@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Exhibition1
+  m_EditorClassIdentifier: 
+  m_GroupName: Exhibition1
+  m_Data:
+    m_SerializedData: []
+  m_GUID: e9a3456023e2da14fab7148c976328da
+  m_SerializeEntries:
+  - m_GUID: f169f3adcb4418b4a9cfa63c16fd1c9c
+    m_Address: Assets/AR objects/Tree.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5ef49fc5987d9d44e8b710f44daa9aad
+    m_Address: Assets/AR objects/Tambourine.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dfae58af85a84cb49895580016f2dd3b
+    m_Address: Assets/AR objects/ZusammenFassung.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 21b405e682dd94844b68829b84456f15
+    m_Address: Assets/AR objects/Chalmers elevator.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 865abbca14d9fe4419c9c1be6cf07e9a
+    m_Address: Assets/AR objects/ARArtwork.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 93319dce6a0cbed4e8e91717d721e95f
+    m_Address: Assets/AR objects/Empty.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d3f079ef9916f47b5a14b97457551586
+    m_Address: "Assets/AR objects/Exhibition2/Monuments - Ahmet O\u0308g\u0306u\u0308t/Models/Aaron
+      Swartz/MOTD_811.prefab"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6196ac4a7ed9744af85e28f38f0e74cb
+    m_Address: "Assets/AR objects/Exhibition2/Monuments - Ahmet O\u0308g\u0306u\u0308t/Models/Philip
+      Saviano/MOTD_621.prefab"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f272de634a6e447baae0c2f54a12f973
+    m_Address: "Assets/AR objects/Exhibition2/Monuments - Ahmet O\u0308g\u0306u\u0308t/Models/Li
+      Wenliang/MOTD_551.prefab"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f75a19e24b7284d1f999e13877b6005e
+    m_Address: "Assets/AR objects/Exhibition2/Monuments - Ahmet O\u0308g\u0306u\u0308t/Models/Marlene
+      Garcia-Esperat/MOTD_221.prefab"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ba37ef9c9877d4d24801e72eb29d2410
+    m_Address: "Assets/AR objects/Exhibition2/Monuments - Ahmet O\u0308g\u0306u\u0308t/Models/Kimberly
+      Young-McLe/MOTD_941.prefab"
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 30686449926174ce5b7fda22c50e4523
+    m_Address: Assets/AR objects/Exhibition2/Video - Tony Cokes/Prefabs/TonyCokesVideoContainer.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2cea796741a414200a95541c70a73f08
+    m_Address: Assets/AR objects/Exhibition2/Jinn - Morehshin Allahyari/Models/ZobaahLowRes/ZobaahLowRes.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 27ed67811f84d984a85ba59a5fd5f296
+    m_Address: Assets/AR objects/Exhibition2/Video - Tony Cokes/Prefabs/TonyCokesVideoContainer2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd8d6f0d634308b4cb11bfacb92e0de3
+    m_Address: Assets/AR objects/Exhibition2/Jinn - Morehshin Allahyari/Prefabs/Jinn.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 16044fe7acc84d0419d4951f8af30652
+    m_Address: Assets/AR objects/Exhibition2/Coins - Tamiko Theil/Prefabs/Coinscene.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c4a8a0ed3b10d148ba7b46bd912be25
+    m_Address: Assets/AR objects/Exhibition2/Video - Tony Cokes/Prefabs/Sample.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 5f577229926f49f45ada8fda575b4c51, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 65ae423b4c672154f8dfb4f525221da8, type: 2}
+    - {fileID: 11400000, guid: 35ad05daddb8ab44e8a09abd95345e12, type: 2}

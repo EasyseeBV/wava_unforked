@@ -1,0 +1,380 @@
+id: cs.temp.dll
+language: CSharp
+name:
+  Default: cs.temp.dll
+qualifiedName:
+  Default: cs.temp.dll
+type: Assembly
+modifiers: {}
+items:
+- id: VoxelBusters.ScreenRecorderKit
+  commentId: N:VoxelBusters.ScreenRecorderKit
+  language: CSharp
+  name:
+    CSharp: VoxelBusters.ScreenRecorderKit
+    VB: VoxelBusters.ScreenRecorderKit
+  nameWithType:
+    CSharp: VoxelBusters.ScreenRecorderKit
+    VB: VoxelBusters.ScreenRecorderKit
+  qualifiedName:
+    CSharp: VoxelBusters.ScreenRecorderKit
+    VB: VoxelBusters.ScreenRecorderKit
+  type: Namespace
+  assemblies:
+  - cs.temp.dll
+  modifiers: {}
+  items:
+  - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+    commentId: T:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+    language: CSharp
+    name:
+      CSharp: ScreenRecorderErrorCode
+      VB: ScreenRecorderErrorCode
+    nameWithType:
+      CSharp: ScreenRecorderErrorCode
+      VB: ScreenRecorderErrorCode
+    qualifiedName:
+      CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+      VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: VoxelBusters.ScreenRecorderKit
+    source:
+      id: ScreenRecorderErrorCode
+      path: ''
+      startLine: 177
+    syntax:
+      content:
+        CSharp: public static class ScreenRecorderErrorCode
+        VB: Public Module ScreenRecorderErrorCode
+    inheritance:
+    - System.Object
+    modifiers:
+      CSharp:
+      - public
+      - static
+      - class
+      VB:
+      - Public
+      - Module
+    items:
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kUnknown
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kUnknown
+      language: CSharp
+      name:
+        CSharp: kUnknown
+        VB: kUnknown
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kUnknown
+        VB: ScreenRecorderErrorCode.kUnknown
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kUnknown
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kUnknown
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kUnknown
+        path: ''
+        startLine: 181
+      summary: 'Error code indicating that an unknown or unexpected error occurred. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kUnknown = 0
+          VB: Public Const kUnknown As Integer = 0
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kApiUnavailable
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kApiUnavailable
+      language: CSharp
+      name:
+        CSharp: kApiUnavailable
+        VB: kApiUnavailable
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kApiUnavailable
+        VB: ScreenRecorderErrorCode.kApiUnavailable
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kApiUnavailable
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kApiUnavailable
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kApiUnavailable
+        path: ''
+        startLine: 184
+      summary: 'Error code indicating that api is unavailable. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kApiUnavailable = 1
+          VB: Public Const kApiUnavailable As Integer = 1
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kRecordingInProgress
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kRecordingInProgress
+      language: CSharp
+      name:
+        CSharp: kRecordingInProgress
+        VB: kRecordingInProgress
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kRecordingInProgress
+        VB: ScreenRecorderErrorCode.kRecordingInProgress
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kRecordingInProgress
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kRecordingInProgress
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kRecordingInProgress
+        path: ''
+        startLine: 187
+      summary: 'Error code indicating that recorder is currently busy recording as recording is in progress. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kRecordingInProgress = 2
+          VB: Public Const kRecordingInProgress As Integer = 2
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kPermissionUnavailable
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kPermissionUnavailable
+      language: CSharp
+      name:
+        CSharp: kPermissionUnavailable
+        VB: kPermissionUnavailable
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kPermissionUnavailable
+        VB: ScreenRecorderErrorCode.kPermissionUnavailable
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kPermissionUnavailable
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kPermissionUnavailable
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kPermissionUnavailable
+        path: ''
+        startLine: 190
+      summary: 'Error code indicating that required permission is unavailable. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kPermissionUnavailable = 3
+          VB: Public Const kPermissionUnavailable As Integer = 3
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kActiveRecordingUnavailable
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kActiveRecordingUnavailable
+      language: CSharp
+      name:
+        CSharp: kActiveRecordingUnavailable
+        VB: kActiveRecordingUnavailable
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kActiveRecordingUnavailable
+        VB: ScreenRecorderErrorCode.kActiveRecordingUnavailable
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kActiveRecordingUnavailable
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kActiveRecordingUnavailable
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kActiveRecordingUnavailable
+        path: ''
+        startLine: 193
+      summary: 'Error code indicating that there is no active recording to operate on. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kActiveRecordingUnavailable = 4
+          VB: Public Const kActiveRecordingUnavailable As Integer = 4
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kFeatureUnsupported
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kFeatureUnsupported
+      language: CSharp
+      name:
+        CSharp: kFeatureUnsupported
+        VB: kFeatureUnsupported
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kFeatureUnsupported
+        VB: ScreenRecorderErrorCode.kFeatureUnsupported
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kFeatureUnsupported
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kFeatureUnsupported
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kFeatureUnsupported
+        path: ''
+        startLine: 196
+      summary: 'Error code indicating that feature is not supported. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kFeatureUnsupported = 5
+          VB: Public Const kFeatureUnsupported As Integer = 5
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kShareServiceUnavailable
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kShareServiceUnavailable
+      language: CSharp
+      name:
+        CSharp: kShareServiceUnavailable
+        VB: kShareServiceUnavailable
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kShareServiceUnavailable
+        VB: ScreenRecorderErrorCode.kShareServiceUnavailable
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kShareServiceUnavailable
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kShareServiceUnavailable
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kShareServiceUnavailable
+        path: ''
+        startLine: 199
+      summary: 'Error code indicating that there is no service available for sharing. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kShareServiceUnavailable = 6
+          VB: Public Const kShareServiceUnavailable As Integer = 6
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+references:
+  System:
+    name:
+      CSharp:
+      - name: System
+        nameWithType: System
+        qualifiedName: System
+        isExternal: true
+      VB:
+      - name: System
+        nameWithType: System
+        qualifiedName: System
+    isDefinition: true
+    commentId: N:System
+  System.Object:
+    name:
+      CSharp:
+      - id: System.Object
+        name: Object
+        nameWithType: Object
+        qualifiedName: System.Object
+        isExternal: true
+      VB:
+      - id: System.Object
+        name: Object
+        nameWithType: Object
+        qualifiedName: System.Object
+        isExternal: true
+    isDefinition: true
+    parent: System
+    commentId: T:System.Object
+  System.Int32:
+    name:
+      CSharp:
+      - id: System.Int32
+        name: Int32
+        nameWithType: Int32
+        qualifiedName: System.Int32
+        isExternal: true
+      VB:
+      - id: System.Int32
+        name: Int32
+        nameWithType: Int32
+        qualifiedName: System.Int32
+        isExternal: true
+    isDefinition: true
+    parent: System
+    commentId: T:System.Int32
+  VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+        name: ScreenRecorderErrorCode
+        nameWithType: ScreenRecorderErrorCode
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+        name: ScreenRecorderErrorCode
+        nameWithType: ScreenRecorderErrorCode
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+    isDefinition: true
+    commentId: T:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+  VoxelBusters.ScreenRecorderKit:
+    name:
+      CSharp:
+      - name: VoxelBusters.ScreenRecorderKit
+        nameWithType: VoxelBusters.ScreenRecorderKit
+        qualifiedName: VoxelBusters.ScreenRecorderKit
+      VB:
+      - name: VoxelBusters.ScreenRecorderKit
+        nameWithType: VoxelBusters.ScreenRecorderKit
+        qualifiedName: VoxelBusters.ScreenRecorderKit
+    isDefinition: true
+    commentId: N:VoxelBusters.ScreenRecorderKit

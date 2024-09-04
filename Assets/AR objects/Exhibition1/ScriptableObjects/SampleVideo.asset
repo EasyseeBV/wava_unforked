@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
+  m_Name: SampleVideo
+  m_EditorClassIdentifier: 
+  Title: Sample
+  Artist: Sample
+  Artists: []
+  Year: 2024
+  Location: Frankfurt
+  ShareLink: 
+  QR: 
+  Description: Sample
+  ARMapImage: {fileID: 21300000, guid: d5b2f112cc1da43cca4cc89a06726cc8, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: d5b2f112cc1da43cca4cc89a06726cc8,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: 4016f35474e40fe47a27a0c2a61bc663, type: 3}
+  ARObjectReference:
+    m_AssetGUID: 8c4a8a0ed3b10d148ba7b46bd912be25
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  AlternateScene: 
+  PlayARObjectDirectly: 0
+  IsAudio: 0
+  PlaceTextRight: 0
+  Latitude: 50.106
+  Longitude: 8.679
+  MaxDistance: 0
+  marker:
+    label: 
+    range:
+      max: 20.999
+      min: 1
+      maxLimit: 20.999
+      minLimit: 1
+    tags: []
+    _enabled: 1
+    latitude: 50.106
+    longitude: 8.679
+    _scale: 185.23361
+    expand: 1
+    altitudeType: 0
+    checkMapBoundaries: 1
+    inited: 1
+    prefab: {fileID: 3186672994675511632, guid: 1df593b3ace9e634cb241223c6194851,
+      type: 3}
+    sizeType: 1
+    _rotationY: 0
+    updateMarker: 1
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints:
+      - {fileID: 11400000}
+      mean: {x: 50.106, y: 8.679}
+      gameSpaceMean: {x: -1584.2157, y: 0, z: 938.7312}
+      zoomedIn: 0
+    borderTransform: {fileID: 0}
+  Hotspot: {fileID: 0}
+  Liked: 0

@@ -1,0 +1,2737 @@
+id: cs.temp.dll
+language: CSharp
+name:
+  Default: cs.temp.dll
+qualifiedName:
+  Default: cs.temp.dll
+type: Assembly
+modifiers: {}
+items:
+- id: VoxelBusters.ScreenRecorderKit
+  commentId: N:VoxelBusters.ScreenRecorderKit
+  language: CSharp
+  name:
+    CSharp: VoxelBusters.ScreenRecorderKit
+    VB: VoxelBusters.ScreenRecorderKit
+  nameWithType:
+    CSharp: VoxelBusters.ScreenRecorderKit
+    VB: VoxelBusters.ScreenRecorderKit
+  qualifiedName:
+    CSharp: VoxelBusters.ScreenRecorderKit
+    VB: VoxelBusters.ScreenRecorderKit
+  type: Namespace
+  assemblies:
+  - cs.temp.dll
+  modifiers: {}
+  items:
+  - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+    commentId: T:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+    language: CSharp
+    name:
+      CSharp: ScreenRecorderErrorCode
+      VB: ScreenRecorderErrorCode
+    nameWithType:
+      CSharp: ScreenRecorderErrorCode
+      VB: ScreenRecorderErrorCode
+    qualifiedName:
+      CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+      VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: VoxelBusters.ScreenRecorderKit
+    source:
+      id: ScreenRecorderErrorCode
+      path: ''
+      startLine: 177
+    syntax:
+      content:
+        CSharp: public static class ScreenRecorderErrorCode
+        VB: Public Module ScreenRecorderErrorCode
+    inheritance:
+    - System.Object
+    modifiers:
+      CSharp:
+      - public
+      - static
+      - class
+      VB:
+      - Public
+      - Module
+    items:
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kUnknown
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kUnknown
+      language: CSharp
+      name:
+        CSharp: kUnknown
+        VB: kUnknown
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kUnknown
+        VB: ScreenRecorderErrorCode.kUnknown
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kUnknown
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kUnknown
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kUnknown
+        path: ''
+        startLine: 181
+      summary: 'Error code indicating that an unknown or unexpected error occurred. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kUnknown = 0
+          VB: Public Const kUnknown As Integer = 0
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kApiUnavailable
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kApiUnavailable
+      language: CSharp
+      name:
+        CSharp: kApiUnavailable
+        VB: kApiUnavailable
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kApiUnavailable
+        VB: ScreenRecorderErrorCode.kApiUnavailable
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kApiUnavailable
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kApiUnavailable
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kApiUnavailable
+        path: ''
+        startLine: 184
+      summary: 'Error code indicating that api is unavailable. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kApiUnavailable = 1
+          VB: Public Const kApiUnavailable As Integer = 1
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kRecordingInProgress
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kRecordingInProgress
+      language: CSharp
+      name:
+        CSharp: kRecordingInProgress
+        VB: kRecordingInProgress
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kRecordingInProgress
+        VB: ScreenRecorderErrorCode.kRecordingInProgress
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kRecordingInProgress
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kRecordingInProgress
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kRecordingInProgress
+        path: ''
+        startLine: 187
+      summary: 'Error code indicating that recorder is currently busy recording as recording is in progress. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kRecordingInProgress = 2
+          VB: Public Const kRecordingInProgress As Integer = 2
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kPermissionUnavailable
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kPermissionUnavailable
+      language: CSharp
+      name:
+        CSharp: kPermissionUnavailable
+        VB: kPermissionUnavailable
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kPermissionUnavailable
+        VB: ScreenRecorderErrorCode.kPermissionUnavailable
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kPermissionUnavailable
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kPermissionUnavailable
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kPermissionUnavailable
+        path: ''
+        startLine: 190
+      summary: 'Error code indicating that required permission is unavailable. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kPermissionUnavailable = 3
+          VB: Public Const kPermissionUnavailable As Integer = 3
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kActiveRecordingUnavailable
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kActiveRecordingUnavailable
+      language: CSharp
+      name:
+        CSharp: kActiveRecordingUnavailable
+        VB: kActiveRecordingUnavailable
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kActiveRecordingUnavailable
+        VB: ScreenRecorderErrorCode.kActiveRecordingUnavailable
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kActiveRecordingUnavailable
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kActiveRecordingUnavailable
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kActiveRecordingUnavailable
+        path: ''
+        startLine: 193
+      summary: 'Error code indicating that there is no active recording to operate on. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kActiveRecordingUnavailable = 4
+          VB: Public Const kActiveRecordingUnavailable As Integer = 4
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kFeatureUnsupported
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kFeatureUnsupported
+      language: CSharp
+      name:
+        CSharp: kFeatureUnsupported
+        VB: kFeatureUnsupported
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kFeatureUnsupported
+        VB: ScreenRecorderErrorCode.kFeatureUnsupported
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kFeatureUnsupported
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kFeatureUnsupported
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kFeatureUnsupported
+        path: ''
+        startLine: 196
+      summary: 'Error code indicating that feature is not supported. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kFeatureUnsupported = 5
+          VB: Public Const kFeatureUnsupported As Integer = 5
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kShareServiceUnavailable
+      commentId: F:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kShareServiceUnavailable
+      language: CSharp
+      name:
+        CSharp: kShareServiceUnavailable
+        VB: kShareServiceUnavailable
+      nameWithType:
+        CSharp: ScreenRecorderErrorCode.kShareServiceUnavailable
+        VB: ScreenRecorderErrorCode.kShareServiceUnavailable
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kShareServiceUnavailable
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode.kShareServiceUnavailable
+      type: Field
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: kShareServiceUnavailable
+        path: ''
+        startLine: 199
+      summary: 'Error code indicating that there is no service available for sharing. '
+      example: []
+      syntax:
+        content:
+          CSharp: public const int kShareServiceUnavailable = 6
+          VB: Public Const kShareServiceUnavailable As Integer = 6
+        return:
+          type: System.Int32
+      modifiers:
+        CSharp:
+        - public
+        - const
+        VB:
+        - Public
+        - Const
+  - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings
+    commentId: T:VoxelBusters.ScreenRecorderKit.GifRecorderSettings
+    language: CSharp
+    name:
+      CSharp: GifRecorderSettings
+      VB: GifRecorderSettings
+    nameWithType:
+      CSharp: GifRecorderSettings
+      VB: GifRecorderSettings
+    qualifiedName:
+      CSharp: VoxelBusters.ScreenRecorderKit.GifRecorderSettings
+      VB: VoxelBusters.ScreenRecorderKit.GifRecorderSettings
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: VoxelBusters.ScreenRecorderKit
+    source:
+      id: GifRecorderSettings
+      path: ''
+      startLine: 572
+    syntax:
+      content:
+        CSharp: >-
+          [Serializable]
+
+          public class GifRecorderSettings : SettingsPropertyGroup
+        VB: >-
+          <Serializable>
+
+          Public Class GifRecorderSettings
+
+              Inherits SettingsPropertyGroup
+    inheritance:
+    - System.Object
+    attributes:
+    - type: System.SerializableAttribute
+      ctor: System.SerializableAttribute.#ctor
+      arguments: []
+    modifiers:
+      CSharp:
+      - public
+      - class
+      VB:
+      - Public
+      - Class
+    items:
+    - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Width
+      commentId: P:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Width
+      language: CSharp
+      name:
+        CSharp: Width
+        VB: Width
+      nameWithType:
+        CSharp: GifRecorderSettings.Width
+        VB: GifRecorderSettings.Width
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Width
+        VB: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Width
+      type: Property
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: Width
+        path: ''
+        startLine: 608
+      summary: "\nWidth of the recording.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public int Width { get; }
+          VB: Public ReadOnly Property Width As Integer
+        parameters: []
+        return:
+          type: System.Int32
+      overload: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Width*
+      modifiers:
+        CSharp:
+        - public
+        - get
+        VB:
+        - Public
+        - ReadOnly
+    - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Height
+      commentId: P:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Height
+      language: CSharp
+      name:
+        CSharp: Height
+        VB: Height
+      nameWithType:
+        CSharp: GifRecorderSettings.Height
+        VB: GifRecorderSettings.Height
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Height
+        VB: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Height
+      type: Property
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: Height
+        path: ''
+        startLine: 617
+      summary: "\nHeight of the recording.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public int Height { get; }
+          VB: Public ReadOnly Property Height As Integer
+        parameters: []
+        return:
+          type: System.Int32
+      overload: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Height*
+      modifiers:
+        CSharp:
+        - public
+        - get
+        VB:
+        - Public
+        - ReadOnly
+    - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.AutoAspect
+      commentId: P:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.AutoAspect
+      language: CSharp
+      name:
+        CSharp: AutoAspect
+        VB: AutoAspect
+      nameWithType:
+        CSharp: GifRecorderSettings.AutoAspect
+        VB: GifRecorderSettings.AutoAspect
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.AutoAspect
+        VB: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.AutoAspect
+      type: Property
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: AutoAspect
+        path: ''
+        startLine: 626
+      summary: "\nEnabling this will adjust the aspect automatically.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public bool AutoAspect { get; }
+          VB: Public ReadOnly Property AutoAspect As Boolean
+        parameters: []
+        return:
+          type: System.Boolean
+      overload: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.AutoAspect*
+      modifiers:
+        CSharp:
+        - public
+        - get
+        VB:
+        - Public
+        - ReadOnly
+    - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.FramePerSecond
+      commentId: P:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.FramePerSecond
+      language: CSharp
+      name:
+        CSharp: FramePerSecond
+        VB: FramePerSecond
+      nameWithType:
+        CSharp: GifRecorderSettings.FramePerSecond
+        VB: GifRecorderSettings.FramePerSecond
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.FramePerSecond
+        VB: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.FramePerSecond
+      type: Property
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: FramePerSecond
+        path: ''
+        startLine: 635
+      summary: "\nNumber of frames to capture per second\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public int FramePerSecond { get; }
+          VB: Public ReadOnly Property FramePerSecond As Integer
+        parameters: []
+        return:
+          type: System.Int32
+      overload: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.FramePerSecond*
+      modifiers:
+        CSharp:
+        - public
+        - get
+        VB:
+        - Public
+        - ReadOnly
+    - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Repeat
+      commentId: P:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Repeat
+      language: CSharp
+      name:
+        CSharp: Repeat
+        VB: Repeat
+      nameWithType:
+        CSharp: GifRecorderSettings.Repeat
+        VB: GifRecorderSettings.Repeat
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Repeat
+        VB: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Repeat
+      type: Property
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: Repeat
+        path: ''
+        startLine: 644
+      summary: "\nEnable to loop the gif\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public int Repeat { get; }
+          VB: Public ReadOnly Property Repeat As Integer
+        parameters: []
+        return:
+          type: System.Int32
+      overload: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Repeat*
+      modifiers:
+        CSharp:
+        - public
+        - get
+        VB:
+        - Public
+        - ReadOnly
+    - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Quality
+      commentId: P:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Quality
+      language: CSharp
+      name:
+        CSharp: Quality
+        VB: Quality
+      nameWithType:
+        CSharp: GifRecorderSettings.Quality
+        VB: GifRecorderSettings.Quality
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Quality
+        VB: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Quality
+      type: Property
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: Quality
+        path: ''
+        startLine: 653
+      summary: "\nQuality of the recording.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public int Quality { get; }
+          VB: Public ReadOnly Property Quality As Integer
+        parameters: []
+        return:
+          type: System.Int32
+      overload: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Quality*
+      modifiers:
+        CSharp:
+        - public
+        - get
+        VB:
+        - Public
+        - ReadOnly
+    - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.BufferSize
+      commentId: P:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.BufferSize
+      language: CSharp
+      name:
+        CSharp: BufferSize
+        VB: BufferSize
+      nameWithType:
+        CSharp: GifRecorderSettings.BufferSize
+        VB: GifRecorderSettings.BufferSize
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.BufferSize
+        VB: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.BufferSize
+      type: Property
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: BufferSize
+        path: ''
+        startLine: 662
+      summary: "\nSize of the buffer used.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public float BufferSize { get; }
+          VB: Public ReadOnly Property BufferSize As Single
+        parameters: []
+        return:
+          type: System.Single
+      overload: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.BufferSize*
+      modifiers:
+        CSharp:
+        - public
+        - get
+        VB:
+        - Public
+        - ReadOnly
+    - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.MaxFrameCount
+      commentId: P:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.MaxFrameCount
+      language: CSharp
+      name:
+        CSharp: MaxFrameCount
+        VB: MaxFrameCount
+      nameWithType:
+        CSharp: GifRecorderSettings.MaxFrameCount
+        VB: GifRecorderSettings.MaxFrameCount
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.MaxFrameCount
+        VB: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.MaxFrameCount
+      type: Property
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: MaxFrameCount
+        path: ''
+        startLine: 671
+      summary: "\nMax frames allowed per recording.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public int MaxFrameCount { get; }
+          VB: Public ReadOnly Property MaxFrameCount As Integer
+        parameters: []
+        return:
+          type: System.Int32
+      overload: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.MaxFrameCount*
+      modifiers:
+        CSharp:
+        - public
+        - get
+        VB:
+        - Public
+        - ReadOnly
+    - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.TimePerFrame
+      commentId: P:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.TimePerFrame
+      language: CSharp
+      name:
+        CSharp: TimePerFrame
+        VB: TimePerFrame
+      nameWithType:
+        CSharp: GifRecorderSettings.TimePerFrame
+        VB: GifRecorderSettings.TimePerFrame
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.TimePerFrame
+        VB: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.TimePerFrame
+      type: Property
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: TimePerFrame
+        path: ''
+        startLine: 677
+      summary: "\nTime per each frame.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public float TimePerFrame { get; }
+          VB: Public ReadOnly Property TimePerFrame As Single
+        parameters: []
+        return:
+          type: System.Single
+      overload: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.TimePerFrame*
+      modifiers:
+        CSharp:
+        - public
+        - get
+        VB:
+        - Public
+        - ReadOnly
+    - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.ThreadPriority
+      commentId: P:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.ThreadPriority
+      language: CSharp
+      name:
+        CSharp: ThreadPriority
+        VB: ThreadPriority
+      nameWithType:
+        CSharp: GifRecorderSettings.ThreadPriority
+        VB: GifRecorderSettings.ThreadPriority
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.ThreadPriority
+        VB: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.ThreadPriority
+      type: Property
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: ThreadPriority
+        path: ''
+        startLine: 682
+      summary: "\nPriority of the recording thread.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public ThreadPriority ThreadPriority { get; }
+          VB: Public ReadOnly Property ThreadPriority As ThreadPriority
+        parameters: []
+        return:
+          type: ThreadPriority
+      overload: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.ThreadPriority*
+      modifiers:
+        CSharp:
+        - public
+        - get
+        VB:
+        - Public
+        - ReadOnly
+    - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.#ctor(System.Boolean,System.Int32,System.Int32,System.Boolean,System.Int32,System.Int32,System.Int32,System.Single,ThreadPriority)
+      commentId: M:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.#ctor(System.Boolean,System.Int32,System.Int32,System.Boolean,System.Int32,System.Int32,System.Int32,System.Single,ThreadPriority)
+      language: CSharp
+      name:
+        CSharp: GifRecorderSettings(Boolean, Int32, Int32, Boolean, Int32, Int32, Int32, Single, ThreadPriority)
+        VB: GifRecorderSettings(Boolean, Int32, Int32, Boolean, Int32, Int32, Int32, Single, ThreadPriority)
+      nameWithType:
+        CSharp: GifRecorderSettings.GifRecorderSettings(Boolean, Int32, Int32, Boolean, Int32, Int32, Int32, Single, ThreadPriority)
+        VB: GifRecorderSettings.GifRecorderSettings(Boolean, Int32, Int32, Boolean, Int32, Int32, Int32, Single, ThreadPriority)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.GifRecorderSettings(System.Boolean, System.Int32, System.Int32, System.Boolean, System.Int32, System.Int32, System.Int32, System.Single, ThreadPriority)
+        VB: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.GifRecorderSettings(System.Boolean, System.Int32, System.Int32, System.Boolean, System.Int32, System.Int32, System.Int32, System.Single, ThreadPriority)
+      type: Constructor
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: .ctor
+        path: ''
+        startLine: 692
+      syntax:
+        content:
+          CSharp: public GifRecorderSettings(bool isEnabled = true, int width = 320, int height = 200, bool autoAspect = true, int fps = 15, int repeat = 0, int quality = 15, float bufferSize = 3F, ThreadPriority threadPriority = null)
+          VB: Public Sub New(isEnabled As Boolean = True, width As Integer = 320, height As Integer = 200, autoAspect As Boolean = True, fps As Integer = 15, repeat As Integer = 0, quality As Integer = 15, bufferSize As Single = 3F, threadPriority As ThreadPriority = Nothing)
+        parameters:
+        - id: isEnabled
+          type: System.Boolean
+        - id: width
+          type: System.Int32
+        - id: height
+          type: System.Int32
+        - id: autoAspect
+          type: System.Boolean
+        - id: fps
+          type: System.Int32
+        - id: repeat
+          type: System.Int32
+        - id: quality
+          type: System.Int32
+        - id: bufferSize
+          type: System.Single
+        - id: threadPriority
+          type: ThreadPriority
+      overload: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.#ctor*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+  - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder
+    commentId: T:VoxelBusters.ScreenRecorderKit.IScreenRecorder
+    language: CSharp
+    name:
+      CSharp: IScreenRecorder
+      VB: IScreenRecorder
+    nameWithType:
+      CSharp: IScreenRecorder
+      VB: IScreenRecorder
+    qualifiedName:
+      CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder
+      VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder
+    type: Interface
+    assemblies:
+    - cs.temp.dll
+    namespace: VoxelBusters.ScreenRecorderKit
+    source:
+      id: IScreenRecorder
+      path: ''
+      startLine: 877
+    summary: "\nInterface for holding an instance of VideoRecorder or GidRecorder used for recording.\n"
+    example: []
+    syntax:
+      content:
+        CSharp: public interface IScreenRecorder
+        VB: Public Interface IScreenRecorder
+    modifiers:
+      CSharp:
+      - public
+      - interface
+      VB:
+      - Public
+      - Interface
+    items:
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.CanRecord
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.CanRecord
+      language: CSharp
+      name:
+        CSharp: CanRecord()
+        VB: CanRecord()
+      nameWithType:
+        CSharp: IScreenRecorder.CanRecord()
+        VB: IScreenRecorder.CanRecord()
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.CanRecord()
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.CanRecord()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: CanRecord
+        path: ''
+        startLine: 885
+      summary: "\nCheck if recording is allowed or not.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: bool CanRecord()
+          VB: Function CanRecord As Boolean
+        return:
+          type: System.Boolean
+          description: Returns false if recording api is not available or if resources are not available for recording.
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.CanRecord*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsRecording
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsRecording
+      language: CSharp
+      name:
+        CSharp: IsRecording()
+        VB: IsRecording()
+      nameWithType:
+        CSharp: IScreenRecorder.IsRecording()
+        VB: IScreenRecorder.IsRecording()
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsRecording()
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsRecording()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: IsRecording
+        path: ''
+        startLine: 891
+      summary: "\nCheck if recording is happening or not.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: bool IsRecording()
+          VB: Function IsRecording As Boolean
+        return:
+          type: System.Boolean
+          description: Returns true if recording is active and not paused. False if no active recording exists or a recording is paused
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsRecording*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsPausedOrRecording
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsPausedOrRecording
+      language: CSharp
+      name:
+        CSharp: IsPausedOrRecording()
+        VB: IsPausedOrRecording()
+      nameWithType:
+        CSharp: IScreenRecorder.IsPausedOrRecording()
+        VB: IScreenRecorder.IsPausedOrRecording()
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsPausedOrRecording()
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsPausedOrRecording()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: IsPausedOrRecording
+        path: ''
+        startLine: 897
+      summary: "\nCheck if an active recording exists\n"
+      example: []
+      syntax:
+        content:
+          CSharp: bool IsPausedOrRecording()
+          VB: Function IsPausedOrRecording As Boolean
+        return:
+          type: System.Boolean
+          description: Returns true if a recording is active or recording is paused. False if no active recording exists.
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsPausedOrRecording*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PrepareRecording(CompletionCallback)
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.PrepareRecording(CompletionCallback)
+      language: CSharp
+      name:
+        CSharp: PrepareRecording(CompletionCallback)
+        VB: PrepareRecording(CompletionCallback)
+      nameWithType:
+        CSharp: IScreenRecorder.PrepareRecording(CompletionCallback)
+        VB: IScreenRecorder.PrepareRecording(CompletionCallback)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PrepareRecording(CompletionCallback)
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PrepareRecording(CompletionCallback)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: PrepareRecording
+        path: ''
+        startLine: 903
+      summary: "\nPrepare for recording\n"
+      example: []
+      syntax:
+        content:
+          CSharp: void PrepareRecording(CompletionCallback callback = null)
+          VB: Sub PrepareRecording(callback As CompletionCallback = Nothing)
+        parameters:
+        - id: callback
+          type: CompletionCallback
+          description: Callback to get triggered once prepare action is complete
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PrepareRecording*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StartRecording(CompletionCallback)
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.StartRecording(CompletionCallback)
+      language: CSharp
+      name:
+        CSharp: StartRecording(CompletionCallback)
+        VB: StartRecording(CompletionCallback)
+      nameWithType:
+        CSharp: IScreenRecorder.StartRecording(CompletionCallback)
+        VB: IScreenRecorder.StartRecording(CompletionCallback)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StartRecording(CompletionCallback)
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StartRecording(CompletionCallback)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: StartRecording
+        path: ''
+        startLine: 909
+      summary: "\nStart a recording\n"
+      example: []
+      syntax:
+        content:
+          CSharp: void StartRecording(CompletionCallback callback = null)
+          VB: Sub StartRecording(callback As CompletionCallback = Nothing)
+        parameters:
+        - id: callback
+          type: CompletionCallback
+          description: Callback to get triggered once start action is complete
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StartRecording*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PauseRecording(CompletionCallback)
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.PauseRecording(CompletionCallback)
+      language: CSharp
+      name:
+        CSharp: PauseRecording(CompletionCallback)
+        VB: PauseRecording(CompletionCallback)
+      nameWithType:
+        CSharp: IScreenRecorder.PauseRecording(CompletionCallback)
+        VB: IScreenRecorder.PauseRecording(CompletionCallback)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PauseRecording(CompletionCallback)
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PauseRecording(CompletionCallback)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: PauseRecording
+        path: ''
+        startLine: 915
+      summary: "\nPause an active recording\n"
+      example: []
+      syntax:
+        content:
+          CSharp: void PauseRecording(CompletionCallback callback = null)
+          VB: Sub PauseRecording(callback As CompletionCallback = Nothing)
+        parameters:
+        - id: callback
+          type: CompletionCallback
+          description: Callback to get triggered once after pause action is complete.
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PauseRecording*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording(CompletionCallback)
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording(CompletionCallback)
+      language: CSharp
+      name:
+        CSharp: StopRecording(CompletionCallback)
+        VB: StopRecording(CompletionCallback)
+      nameWithType:
+        CSharp: IScreenRecorder.StopRecording(CompletionCallback)
+        VB: IScreenRecorder.StopRecording(CompletionCallback)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording(CompletionCallback)
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording(CompletionCallback)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: StopRecording
+        path: ''
+        startLine: 921
+      summary: "\nStop an active recording\n"
+      example: []
+      syntax:
+        content:
+          CSharp: void StopRecording(CompletionCallback callback = null)
+          VB: Sub StopRecording(callback As CompletionCallback = Nothing)
+        parameters:
+        - id: callback
+          type: CompletionCallback
+          description: Callback to get triggered once after stop action is complete.
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording(System.Boolean,CompletionCallback)
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording(System.Boolean,CompletionCallback)
+      language: CSharp
+      name:
+        CSharp: StopRecording(Boolean, CompletionCallback)
+        VB: StopRecording(Boolean, CompletionCallback)
+      nameWithType:
+        CSharp: IScreenRecorder.StopRecording(Boolean, CompletionCallback)
+        VB: IScreenRecorder.StopRecording(Boolean, CompletionCallback)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording(System.Boolean, CompletionCallback)
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording(System.Boolean, CompletionCallback)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: StopRecording
+        path: ''
+        startLine: 928
+      summary: "\nStop an active recording\n"
+      example: []
+      syntax:
+        content:
+          CSharp: void StopRecording(bool flushMemory, CompletionCallback callback = null)
+          VB: Sub StopRecording(flushMemory As Boolean, callback As CompletionCallback = Nothing)
+        parameters:
+        - id: flushMemory
+          type: System.Boolean
+          description: If true, clears all the memory allocated for this recording.
+        - id: callback
+          type: CompletionCallback
+          description: Callback to get triggered once after stop action is complete.
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.DiscardRecording(CompletionCallback)
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.DiscardRecording(CompletionCallback)
+      language: CSharp
+      name:
+        CSharp: DiscardRecording(CompletionCallback)
+        VB: DiscardRecording(CompletionCallback)
+      nameWithType:
+        CSharp: IScreenRecorder.DiscardRecording(CompletionCallback)
+        VB: IScreenRecorder.DiscardRecording(CompletionCallback)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.DiscardRecording(CompletionCallback)
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.DiscardRecording(CompletionCallback)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: DiscardRecording
+        path: ''
+        startLine: 934
+      summary: "\nDiscard an active recording. This won&apos;t trigger SetOnRecordingAvailable callback as the current recording is disposed.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: void DiscardRecording(CompletionCallback callback = null)
+          VB: Sub DiscardRecording(callback As CompletionCallback = Nothing)
+        parameters:
+        - id: callback
+          type: CompletionCallback
+          description: Callback to get triggered once discard action is complete.
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.DiscardRecording*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording(CompletionCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult})
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording(CompletionCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult})
+      language: CSharp
+      name:
+        CSharp: SaveRecording(CompletionCallback<ScreenRecorderSaveRecordingResult>)
+        VB: SaveRecording(CompletionCallback(Of ScreenRecorderSaveRecordingResult))
+      nameWithType:
+        CSharp: IScreenRecorder.SaveRecording(CompletionCallback<ScreenRecorderSaveRecordingResult>)
+        VB: IScreenRecorder.SaveRecording(CompletionCallback(Of ScreenRecorderSaveRecordingResult))
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording(CompletionCallback<VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult>)
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording(CompletionCallback(Of VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult))
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: SaveRecording
+        path: ''
+        startLine: 940
+      summary: "\nSave an active recording\n"
+      example: []
+      syntax:
+        content:
+          CSharp: void SaveRecording(CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null)
+          VB: Sub SaveRecording(callback As CompletionCallback(Of ScreenRecorderSaveRecordingResult) = Nothing)
+        parameters:
+        - id: callback
+          type: CompletionCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult}
+          description: Callback to get triggered once save action is complete. This returns a result where you can fetch path.
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording(System.String,CompletionCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult})
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording(System.String,CompletionCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult})
+      language: CSharp
+      name:
+        CSharp: SaveRecording(String, CompletionCallback<ScreenRecorderSaveRecordingResult>)
+        VB: SaveRecording(String, CompletionCallback(Of ScreenRecorderSaveRecordingResult))
+      nameWithType:
+        CSharp: IScreenRecorder.SaveRecording(String, CompletionCallback<ScreenRecorderSaveRecordingResult>)
+        VB: IScreenRecorder.SaveRecording(String, CompletionCallback(Of ScreenRecorderSaveRecordingResult))
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording(System.String, CompletionCallback<VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult>)
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording(System.String, CompletionCallback(Of VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult))
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: SaveRecording
+        path: ''
+        startLine: 947
+      summary: "\nSave an active recording with a provided filename.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: void SaveRecording(string fileName, CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null)
+          VB: Sub SaveRecording(fileName As String, callback As CompletionCallback(Of ScreenRecorderSaveRecordingResult) = Nothing)
+        parameters:
+        - id: fileName
+          type: System.String
+          description: Filename to be set on saving a recording.
+        - id: callback
+          type: CompletionCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult}
+          description: Callback to get triggered once save action is complete. This returns a result where you can fetch path.
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SetOnRecordingAvailable(SuccessCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult})
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.SetOnRecordingAvailable(SuccessCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult})
+      language: CSharp
+      name:
+        CSharp: SetOnRecordingAvailable(SuccessCallback<ScreenRecorderRecordingAvailableResult>)
+        VB: SetOnRecordingAvailable(SuccessCallback(Of ScreenRecorderRecordingAvailableResult))
+      nameWithType:
+        CSharp: IScreenRecorder.SetOnRecordingAvailable(SuccessCallback<ScreenRecorderRecordingAvailableResult>)
+        VB: IScreenRecorder.SetOnRecordingAvailable(SuccessCallback(Of ScreenRecorderRecordingAvailableResult))
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SetOnRecordingAvailable(SuccessCallback<VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult>)
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SetOnRecordingAvailable(SuccessCallback(Of VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult))
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: SetOnRecordingAvailable
+        path: ''
+        startLine: 954
+      summary: "\nSet a callback to get triggered when a recording result is available. This will be GifTexture in-case of gif recording or video file path in-case of video recording.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: void SetOnRecordingAvailable(SuccessCallback<ScreenRecorderRecordingAvailableResult> callback = null)
+          VB: Sub SetOnRecordingAvailable(callback As SuccessCallback(Of ScreenRecorderRecordingAvailableResult) = Nothing)
+        parameters:
+        - id: callback
+          type: SuccessCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult}
+          description: Callback to get triggered once a recording is available.
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SetOnRecordingAvailable*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.OpenRecording(CompletionCallback)
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.OpenRecording(CompletionCallback)
+      language: CSharp
+      name:
+        CSharp: OpenRecording(CompletionCallback)
+        VB: OpenRecording(CompletionCallback)
+      nameWithType:
+        CSharp: IScreenRecorder.OpenRecording(CompletionCallback)
+        VB: IScreenRecorder.OpenRecording(CompletionCallback)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.OpenRecording(CompletionCallback)
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.OpenRecording(CompletionCallback)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: OpenRecording
+        path: ''
+        startLine: 960
+      summary: "\nOpen an active recording which just got recorded.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: void OpenRecording(CompletionCallback callback = null)
+          VB: Sub OpenRecording(callback As CompletionCallback = Nothing)
+        parameters:
+        - id: callback
+          type: CompletionCallback
+          description: Callback to get triggered once the action is complete.
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.OpenRecording*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.ShareRecording(System.String,System.String,CompletionCallback)
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.ShareRecording(System.String,System.String,CompletionCallback)
+      language: CSharp
+      name:
+        CSharp: ShareRecording(String, String, CompletionCallback)
+        VB: ShareRecording(String, String, CompletionCallback)
+      nameWithType:
+        CSharp: IScreenRecorder.ShareRecording(String, String, CompletionCallback)
+        VB: IScreenRecorder.ShareRecording(String, String, CompletionCallback)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.ShareRecording(System.String, System.String, CompletionCallback)
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.ShareRecording(System.String, System.String, CompletionCallback)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: ShareRecording
+        path: ''
+        startLine: 968
+      summary: "\nShare an active recording which just got recorded.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: void ShareRecording(string text = null, string subject = null, CompletionCallback callback = null)
+          VB: Sub ShareRecording(text As String = Nothing, subject As String = Nothing, callback As CompletionCallback = Nothing)
+        parameters:
+        - id: text
+          type: System.String
+          description: Share text used for sharing.
+        - id: subject
+          type: System.String
+          description: Subject text that needs to be used as subject.
+        - id: callback
+          type: CompletionCallback
+          description: Callback that gets triggered once share action is complete.
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.ShareRecording*
+      modifiers:
+        CSharp: []
+        VB: []
+    - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.Flush
+      commentId: M:VoxelBusters.ScreenRecorderKit.IScreenRecorder.Flush
+      language: CSharp
+      name:
+        CSharp: Flush()
+        VB: Flush()
+      nameWithType:
+        CSharp: IScreenRecorder.Flush()
+        VB: IScreenRecorder.Flush()
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.IScreenRecorder.Flush()
+        VB: VoxelBusters.ScreenRecorderKit.IScreenRecorder.Flush()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: Flush
+        path: ''
+        startLine: 973
+      summary: "\nFlush any resources created for recording.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: void Flush()
+          VB: Sub Flush
+      overload: VoxelBusters.ScreenRecorderKit.IScreenRecorder.Flush*
+      modifiers:
+        CSharp: []
+        VB: []
+  - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+    commentId: T:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+    language: CSharp
+    name:
+      CSharp: ScreenRecorderBuilder
+      VB: ScreenRecorderBuilder
+    nameWithType:
+      CSharp: ScreenRecorderBuilder
+      VB: ScreenRecorderBuilder
+    qualifiedName:
+      CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+      VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: VoxelBusters.ScreenRecorderKit
+    source:
+      id: ScreenRecorderBuilder
+      path: ''
+      startLine: 1075
+    summary: "\nBuilder for creating an instance of IScreenRecorder for Video or Gif.\n"
+    example: []
+    syntax:
+      content:
+        CSharp: public class ScreenRecorderBuilder
+        VB: Public Class ScreenRecorderBuilder
+    inheritance:
+    - System.Object
+    modifiers:
+      CSharp:
+      - public
+      - class
+      VB:
+      - Public
+      - Class
+    items:
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderSettings,VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[])
+      commentId: M:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderSettings,VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[])
+      language: CSharp
+      name:
+        CSharp: CreateVideoRecorder(VideoRecorderSettings, VideoRecorderRuntimeSettingsOption[])
+        VB: CreateVideoRecorder(VideoRecorderSettings, VideoRecorderRuntimeSettingsOption())
+      nameWithType:
+        CSharp: ScreenRecorderBuilder.CreateVideoRecorder(VideoRecorderSettings, VideoRecorderRuntimeSettingsOption[])
+        VB: ScreenRecorderBuilder.CreateVideoRecorder(VideoRecorderSettings, VideoRecorderRuntimeSettingsOption())
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderSettings, VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[])
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderSettings, VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption())
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: CreateVideoRecorder
+        path: ''
+        startLine: 993
+      summary: "\nCreates an instance of the video recorder.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public static ScreenRecorderBuilder CreateVideoRecorder(VideoRecorderSettings settings = null, params VideoRecorderRuntimeSettingsOption[] runtimeSettingsOptions)
+          VB: Public Shared Function CreateVideoRecorder(settings As VideoRecorderSettings = Nothing, ParamArray runtimeSettingsOptions As VideoRecorderRuntimeSettingsOption()) As ScreenRecorderBuilder
+        parameters:
+        - id: settings
+          type: VoxelBusters.ScreenRecorderKit.VideoRecorderSettings
+          description: Basic settings properties.
+        - id: runtimeSettingsOptions
+          type: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[]
+          description: Runtime configurable properties.
+        return:
+          type: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+      overload: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder*
+      modifiers:
+        CSharp:
+        - public
+        - static
+        VB:
+        - Public
+        - Shared
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderSettings,VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings)
+      commentId: M:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderSettings,VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings)
+      language: CSharp
+      name:
+        CSharp: CreateVideoRecorder(VideoRecorderSettings, VideoRecorderRuntimeSettings)
+        VB: CreateVideoRecorder(VideoRecorderSettings, VideoRecorderRuntimeSettings)
+      nameWithType:
+        CSharp: ScreenRecorderBuilder.CreateVideoRecorder(VideoRecorderSettings, VideoRecorderRuntimeSettings)
+        VB: ScreenRecorderBuilder.CreateVideoRecorder(VideoRecorderSettings, VideoRecorderRuntimeSettings)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderSettings, VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings)
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderSettings, VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: CreateVideoRecorder
+        path: ''
+        startLine: 1006
+      summary: "\nCreates an instance of the video recorder.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public static ScreenRecorderBuilder CreateVideoRecorder(VideoRecorderSettings settings = null, VideoRecorderRuntimeSettings runtimeSettings = null)
+          VB: Public Shared Function CreateVideoRecorder(settings As VideoRecorderSettings = Nothing, runtimeSettings As VideoRecorderRuntimeSettings = Nothing) As ScreenRecorderBuilder
+        parameters:
+        - id: settings
+          type: VoxelBusters.ScreenRecorderKit.VideoRecorderSettings
+          description: Basic settings properties.
+        - id: runtimeSettings
+          type: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+          description: Runtime configurable properties.
+        return:
+          type: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+      overload: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder*
+      modifiers:
+        CSharp:
+        - public
+        - static
+        VB:
+        - Public
+        - Shared
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings)
+      commentId: M:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings)
+      language: CSharp
+      name:
+        CSharp: CreateVideoRecorder(VideoRecorderRuntimeSettings)
+        VB: CreateVideoRecorder(VideoRecorderRuntimeSettings)
+      nameWithType:
+        CSharp: ScreenRecorderBuilder.CreateVideoRecorder(VideoRecorderRuntimeSettings)
+        VB: ScreenRecorderBuilder.CreateVideoRecorder(VideoRecorderRuntimeSettings)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings)
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: CreateVideoRecorder
+        path: ''
+        startLine: 1018
+      summary: "\nCreates an instance of the video recorder.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public static ScreenRecorderBuilder CreateVideoRecorder(VideoRecorderRuntimeSettings runtimeSettings = null)
+          VB: Public Shared Function CreateVideoRecorder(runtimeSettings As VideoRecorderRuntimeSettings = Nothing) As ScreenRecorderBuilder
+        parameters:
+        - id: runtimeSettings
+          type: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+          description: Runtime configurable properties.
+        return:
+          type: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+      overload: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder*
+      modifiers:
+        CSharp:
+        - public
+        - static
+        VB:
+        - Public
+        - Shared
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[])
+      commentId: M:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[])
+      language: CSharp
+      name:
+        CSharp: CreateVideoRecorder(VideoRecorderRuntimeSettingsOption[])
+        VB: CreateVideoRecorder(VideoRecorderRuntimeSettingsOption())
+      nameWithType:
+        CSharp: ScreenRecorderBuilder.CreateVideoRecorder(VideoRecorderRuntimeSettingsOption[])
+        VB: ScreenRecorderBuilder.CreateVideoRecorder(VideoRecorderRuntimeSettingsOption())
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[])
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder(VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption())
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: CreateVideoRecorder
+        path: ''
+        startLine: 1029
+      summary: "\nCreates an instance of the video recorder.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public static ScreenRecorderBuilder CreateVideoRecorder(params VideoRecorderRuntimeSettingsOption[] runtimeSettingsOptions)
+          VB: Public Shared Function CreateVideoRecorder(ParamArray runtimeSettingsOptions As VideoRecorderRuntimeSettingsOption()) As ScreenRecorderBuilder
+        parameters:
+        - id: runtimeSettingsOptions
+          type: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[]
+          description: Runtime configurable properties.
+        return:
+          type: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+      overload: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder*
+      modifiers:
+        CSharp:
+        - public
+        - static
+        VB:
+        - Public
+        - Shared
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateGifRecorder(Camera,VoxelBusters.ScreenRecorderKit.GifRecorderSettings)
+      commentId: M:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateGifRecorder(Camera,VoxelBusters.ScreenRecorderKit.GifRecorderSettings)
+      language: CSharp
+      name:
+        CSharp: CreateGifRecorder(Camera, GifRecorderSettings)
+        VB: CreateGifRecorder(Camera, GifRecorderSettings)
+      nameWithType:
+        CSharp: ScreenRecorderBuilder.CreateGifRecorder(Camera, GifRecorderSettings)
+        VB: ScreenRecorderBuilder.CreateGifRecorder(Camera, GifRecorderSettings)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateGifRecorder(Camera, VoxelBusters.ScreenRecorderKit.GifRecorderSettings)
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateGifRecorder(Camera, VoxelBusters.ScreenRecorderKit.GifRecorderSettings)
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: CreateGifRecorder
+        path: ''
+        startLine: 1054
+      summary: "\nCreates an instance of GIF recorder.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public static ScreenRecorderBuilder CreateGifRecorder(Camera camera = null, GifRecorderSettings settings = null)
+          VB: Public Shared Function CreateGifRecorder(camera As Camera = Nothing, settings As GifRecorderSettings = Nothing) As ScreenRecorderBuilder
+        parameters:
+        - id: camera
+          type: Camera
+          description: Camera which needs to be recorded. If null, whole screen will be recorded.
+        - id: settings
+          type: VoxelBusters.ScreenRecorderKit.GifRecorderSettings
+          description: Settings for configuring this gif recorder.
+        return:
+          type: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+      overload: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateGifRecorder*
+      modifiers:
+        CSharp:
+        - public
+        - static
+        VB:
+        - Public
+        - Shared
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.SetOnRecordingAvailable(SuccessCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult})
+      commentId: M:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.SetOnRecordingAvailable(SuccessCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult})
+      language: CSharp
+      name:
+        CSharp: SetOnRecordingAvailable(SuccessCallback<ScreenRecorderRecordingAvailableResult>)
+        VB: SetOnRecordingAvailable(SuccessCallback(Of ScreenRecorderRecordingAvailableResult))
+      nameWithType:
+        CSharp: ScreenRecorderBuilder.SetOnRecordingAvailable(SuccessCallback<ScreenRecorderRecordingAvailableResult>)
+        VB: ScreenRecorderBuilder.SetOnRecordingAvailable(SuccessCallback(Of ScreenRecorderRecordingAvailableResult))
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.SetOnRecordingAvailable(SuccessCallback<VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult>)
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.SetOnRecordingAvailable(SuccessCallback(Of VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult))
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: SetOnRecordingAvailable
+        path: ''
+        startLine: 1096
+      syntax:
+        content:
+          CSharp: public ScreenRecorderBuilder SetOnRecordingAvailable(SuccessCallback<ScreenRecorderRecordingAvailableResult> callback = null)
+          VB: Public Function SetOnRecordingAvailable(callback As SuccessCallback(Of ScreenRecorderRecordingAvailableResult) = Nothing) As ScreenRecorderBuilder
+        parameters:
+        - id: callback
+          type: SuccessCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult}
+        return:
+          type: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+      overload: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.SetOnRecordingAvailable*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.Build
+      commentId: M:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.Build
+      language: CSharp
+      name:
+        CSharp: Build()
+        VB: Build()
+      nameWithType:
+        CSharp: ScreenRecorderBuilder.Build()
+        VB: ScreenRecorderBuilder.Build()
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.Build()
+        VB: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.Build()
+      type: Method
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: Build
+        path: ''
+        startLine: 1107
+      syntax:
+        content:
+          CSharp: public IScreenRecorder Build()
+          VB: Public Function Build As IScreenRecorder
+        return:
+          type: VoxelBusters.ScreenRecorderKit.IScreenRecorder
+      overload: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.Build*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+  - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+    commentId: T:VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+    language: CSharp
+    name:
+      CSharp: VideoRecorderRuntimeSettings
+      VB: VideoRecorderRuntimeSettings
+    nameWithType:
+      CSharp: VideoRecorderRuntimeSettings
+      VB: VideoRecorderRuntimeSettings
+    qualifiedName:
+      CSharp: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+      VB: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+    type: Class
+    assemblies:
+    - cs.temp.dll
+    namespace: VoxelBusters.ScreenRecorderKit
+    source:
+      id: VideoRecorderRuntimeSettings
+      path: ''
+      startLine: 3898
+    summary: "\nSettings for configuring a video recorder.\n"
+    example: []
+    syntax:
+      content:
+        CSharp: public class VideoRecorderRuntimeSettings
+        VB: Public Class VideoRecorderRuntimeSettings
+    inheritance:
+    - System.Object
+    modifiers:
+      CSharp:
+      - public
+      - class
+      VB:
+      - Public
+      - Class
+    items:
+    - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.EnableMicrophone
+      commentId: P:VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.EnableMicrophone
+      language: CSharp
+      name:
+        CSharp: EnableMicrophone
+        VB: EnableMicrophone
+      nameWithType:
+        CSharp: VideoRecorderRuntimeSettings.EnableMicrophone
+        VB: VideoRecorderRuntimeSettings.EnableMicrophone
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.EnableMicrophone
+        VB: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.EnableMicrophone
+      type: Property
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: EnableMicrophone
+        path: ''
+        startLine: 3906
+      summary: "\nSet this to true if you want to use microphone.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public bool? EnableMicrophone { get; }
+          VB: Public ReadOnly Property EnableMicrophone As Boolean?
+        parameters: []
+        return:
+          type: System.Nullable{System.Boolean}
+      overload: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.EnableMicrophone*
+      modifiers:
+        CSharp:
+        - public
+        - get
+        VB:
+        - Public
+        - ReadOnly
+    - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.#ctor(System.Nullable{System.Boolean})
+      commentId: M:VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.#ctor(System.Nullable{System.Boolean})
+      language: CSharp
+      name:
+        CSharp: VideoRecorderRuntimeSettings(Nullable<Boolean>)
+        VB: VideoRecorderRuntimeSettings(Nullable(Of Boolean))
+      nameWithType:
+        CSharp: VideoRecorderRuntimeSettings.VideoRecorderRuntimeSettings(Nullable<Boolean>)
+        VB: VideoRecorderRuntimeSettings.VideoRecorderRuntimeSettings(Nullable(Of Boolean))
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.VideoRecorderRuntimeSettings(System.Nullable<System.Boolean>)
+        VB: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.VideoRecorderRuntimeSettings(System.Nullable(Of System.Boolean))
+      type: Constructor
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: .ctor
+        path: ''
+        startLine: 3917
+      summary: "\nCreate an instance of VideoRecorderRuntimeSettings by passing microphone status.\n"
+      example: []
+      syntax:
+        content:
+          CSharp: public VideoRecorderRuntimeSettings(bool? enableMicrophone = default(bool? ))
+          VB: Public Sub New(enableMicrophone As Boolean? = Nothing)
+        parameters:
+        - id: enableMicrophone
+          type: System.Nullable{System.Boolean}
+          description: ''
+      overload: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.#ctor*
+      modifiers:
+        CSharp:
+        - public
+        VB:
+        - Public
+    - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.op_Implicit(VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[])~VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+      commentId: M:VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.op_Implicit(VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[])~VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+      language: CSharp
+      name:
+        CSharp: Implicit(VideoRecorderRuntimeSettingsOption[] to VideoRecorderRuntimeSettings)
+        VB: Widening(VideoRecorderRuntimeSettingsOption() to VideoRecorderRuntimeSettings)
+      nameWithType:
+        CSharp: VideoRecorderRuntimeSettings.Implicit(VideoRecorderRuntimeSettingsOption[] to VideoRecorderRuntimeSettings)
+        VB: VideoRecorderRuntimeSettings.Widening(VideoRecorderRuntimeSettingsOption() to VideoRecorderRuntimeSettings)
+      qualifiedName:
+        CSharp: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.Implicit(VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[] to VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings)
+        VB: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.Widening(VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption() to VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings)
+      type: Operator
+      assemblies:
+      - cs.temp.dll
+      namespace: VoxelBusters.ScreenRecorderKit
+      source:
+        id: op_Implicit
+        path: ''
+        startLine: 3928
+      syntax:
+        content:
+          CSharp: public static implicit operator VideoRecorderRuntimeSettings(VideoRecorderRuntimeSettingsOption[] options)
+          VB: Public Shared Widening Operator CType(options As VideoRecorderRuntimeSettingsOption()) As VideoRecorderRuntimeSettings
+        parameters:
+        - id: options
+          type: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[]
+        return:
+          type: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+      overload: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.op_Implicit*
+      modifiers:
+        CSharp:
+        - public
+        - static
+        VB:
+        - Public
+        - Shared
+references:
+  System:
+    name:
+      CSharp:
+      - name: System
+        nameWithType: System
+        qualifiedName: System
+        isExternal: true
+      VB:
+      - name: System
+        nameWithType: System
+        qualifiedName: System
+    isDefinition: true
+    commentId: N:System
+  System.Object:
+    name:
+      CSharp:
+      - id: System.Object
+        name: Object
+        nameWithType: Object
+        qualifiedName: System.Object
+        isExternal: true
+      VB:
+      - id: System.Object
+        name: Object
+        nameWithType: Object
+        qualifiedName: System.Object
+        isExternal: true
+    isDefinition: true
+    parent: System
+    commentId: T:System.Object
+  System.Int32:
+    name:
+      CSharp:
+      - id: System.Int32
+        name: Int32
+        nameWithType: Int32
+        qualifiedName: System.Int32
+        isExternal: true
+      VB:
+      - id: System.Int32
+        name: Int32
+        nameWithType: Int32
+        qualifiedName: System.Int32
+        isExternal: true
+    isDefinition: true
+    parent: System
+    commentId: T:System.Int32
+  VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+        name: ScreenRecorderErrorCode
+        nameWithType: ScreenRecorderErrorCode
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+        name: ScreenRecorderErrorCode
+        nameWithType: ScreenRecorderErrorCode
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+    isDefinition: true
+    commentId: T:VoxelBusters.ScreenRecorderKit.ScreenRecorderErrorCode
+  VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Width*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Width*
+        name: Width
+        nameWithType: GifRecorderSettings.Width
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Width
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Width*
+        name: Width
+        nameWithType: GifRecorderSettings.Width
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Width
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Width
+  VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Height*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Height*
+        name: Height
+        nameWithType: GifRecorderSettings.Height
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Height
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Height*
+        name: Height
+        nameWithType: GifRecorderSettings.Height
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Height
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Height
+  System.Boolean:
+    name:
+      CSharp:
+      - id: System.Boolean
+        name: Boolean
+        nameWithType: Boolean
+        qualifiedName: System.Boolean
+        isExternal: true
+      VB:
+      - id: System.Boolean
+        name: Boolean
+        nameWithType: Boolean
+        qualifiedName: System.Boolean
+        isExternal: true
+    isDefinition: true
+    parent: System
+    commentId: T:System.Boolean
+  VoxelBusters.ScreenRecorderKit.GifRecorderSettings.AutoAspect*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.AutoAspect*
+        name: AutoAspect
+        nameWithType: GifRecorderSettings.AutoAspect
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.AutoAspect
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.AutoAspect*
+        name: AutoAspect
+        nameWithType: GifRecorderSettings.AutoAspect
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.AutoAspect
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.AutoAspect
+  VoxelBusters.ScreenRecorderKit.GifRecorderSettings.FramePerSecond*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.FramePerSecond*
+        name: FramePerSecond
+        nameWithType: GifRecorderSettings.FramePerSecond
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.FramePerSecond
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.FramePerSecond*
+        name: FramePerSecond
+        nameWithType: GifRecorderSettings.FramePerSecond
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.FramePerSecond
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.FramePerSecond
+  VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Repeat*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Repeat*
+        name: Repeat
+        nameWithType: GifRecorderSettings.Repeat
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Repeat
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Repeat*
+        name: Repeat
+        nameWithType: GifRecorderSettings.Repeat
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Repeat
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Repeat
+  VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Quality*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Quality*
+        name: Quality
+        nameWithType: GifRecorderSettings.Quality
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Quality
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Quality*
+        name: Quality
+        nameWithType: GifRecorderSettings.Quality
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Quality
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.Quality
+  System.Single:
+    name:
+      CSharp:
+      - id: System.Single
+        name: Single
+        nameWithType: Single
+        qualifiedName: System.Single
+        isExternal: true
+      VB:
+      - id: System.Single
+        name: Single
+        nameWithType: Single
+        qualifiedName: System.Single
+        isExternal: true
+    isDefinition: true
+    parent: System
+    commentId: T:System.Single
+  VoxelBusters.ScreenRecorderKit.GifRecorderSettings.BufferSize*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.BufferSize*
+        name: BufferSize
+        nameWithType: GifRecorderSettings.BufferSize
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.BufferSize
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.BufferSize*
+        name: BufferSize
+        nameWithType: GifRecorderSettings.BufferSize
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.BufferSize
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.BufferSize
+  VoxelBusters.ScreenRecorderKit.GifRecorderSettings.MaxFrameCount*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.MaxFrameCount*
+        name: MaxFrameCount
+        nameWithType: GifRecorderSettings.MaxFrameCount
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.MaxFrameCount
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.MaxFrameCount*
+        name: MaxFrameCount
+        nameWithType: GifRecorderSettings.MaxFrameCount
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.MaxFrameCount
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.MaxFrameCount
+  VoxelBusters.ScreenRecorderKit.GifRecorderSettings.TimePerFrame*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.TimePerFrame*
+        name: TimePerFrame
+        nameWithType: GifRecorderSettings.TimePerFrame
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.TimePerFrame
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.TimePerFrame*
+        name: TimePerFrame
+        nameWithType: GifRecorderSettings.TimePerFrame
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.TimePerFrame
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.TimePerFrame
+  ThreadPriority:
+    name:
+      CSharp:
+      - id: ThreadPriority
+        name: ThreadPriority
+        nameWithType: ThreadPriority
+        qualifiedName: ThreadPriority
+        isExternal: true
+      VB:
+      - id: ThreadPriority
+        name: ThreadPriority
+        nameWithType: ThreadPriority
+        qualifiedName: ThreadPriority
+        isExternal: true
+    isDefinition: true
+  VoxelBusters.ScreenRecorderKit.GifRecorderSettings.ThreadPriority*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.ThreadPriority*
+        name: ThreadPriority
+        nameWithType: GifRecorderSettings.ThreadPriority
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.ThreadPriority
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.ThreadPriority*
+        name: ThreadPriority
+        nameWithType: GifRecorderSettings.ThreadPriority
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.ThreadPriority
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.ThreadPriority
+  VoxelBusters.ScreenRecorderKit.GifRecorderSettings.#ctor*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.#ctor*
+        name: GifRecorderSettings
+        nameWithType: GifRecorderSettings.GifRecorderSettings
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.GifRecorderSettings
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.#ctor*
+        name: GifRecorderSettings
+        nameWithType: GifRecorderSettings.GifRecorderSettings
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings.GifRecorderSettings
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.GifRecorderSettings.#ctor
+  VoxelBusters.ScreenRecorderKit.GifRecorderSettings:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings
+        name: GifRecorderSettings
+        nameWithType: GifRecorderSettings
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.GifRecorderSettings
+        name: GifRecorderSettings
+        nameWithType: GifRecorderSettings
+        qualifiedName: VoxelBusters.ScreenRecorderKit.GifRecorderSettings
+    isDefinition: true
+    parent: VoxelBusters.ScreenRecorderKit
+    commentId: T:VoxelBusters.ScreenRecorderKit.GifRecorderSettings
+  System.SerializableAttribute:
+    name:
+      CSharp:
+      - id: System.SerializableAttribute
+        name: SerializableAttribute
+        nameWithType: SerializableAttribute
+        qualifiedName: System.SerializableAttribute
+        isExternal: true
+      VB:
+      - id: System.SerializableAttribute
+        name: SerializableAttribute
+        nameWithType: SerializableAttribute
+        qualifiedName: System.SerializableAttribute
+        isExternal: true
+    isDefinition: true
+    parent: System
+    commentId: T:System.SerializableAttribute
+  System.SerializableAttribute.#ctor:
+    name:
+      CSharp:
+      - id: System.SerializableAttribute.#ctor
+        name: SerializableAttribute
+        nameWithType: SerializableAttribute.SerializableAttribute
+        qualifiedName: System.SerializableAttribute.SerializableAttribute
+        isExternal: true
+      - name: (
+        nameWithType: (
+        qualifiedName: (
+      - name: )
+        nameWithType: )
+        qualifiedName: )
+      VB:
+      - id: System.SerializableAttribute.#ctor
+        name: SerializableAttribute
+        nameWithType: SerializableAttribute.SerializableAttribute
+        qualifiedName: System.SerializableAttribute.SerializableAttribute
+        isExternal: true
+      - name: (
+        nameWithType: (
+        qualifiedName: (
+      - name: )
+        nameWithType: )
+        qualifiedName: )
+    isDefinition: true
+    parent: System.SerializableAttribute
+    commentId: M:System.SerializableAttribute.#ctor
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.CanRecord*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.CanRecord*
+        name: CanRecord
+        nameWithType: IScreenRecorder.CanRecord
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.CanRecord
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.CanRecord*
+        name: CanRecord
+        nameWithType: IScreenRecorder.CanRecord
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.CanRecord
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.CanRecord
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsRecording*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsRecording*
+        name: IsRecording
+        nameWithType: IScreenRecorder.IsRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsRecording
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsRecording*
+        name: IsRecording
+        nameWithType: IScreenRecorder.IsRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsRecording
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsRecording
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsPausedOrRecording*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsPausedOrRecording*
+        name: IsPausedOrRecording
+        nameWithType: IScreenRecorder.IsPausedOrRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsPausedOrRecording
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsPausedOrRecording*
+        name: IsPausedOrRecording
+        nameWithType: IScreenRecorder.IsPausedOrRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsPausedOrRecording
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.IsPausedOrRecording
+  CompletionCallback:
+    name:
+      CSharp:
+      - id: CompletionCallback
+        name: CompletionCallback
+        nameWithType: CompletionCallback
+        qualifiedName: CompletionCallback
+        isExternal: true
+      VB:
+      - id: CompletionCallback
+        name: CompletionCallback
+        nameWithType: CompletionCallback
+        qualifiedName: CompletionCallback
+        isExternal: true
+    isDefinition: true
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.PrepareRecording*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PrepareRecording*
+        name: PrepareRecording
+        nameWithType: IScreenRecorder.PrepareRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PrepareRecording
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PrepareRecording*
+        name: PrepareRecording
+        nameWithType: IScreenRecorder.PrepareRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PrepareRecording
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.PrepareRecording
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.StartRecording*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StartRecording*
+        name: StartRecording
+        nameWithType: IScreenRecorder.StartRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StartRecording
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StartRecording*
+        name: StartRecording
+        nameWithType: IScreenRecorder.StartRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StartRecording
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.StartRecording
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.PauseRecording*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PauseRecording*
+        name: PauseRecording
+        nameWithType: IScreenRecorder.PauseRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PauseRecording
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PauseRecording*
+        name: PauseRecording
+        nameWithType: IScreenRecorder.PauseRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.PauseRecording
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.PauseRecording
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording*
+        name: StopRecording
+        nameWithType: IScreenRecorder.StopRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording*
+        name: StopRecording
+        nameWithType: IScreenRecorder.StopRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.StopRecording
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.DiscardRecording*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.DiscardRecording*
+        name: DiscardRecording
+        nameWithType: IScreenRecorder.DiscardRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.DiscardRecording
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.DiscardRecording*
+        name: DiscardRecording
+        nameWithType: IScreenRecorder.DiscardRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.DiscardRecording
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.DiscardRecording
+  CompletionCallback`1:
+    name:
+      CSharp:
+      - id: CompletionCallback`1
+        name: CompletionCallback
+        nameWithType: CompletionCallback
+        qualifiedName: CompletionCallback
+        isExternal: true
+      - name: <
+        nameWithType: <
+        qualifiedName: <
+      - name: ''
+        nameWithType: ''
+        qualifiedName: ''
+      - name: '>'
+        nameWithType: '>'
+        qualifiedName: '>'
+      VB:
+      - id: CompletionCallback`1
+        name: CompletionCallback
+        nameWithType: CompletionCallback
+        qualifiedName: CompletionCallback
+        isExternal: true
+      - name: '(Of '
+        nameWithType: '(Of '
+        qualifiedName: '(Of '
+      - name: ''
+        nameWithType: ''
+        qualifiedName: ''
+      - name: )
+        nameWithType: )
+        qualifiedName: )
+    isDefinition: true
+  CompletionCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult}:
+    name:
+      CSharp:
+      - id: CompletionCallback`1
+        name: CompletionCallback
+        nameWithType: CompletionCallback
+        qualifiedName: CompletionCallback
+        isExternal: true
+      - name: <
+        nameWithType: <
+        qualifiedName: <
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult
+        name: ScreenRecorderSaveRecordingResult
+        nameWithType: ScreenRecorderSaveRecordingResult
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult
+      - name: '>'
+        nameWithType: '>'
+        qualifiedName: '>'
+      VB:
+      - id: CompletionCallback`1
+        name: CompletionCallback
+        nameWithType: CompletionCallback
+        qualifiedName: CompletionCallback
+        isExternal: true
+      - name: '(Of '
+        nameWithType: '(Of '
+        qualifiedName: '(Of '
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult
+        name: ScreenRecorderSaveRecordingResult
+        nameWithType: ScreenRecorderSaveRecordingResult
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult
+      - name: )
+        nameWithType: )
+        qualifiedName: )
+    isDefinition: false
+    definition: CompletionCallback`1
+    commentId: '!:CompletionCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderSaveRecordingResult}'
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording*
+        name: SaveRecording
+        nameWithType: IScreenRecorder.SaveRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording*
+        name: SaveRecording
+        nameWithType: IScreenRecorder.SaveRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.SaveRecording
+  System.String:
+    name:
+      CSharp:
+      - id: System.String
+        name: String
+        nameWithType: String
+        qualifiedName: System.String
+        isExternal: true
+      VB:
+      - id: System.String
+        name: String
+        nameWithType: String
+        qualifiedName: System.String
+        isExternal: true
+    isDefinition: true
+    parent: System
+    commentId: T:System.String
+  SuccessCallback`1:
+    name:
+      CSharp:
+      - id: SuccessCallback`1
+        name: SuccessCallback
+        nameWithType: SuccessCallback
+        qualifiedName: SuccessCallback
+        isExternal: true
+      - name: <
+        nameWithType: <
+        qualifiedName: <
+      - name: ''
+        nameWithType: ''
+        qualifiedName: ''
+      - name: '>'
+        nameWithType: '>'
+        qualifiedName: '>'
+      VB:
+      - id: SuccessCallback`1
+        name: SuccessCallback
+        nameWithType: SuccessCallback
+        qualifiedName: SuccessCallback
+        isExternal: true
+      - name: '(Of '
+        nameWithType: '(Of '
+        qualifiedName: '(Of '
+      - name: ''
+        nameWithType: ''
+        qualifiedName: ''
+      - name: )
+        nameWithType: )
+        qualifiedName: )
+    isDefinition: true
+  SuccessCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult}:
+    name:
+      CSharp:
+      - id: SuccessCallback`1
+        name: SuccessCallback
+        nameWithType: SuccessCallback
+        qualifiedName: SuccessCallback
+        isExternal: true
+      - name: <
+        nameWithType: <
+        qualifiedName: <
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult
+        name: ScreenRecorderRecordingAvailableResult
+        nameWithType: ScreenRecorderRecordingAvailableResult
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult
+      - name: '>'
+        nameWithType: '>'
+        qualifiedName: '>'
+      VB:
+      - id: SuccessCallback`1
+        name: SuccessCallback
+        nameWithType: SuccessCallback
+        qualifiedName: SuccessCallback
+        isExternal: true
+      - name: '(Of '
+        nameWithType: '(Of '
+        qualifiedName: '(Of '
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult
+        name: ScreenRecorderRecordingAvailableResult
+        nameWithType: ScreenRecorderRecordingAvailableResult
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult
+      - name: )
+        nameWithType: )
+        qualifiedName: )
+    isDefinition: false
+    definition: SuccessCallback`1
+    commentId: '!:SuccessCallback{VoxelBusters.ScreenRecorderKit.ScreenRecorderRecordingAvailableResult}'
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.SetOnRecordingAvailable*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SetOnRecordingAvailable*
+        name: SetOnRecordingAvailable
+        nameWithType: IScreenRecorder.SetOnRecordingAvailable
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SetOnRecordingAvailable
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SetOnRecordingAvailable*
+        name: SetOnRecordingAvailable
+        nameWithType: IScreenRecorder.SetOnRecordingAvailable
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.SetOnRecordingAvailable
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.SetOnRecordingAvailable
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.OpenRecording*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.OpenRecording*
+        name: OpenRecording
+        nameWithType: IScreenRecorder.OpenRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.OpenRecording
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.OpenRecording*
+        name: OpenRecording
+        nameWithType: IScreenRecorder.OpenRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.OpenRecording
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.OpenRecording
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.ShareRecording*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.ShareRecording*
+        name: ShareRecording
+        nameWithType: IScreenRecorder.ShareRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.ShareRecording
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.ShareRecording*
+        name: ShareRecording
+        nameWithType: IScreenRecorder.ShareRecording
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.ShareRecording
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.ShareRecording
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder.Flush*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.Flush*
+        name: Flush
+        nameWithType: IScreenRecorder.Flush
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.Flush
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder.Flush*
+        name: Flush
+        nameWithType: IScreenRecorder.Flush
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder.Flush
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.IScreenRecorder.Flush
+  VoxelBusters.ScreenRecorderKit.IScreenRecorder:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder
+        name: IScreenRecorder
+        nameWithType: IScreenRecorder
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.IScreenRecorder
+        name: IScreenRecorder
+        nameWithType: IScreenRecorder
+        qualifiedName: VoxelBusters.ScreenRecorderKit.IScreenRecorder
+    isDefinition: true
+    parent: VoxelBusters.ScreenRecorderKit
+    commentId: T:VoxelBusters.ScreenRecorderKit.IScreenRecorder
+  VoxelBusters.ScreenRecorderKit:
+    name:
+      CSharp:
+      - name: VoxelBusters.ScreenRecorderKit
+        nameWithType: VoxelBusters.ScreenRecorderKit
+        qualifiedName: VoxelBusters.ScreenRecorderKit
+      VB:
+      - name: VoxelBusters.ScreenRecorderKit
+        nameWithType: VoxelBusters.ScreenRecorderKit
+        qualifiedName: VoxelBusters.ScreenRecorderKit
+    isDefinition: true
+    commentId: N:VoxelBusters.ScreenRecorderKit
+  VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+        name: ScreenRecorderBuilder
+        nameWithType: ScreenRecorderBuilder
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+        name: ScreenRecorderBuilder
+        nameWithType: ScreenRecorderBuilder
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+    isDefinition: true
+    parent: VoxelBusters.ScreenRecorderKit
+    commentId: T:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder
+  VoxelBusters.ScreenRecorderKit.VideoRecorderSettings:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.VideoRecorderSettings
+        name: VideoRecorderSettings
+        nameWithType: VideoRecorderSettings
+        qualifiedName: VoxelBusters.ScreenRecorderKit.VideoRecorderSettings
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.VideoRecorderSettings
+        name: VideoRecorderSettings
+        nameWithType: VideoRecorderSettings
+        qualifiedName: VoxelBusters.ScreenRecorderKit.VideoRecorderSettings
+    isDefinition: true
+    parent: VoxelBusters.ScreenRecorderKit
+    commentId: T:VoxelBusters.ScreenRecorderKit.VideoRecorderSettings
+  VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption[]:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption
+        name: VideoRecorderRuntimeSettingsOption
+        nameWithType: VideoRecorderRuntimeSettingsOption
+        qualifiedName: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption
+      - name: '[]'
+        nameWithType: '[]'
+        qualifiedName: '[]'
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption
+        name: VideoRecorderRuntimeSettingsOption
+        nameWithType: VideoRecorderRuntimeSettingsOption
+        qualifiedName: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettingsOption
+      - name: ()
+        nameWithType: ()
+        qualifiedName: ()
+    isDefinition: false
+  VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder*
+        name: CreateVideoRecorder
+        nameWithType: ScreenRecorderBuilder.CreateVideoRecorder
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder*
+        name: CreateVideoRecorder
+        nameWithType: ScreenRecorderBuilder.CreateVideoRecorder
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateVideoRecorder
+  VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+        name: VideoRecorderRuntimeSettings
+        nameWithType: VideoRecorderRuntimeSettings
+        qualifiedName: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+        name: VideoRecorderRuntimeSettings
+        nameWithType: VideoRecorderRuntimeSettings
+        qualifiedName: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+    isDefinition: true
+    parent: VoxelBusters.ScreenRecorderKit
+    commentId: T:VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings
+  Camera:
+    name:
+      CSharp:
+      - id: Camera
+        name: Camera
+        nameWithType: Camera
+        qualifiedName: Camera
+        isExternal: true
+      VB:
+      - id: Camera
+        name: Camera
+        nameWithType: Camera
+        qualifiedName: Camera
+        isExternal: true
+    isDefinition: true
+    commentId: '!:Camera'
+  VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateGifRecorder*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateGifRecorder*
+        name: CreateGifRecorder
+        nameWithType: ScreenRecorderBuilder.CreateGifRecorder
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateGifRecorder
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateGifRecorder*
+        name: CreateGifRecorder
+        nameWithType: ScreenRecorderBuilder.CreateGifRecorder
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateGifRecorder
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.CreateGifRecorder
+  VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.SetOnRecordingAvailable*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.SetOnRecordingAvailable*
+        name: SetOnRecordingAvailable
+        nameWithType: ScreenRecorderBuilder.SetOnRecordingAvailable
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.SetOnRecordingAvailable
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.SetOnRecordingAvailable*
+        name: SetOnRecordingAvailable
+        nameWithType: ScreenRecorderBuilder.SetOnRecordingAvailable
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.SetOnRecordingAvailable
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.SetOnRecordingAvailable
+  VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.Build*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.Build*
+        name: Build
+        nameWithType: ScreenRecorderBuilder.Build
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.Build
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.Build*
+        name: Build
+        nameWithType: ScreenRecorderBuilder.Build
+        qualifiedName: VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.Build
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.ScreenRecorderBuilder.Build
+  System.Nullable`1:
+    name:
+      CSharp:
+      - id: System.Nullable`1
+        name: Nullable
+        nameWithType: Nullable
+        qualifiedName: System.Nullable
+        isExternal: true
+      - name: <
+        nameWithType: <
+        qualifiedName: <
+      - name: T
+        nameWithType: T
+        qualifiedName: T
+      - name: '>'
+        nameWithType: '>'
+        qualifiedName: '>'
+      VB:
+      - id: System.Nullable`1
+        name: Nullable
+        nameWithType: Nullable
+        qualifiedName: System.Nullable
+        isExternal: true
+      - name: '(Of '
+        nameWithType: '(Of '
+        qualifiedName: '(Of '
+      - name: T
+        nameWithType: T
+        qualifiedName: T
+      - name: )
+        nameWithType: )
+        qualifiedName: )
+    isDefinition: true
+    commentId: T:System.Nullable`1
+  System.Nullable{System.Boolean}:
+    name:
+      CSharp:
+      - id: System.Nullable`1
+        name: Nullable
+        nameWithType: Nullable
+        qualifiedName: System.Nullable
+        isExternal: true
+      - name: <
+        nameWithType: <
+        qualifiedName: <
+      - id: System.Boolean
+        name: Boolean
+        nameWithType: Boolean
+        qualifiedName: System.Boolean
+        isExternal: true
+      - name: '>'
+        nameWithType: '>'
+        qualifiedName: '>'
+      VB:
+      - id: System.Nullable`1
+        name: Nullable
+        nameWithType: Nullable
+        qualifiedName: System.Nullable
+        isExternal: true
+      - name: '(Of '
+        nameWithType: '(Of '
+        qualifiedName: '(Of '
+      - id: System.Boolean
+        name: Boolean
+        nameWithType: Boolean
+        qualifiedName: System.Boolean
+        isExternal: true
+      - name: )
+        nameWithType: )
+        qualifiedName: )
+    isDefinition: false
+    definition: System.Nullable`1
+    parent: System
+    commentId: T:System.Nullable{System.Boolean}
+  VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.EnableMicrophone*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.EnableMicrophone*
+        name: EnableMicrophone
+        nameWithType: VideoRecorderRuntimeSettings.EnableMicrophone
+        qualifiedName: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.EnableMicrophone
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.EnableMicrophone*
+        name: EnableMicrophone
+        nameWithType: VideoRecorderRuntimeSettings.EnableMicrophone
+        qualifiedName: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.EnableMicrophone
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.EnableMicrophone
+  VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.#ctor*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.#ctor*
+        name: VideoRecorderRuntimeSettings
+        nameWithType: VideoRecorderRuntimeSettings.VideoRecorderRuntimeSettings
+        qualifiedName: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.VideoRecorderRuntimeSettings
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.#ctor*
+        name: VideoRecorderRuntimeSettings
+        nameWithType: VideoRecorderRuntimeSettings.VideoRecorderRuntimeSettings
+        qualifiedName: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.VideoRecorderRuntimeSettings
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.#ctor
+  VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.op_Implicit*:
+    name:
+      CSharp:
+      - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.op_Implicit*
+        name: Implicit
+        nameWithType: VideoRecorderRuntimeSettings.Implicit
+        qualifiedName: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.Implicit
+      VB:
+      - id: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.op_Implicit*
+        name: Widening
+        nameWithType: VideoRecorderRuntimeSettings.Widening
+        qualifiedName: VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.Widening
+    isDefinition: true
+    commentId: Overload:VoxelBusters.ScreenRecorderKit.VideoRecorderRuntimeSettings.op_Implicit

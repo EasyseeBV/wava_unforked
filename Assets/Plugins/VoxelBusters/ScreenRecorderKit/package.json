@@ -1,0 +1,14 @@
+{
+    "name": "com.voxelbusters.screenrecorderkit",
+    "displayName": "Screen Recorder Kit",
+    "version": "1.6.2",
+    "unity": "2018.3",
+    "description": "Screen Recorder Kit allows to easily screen record your games on Unity. It supports both iOS and Android platforms with unified and simple API.",
+    "keywords": [ "voxelbusters", "replaykit", "Gif" ],
+    "license": "MIT",
+    "author": {
+        "name": "Voxel Busters",
+        "email": "support@voxelbusters.com",
+        "url": "https://www.voxelbusters.com"
+    }
+}

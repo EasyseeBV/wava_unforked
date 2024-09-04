@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
+  m_Name: TonyCokes2
+  m_EditorClassIdentifier: 
+  Title: SM BNGRZ 02.01
+  Artist: Tony Cokes
+  Year: 2021
+  Location: Frankfurt
+  ShareLink: 
+  Description: Tony Cokes' video work SM BNGRZ explores the importance of music and
+    dance floors as spaces for resistance. From the political potential of acid house
+    to the queering of disco, the videos juxtapose the narrative of dance floor mania
+    with the sociopolitical facets of dance culture of the early nineties. SM BNGRZ
+    exposes the subversive importance of rave and club culture as spaces for the
+    celebration of life through love, desire, queerness, art, and moving bodies,
+    integral to social transformation and activism.
+  ARMapImage: {fileID: 21300000, guid: d5b2f112cc1da43cca4cc89a06726cc8, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: d5b2f112cc1da43cca4cc89a06726cc8,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: d5b2f112cc1da43cca4cc89a06726cc8, type: 3}
+  ARObjectReference:
+    m_AssetGUID: 27ed67811f84d984a85ba59a5fd5f296
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 1
+  AlternateScene: 
+  PlayARObjectDirectly: 0
+  IsAudio: 0
+  PlaceTextRight: 0
+  Latitude: 50.11042901601
+  Longitude: 8.68197428774876
+  marker:
+    label: 
+    range:
+      max: 20.999
+      min: 1
+      maxLimit: 20.999
+      minLimit: 1
+    tags: []
+    _enabled: 1
+    latitude: 0
+    longitude: 0
+    _scale: 1
+    expand: 1
+    altitudeType: 0
+    checkMapBoundaries: 1
+    inited: 0
+    prefab: {fileID: 0}
+    sizeType: 0
+    _rotationY: 0
+  Hotspot: {fileID: 0}

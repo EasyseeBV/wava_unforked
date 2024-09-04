@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
+  m_Name: Bird - Flaka Haliti
+  m_EditorClassIdentifier: 
+  Title: Whose Bones?
+  Artist: Flaka Haliti
+  Year: series, 2022-ongoing
+  Location: Frankfurt
+  ShareLink: 
+  Description: "A bird in landing, perching delicately in a balanced momentum. Flaka
+    Haliti's creature in perpetual arrival blurs the lines between the powerful and
+    the powerless, the oppressor and the oppressed, the real and the imaginary. Its
+    bone structure is a fuse of an Eagle and a Pigeon, embodying the symbol of German
+    self-consciousness and the resilience of a common bird, embracing in-betweenness
+    as a fundamental aspect of existence and a survival tactic. Rather than submitting
+    to analysis and to the viewer's gaze, the bird stands as an opaque and enigmatic
+    figure, coated, covered by snow that fell. Or has always been there? An archaeological
+    remnant or a futuristic fantasy, this bird is a symbol in and of itself. \n\nComputational
+    designer - Martino Hutz"
+  ARMapImage: {fileID: 21300000, guid: 629aeb336c3a44f10945fe12f34b0498, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: 629aeb336c3a44f10945fe12f34b0498,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: 629aeb336c3a44f10945fe12f34b0498, type: 3}
+  ARObjectReference:
+    m_AssetGUID: 6b304d516999e234eb3c791e845cd9d9
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  AlternateScene: 
+  PlayARObjectDirectly: 0
+  IsAudio: 0
+  PlaceTextRight: 0
+  Latitude: 50.11100128498572
+  Longitude: 8.680588481979441
+  marker:
+    label: 
+    range:
+      max: 20.999
+      min: 1
+      maxLimit: 20.999
+      minLimit: 1
+    tags: []
+    _enabled: 1
+    latitude: 50.11101465432277
+    longitude: 8.680582670358943
+    _scale: 109.6583
+    expand: 1
+    altitudeType: 0
+    checkMapBoundaries: 1
+    inited: 1
+    prefab: {fileID: 3186672994675511632, guid: 1df593b3ace9e634cb241223c6194851,
+      type: 3}
+    sizeType: 1
+    _rotationY: 0
+  Hotspot: {fileID: 0}

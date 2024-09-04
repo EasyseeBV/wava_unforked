@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
+  m_Name: Coins - Tamiko Thiel
+  m_EditorClassIdentifier: 
+  Title: Revolution and Return
+  Artist: Tamiko Thiel and /p
+  Year: 2023
+  Location: Frankfurt
+  ShareLink: 
+  Description: "Tap the coins!\n\nSilver coins minted by German princes rain down
+    from above as symbols of their power. Tapping the coins turn them into the constitutional
+    documents of the National Assembly in the Paulskirche. The \u201CRevolutionary
+    March\u201D by Johann Strauss Jr. plays in the background.\nOver time, the music
+    becomes more and more discordant. Gold coins minted by the Prussian king and
+    Austrian emperor begin to fall from the sky. Tapping the gold coins play Prussian
+    and Austrian victory marches, e.g. \u201CPrussians\u2019 Glory\u201D by Johann
+    Gottfried Piefke and the \u201CRadetzky March\u201D by Johann Strauss Sr.\n\nGradually,
+    the gold coins, symbols of Prussian and Austrian power, bury the documents of
+    the revolution, leaving only the jingling sounds of gold coins falling.\n\nThe
+    Revolution of 1848 began in the Grand Duchy of Baden and spread to the other
+    states of the federation within a few weeks. From Berlin to Vienna, the revolution
+    forced autocratic monarchs to appoint liberal governments (the \"March Cabinets\")
+    in the individual states, and hold elections to a constituent National Assembly.
+    This met on May 18, 1848, in the Paulskirche in the then-free city of Frankfurt
+    am Main. The National Assembly established a central government and saw itself
+    as the parliament of a revolutionary, nascent democratic German Empire.\n\nAfter
+    initial democratic reforms in March 1848 (abolition of press censorship, liberation
+    of the peasants), the revolutionary movement came increasingly under attack from
+    reactionary forces. By July 1849, predominantly Prussian and Austrian troops
+    had used military force to crush the first attempt to create a democratically
+    constituted, unified German nation-state."
+  ARMapImage: {fileID: 21300000, guid: f8cb4585291bb40efa51230aa9aa790b, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: f8cb4585291bb40efa51230aa9aa790b,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: f8cb4585291bb40efa51230aa9aa790b, type: 3}
+  ARObjectReference:
+    m_AssetGUID: 16044fe7acc84d0419d4951f8af30652
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  AlternateScene: 
+  PlayARObjectDirectly: 0
+  IsAudio: 0
+  PlaceTextRight: 0
+  Latitude: 50.11116657485836
+  Longitude: 8.681084989973035
+  marker:
+    label: 
+    range:
+      max: 20.999
+      min: 1
+      maxLimit: 20.999
+      minLimit: 1
+    tags: []
+    _enabled: 1
+    latitude: 50.11107034760553
+    longitude: 8.681049382829793
+    _scale: 109.6583
+    expand: 1
+    altitudeType: 0
+    checkMapBoundaries: 1
+    inited: 1
+    prefab: {fileID: 3186672994675511632, guid: 1df593b3ace9e634cb241223c6194851,
+      type: 3}
+    sizeType: 1
+    _rotationY: 0
+  Hotspot: {fileID: 0}

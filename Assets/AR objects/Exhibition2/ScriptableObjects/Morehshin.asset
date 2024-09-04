@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
+  m_Name: Morehshin
+  m_EditorClassIdentifier: 
+  Title: 'Zoba''ah: The Whirlwind, 2022'
+  Artist: Morehshin Allahyari
+  Year: 2022
+  Location: Frankfurt
+  ShareLink: 
+  Description: "Morehshin Allahyari\u2019s 3D sculpture Zoba'ah: The Whirlwind, is
+    based on drawings of the jinn Zoba'ah dating back to the 14th and 16th centuries.
+    In Islamic and pre-Islamic theology, jinn are intelligent spirits are shape-shifters
+    created from smokeless fire. They inhabit a parallel world and are one of the
+    three sentient creatures created by Allah, along with humans and angels. Unlike
+    angels, jinn have their own agency and free will and can lean towards both good
+    and evil. They are said to appear in from of humans when catastrophes occur.\n\nZoba\u2019ah
+    , one of the most powerful jinn known for bringing immediate change, is summoned
+    by the artist to Frankfurt and brought into the hybrid space of the Eiserner
+    Steg. Zoba'ah: The Whirlwind invites you to contribute to or participate in the
+    project in the form of a series of small daily actions (referred to as micro-actions)
+    to create bigger collective goals and changes in the world (referred to as macro-influences).\n\nUSER
+    CONTRIBUTION \nTo agree to the terms you also have to write one or a series of
+    daily actions and rituals. You will promise to carry these actions. Thereby you
+    will summon Zoba'ah and her power to the world. The digital travels to the physical.
+    The physical to the metaphysical, and through this cycle, you will participate
+    with Zoba'ah in bringing change. \n\nTo make your contribution visit: https://virtuelleskulpturer.samtidskunst.dk/zobaah/\n\nThis
+    work was commissioned and is in the acquisition of the Museum for Samtidskunst,
+    2022-2023.\n"
+  ARMapImage: {fileID: 21300000, guid: ff1c63bea71144006a6bc8a5b7be6b4e, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: ff1c63bea71144006a6bc8a5b7be6b4e,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: ff1c63bea71144006a6bc8a5b7be6b4e, type: 3}
+  ARObjectReference:
+    m_AssetGUID: fd8d6f0d634308b4cb11bfacb92e0de3
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
+  AlternateScene: AgreementScene
+  PlayARObjectDirectly: 0
+  IsAudio: 0
+  PlaceTextRight: 0
+  Latitude: 50.10809803885154
+  Longitude: 8.68213160163177
+  marker:
+    label: 
+    range:
+      max: 20.999
+      min: 1
+      maxLimit: 20.999
+      minLimit: 1
+    tags: []
+    _enabled: 1
+    latitude: 0
+    longitude: 0
+    _scale: 1
+    expand: 1
+    altitudeType: 0
+    checkMapBoundaries: 1
+    inited: 0
+    prefab: {fileID: 0}
+    sizeType: 0
+    _rotationY: 0
+  Hotspot: {fileID: 0}

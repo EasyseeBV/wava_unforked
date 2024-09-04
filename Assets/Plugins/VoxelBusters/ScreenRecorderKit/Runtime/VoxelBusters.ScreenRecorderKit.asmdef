@@ -1,0 +1,17 @@
+{
+    "name": "VoxelBusters.ScreenRecorderKit",
+    "references": [
+        "VoxelBusters.CoreLibrary",
+        "VoxelBusters.CoreLibrary.NativePlugins",
+        "VoxelBusters.ExternalLibs.Encoders"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

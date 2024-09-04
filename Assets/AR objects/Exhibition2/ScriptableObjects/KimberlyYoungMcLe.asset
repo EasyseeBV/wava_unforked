@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
+  m_Name: KimberlyYoungMcLe
+  m_EditorClassIdentifier: 
+  Title: Monument of Kimberly Young-McLear
+  Artist: "Ahmet \xD6\u011F\xFCt"
+  Year: 2022
+  Location: Frankfurt
+  ShareLink: 
+  Description: "Kimberly Young-McLear, a highly decorated senior military officer
+    and tech expert, faced workplace bullying, harassment, discrimination, and retaliation
+    due to her intelligence, race, gender, and sexuality, during her tenure at the
+    Coast Guard Academy from 2014-2018. The Homeland Security Inspector General found
+    that the Coast Guard violated numerous policies and federal retaliation laws.
+    Her bravery led to over 30 Coast Guard policy reforms, key passages in the 2020
+    Elijah E. Cummings Coast Guard Authorization Act, and two national defence bipartisan
+    laws. Still, there has been no justice in her case.\n\nMonuments of the Disclosed
+    is a series of digital monuments dedicated to whistleblowers who stood up to
+    forces far beyond themselves. In recent years, doubts have been raised around
+    the question of who is honoured in monumental form, with military generals, philanthropic
+    merchants, and well-connected politicians being the most common choices for statues,
+    which serve as towering exclamation points in the urban landscape, emphasising
+    what and whose \"history\" has deemed important. In \xD6\u011F\xFCt\u2019s monuments,
+    the busts hover over the plinths, making one wonder if they are about to land
+    or be removed. They exist in a perpetual state of transition. Monuments are built,
+    and monuments are toppled. \n\nIn 2022 \xD6\u011F\xFCt collaborated with Artwrld
+    to create a collection of digital monuments to lesser-known whistleblowers. Individuals
+    who, often at tremendous personal sacrifice, exposed the fraud, malintent and
+    wrongdoing of unfettered power; and who, more often than not, remain unrecognized
+    for their acts of courage.\n\nFor DEMO-, five of these monuments were placed
+    in context-specific locations in the public space of Frankfurt: at the IG Farben
+    Building (Kimberly Young-McLe), the Chinese Consulate-General (Li Wenliang),
+    the Philippine Consulate General (Marlene Garcia-Esperat), the Frankfurt Dom
+    (Philip Saviano) and at the GPS Reference Point (Aaron Swartz).\n"
+  ARMapImage: {fileID: 21300000, guid: 1f20fafb9ed5b424c8a3d411057513c1, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: 1f20fafb9ed5b424c8a3d411057513c1,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: 1f20fafb9ed5b424c8a3d411057513c1, type: 3}
+  ARObjectReference:
+    m_AssetGUID: ba37ef9c9877d4d24801e72eb29d2410
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 1
+  AlternateScene: 
+  PlayARObjectDirectly: 0
+  IsAudio: 0
+  PlaceTextRight: 0
+  Latitude: 50.1263083625048
+  Longitude: 8.66719488156151
+  marker:
+    label: 
+    range:
+      max: 20.999
+      min: 1
+      maxLimit: 20.999
+      minLimit: 1
+    tags: []
+    _enabled: 1
+    latitude: 50.1263083625048
+    longitude: 8.66719488156151
+    _scale: 109.6583
+    expand: 1
+    altitudeType: 0
+    checkMapBoundaries: 1
+    inited: 1
+    prefab: {fileID: 3186672994675511632, guid: 1df593b3ace9e634cb241223c6194851,
+      type: 3}
+    sizeType: 1
+    _rotationY: 0
+  Hotspot: {fileID: 0}

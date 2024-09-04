@@ -1,0 +1,97 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/LoadingScene.unity
+    guid: 50f0ffc32822d49b68138197ee4bf314
+  - enabled: 0
+    path: Assets/Scenes/StartMenu.unity
+    guid: 273b9b47965d378408a13046b3250c71
+  - enabled: 0
+    path: Assets/Plugins/VoxelBusters/ScreenRecorderKit/Examples/Scenes/ScreenRecorderDemo.unity
+    guid: 0baf40b51f7f14da78c33398c41dfbfe
+  - enabled: 0
+    path: Assets/AlmostEngine/UltimateScreenshotCreator/Examples/Scenes/DefaultExample.unity
+    guid: 6745a049a01478344a652452bb861a50
+  - enabled: 0
+    path: Assets/Scenes/test_build.unity
+    guid: e4e58901f763b35418db8346104e7361
+  - enabled: 1
+    path: Assets/Scenes/WelcomeTutorial_1.unity
+    guid: 5dfda12dddc7545088a051a5066fcfb8
+  - enabled: 1
+    path: Assets/Scenes/WelcomeTutorial_2.unity
+    guid: bdaa6fa1abc794d01aa8c25bf129b88b
+  - enabled: 1
+    path: Assets/Scenes/WelcomeTutorial_3.unity
+    guid: 50176d91c69e64c019f01e8ac3c2deb7
+  - enabled: 1
+    path: Assets/Scenes/WelcomeTutorial_4.unity
+    guid: 26e89f3abef3549c59daa6b80470a7ce
+  - enabled: 1
+    path: Assets/Scenes/WelcomeTutorial_5.unity
+    guid: 99749311ab6c84812aca3d9b314f2238
+  - enabled: 1
+    path: Assets/Scenes/WelcomeTutorial_6.unity
+    guid: 958b81eae31b5463a8800cc9c145474b
+  - enabled: 0
+    path: Assets/Scenes/Tutorial.unity
+    guid: 0c925f5fe93ff744e8ea0d5f5f5fa008
+  - enabled: 1
+    path: Assets/Scenes/Map.unity
+    guid: d6a52d074d5c8aa488917e1cec071de1
+  - enabled: 1
+    path: Assets/Scenes/AR.unity
+    guid: 4a36c0dc757675244a45366c2435629f
+  - enabled: 0
+    path: Assets/Infinity Code/Online maps/Examples/Scenes/Behaviours/Navigation.unity
+    guid: 0f18cdbd5a83b6b419452f107a242330
+  - enabled: 1
+    path: Assets/Scenes/Exhibition&Art.unity
+    guid: 80db1d336999b4147babc43bc4dd06e8
+  - enabled: 1
+    path: Assets/Scenes/AboutUs.unity
+    guid: a6bd162e73285514394c5b336346c5f8
+  - enabled: 1
+    path: Assets/Scenes/Help.unity
+    guid: 92796818e701fc54b8e0e84e63322575
+  - enabled: 1
+    path: Assets/Scenes/Home.unity
+    guid: 53e440f1f005a054e9913ca22397f815
+  - enabled: 1
+    path: Assets/Scenes/Profile.unity
+    guid: dbda34c44a8d9694aa94a726e0ad9ce7
+  - enabled: 1
+    path: Assets/Scenes/ScanInvitation.unity
+    guid: 585f6147972164501b6952408a867517
+  - enabled: 1
+    path: Assets/AR objects/Exhibition1/Embedded Systems - Benedikt Akkerman/AlternateScene/Ben/Ben.unity
+    guid: a69fa318c15e9489285c31f4abae647d
+  - enabled: 1
+    path: Assets/AR objects/Exhibition2/Coins - Tamiko Theil/AlternateScene/Paulskirche/Scenes/RevolutionWithAR.unity
+    guid: b4eda4832b565da4ab3d8991ae876f35
+  - enabled: 1
+    path: Assets/AR objects/Exhibition2/Sound - Le Trucs/AlternateScene/LeTrucsRebuilt.unity
+    guid: 6fa53de15dca7f7429a679f236bba720
+  - enabled: 1
+    path: Assets/AR objects/Exhibition2/Jinn - Morehshin Allahyari/AlternateScene/AgreementScene.unity
+    guid: ca664d9f817494ac38d55ac3ef2ef58d
+  m_configObjects:
+    UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: f8ce26fe3bc69499b9be4b2378e97a94,
+      type: 2}
+    UnityEditor.XR.ARKit.ARKitSettings: {fileID: 11400000, guid: 98c79e8cc22674a89a95a3a90e2b70cb,
+      type: 2}
+    com.unity.addressableassets: {fileID: 11400000, guid: 8c2fc7b50c0fe01448e91b588670a15c,
+      type: 2}
+    com.unity.xr.arfoundation.simulation_settings: {fileID: 11400000, guid: f858a419e1b01f4438f02ffca5320da6,
+      type: 2}
+    com.unity.xr.arkit.PlayerSettings: {fileID: 11400000, guid: 2d5fb8e61571b4e3897f221189089fd6,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: e2f869774b12e400996eb546603602e3,
+      type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: 1ba9cc3c3f476af4e8311f1277d4a92b,
+      type: 2}

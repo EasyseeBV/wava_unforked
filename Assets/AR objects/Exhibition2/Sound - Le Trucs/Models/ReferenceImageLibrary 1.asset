@@ -1,0 +1,179 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 848409ee8ba454f42a5ddff137688a27, type: 3}
+  m_Name: ReferenceImageLibrary 1
+  m_EditorClassIdentifier: 
+  m_GuidLow: 5008488807651187938
+  m_GuidHigh: 5321800298014364826
+  m_DataStore:
+    m_Storage: []
+  m_Images:
+  - m_SerializedGuid:
+      m_GuidLow: 5761003266208019470
+      m_GuidHigh: 8562725833288760244
+    m_SerializedTextureGuid:
+      m_GuidLow: 11828049592193450290
+      m_GuidHigh: 4115382054880260699
+    m_Size: {x: 0.5, y: 0.38760504}
+    m_SpecifySize: 1
+    m_Name: BadenWurttemberg1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5596111208797683329
+      m_GuidHigh: 16003531663483008135
+    m_SerializedTextureGuid:
+      m_GuidLow: 8392489117748090819
+      m_GuidHigh: 15035315719242745753
+    m_Size: {x: 0.5, y: 0.4073634}
+    m_SpecifySize: 1
+    m_Name: Bayern1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 4632211215125960532
+      m_GuidHigh: 18437547726613644170
+    m_SerializedTextureGuid:
+      m_GuidLow: 11828056003234103499
+      m_GuidHigh: 3599139572530504696
+    m_Size: {x: 0.5, y: 0.35316455}
+    m_SpecifySize: 1
+    m_Name: Berlin1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5684520386137498479
+      m_GuidHigh: 10984587541257225889
+    m_SerializedTextureGuid:
+      m_GuidLow: 9516979645255983771
+      m_GuidHigh: 17010637738868179898
+    m_Size: {x: 0.5, y: 0.35185185}
+    m_SpecifySize: 1
+    m_Name: Brandenburg1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5709552348766143168
+      m_GuidHigh: 8419907794629945488
+    m_SerializedTextureGuid:
+      m_GuidLow: 6079754479115283004
+      m_GuidHigh: 9098182100542108024
+    m_Size: {x: 0.5, y: 0.58196723}
+    m_SpecifySize: 1
+    m_Name: Bremen1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5350386191034753170
+      m_GuidHigh: 8180814452091054211
+    m_SerializedTextureGuid:
+      m_GuidLow: 10696114671501012635
+      m_GuidHigh: 7053689167754489848
+    m_Size: {x: 0.5, y: 0.46121883}
+    m_SpecifySize: 1
+    m_Name: Hamburg1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 4835260136672595171
+      m_GuidHigh: 13550149576618077094
+    m_SerializedTextureGuid:
+      m_GuidLow: 10675956917177357248
+      m_GuidHigh: 5468257203733143083
+    m_Size: {x: 0.5, y: 0.30125523}
+    m_SpecifySize: 1
+    m_Name: Hessen1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5549680360531650467
+      m_GuidHigh: 7931486812664223369
+    m_SerializedTextureGuid:
+      m_GuidLow: 12995082120452194461
+      m_GuidHigh: 8810379535990832795
+    m_Size: {x: 0.5, y: 0.5111732}
+    m_SpecifySize: 1
+    m_Name: MecklenburgVorpommern1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 4643558100123767544
+      m_GuidHigh: 2713815320317921152
+    m_SerializedTextureGuid:
+      m_GuidLow: 3788693266687185530
+      m_GuidHigh: 6148963800410444280
+    m_Size: {x: 0.5, y: 0.35416666}
+    m_SpecifySize: 1
+    m_Name: NordrheinWestfalen1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5576462628519057837
+      m_GuidHigh: 10591440613565967254
+    m_SerializedTextureGuid:
+      m_GuidLow: 14187467888308811133
+      m_GuidHigh: 10448648173908043513
+    m_Size: {x: 0.5, y: 0.46231157}
+    m_SpecifySize: 1
+    m_Name: RheinlandPlatz1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 4984218192425011551
+      m_GuidHigh: 1453392664124318142
+    m_SerializedTextureGuid:
+      m_GuidLow: 14191027216767893108
+      m_GuidHigh: 16537370824911454552
+    m_Size: {x: 0.5, y: 0.34742647}
+    m_SpecifySize: 1
+    m_Name: Saarland1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5354153697298132156
+      m_GuidHigh: 13377884481073250730
+    m_SerializedTextureGuid:
+      m_GuidLow: 16460522408565126781
+      m_GuidHigh: 2422879509937165881
+    m_Size: {x: 0.5, y: 0.40618956}
+    m_SpecifySize: 1
+    m_Name: Sachsen1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5357860930512813791
+      m_GuidHigh: 16744845783198312839
+    m_SerializedTextureGuid:
+      m_GuidLow: 17637103896274477569
+      m_GuidHigh: 2766663885982535672
+    m_Size: {x: 0.5, y: 0.2568306}
+    m_SpecifySize: 1
+    m_Name: SachsenAnhalt1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5489988925744586211
+      m_GuidHigh: 10641720034421691829
+    m_SerializedTextureGuid:
+      m_GuidLow: 6058225231677473416
+      m_GuidHigh: 1507520617550381194
+    m_Size: {x: 0.5, y: 0.25652173}
+    m_SpecifySize: 1
+    m_Name: SchleswigHolstein1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5325594680505598662
+      m_GuidHigh: 11738609923196341157
+    m_SerializedTextureGuid:
+      m_GuidLow: 7262716343557161285
+      m_GuidHigh: 8176720411044692536
+    m_Size: {x: 0.5, y: 0.342615}
+    m_SpecifySize: 1
+    m_Name: Thuringen1
+    m_Texture: {fileID: 0}
+  - m_SerializedGuid:
+      m_GuidLow: 5230002866236325801
+      m_GuidHigh: 16886841618141435556
+    m_SerializedTextureGuid:
+      m_GuidLow: 11835566992804474229
+      m_GuidHigh: 3710901425646823736
+    m_Size: {x: 0.5, y: 0.41978022}
+    m_SpecifySize: 1
+    m_Name: Germany1
+    m_Texture: {fileID: 0}

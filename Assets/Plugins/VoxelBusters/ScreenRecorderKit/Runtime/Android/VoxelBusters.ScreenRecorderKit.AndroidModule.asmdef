@@ -1,0 +1,21 @@
+{
+    "name": "VoxelBusters.ScreenRecorderKit.AndroidModule",
+    "references": [
+        "VoxelBusters.CoreLibrary",
+        "VoxelBusters.CoreLibrary.NativePlugins",
+        "VoxelBusters.ScreenRecorderKit",
+        "VoxelBusters.CoreLibrary.NativePlugins.AndroidModule"
+    ],
+    "includePlatforms": [
+        "Android",
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

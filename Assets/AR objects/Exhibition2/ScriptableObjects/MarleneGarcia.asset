@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
+  m_Name: MarleneGarcia
+  m_EditorClassIdentifier: 
+  Title: Marlene Garcia-Esperat
+  Artist: "Ahmet \xD6\u011F\xFCt"
+  Year: 2022
+  Location: Frankfurt
+  ShareLink: 
+  Description: "Marlene Garcia-Esperat, a chemist in the Philippine's Department
+    of Agriculture, uncovered political grafting by government officials and was
+    later appointed as ombudsman. Despite being on a witness protection program due
+    to death threats, she continued to expose corruption through media outlets. She
+    was murdered in her home in 2005 by agriculture officials whom she had investigated
+    for years over their corrupt dealings, including the embezzlement of millions
+    from government contracts.\n\nMonuments of the Disclosed is a series of digital
+    monuments dedicated to whistleblowers who stood up to forces far beyond themselves.
+    In recent years, doubts have been raised around the question of who is honoured
+    in monumental form, with military generals, philanthropic merchants, and well-connected
+    politicians being the most common choices for statues, which serve as towering
+    exclamation points in the urban landscape, emphasising what and whose \"history\"
+    has deemed important. In \xD6\u011F\xFCt\u2019s monuments, the busts hover over
+    the plinths, making one wonder if they are about to land or be removed. They
+    exist in a perpetual state of transition. Monuments are built, and monuments
+    are toppled. \n\nIn 2022 \xD6\u011F\xFCt collaborated with Artwrld to create
+    a collection of digital monuments to lesser-known whistleblowers. Individuals
+    who, often at tremendous personal sacrifice, exposed the fraud, malintent and
+    wrongdoing of unfettered power; and who, more often than not, remain unrecognized
+    for their acts of courage.\n\nFor DEMO-, five of these monuments were placed
+    in context-specific locations in the public space of Frankfurt: at the IG Farben
+    Building (Kimberly Young-McLe), the Chinese Consulate-General (Li Wenliang),
+    the Philippine Consulate General (Marlene Garcia-Esperat), the Frankfurt Dom
+    (Philip Saviano) and at the GPS Reference Point (Aaron Swartz).\n"
+  ARMapImage: {fileID: 21300000, guid: 5c45cd53e4d014cd8a45414e1a0ea325, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: 5c45cd53e4d014cd8a45414e1a0ea325,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: 5c45cd53e4d014cd8a45414e1a0ea325, type: 3}
+  ARObjectReference:
+    m_AssetGUID: f75a19e24b7284d1f999e13877b6005e
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 1
+  AlternateScene: 
+  PlayARObjectDirectly: 0
+  IsAudio: 0
+  PlaceTextRight: 0
+  Latitude: 50.121130555488996
+  Longitude: 8.672439092569887
+  marker:
+    label: 
+    range:
+      max: 20.999
+      min: 1
+      maxLimit: 20.999
+      minLimit: 1
+    tags: []
+    _enabled: 1
+    latitude: 50.121130555488996
+    longitude: 8.672439092569887
+    _scale: 109.6583
+    expand: 1
+    altitudeType: 0
+    checkMapBoundaries: 1
+    inited: 1
+    prefab: {fileID: 3186672994675511632, guid: 1df593b3ace9e634cb241223c6194851,
+      type: 3}
+    sizeType: 1
+    _rotationY: 0
+  Hotspot: {fileID: 0}

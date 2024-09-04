@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
+  m_Name: Embedded
+  m_EditorClassIdentifier: 
+  Title: Embedded Systems
+  Artist: Benedikt Ackermann
+  Year: 2022
+  Location: Frankfurt am Main
+  ShareLink: www.google.nl
+  QR: 
+  Description: "As we tread the sidewalk on a daily basis, we see them all around
+    us. But do we ever notice them? In different shapes and sizes, the many manholes
+    in our surroundings hide beneath their covers the lifeline of our contemporary,
+    networked existence. Searching across land and sea, the cables that run beneath
+    our feet are the autostradas of the information age. \r\n \r\nBenedikt Ackermann
+    programmed a detector that identifies these manholes. With the use of machine
+    learning, Ackermann presents a virtual tool that reveals the physical backbone
+    of its own virtuality. Observing the world through the detector we in fact teach
+    ourselves to look and be attentive to the hidden infrastructures that we so often
+    forget about. As the machine learns to identify, it is us who begin to see. \r\n"
+  ARMapImage: {fileID: 21300000, guid: 44b0c0b21ab176a4aae78c96c5ab40fb, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: 80479146ef02a8d4aa93bacfb506a8ec,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: 9c5489d294a4b1d4e849b9c41d6d0f4e, type: 3}
+  - {fileID: 21300000, guid: a2e6fd74a8aa0fd409a95c33df54da8e, type: 3}
+  ARObjectReference:
+    m_AssetGUID: 93319dce6a0cbed4e8e91717d721e95f
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 1
+  AlternateScene: Ben
+  PlayARObjectDirectly: 0
+  IsAudio: 0
+  PlaceTextRight: 1
+  Latitude: 50.108355
+  Longitude: 8.6724618
+  MaxDistance: 0
+  marker:
+    label: 
+    range:
+      max: 20.999
+      min: 1
+      maxLimit: 20.999
+      minLimit: 1
+    tags: []
+    _enabled: 1
+    latitude: 50.108355
+    longitude: 8.6724618
+    _scale: 17.973139
+    expand: 1
+    altitudeType: 0
+    checkMapBoundaries: 1
+    inited: 1
+    prefab: {fileID: 3186672994675511632, guid: 1df593b3ace9e634cb241223c6194851,
+      type: 3}
+    sizeType: 1
+    _rotationY: 0
+  Hotspot: {fileID: 0}
+  Liked: 0

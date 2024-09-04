@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
+  m_Name: Unfocus
+  m_EditorClassIdentifier: 
+  Title: How to unfocus completely
+  Artist: Kristin Reiman
+  Year: 2022
+  Location: Frankfurt am Main
+  ShareLink: www.google.nl
+  Description: "Over and over again, in different harmonies and arrangements, Kristin
+    Reiman\u2019s choir\r\npiece spreads and expands in space and time, erupting
+    in the middle and dissolving\r\nslowly towards the edges. Like formalistic mantras,
+    the repeating sentences gain and\r\nlose meaning as the piece develops. Gradually,
+    we lose track of the words themselves\r\nand find ourselves in a pool of sonic
+    waves, tightening and loosening infrequently.\r\nUnder the towering Deutsche
+    Bank Towers, overseeing a market running to the beat of\r\nmillisecond-activity
+    and a never-ending flux of capital, the tiny hilltop in the\r\nTaunusanlage becomes
+    a place of refuge. The emanating sounds cast a spell-like effect\r\non the surrounding,
+    fighting off the demand for constant productivity and allowing us for\r\na moment
+    to immerse ourselves in the magical soundscape of \u201CHow to unfocus\r\ncompletely\u201D."
+  ARMapImage: {fileID: 0}
+  ARMapBackgroundImage: {fileID: 21300000, guid: 61af28a146332a14ea93095df7e440b6,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: 02e0bcf05b5cc32409e62c4da489506e, type: 3}
+  ARObjectReference:
+    m_AssetGUID: dfae58af85a84cb49895580016f2dd3b
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 1
+  AlternateScene: 
+  PlayARObjectDirectly: 0
+  IsAudio: 1
+  PlaceTextRight: 0
+  Latitude: 50.11351747990217
+  Longitude: 8.670569218400901
+  marker:
+    label: 
+    range:
+      max: 20.999
+      min: 1
+      maxLimit: 20.999
+      minLimit: 1
+    tags: []
+    _enabled: 1
+    latitude: 0
+    longitude: 0
+    _scale: 1
+    expand: 1
+    altitudeType: 0
+    checkMapBoundaries: 1
+    inited: 0
+    prefab: {fileID: 0}
+    sizeType: 0
+    _rotationY: 0
+  Hotspot: {fileID: 0}

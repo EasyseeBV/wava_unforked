@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
+  m_Name: LeTrucs
+  m_EditorClassIdentifier: 
+  Title: Bunte Stoffe - Eine Hymne
+  Artist: Le Trucs
+  Year: 2023
+  Location: Frankfurt
+  ShareLink: 
+  Description: "When inside the Paulskirch, walk alongside the wall and look at the
+    different coats of arms with your phone. Each Flag will then start warming up
+    and once all are scanned or some got too impatient, the choir will commence.
+    \n\nWith their humorous and witty attitude, the duo Les Trucs composed this site-specific
+    sound installation for the Paulskirche. Reinterpreting regional German hymns,
+    mashing up their vocabulary and randomly reordering their buzzwords, Les Trucs
+    give new voices to the flags \u2013\u2013 ones of cheeky critique and satire
+    that shine a light on frightful histories of nationalistic tendencies and the
+    artificial attempts of constructing a \"we\".\n\nLyrics:\n\nStrophen:\n\nDunkle
+    Kiefern, Kohle, Eisen\nStolz das Antlitz, bunter Adler\nst\xFCrze in den Birkenwald
+    oh \nwie so wirkend stehst du da (heideho)\n\nFreude, Antlitz, Fl\xFCsse, Knechte\nSumpf
+    und Reben bl\xFChen kernig\nLaut preis\xB4ich Recht Brot Land dunkel\nheil du
+    edle Perle t\xF6n\xB4\n\nO, Sehnsucht, gewaltig\nrauscht, umweht so nimm mich
+    sanft\ngl\xFChnde Seele, Wein getrunken\nTut! Tr\xF6t! Himmel! Mutter, H\xF6rt!
+    \n\nRefrain\n\nSinn und Recht und Baum und Hain\nWir wolln hier eine Festung
+    sein\nUnsre Heimat himmelw\xE4rts\nSo klingt es stolz ins Land hinaus\n\nSinn
+    und Recht und Baum und Hain\nwandern in den Tunnel rein\nsteige, halte, wanke,
+    schlage\nKlappe zu wir gehn nach Haus\n\n\nEnglish Translation:\n\nVerses:\n\nDark
+    pines, coal, iron\nProud the face, colorful eagle\nplunge into the birch forest
+    oh \nhow so seeming you stand there (heideho)\n\njoy, face, rivers, servants\nmarsh
+    and vines blossom pithy\nloud I praise right bread land dark\nholy you noble
+    pearl sounding\n\nO, longing, mighty\nrushes, blows around so take me gently\nglowing
+    soul, wine drunk\nTut! Toot! Heaven! Mother, listen! \n\nRefrain\n\nSense and
+    right and tree and grove\nWe want to be a fortress here\nOur homeland skyward\nSo
+    it proudly sounds out into the land\n\nSense and right and tree and grove\nwalk
+    into the tunnel\nclimb, stop, sway, strike\nShut up we're going home\n"
+  ARMapImage: {fileID: 21300000, guid: 70beb9a67f30140fea221fc001bc1a9b, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: 70beb9a67f30140fea221fc001bc1a9b,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: 70beb9a67f30140fea221fc001bc1a9b, type: 3}
+  ARObjectReference:
+    m_AssetGUID: 93319dce6a0cbed4e8e91717d721e95f
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 1
+  AlternateScene: LeTrucsRebuilt
+  PlayARObjectDirectly: 0
+  IsAudio: 1
+  PlaceTextRight: 0
+  Latitude: 50.111310569251735
+  Longitude: 8.680719724538259
+  marker:
+    label: 
+    range:
+      max: 20.999
+      min: 1
+      maxLimit: 20.999
+      minLimit: 1
+    tags: []
+    _enabled: 1
+    latitude: 50.111109138502904
+    longitude: 8.680788704542808
+    _scale: 109.6583
+    expand: 1
+    altitudeType: 0
+    checkMapBoundaries: 1
+    inited: 1
+    prefab: {fileID: 3186672994675511632, guid: 1df593b3ace9e634cb241223c6194851,
+      type: 3}
+    sizeType: 1
+    _rotationY: 0
+  Hotspot: {fileID: 0}

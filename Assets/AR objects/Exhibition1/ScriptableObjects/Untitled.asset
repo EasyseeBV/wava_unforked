@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
+  m_Name: Untitled
+  m_EditorClassIdentifier: 
+  Title: Untitled
+  Artist: Alex Chalmers
+  Year: 2022
+  Location: Frankfurt am Main
+  ShareLink: www.google.nl
+  Description: "A ghost, cut-out and sitting functionless, among the skyscrapers
+    which once encapsulated it, the elevator cabin is located in the green strip
+    of Gallusanlage in Frankfurt's banking district. Here the sculpture by Alex Chalmers
+    untitled (2022) becomes an allegory to the financial institutions surrounding
+    it.\r\n \r\nConverted by photogrammetry the elevator cabin is now digital. The
+    transformation has rendered a normally heavy metal structure light and frictionless.
+    The sculpture evokes the possibility of going up or down bringing into question
+    archetypal human beliefs."
+  ARMapImage: {fileID: 0}
+  ARMapBackgroundImage: {fileID: 21300000, guid: e9607ba43b3f4b9499ff98302227e2c4,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: c2c91faaf344fa8459df19f402d4beb6, type: 3}
+  - {fileID: 21300000, guid: dbcb7d0626db7084ab22967368997d22, type: 3}
+  ARObjectReference:
+    m_AssetGUID: 21b405e682dd94844b68829b84456f15
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 1
+  AlternateScene: 
+  PlayARObjectDirectly: 0
+  IsAudio: 0
+  PlaceTextRight: 0
+  Latitude: 50.10917233414599
+  Longitude: 8.672437450454341
+  marker:
+    label: 
+    range:
+      max: 20.999
+      min: 1
+      maxLimit: 20.999
+      minLimit: 1
+    tags: []
+    _enabled: 1
+    latitude: 0
+    longitude: 0
+    _scale: 1
+    expand: 1
+    altitudeType: 0
+    checkMapBoundaries: 1
+    inited: 0
+    prefab: {fileID: 0}
+    sizeType: 0
+    _rotationY: 0
+  Hotspot: {fileID: 0}

@@ -1,0 +1,15 @@
+{
+    "name": "VoxelBusters.ScreenRecorderKit.SimulatorModule",
+    "references": [
+        "VoxelBusters.CoreLibrary",
+        "VoxelBusters.ScreenRecorderKit"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}

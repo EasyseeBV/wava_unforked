@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
+  m_Name: TonyCokes1
+  m_EditorClassIdentifier: 
+  Title: SM BNGRZ 01.04
+  Artist: Tony Cokes
+  Artists: []
+  Year: 2021
+  Location: Frankfurt
+  ShareLink: 
+  QR: 
+  Description: 'Tony Cokes'' video work SM BNGRZ explores the importance of music
+    and dance floors as spaces for resistance. From the political potential of acid
+    house to the queering of disco, the videos juxtapose the narrative of dance floor
+    mania with the sociopolitical facets of dance culture of the early nineties.
+    SM BNGRZ exposes the subversive importance of rave and club culture as spaces
+    for the celebration of life through love, desire, queerness, art, and moving
+    bodies, integral to social transformation and activism.
+
+'
+  ARMapImage: {fileID: 21300000, guid: 45e7755e1a9c34a1dbd1b3b44d3efbc4, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: 45e7755e1a9c34a1dbd1b3b44d3efbc4,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: 45e7755e1a9c34a1dbd1b3b44d3efbc4, type: 3}
+  ARObjectReference:
+    m_AssetGUID: 30686449926174ce5b7fda22c50e4523
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 1
+  AlternateScene: 
+  PlayARObjectDirectly: 0
+  IsAudio: 0
+  PlaceTextRight: 0
+  Latitude: 50.110887711245624
+  Longitude: 8.680917378994307
+  MaxDistance: 0
+  marker:
+    label: 
+    range:
+      max: 20.999
+      min: 1
+      maxLimit: 20.999
+      minLimit: 1
+    tags: []
+    _enabled: 1
+    latitude: 50.110887711245624
+    longitude: 8.680917378994307
+    _scale: 150.22446
+    expand: 1
+    altitudeType: 0
+    checkMapBoundaries: 1
+    inited: 1
+    prefab: {fileID: 3186672994675511632, guid: 1df593b3ace9e634cb241223c6194851,
+      type: 3}
+    sizeType: 1
+    _rotationY: 0
+    updateMarker: 1
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints:
+      - {fileID: 11400000, guid: cc3f28275b52441e6a00d13935c34fd1, type: 2}
+      - {fileID: 11400000, guid: a19be35ca43ab4d4695a8d49e353187b, type: 2}
+      - {fileID: 11400000, guid: 7dbc4b551a36b4d1ab6232b6ddb0ca7a, type: 2}
+      - {fileID: 11400000}
+      - {fileID: 11400000, guid: 7d5b0373d19bc404b974c58377597da8, type: 2}
+      - {fileID: 11400000, guid: 818f3881c74e5442f9aa36055be3a36f, type: 2}
+      mean: {x: 50.11096, y: 8.681193}
+      gameSpaceMean: {x: -1092.2019, y: 0, z: 831.0139}
+      zoomedIn: 0
+    borderTransform: {fileID: 0}
+  Hotspot: {fileID: 0}
+  Liked: 0
