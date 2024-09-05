@@ -1,8 +1,7 @@
+using System;
 using System.Collections;
 using System.Linq;
-
 using Messy.Definitions;
-
 using UnityEngine;
 
 public class ARMapPointMaker : MonoBehaviour {
@@ -14,6 +13,8 @@ public class ARMapPointMaker : MonoBehaviour {
     [Header("Dependencies")]
     [SerializeField] private GroupMarkers groupMarkers;
     [SerializeField] private NoArtworkHandler noArtworkHandler;
+
+    public static event Action OnHotspotsSpawned;
 
     private bool once = false;
     private bool autoCloseOnce = false;
@@ -61,7 +62,8 @@ public class ARMapPointMaker : MonoBehaviour {
         OnChangeGps(OnlineMapsLocationService.instance.position);
         OnChangePosition();
         OnChangeZoom();
-        groupMarkers?.Group();
+        OnHotspotsSpawned?.Invoke();
+        //groupMarkers?.Group();
     }
 
     bool StartedTouch;

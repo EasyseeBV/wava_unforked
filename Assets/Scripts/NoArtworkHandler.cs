@@ -34,7 +34,7 @@ public class NoArtworkHandler : MonoBehaviour
 
     private void FindClosestArtwork()
     {
-        var marker = PlayerCollider.Instance.MapsMarker;
+        var marker = PlayerMarker.Instance.MapsMarker;
         double playerLongitude = marker.Longitude;
         double playerLatitude = marker.Latitude;
 

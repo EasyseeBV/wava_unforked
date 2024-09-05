@@ -152,7 +152,7 @@ public abstract class OnlineMapsLocationServiceBase : MonoBehaviour, IOnlineMaps
     /// <summary>
     /// Specifies whether the script will automatically update the location
     /// </summary>
-    public bool updatePosition = true;
+    public bool updatePosition = false;
 
     /// <summary>
     /// Specifies the need for marker rotation

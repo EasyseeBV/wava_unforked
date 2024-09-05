@@ -40,6 +40,8 @@ public class NavigationMaker : MonoBehaviour
         map.OnChangeZoom += OnChangeZoom;
         OnlineMapsLocationService.instance.OnLocationChanged += OnGpsChanged;
         OnlineMapsLocationService.instance.OnCompassChanged += OnCompassChanged;
+        
+        FollowPlayer(false);
     }
 
     public void ZoomIn() {

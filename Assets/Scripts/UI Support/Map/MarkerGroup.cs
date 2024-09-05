@@ -11,8 +11,10 @@ public class MarkerGroup
     public GroupMarkerUI groupMarkerObject;
     public List<ARPointSO> artworkPoints;
     public Vector2 mean; // Using Vector2 to store latitude and longitude
-    public Vector3 gameSpaceMean; // Using Vector3 to store the mean local position
     public bool zoomedIn = false;
+
+    public double latitude => mean.x;
+    public double longitude => mean.y;
 
     public bool SelectedGroup
     {
@@ -35,7 +37,6 @@ public class MarkerGroup
         artworkPoints = new List<ARPointSO>();
         artworkPoints.Add(artwork);
         mean = new Vector2((float)artwork.Latitude, (float)artwork.Longitude);
-        gameSpaceMean = new Vector3(artwork.marker.instance.transform.localPosition.x, 0, artwork.marker.instance.transform.localPosition.z);
     }
 
     public void Add(ARPointSO artwork)
@@ -61,9 +62,6 @@ public class MarkerGroup
         }
 
         mean = new Vector2((float)(totalLat / artworkPoints.Count), (float)(totalLon / artworkPoints.Count));
-        gameSpaceMean = new Vector3(totalX / artworkPoints.Count, 0, totalZ / artworkPoints.Count);
-
-        if(updateTransform) groupMarkerObject?.Move(gameSpaceMean);
     }
 
     public void ShowArtworkPoints(bool state, bool onlyForGroups = false)
@@ -104,5 +102,16 @@ public class MarkerGroup
         int inactive = artworkPoints.Count(artworkPoint => !artworkPoint.marker.instance.gameObject.activeInHierarchy);
         bool showArtwork = (float)inactive / artworkPoints.Count > 0.45f;
         ShowArtworkPoints(showArtwork);
+    }
+
+    public void CheckForValidZoom()
+    {
+        if (artworkPoints?.Count <= 1) return;
+        
+        if (zoomedIn)
+        {
+            ShowArtworkPoints(true);
+            groupMarkerObject?.gameObject.SetActive(false);
+        }
     }
 }

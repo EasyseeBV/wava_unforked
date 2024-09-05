@@ -15,7 +15,7 @@ public class PlayerFinder : MonoBehaviour
 
     private void GoToPlayer()
     {
-        var mapMarker = PlayerCollider.Instance.MapsMarker;
+        var mapMarker = PlayerMarker.Instance.MapsMarker;
         maps.SetPosition(mapMarker.Longitude, mapMarker.Latitude);
     }
 }

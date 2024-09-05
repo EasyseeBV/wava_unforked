@@ -71,6 +71,7 @@ public class OnlineMapsMarker3D : OnlineMapsMarkerBase
     [HideInInspector] public bool updateMarker;
     [HideInInspector] public MarkerGroup markerGroup;
     [HideInInspector] public Transform borderTransform;
+    [HideInInspector] public bool isGroupMarker;
 
     /// <summary>
     /// Gets or sets marker enabled.
@@ -169,7 +170,16 @@ public class OnlineMapsMarker3D : OnlineMapsMarkerBase
             if (_visible == value) return;
             _visible = value;
             instance.SetActive(value);
-            markerGroup?.TryToggleMarker();
+            
+            switch (isGroupMarker)
+            {
+                case false:
+                    markerGroup?.TryToggleMarker();
+                    break;
+                case true when value:
+                    markerGroup?.CheckForValidZoom();
+                    break;
+            }
         }
     }
 

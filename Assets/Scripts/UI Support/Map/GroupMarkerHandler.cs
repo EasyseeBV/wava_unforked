@@ -1,19 +1,15 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Messy.Definitions;
 using UnityEngine;
 
+
 /// <summary>
-///
-///
-/// 
-///  THIS CLASS IS DEPRECATED
-///
-///
-///
+/// Will be converting the marker group system to this tomorrow
 /// </summary>
-public class GroupMarkers : MonoBehaviour
+public class GroupMarkerHandler : MonoBehaviour
 {
     private enum Zoom
     {
@@ -22,17 +18,19 @@ public class GroupMarkers : MonoBehaviour
         Far
     }
     
+    [SerializeField] private GroupMarkerUI template;
+    
     [Header("Settings")]
     [SerializeField] private Vector2 closeDistanceGroup;
     [SerializeField] private Vector2 mediumDistanceGroup;
     [SerializeField] private Vector2 farDistanceGroup;
     
-    [Header("Prefabs")]
-    [SerializeField] private GroupMarkerUI groupMarkerPrefab;
-
     [Header("Dependencies")]
     [SerializeField] private OnlineMaps map;
-
+    
+    private Transform groupMarkerTransform;
+    private List<MarkerGroup> markerGroups = new();
+    
     private Zoom zoom;
     private float zoomTolerance
     {
@@ -51,23 +49,21 @@ public class GroupMarkers : MonoBehaviour
             }
         }
     }
-    
-    private Transform groupMarkerTransform;
-    [SerializeField] private List<MarkerGroup> markerGroups = new();
-    
-    private void Start()
+
+    private void OnEnable()
     {
-        map.OnChangeZoom += OnChangeZoom;
-        map.OnChangePosition += OnChangePosition;
+        ARMapPointMaker.OnHotspotsSpawned += Group;
+        OnlineMaps.instance.OnChangeZoom += OnChangeZoom;
     }
 
-    public void Group()
+    private void OnDisable()
     {
-        if (!groupMarkerTransform) groupMarkerTransform = FindObjectOfType<PlayerMarker>().transform.parent;
-        if (!createGroupsOnInit) return;
-
-        groupsVisible = true;
-            
+        ARMapPointMaker.OnHotspotsSpawned -= Group;
+        OnlineMaps.instance.OnChangeZoom -= OnChangeZoom;
+    }
+    
+    private void Group()
+    {
         foreach (var artwork in ARInfoManager.ExhibitionsSO.SelectMany(exhibition => exhibition.ArtWorks))
         {
             TryAddArtwork(artwork);
@@ -82,10 +78,27 @@ public class GroupMarkers : MonoBehaviour
             }
         }
 
+        int indexed = 0;
+        
         foreach (var group in markerGroups.Where(group => group.artworkPoints.Count > 1))
         {
-            //group.groupMarkerObject = Instantiate(groupMarkerPrefab, group.gameSpaceMean, Quaternion.identity, groupMarkerTransform);
+            Debug.Log("found a group, with count: " + group.artworkPoints.Count);
+            indexed++;
+            
+            var control = OnlineMapsTileSetControl.instance;
+            
+            var marker = control.marker3DManager.Create(group.longitude, group.latitude, template.gameObject);
+            
+            group.groupMarkerObject = marker.instance.GetComponent<GroupMarkerUI>();
+            group.groupMarkerObject.marker = marker;
+            group.groupMarkerObject.marker.isGroupMarker = true;
+            group.groupMarkerObject.marker.markerGroup = group;
+            group.groupMarkerObject.marker.sizeType = OnlineMapsMarker3D.SizeType.realWorld;
+            group.groupMarkerObject.marker.scale = 1150f * ((Screen.width + Screen.height) / 2f) / Mathf.Pow(2, (map.zoom + map.zoomScale) * 0.85f);
+            
             group.groupMarkerObject.SetMarkerSize(group.artworkPoints.Count);
+            
+            // deprecated?
             group.groupMarkerObject.MonitorTransform(group.artworkPoints[0].marker.instance.transform);
 
             foreach (var arPoint in group.artworkPoints)
@@ -96,7 +109,7 @@ public class GroupMarkers : MonoBehaviour
             }
         }
     }
-
+    
     private void TryAddArtwork(ARPointSO artwork)
     {
         foreach (var group in markerGroups)
@@ -113,7 +126,7 @@ public class GroupMarkers : MonoBehaviour
         markerGroups.Add(markerGroup);
         artwork.Hotspot.markerGroup = markerGroup;
     }
-
+    
     private double HaversineDistance(Vector2 point1, Vector2 point2)
     {
         double R = 6371e3; // Earth radius in meters
@@ -132,93 +145,19 @@ public class GroupMarkers : MonoBehaviour
         return R * c;
     }
     
-    public void OnChangeZoom()
+    private void OnChangeZoom() 
     {
-        foreach (var group in markerGroups)
+        foreach (var group in markerGroups.Where(group => group.artworkPoints.Count > 1))
         {
-            if (!group.groupMarkerObject) continue;
-            
-            if (!group.zoomedIn)
-            {
-                group.ShowArtworkPoints(false);  
-                group.groupMarkerObject?.Scale();
-                //group.RecalculateMean(true);
-            }
-        }
-        
-        if (markerGroups.Count > 0 && markerGroups[0].artworkPoints.Count > 0)
-        {
-            int zoomLevel = (int)markerGroups[0].artworkPoints[0].Hotspot.ZoomLevel;
-            ZoomGrouping(zoomLevel);
-        }
-    }
-
-    private void ZoomGrouping(int _zoom)
-    {
-        if (_zoom >= closeDistanceGroup.x)
-        {
-            if (zoom == Zoom.Close) return;
-                    
-            zoom = Zoom.Close;
-        }
-        else if (_zoom >= mediumDistanceGroup.x)
-        {
-            if (zoom == Zoom.Medium) return;
-                    
-            zoom = Zoom.Medium;
-        }
-        else
-        {
-            if (zoom == Zoom.Far) return;
-                    
-            zoom = Zoom.Far;
-        }
-            
-        foreach (var group in markerGroups)
-        {
-            group.ShowArtworkPoints(true);
-            group.groupMarkerObject?.gameObject.SetActive(false);
-        }
-            
-        markerGroups.Clear();
-        Group();
-    }
-
-    public void OnChangePosition()
-    {
-        foreach (var group in markerGroups)
-        {
-            if (!group.groupMarkerObject) continue;
-
-            group.RecalculateMean(true);
-        }
-    }
-    
-    // Testing purposes
-    [Header("Debugging")] 
-    [SerializeField] private bool createGroupsOnInit;
-    [SerializeField] private bool createGroups;
-    [SerializeField] private bool hideGroups;
-    private bool groupsVisible = true;
-    
-    private void Update()
-    {
-        if (createGroups)
-        {
-            createGroups = false;
-            
-            markerGroups.Clear();
-            Group();
+            group.groupMarkerObject.marker.scale = 1150f * ((Screen.width + Screen.height) / 2f) / Mathf.Pow(2, (map.zoom + map.zoomScale) * 0.85f);
         }
 
-        if (groupsVisible == hideGroups)
+        /*
+        foreach (ARPointSO item in ARInfoManager.ExhibitionsSO.SelectMany(s => s.ArtWorks))
         {
-            groupsVisible = !hideGroups;
-
-            foreach (var group in markerGroups)
-            {
-                group.ShowArtworkPoints(hideGroups);
-            }
+            item.Hotspot.SetFormat(map.zoom);
+            item.marker.scale = 1150f * ((Screen.width + Screen.height) / 2f) / Mathf.Pow(2, (map.zoom + map.zoomScale) * 0.85f);
         }
+        */
     }
 }

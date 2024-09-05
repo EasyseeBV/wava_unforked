@@ -6,6 +6,8 @@ public class GroupMarkerUI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private TMP_Text markerSizeLabel;
+    
+    public OnlineMapsMarker3D marker;
 
     private Transform monitoredTransform;
     
