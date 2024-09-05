@@ -15,9 +15,7 @@ public class BorderCollider : MonoBehaviour
 
     private void Update()
     {
-        transform.localScale = new Vector3 (targetScale/parentTransform.localScale.x, 
-                                            targetScale/parentTransform.localScale.y,
-                                            targetScale/parentTransform.localScale.z);
+        //transform.localScale = new Vector3 (targetScale/parentTransform.localScale.x, targetScale/parentTransform.localScale.y,targetScale/parentTransform.localScale.z);
     }
 
     private void OnEnable()

@@ -15,7 +15,7 @@ using UnityEngine;
 /// </summary>
 public class GroupMarkers : MonoBehaviour
 {
-    private enum Zoom
+    /*private enum Zoom
     {
         Close,
         Medium,
@@ -92,7 +92,7 @@ public class GroupMarkers : MonoBehaviour
             {
                 arPoint.Hotspot.Logo.enabled = false;
                 arPoint.Hotspot.Shadow.SetActive(false);
-                if(!arPoint.Hotspot.InPlayerRange) arPoint.Hotspot.BorderRingMesh.enabled = false;
+                //arPoint.Hotspot.BorderRingMesh.enabled = false;
             }
         }
     }
@@ -220,5 +220,5 @@ public class GroupMarkers : MonoBehaviour
                 group.ShowArtworkPoints(hideGroups);
             }
         }
-    }
+    }*/
 }

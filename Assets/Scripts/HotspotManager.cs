@@ -124,6 +124,12 @@ public class HotspotManager : MonoBehaviour
     {
         inReach = InReach;
 
+        if (inReach)
+        {
+            BorderRingMesh.enabled = true;
+            BorderRingMesh.material = SelectedHotspotInRangeMat;
+        }
+
         if (!ZoomedOut && InReach)
         {
             BorderRingMesh.enabled = true;
@@ -134,17 +140,18 @@ public class HotspotManager : MonoBehaviour
         {
             if (selected)
             {
-                BorderRingMesh.enabled = true;
+                BorderRingMesh.enabled = true; 
                 BorderRingMesh.material = SelectedHotspotMat;
             }
             else
-            {
+            { 
                 BorderRingMesh.enabled = false;
             }
         }
         
         /*
          // Legacy code to display border with an animation
+         
         Animator ani = GetComponent<Animator>();
         AnimatorClipInfo[] animatorinfo = ani.GetCurrentAnimatorClipInfo(0);
         if (animatorinfo.Length == 0)

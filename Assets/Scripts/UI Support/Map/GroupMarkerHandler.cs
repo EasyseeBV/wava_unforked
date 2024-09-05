@@ -27,6 +27,7 @@ public class GroupMarkerHandler : MonoBehaviour
     
     [Header("Dependencies")]
     [SerializeField] private OnlineMaps map;
+    [SerializeField] private OnlineMapsMarker3DManager mapManager;
     
     private Transform groupMarkerTransform;
     private List<MarkerGroup> markerGroups = new();
@@ -82,11 +83,9 @@ public class GroupMarkerHandler : MonoBehaviour
         
         foreach (var group in markerGroups.Where(group => group.artworkPoints.Count > 1))
         {
-            Debug.Log("found a group, with count: " + group.artworkPoints.Count);
             indexed++;
             
             var control = OnlineMapsTileSetControl.instance;
-            
             var marker = control.marker3DManager.Create(group.longitude, group.latitude, template.gameObject);
             
             group.groupMarkerObject = marker.instance.GetComponent<GroupMarkerUI>();
@@ -105,7 +104,7 @@ public class GroupMarkerHandler : MonoBehaviour
             {
                 arPoint.Hotspot.Logo.enabled = false;
                 arPoint.Hotspot.Shadow.SetActive(false);
-                if(!arPoint.Hotspot.InPlayerRange) arPoint.Hotspot.BorderRingMesh.enabled = false;
+                arPoint.Hotspot.BorderRingMesh.enabled = false;
             }
         }
     }
@@ -151,13 +150,54 @@ public class GroupMarkerHandler : MonoBehaviour
         {
             group.groupMarkerObject.marker.scale = 1150f * ((Screen.width + Screen.height) / 2f) / Mathf.Pow(2, (map.zoom + map.zoomScale) * 0.85f);
         }
-
-        /*
-        foreach (ARPointSO item in ARInfoManager.ExhibitionsSO.SelectMany(s => s.ArtWorks))
+        
+        if (markerGroups.Count > 0 && markerGroups[0].artworkPoints.Count > 0)
         {
-            item.Hotspot.SetFormat(map.zoom);
-            item.marker.scale = 1150f * ((Screen.width + Screen.height) / 2f) / Mathf.Pow(2, (map.zoom + map.zoomScale) * 0.85f);
+            int zoomLevel = (int)markerGroups[0].artworkPoints[0].Hotspot.ZoomLevel;
+            ZoomGrouping(zoomLevel);
         }
-        */
     }
+    
+
+    private void ZoomGrouping(int _zoom)
+    {
+        if (_zoom >= closeDistanceGroup.x)
+        {
+            if (zoom == Zoom.Close) return;
+                    
+            zoom = Zoom.Close;
+        }
+        else if (_zoom >= mediumDistanceGroup.x)
+        {
+            if (zoom == Zoom.Medium) return;
+                    
+            zoom = Zoom.Medium;
+        }
+        else
+        {
+            if (zoom == Zoom.Far) return;
+                    
+            zoom = Zoom.Far;
+        }
+            
+        foreach (var group in markerGroups)
+        {
+            group.ShowArtworkPoints(true);
+            group.groupMarkerObject?.gameObject.SetActive(false);
+        }
+        
+        foreach (var markerGroup in markerGroups)
+        {
+            if (markerGroup.groupMarkerObject?.marker?.instance != null)
+            {
+                markerGroup.groupMarkerObject.marker.enabled = false;
+                Destroy(markerGroup.groupMarkerObject?.marker?.instance);
+            }
+        }
+        
+        markerGroups.Clear();
+        
+        Group();
+    }
+
 }
