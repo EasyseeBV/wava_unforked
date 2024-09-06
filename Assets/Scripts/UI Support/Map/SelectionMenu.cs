@@ -42,7 +42,11 @@ public class SelectionMenu : MonoBehaviour
     }
 
     private void OnEnable() => OnlineMapsControlBase.instance.OnMapClick += OnMapClicked;
-    private void OnDisable() => OnlineMapsControlBase.instance.OnMapClick -= OnMapClicked;
+
+    private void OnDisable()
+    {
+        if(OnlineMapsControlBase.instance != null) OnlineMapsControlBase.instance.OnMapClick -= OnMapClicked;
+    } 
     
 
     public void LoadARPointSO()
