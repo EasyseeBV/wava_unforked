@@ -69,13 +69,11 @@ MonoBehaviour:
     wound-space of the Gr\xFCneburgpark, the video works coexist, different yet inseparable,
     bound by ceaseless storms of histories and the continuously generated trauma
     of displacement and loss. "
-  ExhibitionImages:
-  - {fileID: 21300000, guid: c2c8bcd575e174c27a182cd177dd0bac, type: 3}
+  ExhibitionImages: []
   ArtWorks:
   - {fileID: 11400000, guid: f7dbc1bad772c48d7869110f0ff29f10, type: 2}
   - {fileID: 11400000, guid: fdaf2db1876b64c1d9c587dbf466ea5a, type: 2}
   - {fileID: 11400000, guid: 8c37ce03da2584158aaaf37bd801c53f, type: 2}
   - {fileID: 11400000, guid: e023ca7c8b964432bb0d6dc6da9e1dca, type: 2}
-  - {fileID: 11400000, guid: acfd102e05b084066a2dba9eeeaf9444, type: 2}
   ARMapIcon: {fileID: 0}
   Liked: 0
