@@ -54,11 +54,9 @@ MonoBehaviour:
     kosher laws and promoting Christian outreach to non-Jewish communities during
     that era. In fact, the positioning of the apse in the church symbolizes the path
     taken by the announcing angel.'
-  ARMapImage: {fileID: 21300000, guid: 7928585b574094ef5b78238f18f43c8e, type: 3}
-  ARMapBackgroundImage: {fileID: 21300000, guid: 7928585b574094ef5b78238f18f43c8e,
-    type: 3}
-  ArtworkImages:
-  - {fileID: 21300000, guid: 7928585b574094ef5b78238f18f43c8e, type: 3}
+  ARMapImage: {fileID: 0}
+  ARMapBackgroundImage: {fileID: 0}
+  ArtworkImages: []
   ARObjectReference:
     m_AssetGUID: f92f247e147d449118c798fb479f4c94
     m_SubObjectName: 
@@ -97,8 +95,8 @@ MonoBehaviour:
       artworkPoints:
       - {fileID: 11400000}
       mean: {x: 50.106, y: 8.679}
-      gameSpaceMean: {x: -1584.2157, y: 0, z: 938.7312}
       zoomedIn: 0
     borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
   Liked: 0

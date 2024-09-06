@@ -25,11 +25,9 @@ MonoBehaviour:
     out and stand still before resuming their journey. Bartana uses slow motion,
     repetition, and cross-fading to create a layered, critical reflection on the
     ritual, exposing the ghostly omnipresence of collective trauma. '
-  ARMapImage: {fileID: 21300000, guid: 9aa972863f72547c6b74800a4d8d7310, type: 3}
-  ARMapBackgroundImage: {fileID: 21300000, guid: 9aa972863f72547c6b74800a4d8d7310,
-    type: 3}
-  ArtworkImages:
-  - {fileID: 21300000, guid: 9aa972863f72547c6b74800a4d8d7310, type: 3}
+  ARMapImage: {fileID: 0}
+  ARMapBackgroundImage: {fileID: 0}
+  ArtworkImages: []
   ARObjectReference:
     m_AssetGUID: 6b2b1d0646ea44c87a1a6206190dba7d
     m_SubObjectName: 
@@ -68,8 +66,8 @@ MonoBehaviour:
       artworkPoints:
       - {fileID: 11400000}
       mean: {x: 50.106, y: 8.679}
-      gameSpaceMean: {x: -1584.2157, y: 0, z: 938.7312}
       zoomedIn: 0
     borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
   Liked: 0

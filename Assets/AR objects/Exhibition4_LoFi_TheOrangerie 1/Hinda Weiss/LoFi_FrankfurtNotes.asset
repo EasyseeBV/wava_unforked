@@ -25,11 +25,9 @@ MonoBehaviour:
     the present to the past. Creating a space both real and imaginary, the video
     weaves together pieces of sedimented Jewish history of loss and displacement
     into a seemingly idle scene, not unlike the park itself."
-  ARMapImage: {fileID: 21300000, guid: 0dce3db8b035f44a39dac216f4b9d312, type: 3}
-  ARMapBackgroundImage: {fileID: 21300000, guid: 0dce3db8b035f44a39dac216f4b9d312,
-    type: 3}
-  ArtworkImages:
-  - {fileID: 21300000, guid: 0dce3db8b035f44a39dac216f4b9d312, type: 3}
+  ARMapImage: {fileID: 0}
+  ARMapBackgroundImage: {fileID: 0}
+  ArtworkImages: []
   ARObjectReference:
     m_AssetGUID: 9bb80684310f542e9adf531a3d338991
     m_SubObjectName: 
@@ -68,8 +66,8 @@ MonoBehaviour:
       artworkPoints:
       - {fileID: 11400000}
       mean: {x: 50.106, y: 8.679}
-      gameSpaceMean: {x: -1584.2157, y: 0, z: 938.7312}
       zoomedIn: 0
     borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
   Liked: 0
