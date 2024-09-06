@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7484c5630b23204da87e6d1bf9652d6, type: 3}
+  m_Name: MuhammadToukhy
+  m_EditorClassIdentifier: 
+  Title: Muhammad Toukhy
+  Location: 
+  Link: 
+  ArtistIcon: {fileID: 0}
+  Description: 'Muhammad Toukhy (b. Jaffa, 1999), is a multidisciplinary artist.
+    He completed his BA in art in 2021 from the University of Haifa. Since then,
+    he has participated in multiple group exhibitions and held two solo exhibitions:
+    one at the Kupferman Collection House in Lohamei HaGeta''ot in 2023, and another
+    at Wannsee Contemporary in Berlin in 2023.'
+  Liked: 0

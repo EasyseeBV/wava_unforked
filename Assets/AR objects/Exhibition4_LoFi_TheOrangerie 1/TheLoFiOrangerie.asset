@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a37f4225795b2984fa53c3e0c653630e, type: 3}
+  m_Name: TheLoFiOrangerie
+  m_EditorClassIdentifier: 
+  Title: The LoFi Orangerie
+  Artist: Ben Livne Weitzman
+  Year: 2024
+  Location: Frankfurt am Main, Germany
+  Color:
+    serializedVersion: 2
+    rgba: 4293737867
+  Description: "The Gr\xFCneburgpark is the largest park in Frankfurt. For almost
+    a century, it belonged to the Rothschild family, who had built an Orangerie on
+    its grounds. In 1935, the park was seized by the Nazi city administration and
+    opened to the public the following year. Albert von Goldschmidt-Rothschild, the
+    last resident of the estate, fled to Switzerland and took his own life in 1941.\n\nAppearing
+    in their contemporary form around the mid-16th century, Orangeries function as
+    winter housing for citrus and other detached southern plants that were not made
+    to survive the northern climate. Being almost entirely inter-fertile, citrus
+    plants have entangled histories of becoming, from East Asia to Sevilla via the
+    Arab Agriculture Revolution. A well-known composite is the Jaffa orange. First
+    cultivated by Arab farmers in the mid-19th century, the orange named after the
+    city in whose markets it first appeared became an agricultural focus for the
+    growing Jewish settlement. For some time, ties between Arab and Jewish farmers
+    and exporters proved strong even amidst the growing tensions. Then, what was
+    an image of return for some became a symbol of disaster for others. \n\nWhat
+    powers do images have in processing composite realities and cultivating political
+    imaginaries? The Orangerie presents a collection of video works that fuse documentary
+    and fiction in an attempt to observe and understand complex entanglements. Emerging
+    from concrete political and social environments, the artists explore various
+    image-making tools to break through the seen world. Appearing along a circular
+    path within the park through Augmented Reality, the videos virtually inhabit
+    the physical space together, without separability. \n\nHinda Weiss\u2019s Frankfurt
+    Notes (2019) was filmed in Frankfurt, around the park and its memorial rose garden.
+    By collaging video footage into a single frame, she creates an image of Frankfurt
+    that spans from the present to the past. Creating a space both real and imaginary,
+    the video weaves together pieces of sedimented Jewish history of loss and displacement
+    into a seemingly idle scene, not unlike the park itself. In Epiphanie (2023),
+    Muhammad Toukhy's video work presents an image reminiscent of neorealistic cinema
+    combined with the jaggedness and eerieness of a drone camera. Toukhy's video
+    explores the custom of retrieving a cross thrown into the water at St. Peter's
+    Church in Jaffa, known for its unusual westward orientation. This orientation
+    prompts reflections on Jaffa's deep connection to the sea and the West, as well
+    as the distinctive Palestinian identity in this enclave surrounded by Israeli
+    neighbourhoods\u2014a constant invocation of nostalgia and grief.\n\nTrembling
+    Time (2001) by Yael Bartana captures and moulds a moment of silence during Israel's
+    Memorial Day from a bridge overlooking traffic. As the commemorative siren sounds,
+    driving cars slow to a halt, and passengers step out and stand still before resuming
+    their journey. Bartana uses slow motion, repetition, and cross-fading to create
+    a layered, critical reflection on the ritual, exposing the ghostly omnipresence
+    of collective trauma. Bidoon Enwan (Untitled, 2009), in Arabic \u0628\u0650\u062F\u0648\u0646
+    \u0639\u0646\u0648\u0627\u0646, means both \"without an address\" and \"untitled.\"
+    In the video, the artist Raafat Hattab tends to an olive tree, connecting with
+    the memory and yearning for a return to a place that was. As the camera zooms
+    out, the space around is revealed, anchoring the old tree in Rabin Square in
+    the middle of paved contemporary Tel Aviv\u2013\u2013exposing the state of being
+    detached while remaining rooted in place. \n\nAs extreme winds blow, The Orangerie
+    seeks to shelter and hold open possible spaces of encounter. Within the covered-up
+    wound-space of the Gr\xFCneburgpark, the video works coexist, different yet inseparable,
+    bound by ceaseless storms of histories and the continuously generated trauma
+    of displacement and loss. "
+  ExhibitionImages:
+  - {fileID: 21300000, guid: c2c8bcd575e174c27a182cd177dd0bac, type: 3}
+  ArtWorks:
+  - {fileID: 11400000, guid: f7dbc1bad772c48d7869110f0ff29f10, type: 2}
+  - {fileID: 11400000, guid: fdaf2db1876b64c1d9c587dbf466ea5a, type: 2}
+  - {fileID: 11400000, guid: 8c37ce03da2584158aaaf37bd801c53f, type: 2}
+  - {fileID: 11400000, guid: e023ca7c8b964432bb0d6dc6da9e1dca, type: 2}
+  - {fileID: 11400000, guid: acfd102e05b084066a2dba9eeeaf9444, type: 2}
+  ARMapIcon: {fileID: 0}
+  Liked: 0
