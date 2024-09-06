@@ -92,7 +92,7 @@ public class UIInfoController : MonoBehaviour
         bottomDefaultArea.SetActive(true);
         bottomDefaultText.text = textInfo;
         
-        Invoke(nameof(ClearText), 2f);
+        Invoke(nameof(ClearText), 3f);
     }
 
     private void ClearText()
