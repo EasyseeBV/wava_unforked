@@ -41,10 +41,16 @@ public class SelectionMenu : MonoBehaviour
         exitButtons[1].onClick.AddListener(OpenArtwork);
     }
 
-    private void OnEnable() => OnlineMapsControlBase.instance.OnMapClick += OnMapClicked;
-    private void OnDisable() => OnlineMapsControlBase.instance.OnMapClick -= OnMapClicked;
-    
+    private void OnEnable()
+    {
+        if(OnlineMapsControlBase.instance) OnlineMapsControlBase.instance.OnMapClick += OnMapClicked;
+    }
 
+    private void OnDisable()
+    {
+        if(OnlineMapsControlBase.instance) OnlineMapsControlBase.instance.OnMapClick -= OnMapClicked;
+    }
+    
     public void LoadARPointSO()
     {
         if (SelectedARPoint)

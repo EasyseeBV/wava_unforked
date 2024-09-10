@@ -43,7 +43,9 @@ public class ExhibitionCard : MonoBehaviour
             image1.sprite = point.ExhibitionImages[1];
             image2.sprite = point.ExhibitionImages[2];
         }
-        else if (point.ArtWorks.Count >= 3)
+        else if (point.ArtWorks.Count >= 3 && point.ArtWorks[0].ArtworkImages.Count > 0 
+                                           && point.ArtWorks[1].ArtworkImages.Count > 0 
+                                           && point.ArtWorks[2].ArtworkImages.Count > 0)
         {
             singleCoverImageObject.SetActive(false);
             multCoverImageObject.SetActive(true);
