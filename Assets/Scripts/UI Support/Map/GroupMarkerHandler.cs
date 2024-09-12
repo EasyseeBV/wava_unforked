@@ -104,7 +104,8 @@ public class GroupMarkerHandler : MonoBehaviour
             {
                 arPoint.Hotspot.Logo.enabled = false;
                 arPoint.Hotspot.Shadow.SetActive(false);
-                arPoint.Hotspot.BorderRingMesh.enabled = false;
+                arPoint.Hotspot.Parent.SetActive(false);
+                //arPoint.Hotspot.BorderRingMesh.enabled = false;
             }
         }
     }

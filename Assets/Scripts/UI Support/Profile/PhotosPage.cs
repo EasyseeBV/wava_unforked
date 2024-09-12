@@ -37,7 +37,7 @@ public class PhotosPage : MonoBehaviour
     {
         foreach (Transform t in photosLayoutArea)
         {
-            Destroy(t.gameObject);
+            if(t.GetComponent<UserPhoto>()) t.gameObject.SetActive(false);
         }
     }
 

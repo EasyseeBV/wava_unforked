@@ -20,6 +20,7 @@ public class HotspotManager : MonoBehaviour
     public Image BackgroundAR;
     public Image ARObjectImage;
     public MeshRenderer Logo;
+    public GameObject Parent;
     
     [Header("UI Designs V2")]
     public MeshRenderer BorderRingMesh;

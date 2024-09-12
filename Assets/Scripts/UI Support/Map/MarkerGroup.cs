@@ -77,6 +77,7 @@ public class MarkerGroup
         {
             point.Hotspot.Logo.enabled = state;
             point.Hotspot.Shadow.SetActive(state);
+            point.Hotspot.Parent.SetActive(state);
 
             if (!state) continue;
             //point.Hotspot.BorderRingMesh.enabled = point.Hotspot.InPlayerRange || point.Hotspot.selected;
