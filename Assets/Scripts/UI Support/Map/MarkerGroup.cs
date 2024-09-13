@@ -11,7 +11,16 @@ public class MarkerGroup
     public GroupMarkerUI groupMarkerObject;
     public List<ARPointSO> artworkPoints;
     public Vector2 mean; // Using Vector2 to store latitude and longitude
-    public bool zoomedIn = false;
+    public bool ZoomedIn
+    {
+        get => zoomedIn;
+        set
+        {
+            zoomedIn = value;
+            ShowArtworkPoints(value, true);
+        }
+    }
+    private bool zoomedIn;
 
     public double latitude => mean.x;
     public double longitude => mean.y;
@@ -41,6 +50,7 @@ public class MarkerGroup
 
     public void Add(ARPointSO artwork)
     {
+        if (artworkPoints.Contains(artwork)) return;
         artworkPoints.Add(artwork);
         RecalculateMean();
     }
@@ -68,8 +78,8 @@ public class MarkerGroup
     {
         if (onlyForGroups && artworkPoints.Count <= 1) return;
         
-        if (SelectedGroup) return;
-        if (showingArtwork == state) return;
+        //if (SelectedGroup) return;
+        //if (showingArtwork == state) return;
 
         groupMarkerObject?.gameObject.SetActive(!state);
 
@@ -78,10 +88,6 @@ public class MarkerGroup
             point.Hotspot.Logo.enabled = state;
             point.Hotspot.Shadow.SetActive(state);
             point.Hotspot.Parent.SetActive(state);
-
-            if (!state) continue;
-            //point.Hotspot.BorderRingMesh.enabled = point.Hotspot.InPlayerRange || point.Hotspot.selected;
-        
         }
 
         showingArtwork = state;
@@ -91,7 +97,7 @@ public class MarkerGroup
     {
         if (artworkPoints?.Count <= 1) return;
         
-        switch (zoomedIn)
+        switch (ZoomedIn)
         {
             case true when showingArtwork == false:
                 ShowArtworkPoints(true);
@@ -109,10 +115,9 @@ public class MarkerGroup
     {
         if (artworkPoints?.Count <= 1) return;
         
-        if (zoomedIn)
+        /*if (ZoomedIn)
         {
             ShowArtworkPoints(true);
-            groupMarkerObject?.gameObject.SetActive(false);
-        }
+        }*/
     }
 }

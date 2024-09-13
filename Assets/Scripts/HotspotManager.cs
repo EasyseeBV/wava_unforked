@@ -28,9 +28,10 @@ public class HotspotManager : MonoBehaviour
     public Material SelectedHotspotInRangeMat;
     public GameObject Shadow;
     
-    [HideInInspector] public bool selected = false;
-    [HideInInspector] public MarkerGroup markerGroup;
-    public bool InPlayerRange => BorderRingMesh.enabled && BorderRingMesh.material == SelectedHotspotInRangeMat;
+    [Header("Runtime")]
+    public bool selected = false;
+    public MarkerGroup markerGroup;
+    public bool inPlayerRange = false;
 
     [HideInInspector]
     public ExhibitionSO ConnectedExhibition;
@@ -116,8 +117,8 @@ public class HotspotManager : MonoBehaviour
         
         if (markerGroup != null)
         {
-            markerGroup.zoomedIn = ShouldEnable;
-            markerGroup.ShowArtworkPoints(ShouldEnable, true);
+            //markerGroup.ZoomedIn = ShouldEnable;
+            //markerGroup.ShowArtworkPoints(ShouldEnable, true);
         }
     }
 
@@ -129,16 +130,16 @@ public class HotspotManager : MonoBehaviour
         {
             BorderRingMesh.enabled = true;
             BorderRingMesh.material = SelectedHotspotInRangeMat;
+            inPlayerRange = true;
         }
 
         if (!ZoomedOut && InReach)
         {
-            BorderRingMesh.enabled = true;
-            BorderRingMesh.material = SelectedHotspotInRangeMat;
             if(selected) SelectionMenu.Instance.Open(this, true);
         }
         else if(!InReach)
         {
+            inPlayerRange = false;
             if (selected)
             {
                 BorderRingMesh.enabled = true; 

@@ -107,5 +107,15 @@ public class SelectionMenu : MonoBehaviour
         container[1].SetActive(false);
     }
     
-    private void OnMapClicked() => Close();  
+    private void HardClose()
+    {
+        if (cachedHotspot == null) return;
+        if (cachedHotspot.inPlayerRange) return;
+        cachedHotspot.BorderRingMesh.enabled = false;
+        cachedHotspot.selected = false;
+        Close();
+        cachedHotspot = null;
+    }
+    
+    private void OnMapClicked() => HardClose();  
 }
