@@ -13,8 +13,15 @@ MonoBehaviour:
   m_Name: Hinda Weiss
   m_EditorClassIdentifier: 
   Title: Hinda Weiss
-  Location: 
+  Location: Brooklyn [USA]
   Link: 
-  ArtistIcon: {fileID: 0}
-  Description: 
+  ArtistIcon: {fileID: 21300000, guid: 8a1c28eb064124197876885f2e8b1315, type: 3}
+  Description: "Hinda Weiss is a Brooklyn-based artist who works with moving images,
+    sound, photography, and installation. She holds an MFA from Columbia University
+    and a BFA from the Midrasha School of Art. Weiss has received numerous awards,
+    such as the Outset Contemporary Art Fund and Artis and Ostrovsky Family Fund,
+    and has participated in residencies worldwide, including  air_basis in Frankfurt,
+    Artport TLV, Cit\xE9 Internationale des Arts in Paris, and The Elizabeth Foundation
+    for the Arts in NYC. Her work has been exhibited at venues including the  Israel
+    Museum in Jerusalem, Palais de Tokyo in Paris, and Ludlow 38 in NYC."
   Liked: 0

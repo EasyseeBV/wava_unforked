@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Epiphany
   Artist: Muhammad Toukhy
-  Artists: []
+  Artists:
+  - {fileID: 11400000, guid: bbccddda2cc6b43088d0cd4c34c5b19b, type: 2}
   Year: 2023
   Location: 
   ShareLink: 
@@ -54,9 +55,11 @@ MonoBehaviour:
     kosher laws and promoting Christian outreach to non-Jewish communities during
     that era. In fact, the positioning of the apse in the church symbolizes the path
     taken by the announcing angel.'
-  ARMapImage: {fileID: 0}
-  ARMapBackgroundImage: {fileID: 0}
-  ArtworkImages: []
+  ARMapImage: {fileID: 21300000, guid: 3e5c6c5dc90de440f9644912c44667de, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: 3e5c6c5dc90de440f9644912c44667de,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: 3e5c6c5dc90de440f9644912c44667de, type: 3}
   ARObjectReference:
     m_AssetGUID: f92f247e147d449118c798fb479f4c94
     m_SubObjectName: 
@@ -66,8 +69,8 @@ MonoBehaviour:
   PlayARObjectDirectly: 0
   IsAudio: 0
   PlaceTextRight: 0
-  Latitude: 50.0958306
-  Longitude: 8.7536704
+  Latitude: 50.1292011
+  Longitude: 8.6603356
   MaxDistance: 0
   marker:
     label: 

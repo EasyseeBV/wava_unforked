@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Trembling Time
   Artist: Yael Barata
-  Artists: []
+  Artists:
+  - {fileID: 11400000, guid: 5248d39b527d14e448a24ae65e32ed13, type: 2}
   Year: 2001
   Location: 
   ShareLink: 
@@ -25,9 +26,11 @@ MonoBehaviour:
     out and stand still before resuming their journey. Bartana uses slow motion,
     repetition, and cross-fading to create a layered, critical reflection on the
     ritual, exposing the ghostly omnipresence of collective trauma. '
-  ARMapImage: {fileID: 0}
-  ARMapBackgroundImage: {fileID: 0}
-  ArtworkImages: []
+  ARMapImage: {fileID: 21300000, guid: bc0472303acc9486aa7c97e2f3b75b42, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: bc0472303acc9486aa7c97e2f3b75b42,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: bc0472303acc9486aa7c97e2f3b75b42, type: 3}
   ARObjectReference:
     m_AssetGUID: 6b2b1d0646ea44c87a1a6206190dba7d
     m_SubObjectName: 
@@ -37,8 +40,8 @@ MonoBehaviour:
   PlayARObjectDirectly: 0
   IsAudio: 0
   PlaceTextRight: 0
-  Latitude: 50.0959994
-  Longitude: 8.7532154
+  Latitude: 50.1283772
+  Longitude: 8.6598719
   MaxDistance: 0
   marker:
     label: 
