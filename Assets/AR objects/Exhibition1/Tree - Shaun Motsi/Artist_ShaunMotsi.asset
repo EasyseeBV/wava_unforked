@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7484c5630b23204da87e6d1bf9652d6, type: 3}
+  m_Name: Artist_ShaunMotsi
+  m_EditorClassIdentifier: 
+  Title: Shaun Motsi
+  Location: 
+  Link: https://shaunmotsi.com/
+  ArtistIcon: {fileID: 21300000, guid: 0cab628ffbd74495a883d79e54ceb93c, type: 3}
+  Description: "Shaun Motsi, born 1989 in Harare, ZWE, studied Fine Art at the St\xE4delschule
+    in Frankfurt am Main until 2020. He won the Sammlung Pohl Graduate Prize in 2020
+    as well as the St\xE4delschule\u2019s Colliers International Rundgang Prize.
+    His work has been included in numerous group exhibitions at such venues as Elvira,
+    Frankfurt am Main, DE (2021), Shedhalle, Zurich, CH (2020), Portikus, Frankfurt
+    am Main, DE (2020), PS120, Berlin, DE (2019), TOR Art Space, Frankfurt am Main,
+    DE (2018), and the IX Berlin Biennale, Berlin, DE (2016). He has had solo exhibitions
+    at Page NYC, New York, USA (2019) and PSM, Berlin, DE (2017), among others. Using
+    painting, installation, and text, Shaun Motsi examines various aspects of cultural
+    narratives and how they interconnect in a global context. His works focus on
+    the question of how knowledge and information are transmitted and received across
+    temporal and geographical spaces. They reference everyday things, western pop
+    culture, and the artist\u2019s own experiences. Questions about the representation
+    of blackness in relation to neoliberal-capitalist western culture play a role
+    in his artistic practice, as does the blurring of the boundary between identity
+    and aesthetics qua representation."
+  Liked: 0

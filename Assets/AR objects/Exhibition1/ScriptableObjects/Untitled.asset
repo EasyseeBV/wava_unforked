@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Untitled
   Artist: Alex Chalmers
+  Artists:
+  - {fileID: 11400000, guid: 6899df71edfe34cb6b2444ad584636af, type: 2}
   Year: 2022
   Location: Frankfurt am Main
   ShareLink: www.google.nl
+  QR: 
   Description: "A ghost, cut-out and sitting functionless, among the skyscrapers
     which once encapsulated it, the elevator cabin is located in the green strip
     of Gallusanlage in Frankfurt's banking district. Here the sculpture by Alex Chalmers
@@ -42,6 +45,7 @@ MonoBehaviour:
   PlaceTextRight: 0
   Latitude: 50.10917233414599
   Longitude: 8.672437450454341
+  MaxDistance: 0
   marker:
     label: 
     range:
@@ -61,4 +65,12 @@ MonoBehaviour:
     prefab: {fileID: 0}
     sizeType: 0
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
+  Liked: 0

@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7484c5630b23204da87e6d1bf9652d6, type: 3}
+  m_Name: "Artist_AhmetO\u0308g\u0306u\u0308t"
+  m_EditorClassIdentifier: 
+  Title: "Ahmet \xD6\u011F\xFCt"
+  Location: 
+  Link: https://ahmetogut.com/
+  ArtistIcon: {fileID: 21300000, guid: 11b912b86d9ea451093479cb24cd524c, type: 3}
+  Description: "Ahmet \xD6\u011F\xFCt born in 1981 in Diyarbak\u0131r, is a sociocultural
+    initiator, artist, and lecturer. Working across a variety of media, including
+    photography, video, and installation, \xD6\u011F\xFCt often uses humor and small
+    gestures to offer his commentary on rather serious or pressing social and political
+    issues. \xD6\u011F\xFCt is regularly collaborating with people from outside of
+    the art world to create shifts in the perception of common. He has exhibited
+    widely, more recently with solo presentations at Kunstverein Dresden, Kunsthal
+    Charlottenborg, Chisenhale Gallery, and Van Abbemuseum. He has also participated
+    in numerous group exhibitions, including 17th Istanbul Biennial, Istanbul, (2022);
+    FRONT International 2022, Cleveland Triennial for Contemporary Art, Ohio (2022);
+    Asia Society Triennial: We Do Not Dream Alone (2021); In the Presence of Absence,
+    Stedelijk Museum Amsterdam (2020); Zero Gravity at Nam SeMA, Seoul Museum of
+    Art (2019); Echigo Tsumari Art Triennale (2018); the British Art Show 8 (2015-2017);
+    11th Gwangju Biennale (2016); the 13th Biennale de Lyon (2015); 19th Biennale
+    of Sydney (2014); Performa 13, the Fifth Biennial of Visual Art Performance,
+    New York (2013); the 7th Liverpool Biennial (2012); the 12th Istanbul Biennial
+    (2011); the New Museum Triennial, New York (2009); and the 5th Berlin Biennial
+    for Contemporary Art (2008). \xD6\u011F\xFCt has been a guest professor, mentor,
+    tutor, advisor, research teacher at several schools. Among the schools are Institut
+    f\xFCr Kunst im Kontext at Universit\xE4t der K\xFCnste Berlin; Jan van Eyck
+    Academie, Maastricht; Sandberg Institute Amsterdam; Finnish Academy of Fine Arts,
+    Helsinki; TransArts - Transdisziplin\xE4re Kunst, Institut f\xFCr Bildende und
+    Mediale Kunst Universit\xE4t f\xFCr angewandte Kunst Wien; and DAI (Dutch Art
+    Institute) Arnhem. \xD6\u011F\xFCt was awarded the Visible Award for the Silent
+    University (2013); the special prize of the Future Generation Art Prize, Pinchuk
+    Art Centre, Ukraine (2012); the De Volkskrant Beeldende Kunst Prijs 2011, Netherlands;
+    and the Kunstpreis Europas Zukunft, Museum of Contemporary Art, Germany (2010).
+    He co-represented Turkey at the 53rd Venice Biennale (2009)."
+  Liked: 0

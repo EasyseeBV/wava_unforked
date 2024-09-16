@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Embedded Systems
   Artist: Benedikt Ackermann
+  Artists:
+  - {fileID: 11400000, guid: 5c34c6514789e4b039c3b779319b20ba, type: 2}
   Year: 2022
   Location: Frankfurt am Main
   ShareLink: www.google.nl
@@ -27,13 +29,16 @@ MonoBehaviour:
     learning, Ackermann presents a virtual tool that reveals the physical backbone
     of its own virtuality. Observing the world through the detector we in fact teach
     ourselves to look and be attentive to the hidden infrastructures that we so often
-    forget about. As the machine learns to identify, it is us who begin to see. \r\n"
+    forget about. As the machine learns to identify, it is us who begin to see. \r\n\n*Please
+    note: Due to restrictions of iOS, \rthis artwork is only available \ron Android
+    phones. "
   ARMapImage: {fileID: 21300000, guid: 44b0c0b21ab176a4aae78c96c5ab40fb, type: 3}
   ARMapBackgroundImage: {fileID: 21300000, guid: 80479146ef02a8d4aa93bacfb506a8ec,
     type: 3}
   ArtworkImages:
   - {fileID: 21300000, guid: 9c5489d294a4b1d4e849b9c41d6d0f4e, type: 3}
   - {fileID: 21300000, guid: a2e6fd74a8aa0fd409a95c33df54da8e, type: 3}
+  - {fileID: 21300000, guid: 68de6ad6b67f84ebfb4fc67c7c7fbd0c, type: 3}
   ARObjectReference:
     m_AssetGUID: 93319dce6a0cbed4e8e91717d721e95f
     m_SubObjectName: 
@@ -66,5 +71,12 @@ MonoBehaviour:
       type: 3}
     sizeType: 1
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
   Liked: 0

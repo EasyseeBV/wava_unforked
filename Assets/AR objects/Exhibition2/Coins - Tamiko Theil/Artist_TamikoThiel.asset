@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7484c5630b23204da87e6d1bf9652d6, type: 3}
+  m_Name: Artist_TamikoThiel
+  m_EditorClassIdentifier: 
+  Title: Tamiko Thiel
+  Location: Munich [GER]
+  Link: https://www.tamikothiel.com/
+  ArtistIcon: {fileID: 21300000, guid: ca9ebac2484fe46629cd7470680f5a24, type: 3}
+  Description: "Tamiko Thiel is a visual artist who explores the interplay of place,
+    space, the body, and cultural identity through a variety of media, including
+    2D and 3D digital prints, videos, installations, augmented reality, and artificial
+    intelligence art. Thiel received a B.S. in Product Design Engineering from Stanford
+    University and an M.S. in Mechanical Engineering from the Massachusetts Institute
+    of Technology, where she worked as a lead product designer on Danny Hillis\u2019
+    AI supercomputers, the Connection Machines CM-1 and CM-2. Her work has been exhibited
+    in museums and galleries worldwide, including the Museum of Modern Art in New
+    York and the San Jose Museum of Art. She was awarded the 2018 iX Immersive Experiences
+    Visionary Pioneer Award for her life work by the Society for Art and Technology
+    Montreal. In 2007, she received a major grant from the Hauptstadtkulturfonds
+    to create an interactive 3D installation on the Berlin Wall. In 2012, she was
+    commissioned by the Foundation for Art and Creative Technology (FACT) in Liverpool
+    to develop an augmented reality system using bio-sensing, together with her collective
+    MAnifest.AR. In 2018 Thiel was commissioned by the Whitney Museum of American
+    Art to create the AR installation \"Unexpected Growth\", and she supported numerous
+    AR projects, including the \"Mi Querido Barrio\" tour in 2012 and the Hidden
+    Histories San Jose Japantown AR project in 2019."
+  Liked: 0

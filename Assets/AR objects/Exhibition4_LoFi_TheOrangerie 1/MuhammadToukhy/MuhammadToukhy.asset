@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Muhammad Toukhy
   Location: 
-  Link: 
-  ArtistIcon: {fileID: 0}
+  Link: https://muhammadtoukhy.com/
+  ArtistIcon: {fileID: 21300000, guid: 9872c888d043f4394a564653c68e9916, type: 3}
   Description: 'Muhammad Toukhy (b. Jaffa, 1999), is a multidisciplinary artist.
     He completed his BA in art in 2021 from the University of Haifa. Since then,
     he has participated in multiple group exhibitions and held two solo exhibitions:

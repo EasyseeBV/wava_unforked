@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: "Untitled (N\xFC Sensitivity)"
   Artist: Shaun Motsi
+  Artists:
+  - {fileID: 11400000, guid: 49dda58b5997f455fbabc74714eb7488, type: 2}
   Year: 2021
   Location: Frankfurt am Main
   ShareLink: www.google.nl
+  QR: 
   Description: "Due to its unique microclimate conditions, the Nizza Garden is one
     of the only places north of the Alps where palm, banana, various sorts of citrus,
     and other dislocated vegetation grow all year round. Continuing this tradition
@@ -45,6 +48,7 @@ MonoBehaviour:
   PlaceTextRight: 1
   Latitude: 50.10720452602894
   Longitude: 8.675352566936684
+  MaxDistance: 0
   marker:
     label: 
     range:
@@ -64,4 +68,12 @@ MonoBehaviour:
     prefab: {fileID: 0}
     sizeType: 0
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
+  Liked: 0

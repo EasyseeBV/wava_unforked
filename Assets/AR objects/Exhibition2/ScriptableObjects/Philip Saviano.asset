@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Monument of Phillip Saviano
   Artist: "Ahmet \xD6\u011F\xFCt"
+  Artists:
+  - {fileID: 11400000, guid: d4a365eb3aa984c769f8031c3f8dd430, type: 2}
   Year: 2022
   Location: Frankfurt
   ShareLink: 
+  QR: 
   Description: "Phillip Saviano's brave decision to approach The Boston Globe with
     his story of being abused by a Catholic priest was a pivotal moment in the fight
     against the systemic abuse of children by priests. Suffering from the AIDS virus
@@ -57,6 +60,7 @@ MonoBehaviour:
   PlaceTextRight: 0
   Latitude: 50.11079815131707
   Longitude: 8.684841456457077
+  MaxDistance: 0
   marker:
     label: 
     range:
@@ -77,4 +81,12 @@ MonoBehaviour:
       type: 3}
     sizeType: 1
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
+  Liked: 0

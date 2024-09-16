@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Frankfurt Notes
   Artist: Hinda Weiss
-  Artists: []
+  Artists:
+  - {fileID: 11400000, guid: 7d4a6438453214df3980f05ac6ad3938, type: 2}
   Year: 2019
   Location: 
   ShareLink: 
@@ -25,9 +26,11 @@ MonoBehaviour:
     the present to the past. Creating a space both real and imaginary, the video
     weaves together pieces of sedimented Jewish history of loss and displacement
     into a seemingly idle scene, not unlike the park itself."
-  ARMapImage: {fileID: 0}
-  ARMapBackgroundImage: {fileID: 0}
-  ArtworkImages: []
+  ARMapImage: {fileID: 21300000, guid: aa0f365f7d7cf4a6b82d489295a8ccb4, type: 3}
+  ARMapBackgroundImage: {fileID: 21300000, guid: aa0f365f7d7cf4a6b82d489295a8ccb4,
+    type: 3}
+  ArtworkImages:
+  - {fileID: 21300000, guid: aa0f365f7d7cf4a6b82d489295a8ccb4, type: 3}
   ARObjectReference:
     m_AssetGUID: 9bb80684310f542e9adf531a3d338991
     m_SubObjectName: 
@@ -66,7 +69,6 @@ MonoBehaviour:
       artworkPoints:
       - {fileID: 11400000}
       mean: {x: 50.106, y: 8.679}
-      zoomedIn: 0
     borderTransform: {fileID: 0}
     isGroupMarker: 0
   Hotspot: {fileID: 0}

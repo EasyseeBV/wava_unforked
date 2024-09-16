@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: 'Zoba''ah: The Whirlwind, 2022'
   Artist: Morehshin Allahyari
+  Artists:
+  - {fileID: 11400000, guid: 9ff4649cc46cd4a67871b334894dbe4e, type: 2}
   Year: 2022
   Location: Frankfurt
   ShareLink: 
+  QR: 
   Description: "Morehshin Allahyari\u2019s 3D sculpture Zoba'ah: The Whirlwind, is
     based on drawings of the jinn Zoba'ah dating back to the 14th and 16th centuries.
     In Islamic and pre-Islamic theology, jinn are intelligent spirits are shape-shifters
@@ -52,6 +55,7 @@ MonoBehaviour:
   PlaceTextRight: 0
   Latitude: 50.10809803885154
   Longitude: 8.68213160163177
+  MaxDistance: 0
   marker:
     label: 
     range:
@@ -71,4 +75,12 @@ MonoBehaviour:
     prefab: {fileID: 0}
     sizeType: 0
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
+  Liked: 0

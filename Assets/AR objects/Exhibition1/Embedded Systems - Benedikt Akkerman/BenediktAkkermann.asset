@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7484c5630b23204da87e6d1bf9652d6, type: 3}
+  m_Name: BenediktAkkermann
+  m_EditorClassIdentifier: 
+  Title: Benedikt Akkerman
+  Location: Frankfurt a.M. [GER]
+  Link: 
+  ArtistIcon: {fileID: 21300000, guid: 7d3e8117893d64ae8946ea7616d735aa, type: 3}
+  Description: "Benedikt Ackermann (*1994 in Frankfurt am Main, DE) works mainly
+    with photography, video and digital media. Since 2019 he has been studying at
+    the Hochschule f\xFCr Bildende K\xFCnste \u2013 St\xE4delschule in Frankfurt
+    am Main (DE) with Prof. Gerard Byrne and Prof. Haegue Yang. Previously, he studied
+    philosophy at the Goethe University Frankfurt am Main (DE). Among others, Benedikt
+    Ackermann has exhibited at Museum Angewandte Kunst, Frankfurt am Main (DE) and
+    at Goethe Institut, Dublin (IE)."
+  Liked: 0

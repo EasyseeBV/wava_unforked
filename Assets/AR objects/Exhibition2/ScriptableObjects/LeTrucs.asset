@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Bunte Stoffe - Eine Hymne
   Artist: Le Trucs
+  Artists:
+  - {fileID: 11400000, guid: ceb1352ad076e4a3dba1b88e60924fba, type: 2}
   Year: 2023
   Location: Frankfurt
   ShareLink: 
+  QR: 
   Description: "When inside the Paulskirch, walk alongside the wall and look at the
     different coats of arms with your phone. Each Flag will then start warming up
     and once all are scanned or some got too impatient, the choir will commence.
@@ -59,6 +62,7 @@ MonoBehaviour:
   PlaceTextRight: 0
   Latitude: 50.111310569251735
   Longitude: 8.680719724538259
+  MaxDistance: 0
   marker:
     label: 
     range:
@@ -79,4 +83,12 @@ MonoBehaviour:
       type: 3}
     sizeType: 1
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
+  Liked: 0

@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: SM BNGRZ 01.04
   Artist: Tony Cokes
-  Artists: []
+  Artists:
+  - {fileID: 11400000, guid: 2589b94b94e9d4dfdbb70d875987ac20, type: 2}
   Year: 2021
   Location: Frankfurt
   ShareLink: 
@@ -76,8 +77,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 7d5b0373d19bc404b974c58377597da8, type: 2}
       - {fileID: 11400000, guid: 818f3881c74e5442f9aa36055be3a36f, type: 2}
       mean: {x: 50.11096, y: 8.681193}
-      gameSpaceMean: {x: -1092.2019, y: 0, z: 831.0139}
-      zoomedIn: 0
     borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
   Liked: 0

@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Monument of Kimberly Young-McLear
   Artist: "Ahmet \xD6\u011F\xFCt"
+  Artists:
+  - {fileID: 11400000, guid: d4a365eb3aa984c769f8031c3f8dd430, type: 2}
   Year: 2022
   Location: Frankfurt
   ShareLink: 
+  QR: 
   Description: "Kimberly Young-McLear, a highly decorated senior military officer
     and tech expert, faced workplace bullying, harassment, discrimination, and retaliation
     due to her intelligence, race, gender, and sexuality, during her tenure at the
@@ -58,6 +61,7 @@ MonoBehaviour:
   PlaceTextRight: 0
   Latitude: 50.1263083625048
   Longitude: 8.66719488156151
+  MaxDistance: 0
   marker:
     label: 
     range:
@@ -78,4 +82,12 @@ MonoBehaviour:
       type: 3}
     sizeType: 1
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
+  Liked: 0

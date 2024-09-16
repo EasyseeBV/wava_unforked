@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Whose Bones?
   Artist: Flaka Haliti
+  Artists:
+  - {fileID: 11400000, guid: 2347de12863fb42db9adeca8e351bb45, type: 2}
   Year: series, 2022-ongoing
   Location: Frankfurt
   ShareLink: 
+  QR: 
   Description: "A bird in landing, perching delicately in a balanced momentum. Flaka
     Haliti's creature in perpetual arrival blurs the lines between the powerful and
     the powerless, the oppressor and the oppressed, the real and the imaginary. Its
@@ -43,6 +46,7 @@ MonoBehaviour:
   PlaceTextRight: 0
   Latitude: 50.11100128498572
   Longitude: 8.680588481979441
+  MaxDistance: 0
   marker:
     label: 
     range:
@@ -63,4 +67,12 @@ MonoBehaviour:
       type: 3}
     sizeType: 1
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
+  Liked: 0

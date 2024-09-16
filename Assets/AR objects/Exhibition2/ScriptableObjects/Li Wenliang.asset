@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Monument of Li Wenliang
   Artist: "Ahmet \xD6\u011F\xFCt"
+  Artists:
+  - {fileID: 11400000, guid: d4a365eb3aa984c769f8031c3f8dd430, type: 2}
   Year: 2022
   Location: Frankfurt
   ShareLink: 
+  QR: 
   Description: "In December 2019, Li Wenliang warned fellow doctors on WeChat about
     a SARS-like disease outbreak. His message was leaked on social media, leading
     to accusations of spreading false rumours and interrogations by the Wuhan police.
@@ -56,6 +59,7 @@ MonoBehaviour:
   PlaceTextRight: 0
   Latitude: 50.09831310516518
   Longitude: 8.670417295591264
+  MaxDistance: 0
   marker:
     label: 
     range:
@@ -76,4 +80,12 @@ MonoBehaviour:
       type: 3}
     sizeType: 1
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
+  Liked: 0

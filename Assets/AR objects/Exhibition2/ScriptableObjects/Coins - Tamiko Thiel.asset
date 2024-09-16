@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Revolution and Return
   Artist: Tamiko Thiel and /p
+  Artists:
+  - {fileID: 11400000, guid: ff12d29501f2d48c88abd6cdcf2ab5ab, type: 2}
   Year: 2023
   Location: Frankfurt
   ShareLink: 
+  QR: 
   Description: "Tap the coins!\n\nSilver coins minted by German princes rain down
     from above as symbols of their power. Tapping the coins turn them into the constitutional
     documents of the National Assembly in the Paulskirche. The \u201CRevolutionary
@@ -55,6 +58,7 @@ MonoBehaviour:
   PlaceTextRight: 0
   Latitude: 50.11116657485836
   Longitude: 8.681084989973035
+  MaxDistance: 0
   marker:
     label: 
     range:
@@ -75,4 +79,12 @@ MonoBehaviour:
       type: 3}
     sizeType: 1
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
+  Liked: 0

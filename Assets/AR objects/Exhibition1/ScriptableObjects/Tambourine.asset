@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Tambourine
   Artist: Tanya V. Abelson
+  Artists:
+  - {fileID: 11400000, guid: e959eaa785f554cce9230b3076d956b7, type: 2}
   Year: 2021
   Location: Frankfurt am Main
   ShareLink: www.google.nl
+  QR: 
   Description: "Composed especially for the Nizza Garden path together with musician
     Alexander Iezzi, Tanya V. Abelson orchestrated a sonic arrangement for two of
     Abelson\u2019s sculptures \u2013 Tambourine and Sunburn Drum. The two large-scale
@@ -42,6 +45,7 @@ MonoBehaviour:
   PlaceTextRight: 0
   Latitude: 50.10668
   Longitude: 8.674195
+  MaxDistance: 0
   marker:
     label: 
     range:
@@ -61,4 +65,12 @@ MonoBehaviour:
     prefab: {fileID: 0}
     sizeType: 0
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
+  Liked: 0
