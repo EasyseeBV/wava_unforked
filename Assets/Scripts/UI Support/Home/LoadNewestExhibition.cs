@@ -8,6 +8,8 @@ public class LoadNewestExhibition : MonoBehaviour
 {
     [SerializeField] private ExhibitionCard exhibitionCard;
     [SerializeField] private ArtistContainer artistContainer;
+
+    private static List<ArtistSO> cachedArtists;
     
     void Start()
     {
@@ -17,24 +19,22 @@ public class LoadNewestExhibition : MonoBehaviour
 
         var exhibition = sortedExhibitions.FirstOrDefault();
         exhibitionCard.Init(exhibition);
-        
-        if (exhibition.ArtWorks.Count > 0 && exhibition.ArtWorks[0].Artists.Count > 0)
-        {
-            artistContainer.Assign(exhibition.ArtWorks[0].Artists[0]);
-        }
-        else
-        {
-            foreach (var exhib in sortedExhibitions)
-            {
-                if (exhib.ArtWorks.Count <= 0 || exhib.ArtWorks[0].Artists.Count <= 0) continue;
-                
-                artistContainer.Assign(exhib.ArtWorks[0].Artists[0]);
-                return;
-            }
 
-            Debug.LogWarning("No Artists found..");
-            
-            artistContainer.gameObject.SetActive(false);
+        if (cachedArtists == null || cachedArtists.Count <= 0)
+        {
+            cachedArtists = new List<ArtistSO>();
+            foreach (var exhibitionSO in sortedExhibitions)
+            {
+                foreach (var artWork in exhibitionSO.ArtWorks)
+                {
+                    cachedArtists.AddRange(artWork.Artists);
+                }
+            }
+        }
+
+        if (cachedArtists.Count > 0)
+        {
+            artistContainer.Assign(cachedArtists[Random.Range(0, cachedArtists.Count)]);
         }
     }
 }
