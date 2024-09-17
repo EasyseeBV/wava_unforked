@@ -48,7 +48,6 @@ public class PhotosPage : MonoBehaviour
         {
             Debug.LogError("Directory does not exist: " + path);
             
-            if (countLabel) countLabel.text = "image count: failed";
             if (infoLabel) infoLabel.text = "No Images";
             refreshButton?.gameObject.SetActive(true);
             
@@ -56,7 +55,6 @@ public class PhotosPage : MonoBehaviour
         }
         else
         {
-            if (countLabel) countLabel.text = "Loading...";
             if (infoLabel) infoLabel.text = "Loading...";
             refreshButton?.gameObject.SetActive(false);
         }
@@ -78,6 +76,8 @@ public class PhotosPage : MonoBehaviour
         {
             infoLabel.text = "";
         }
+        
+        if (countLabel) countLabel.text = "";
 
         int count = 0;
 
@@ -89,8 +89,7 @@ public class PhotosPage : MonoBehaviour
             LayoutRebuilder.ForceRebuildLayoutImmediate(photosLayoutArea as RectTransform); // Force immediate rebuild
         }
 
-        if(count <= 0) refreshButton.gameObject.SetActive(true);
-        //if (countLabel) countLabel.text = "image count: " + count;
+        if(count <= 0) refreshButton?.gameObject.SetActive(true);
         StartCoroutine(LateRebuild());
     }
 
