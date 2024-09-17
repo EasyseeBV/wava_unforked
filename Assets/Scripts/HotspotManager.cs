@@ -95,32 +95,6 @@ public class HotspotManager : MonoBehaviour
         }
 
     }
-    
-    bool isShowingText;
-    public void EnableInfo(bool ShouldEnable) {
-        isShowingText = ShouldEnable;
-        
-        /*
-         // Legacy code to show info about each hotspot
-        if (arPoint.PlaceTextRight) {
-            LeftDistance.enabled = false;
-            LeftTitle.enabled = false;
-            RightTitle.enabled = ShouldEnable;
-            RightDistance.enabled = ShouldEnable;
-        } else {
-            LeftDistance.enabled = ShouldEnable;
-            LeftTitle.enabled = ShouldEnable;
-            RightTitle.enabled = false;
-            RightDistance.enabled = false;
-        }
-        */
-        
-        if (markerGroup != null)
-        {
-            //markerGroup.ZoomedIn = ShouldEnable;
-            //markerGroup.ShowArtworkPoints(ShouldEnable, true);
-        }
-    }
 
     public void SetReach(bool InReach)
     {
@@ -197,11 +171,6 @@ public class HotspotManager : MonoBehaviour
             SetStage(true);
         else if (!zoomed && ZoomedOut) 
             SetStage(false);
-        
-        if (zoomLevel >= DetailedZoom) 
-            EnableInfo(true);
-        else 
-            EnableInfo(CanShow);
     }
 
     /// <summary>
@@ -228,8 +197,8 @@ public class HotspotManager : MonoBehaviour
         }
     }
 
-    public void Unfocus() {
-        EnableInfo(false);
+    public void Unfocus() 
+    {
         ShowSelectionBorder(false);
     }
 
@@ -244,13 +213,40 @@ public class HotspotManager : MonoBehaviour
         else if (CanShow) StartAR(arPoint);
         else 
         {
-            if (isShowingText)
+            if (selected)
             {
-                Navigation.SetCustomNavigation(new Vector2((float)arPoint.Longitude, (float)arPoint.Latitude), arPoint.Title, this);
+                GetDirections();
+                //Navigation.SetCustomNavigation(new Vector2((float)arPoint.Longitude, (float)arPoint.Latitude), arPoint.Title, this);
+            }
+            else
+            {
                 ShowSelectionBorder(true);
             }
-            else EnableInfo(true);
         }
+    }
+
+    public void GetDirections()
+    {
+        string location = arPoint.Latitude + "," + arPoint.Longitude;
+        
+#if UNITY_ANDROID
+        string url = "https://www.google.com/maps/dir/?api=1&destination=" + location;
+        Application.OpenURL(url);
+#elif UNITY_IOS
+        // Check if Google Maps is installed on iOS
+        if (Application.CanOpenURL("comgooglemaps://"))
+        {
+            // Google Maps URL scheme for iOS
+            string url = "comgooglemaps://?daddr=" + location + "&directionsmode=driving";
+            Application.OpenURL(url);
+        }
+        else
+        {
+            // Apple Maps URL scheme for iOS
+            string url = "http://maps.apple.com/?daddr=" + location;
+            Application.OpenURL(url);
+        }
+#endif
     }
 
     public IEnumerator UnTouch() {
@@ -258,10 +254,10 @@ public class HotspotManager : MonoBehaviour
         Touched = false;
     }
 
-    private void ShowSelectionBorder(bool state)
+    public void ShowSelectionBorder(bool state)
     {
         selected = state;
-        markerGroup.SelectedGroup = state;
+        //markerGroup.SelectedGroup = state;
         BorderRingMesh.enabled = state;
         BorderRingMesh.material = SelectedHotspotMat;
 

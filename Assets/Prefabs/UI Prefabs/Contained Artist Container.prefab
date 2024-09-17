@@ -402,6 +402,7 @@ MonoBehaviour:
   artistNameLabel: {fileID: 4728772601768585135}
   artworkCountLabel: {fileID: 8753609467916766734}
   artistPageButton: {fileID: 8757519484163748247}
+  artist: {fileID: 0}
 --- !u!1 &2795359831944847201
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,7 +20,7 @@ public class PhotosPage : MonoBehaviour
 
     private void Awake()
     {
-        refreshButton.onClick.AddListener(Open);
+        refreshButton?.onClick.AddListener(Open);
     }
 
     public void Open()
@@ -50,7 +50,7 @@ public class PhotosPage : MonoBehaviour
             
             if (countLabel) countLabel.text = "image count: failed";
             if (infoLabel) infoLabel.text = "No Images";
-            refreshButton.gameObject.SetActive(true);
+            refreshButton?.gameObject.SetActive(true);
             
             yield break;
         }
@@ -58,7 +58,12 @@ public class PhotosPage : MonoBehaviour
         {
             if (countLabel) countLabel.text = "Loading...";
             if (infoLabel) infoLabel.text = "Loading...";
-            refreshButton.gameObject.SetActive(false);
+            refreshButton?.gameObject.SetActive(false);
+        }
+
+        if (infoLabel != null)
+        {
+            infoLabel.text = "";
         }
         
         string[] files = Directory.GetFiles(path, "*.png"); // Assuming PNG images, you can add other formats if needed.
@@ -85,7 +90,7 @@ public class PhotosPage : MonoBehaviour
         }
 
         if(count <= 0) refreshButton.gameObject.SetActive(true);
-        if (countLabel) countLabel.text = "image count: " + count;
+        //if (countLabel) countLabel.text = "image count: " + count;
         StartCoroutine(LateRebuild());
     }
 

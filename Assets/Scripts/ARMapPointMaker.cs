@@ -68,8 +68,8 @@ public class ARMapPointMaker : MonoBehaviour {
 
     bool StartedTouch;
     RaycastHit hit;
-    private void Update() {
-
+    private void Update() 
+    {
         if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began) {
             if (IsTouchOverThisObject(Input.GetTouch(0))) {
                 StartedTouch = true;
@@ -82,6 +82,7 @@ public class ARMapPointMaker : MonoBehaviour {
         } else if (Input.touchCount > 1 || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)) {
             StartedTouch = false;
         }
+
 
         if (Input.GetMouseButtonDown(0)) {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);

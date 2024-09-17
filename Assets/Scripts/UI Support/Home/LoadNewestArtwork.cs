@@ -6,25 +6,44 @@ using UnityEngine;
 
 public class LoadNewestArtwork : MonoBehaviour
 {
-    [SerializeField] private GalleryCard[] galleryCards;
+    [Header("References")]
+    [SerializeField] private GalleryCard galleryCard;
+    [SerializeField] private int showCount = 4;
+    [SerializeField] private Transform parent;
+
+    [Header("Custom loading")]
+    [SerializeField] private bool loadCustomArtwork = false;
+    [SerializeField] private ARPointSO[] customArtworkOrder;
     
     void Start()
     {
-        var listArtworks = new List<ARPointSO>();
+        var orderedList = new List<ARPointSO>(0);
 
-        foreach (ARPointSO point in ARInfoManager.ExhibitionsSO.SelectMany(s => s.ArtWorks)
-                     .Where(t => t.ArtworkImages.Count != 0))
+        if (!loadCustomArtwork)
         {
-            listArtworks.Add(point);    
-        }
-        
-        var orderedList = listArtworks.OrderByDescending(point => point.Year).ToList();
-        
-        for (int i = 0; i < galleryCards.Length; i++)
-        {
-            if (i >= orderedList.Count) galleryCards[i].LoadARPoint(orderedList[^1]);
+            var listArtworks = new List<ARPointSO>();
             
-            galleryCards[i].LoadARPoint(orderedList[i]);
+            foreach (ARPointSO point in ARInfoManager.ExhibitionsSO.SelectMany(s => s.ArtWorks)
+                         .Where(t => t.ArtworkImages.Count != 0))
+            {
+                listArtworks.Add(point);
+            }
+            
+            orderedList = listArtworks.OrderByDescending(point => point.Year).ToList();
+        }
+        else
+        {
+            orderedList = new List<ARPointSO>(customArtworkOrder);
+        }
+
+        
+        for (int i = 0; i < showCount; i++)
+        {
+            if (i >= orderedList.Count) return;
+
+            var card = Instantiate(galleryCard, parent);
+            card.gameObject.SetActive(true);
+            card.LoadARPoint(orderedList[i]);
         }
     }
 }

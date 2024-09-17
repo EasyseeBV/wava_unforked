@@ -50,6 +50,9 @@ public class FavoritesPage : MonoBehaviour
 
                 foreach (var artist in artwork.Artists)
                 {
+                    cachedArtistList ??= new();
+                    if (artist == null) continue;
+                    
                     if (artist.Liked && !cachedArtistList.Contains(artist))
                     {
                         cachedArtistList.Add(artist);

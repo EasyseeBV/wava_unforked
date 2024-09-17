@@ -63,6 +63,7 @@ public class SelectionMenu : MonoBehaviour
 
     public void Open(HotspotManager hotspot, bool inRange)
     {
+        if(cachedHotspot) cachedHotspot.ShowSelectionBorder(false);
         cachedHotspot = hotspot;
         
         container[0].SetActive(!inRange);
@@ -79,7 +80,7 @@ public class SelectionMenu : MonoBehaviour
         
         selectionButton[0].onClick.RemoveAllListeners();
         selectionButton[1].onClick.RemoveAllListeners();
-        selectionButton[inRange ? 1 : 0].onClick.AddListener(inRange ? OpenArtwork : hotspot.OnTouch);
+        selectionButton[inRange ? 1 : 0].onClick.AddListener(inRange && hotspot.CanShow ? OpenArtwork : hotspot.GetDirections);
         
         foreach (var g in inRange ? layoutGroupsInRange : layoutGroups)
         {
@@ -89,10 +90,11 @@ public class SelectionMenu : MonoBehaviour
 
     private void OpenArtwork()
     {
-        if (!cachedHotspot) return;
+        if (!cachedHotspot || !cachedHotspot.CanShow) return;
         
-        ArtworkUIManager.SelectedArtwork = cachedHotspot.GetHotspotARPointSO();
-        SceneManager.LoadScene("Exhibition&Art");
+        cachedHotspot.StartAR(cachedHotspot.GetHotspotARPointSO());
+        //ArtworkUIManager.SelectedArtwork = cachedHotspot.GetHotspotARPointSO();
+        //SceneManager.LoadScene("Exhibition&Art");
     }
 
     public void UpdateDistance(float d)

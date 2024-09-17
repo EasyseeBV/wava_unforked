@@ -18,18 +18,26 @@ public class ArtistContainer : MonoBehaviour
     
     public void Assign(ArtistSO artist)
     {
+        if (artist == null)
+        {
+            Debug.LogWarning("Empty Artist Provided");
+            gameObject.SetActive(false);
+            return;
+        }
+        
         this.artist = artist;
 
         if(artist.ArtistIcon != null) 
             profilePicture.sprite = artist.ArtistIcon;
         artistNameLabel.text = artist.Title;
-        artworkCountLabel.text = GetArtistWorkCount();
+        int works = GetArtistWorkCount();
+        artworkCountLabel.text = works == 1 ? "1 Artwork" : $"{GetArtistWorkCount()} Artworks";
         artistPageButton.onClick.AddListener(OpenArtistPage);
     }
 
-    private string GetArtistWorkCount()
+    private int GetArtistWorkCount()
     {
-        if (ARInfoManager.ExhibitionsSO == null) return string.Empty;
+        if (ARInfoManager.ExhibitionsSO == null) return 0;
 
         int count = 0;
         foreach (var exh in ARInfoManager.ExhibitionsSO)
@@ -43,7 +51,7 @@ public class ArtistContainer : MonoBehaviour
             }
         }
 
-        return count.ToString();
+        return count;
     }
 
     private void OpenArtistPage()
