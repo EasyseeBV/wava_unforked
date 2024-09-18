@@ -215,7 +215,7 @@ public class HotspotManager : MonoBehaviour
         {
             if (selected)
             {
-                GetDirections();
+                //GetDirections();
                 //Navigation.SetCustomNavigation(new Vector2((float)arPoint.Longitude, (float)arPoint.Latitude), arPoint.Title, this);
             }
             else

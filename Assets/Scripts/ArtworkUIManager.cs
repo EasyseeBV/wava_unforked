@@ -86,13 +86,13 @@ public class ArtworkUIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (HasSelectionMenu) {
+        /*if (HasSelectionMenu) {
             if (SelectedArtworks) {
                 InitArtworks();
             } else {
                 InitExhibitions();
             }
-        }
+        }*/
 
         if (SelectedExhibition)
         {
