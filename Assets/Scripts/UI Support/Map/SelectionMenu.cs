@@ -38,7 +38,7 @@ public class SelectionMenu : MonoBehaviour
         container[1].SetActive(false);
         
         exitButtons[0].onClick.AddListener(OpenArtwork);
-        exitButtons[1].onClick.AddListener(OpenArtwork);
+        exitButtons[1].onClick.AddListener(StartAR);
     }
 
     private void OnEnable()
@@ -90,11 +90,17 @@ public class SelectionMenu : MonoBehaviour
 
     private void OpenArtwork()
     {
-        if (!cachedHotspot || !cachedHotspot.CanShow) return;
+        if (!cachedHotspot) return;
+        
+        ArtworkUIManager.SelectedArtwork = cachedHotspot.GetHotspotARPointSO();
+        SceneManager.LoadScene("Exhibition&Art");
+    }
+
+    private void StartAR()
+    {
+        if (!cachedHotspot) return;
         
         cachedHotspot.StartAR(cachedHotspot.GetHotspotARPointSO());
-        //ArtworkUIManager.SelectedArtwork = cachedHotspot.GetHotspotARPointSO();
-        //SceneManager.LoadScene("Exhibition&Art");
     }
 
     public void UpdateDistance(float d)
