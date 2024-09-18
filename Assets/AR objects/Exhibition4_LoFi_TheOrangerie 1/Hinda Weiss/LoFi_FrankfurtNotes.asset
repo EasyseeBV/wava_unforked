@@ -40,8 +40,8 @@ MonoBehaviour:
   PlayARObjectDirectly: 0
   IsAudio: 0
   PlaceTextRight: 0
-  Latitude: 50.0962041
-  Longitude: 8.7537133
+  Latitude: 50.1280024
+  Longitude: 8.6612304
   MaxDistance: 0
   marker:
     label: 
