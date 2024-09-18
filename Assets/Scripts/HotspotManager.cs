@@ -233,19 +233,9 @@ public class HotspotManager : MonoBehaviour
         string url = "https://www.google.com/maps/dir/?api=1&destination=" + location;
         Application.OpenURL(url);
 #elif UNITY_IOS
-        // Check if Google Maps is installed on iOS
-        if (Application.CanOpenURL("comgooglemaps://"))
-        {
-            // Google Maps URL scheme for iOS
-            string url = "comgooglemaps://?daddr=" + location + "&directionsmode=driving";
-            Application.OpenURL(url);
-        }
-        else
-        {
             // Apple Maps URL scheme for iOS
             string url = "http://maps.apple.com/?daddr=" + location;
             Application.OpenURL(url);
-        }
 #endif
     }
 
