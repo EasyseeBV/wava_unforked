@@ -27,6 +27,9 @@ public class SelectionMenu : MonoBehaviour
     [SerializeField] private MapFilterToggle mapFilterToggle;
     [SerializeField] private MoveMapToArtwork mapMover;
 
+    [Header("Navigation Tools")]
+    [SerializeField] private GameObject navigationObject;
+
     public static ARPointSO SelectedARPoint = null;
     private HotspotManager cachedHotspot;
     
@@ -86,6 +89,8 @@ public class SelectionMenu : MonoBehaviour
         {
             LayoutRebuilder.ForceRebuildLayoutImmediate(g);
         }
+        
+        navigationObject.SetActive(false);
     }
 
     private void OpenArtwork()
@@ -113,6 +118,7 @@ public class SelectionMenu : MonoBehaviour
     {
         container[0].SetActive(false);
         container[1].SetActive(false);
+        navigationObject.SetActive(true);
     }
     
     private void HardClose()
