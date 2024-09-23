@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: Paper and Stele
   Artist: Florian Adolph
+  Artists:
+  - {fileID: 11400000, guid: 48d15ada091b4414eb3ddc6b31014e45, type: 2}
   Year: 2019
   Location: Frankfurt am Main
   ShareLink: www.google.nl
+  QR: 
   Description: "Inverted surface flipped inside out. A crumpled piece of paper holding
     a text by Czech philosopher Vil\xE9m Flusser \u2013 \u201CFarewell to reality\u201D.
     The two sculptures of Florian Adolph are made of specific and contrasting materiality:
@@ -42,6 +45,7 @@ MonoBehaviour:
   PlaceTextRight: 1
   Latitude: 50.1122585
   Longitude: 8.6703429
+  MaxDistance: 0
   marker:
     label: 
     range:
@@ -61,4 +65,12 @@ MonoBehaviour:
     prefab: {fileID: 0}
     sizeType: 0
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
+  Liked: 0

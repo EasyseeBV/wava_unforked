@@ -964,6 +964,7 @@ MonoBehaviour:
   BackgroundAR: {fileID: 2511041577648405508}
   ARObjectImage: {fileID: 6528551257739899973}
   Logo: {fileID: 3186672993858327040}
+  Parent: {fileID: 8527264247660061773}
   BorderRingMesh: {fileID: 8865850850805524483}
   SelectedHotspotMat: {fileID: 2100000, guid: ab7f5eb70d4f71148b7284928dc48df8, type: 2}
   SelectedHotspotInRangeMat: {fileID: 2100000, guid: 312b8ad9821a7bb46980c55928cd866a,

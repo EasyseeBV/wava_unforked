@@ -6,7 +6,6 @@ public class PlayerFinder : MonoBehaviour
 {
     [SerializeField] private OnlineMaps maps;
     [SerializeField] private Button findButton;
-    [SerializeField] private GroupMarkers groupMarkers;
 
     private void Awake()
     {

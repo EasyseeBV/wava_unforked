@@ -8,6 +8,8 @@ public class LoadNewestExhibition : MonoBehaviour
 {
     [SerializeField] private ExhibitionCard exhibitionCard;
     [SerializeField] private ArtistContainer artistContainer;
+
+    private static List<ArtistSO> cachedArtists;
     
     void Start()
     {
@@ -18,13 +20,21 @@ public class LoadNewestExhibition : MonoBehaviour
         var exhibition = sortedExhibitions.FirstOrDefault();
         exhibitionCard.Init(exhibition);
 
-        if (exhibition.ArtWorks[0].Artists.Count > 0)
+        if (cachedArtists == null || cachedArtists.Count <= 0)
         {
-            artistContainer.Assign(exhibition.ArtWorks[0].Artists[0]);
+            cachedArtists = new List<ArtistSO>();
+            foreach (var exhibitionSO in sortedExhibitions)
+            {
+                foreach (var artWork in exhibitionSO.ArtWorks)
+                {
+                    cachedArtists.AddRange(artWork.Artists);
+                }
+            }
         }
-        else
+
+        if (cachedArtists.Count > 0)
         {
-            artistContainer.gameObject.SetActive(false);
+            artistContainer.Assign(cachedArtists[Random.Range(0, cachedArtists.Count)]);
         }
     }
 }

@@ -27,6 +27,9 @@ public class SelectionMenu : MonoBehaviour
     [SerializeField] private MapFilterToggle mapFilterToggle;
     [SerializeField] private MoveMapToArtwork mapMover;
 
+    [Header("Navigation Tools")]
+    [SerializeField] private GameObject navigationObject;
+
     public static ARPointSO SelectedARPoint = null;
     private HotspotManager cachedHotspot;
     
@@ -38,17 +41,19 @@ public class SelectionMenu : MonoBehaviour
         container[1].SetActive(false);
         
         exitButtons[0].onClick.AddListener(OpenArtwork);
-        exitButtons[1].onClick.AddListener(OpenArtwork);
+        exitButtons[1].onClick.AddListener(StartAR);
     }
 
-    private void OnEnable() => OnlineMapsControlBase.instance.OnMapClick += OnMapClicked;
+    private void OnEnable()
+    {
+        if(OnlineMapsControlBase.instance) OnlineMapsControlBase.instance.OnMapClick += OnMapClicked;
+    }
 
     private void OnDisable()
     {
-        if(OnlineMapsControlBase.instance != null) OnlineMapsControlBase.instance.OnMapClick -= OnMapClicked;
-    } 
+        if(OnlineMapsControlBase.instance) OnlineMapsControlBase.instance.OnMapClick -= OnMapClicked;
+    }
     
-
     public void LoadARPointSO()
     {
         if (SelectedARPoint)
@@ -61,6 +66,7 @@ public class SelectionMenu : MonoBehaviour
 
     public void Open(HotspotManager hotspot, bool inRange)
     {
+        if(cachedHotspot) cachedHotspot.ShowSelectionBorder(false);
         cachedHotspot = hotspot;
         
         container[0].SetActive(!inRange);
@@ -77,12 +83,14 @@ public class SelectionMenu : MonoBehaviour
         
         selectionButton[0].onClick.RemoveAllListeners();
         selectionButton[1].onClick.RemoveAllListeners();
-        selectionButton[inRange ? 1 : 0].onClick.AddListener(inRange ? OpenArtwork : hotspot.OnTouch);
+        selectionButton[inRange ? 1 : 0].onClick.AddListener(inRange && hotspot.CanShow ? OpenArtwork : hotspot.GetDirections);
         
         foreach (var g in inRange ? layoutGroupsInRange : layoutGroups)
         {
             LayoutRebuilder.ForceRebuildLayoutImmediate(g);
         }
+        
+        navigationObject.SetActive(false);
     }
 
     private void OpenArtwork()
@@ -91,6 +99,13 @@ public class SelectionMenu : MonoBehaviour
         
         ArtworkUIManager.SelectedArtwork = cachedHotspot.GetHotspotARPointSO();
         SceneManager.LoadScene("Exhibition&Art");
+    }
+
+    private void StartAR()
+    {
+        if (!cachedHotspot) return;
+        
+        cachedHotspot.StartAR(cachedHotspot.GetHotspotARPointSO());
     }
 
     public void UpdateDistance(float d)
@@ -103,7 +118,18 @@ public class SelectionMenu : MonoBehaviour
     {
         container[0].SetActive(false);
         container[1].SetActive(false);
+        navigationObject.SetActive(true);
     }
     
-    private void OnMapClicked() => Close();  
+    private void HardClose()
+    {
+        if (cachedHotspot == null) return;
+        if (cachedHotspot.inPlayerRange) return;
+        cachedHotspot.BorderRingMesh.enabled = false;
+        cachedHotspot.selected = false;
+        Close();
+        cachedHotspot = null;
+    }
+    
+    private void OnMapClicked() => HardClose();  
 }

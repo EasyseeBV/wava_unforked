@@ -14,9 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Title: How to unfocus completely
   Artist: Kristin Reiman
+  Artists:
+  - {fileID: 11400000, guid: 6f171e8c45545413b95638a2fcac8fb9, type: 2}
   Year: 2022
   Location: Frankfurt am Main
   ShareLink: www.google.nl
+  QR: 
   Description: "Over and over again, in different harmonies and arrangements, Kristin
     Reiman\u2019s choir\r\npiece spreads and expands in space and time, erupting
     in the middle and dissolving\r\nslowly towards the edges. Like formalistic mantras,
@@ -44,6 +47,7 @@ MonoBehaviour:
   PlaceTextRight: 0
   Latitude: 50.11351747990217
   Longitude: 8.670569218400901
+  MaxDistance: 0
   marker:
     label: 
     range:
@@ -63,4 +67,12 @@ MonoBehaviour:
     prefab: {fileID: 0}
     sizeType: 0
     _rotationY: 0
+    updateMarker: 0
+    markerGroup:
+      groupMarkerObject: {fileID: 0}
+      artworkPoints: []
+      mean: {x: 0, y: 0}
+    borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
+  Liked: 0

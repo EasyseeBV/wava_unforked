@@ -20,7 +20,7 @@ public class PhotosPage : MonoBehaviour
 
     private void Awake()
     {
-        refreshButton.onClick.AddListener(Open);
+        refreshButton?.onClick.AddListener(Open);
     }
 
     public void Open()
@@ -37,7 +37,7 @@ public class PhotosPage : MonoBehaviour
     {
         foreach (Transform t in photosLayoutArea)
         {
-            Destroy(t.gameObject);
+            if(t.GetComponent<UserPhoto>()) t.gameObject.SetActive(false);
         }
     }
 
@@ -48,17 +48,20 @@ public class PhotosPage : MonoBehaviour
         {
             Debug.LogError("Directory does not exist: " + path);
             
-            if (countLabel) countLabel.text = "image count: failed";
             if (infoLabel) infoLabel.text = "No Images";
-            refreshButton.gameObject.SetActive(true);
+            refreshButton?.gameObject.SetActive(true);
             
             yield break;
         }
         else
         {
-            if (countLabel) countLabel.text = "Loading...";
             if (infoLabel) infoLabel.text = "Loading...";
-            refreshButton.gameObject.SetActive(false);
+            refreshButton?.gameObject.SetActive(false);
+        }
+
+        if (infoLabel != null)
+        {
+            infoLabel.text = "";
         }
         
         string[] files = Directory.GetFiles(path, "*.png"); // Assuming PNG images, you can add other formats if needed.
@@ -73,6 +76,8 @@ public class PhotosPage : MonoBehaviour
         {
             infoLabel.text = "";
         }
+        
+        if (countLabel) countLabel.text = "";
 
         int count = 0;
 
@@ -84,8 +89,7 @@ public class PhotosPage : MonoBehaviour
             LayoutRebuilder.ForceRebuildLayoutImmediate(photosLayoutArea as RectTransform); // Force immediate rebuild
         }
 
-        if(count <= 0) refreshButton.gameObject.SetActive(true);
-        if (countLabel) countLabel.text = "image count: " + count;
+        if(count <= 0) refreshButton?.gameObject.SetActive(true);
         StartCoroutine(LateRebuild());
     }
 

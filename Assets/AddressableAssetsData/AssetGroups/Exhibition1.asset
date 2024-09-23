@@ -107,6 +107,26 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f92f247e147d449118c798fb479f4c94
+    m_Address: Assets/AR objects/Exhibition4_LoFi_TheOrangerie 1/MuhammadToukhy/Epiphany/EpiphanyLoFi.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6ed3450a2e3d04cbb93658f7a852483d
+    m_Address: Assets/AR objects/Exhibition4_LoFi_TheOrangerie 1/RaafatHaatab/Hattab_Untitled_2009/LoFi_Haatab_Untitled.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6b2b1d0646ea44c87a1a6206190dba7d
+    m_Address: Assets/AR objects/Exhibition4_LoFi_TheOrangerie 1/Yael Bartana/TremblingTime/LoFi_TremblingTime.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9bb80684310f542e9adf531a3d338991
+    m_Address: Assets/AR objects/Exhibition4_LoFi_TheOrangerie 1/Hinda Weiss/FrankfurtNotesVideo/LoFiFrankfurtNotes.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5f577229926f49f45ada8fda575b4c51, type: 2}
   m_SchemaSet:

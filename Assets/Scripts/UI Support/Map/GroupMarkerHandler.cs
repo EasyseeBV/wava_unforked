@@ -5,10 +5,6 @@ using System.Linq;
 using Messy.Definitions;
 using UnityEngine;
 
-
-/// <summary>
-/// Will be converting the marker group system to this tomorrow
-/// </summary>
 public class GroupMarkerHandler : MonoBehaviour
 {
     private enum Zoom
@@ -24,6 +20,7 @@ public class GroupMarkerHandler : MonoBehaviour
     [SerializeField] private Vector2 closeDistanceGroup;
     [SerializeField] private Vector2 mediumDistanceGroup;
     [SerializeField] private Vector2 farDistanceGroup;
+    [SerializeField] private int zoomedIn;
     
     [Header("Dependencies")]
     [SerializeField] private OnlineMaps map;
@@ -60,7 +57,7 @@ public class GroupMarkerHandler : MonoBehaviour
     private void OnDisable()
     {
         ARMapPointMaker.OnHotspotsSpawned -= Group;
-        if(OnlineMaps.instance != null) OnlineMaps.instance.OnChangeZoom -= OnChangeZoom;
+        if(OnlineMaps.instance) OnlineMaps.instance.OnChangeZoom -= OnChangeZoom;
     }
     
     private void Group()
@@ -104,7 +101,8 @@ public class GroupMarkerHandler : MonoBehaviour
             {
                 arPoint.Hotspot.Logo.enabled = false;
                 arPoint.Hotspot.Shadow.SetActive(false);
-                arPoint.Hotspot.BorderRingMesh.enabled = false;
+                arPoint.Hotspot.Parent.SetActive(false);
+                //arPoint.Hotspot.BorderRingMesh.enabled = false;
             }
         }
     }
@@ -151,20 +149,25 @@ public class GroupMarkerHandler : MonoBehaviour
             group.groupMarkerObject.marker.scale = 1150f * ((Screen.width + Screen.height) / 2f) / Mathf.Pow(2, (map.zoom + map.zoomScale) * 0.85f);
         }
         
-        if (markerGroups.Count > 0 && markerGroups[0].artworkPoints.Count > 0)
+        if (markerGroups.Count > 0)
         {
-            int zoomLevel = (int)markerGroups[0].artworkPoints[0].Hotspot.ZoomLevel;
+            int zoomLevel = (int)HotspotManager.Zoom;
             ZoomGrouping(zoomLevel);
         }
     }
-    
 
     private void ZoomGrouping(int _zoom)
     {
+        // Control if a group marker should be shown or not based on zoomed in value
+        foreach (var group in markerGroups)
+        {
+            group.ZoomedIn = _zoom >= zoomedIn;
+        }
+        
         if (_zoom >= closeDistanceGroup.x)
         {
             if (zoom == Zoom.Close) return;
-                    
+
             zoom = Zoom.Close;
         }
         else if (_zoom >= mediumDistanceGroup.x)

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7484c5630b23204da87e6d1bf9652d6, type: 3}
+  m_Name: Artist_FlakaHaliti
+  m_EditorClassIdentifier: 
+  Title: Flaka Haliti
+  Location: Munich [GER]
+  Link: https://www.instagram.com/flakahaliti_/
+  ArtistIcon: {fileID: 21300000, guid: 5bc70b5bf3420497d98522a29ad2710e, type: 3}
+  Description: "Flaka Haliti (born 1982 in Prishtina, Kosovo, lives in Munich) represented
+    her home country Kosovo at the Venice Biennale in 2015. She was a scholarship
+    holder of the Villa Romana in Florence in 2017 and is the recipient of the Ars
+    Viva Prize. She completed her studies at the College of Fine Arts, St\xE4delschule
+    in Frankfurt am Main and presented her artistic work in individual exhibitions
+    at the mumok - Museum Moderne Kunst in Vienna, S.A.L.T.S. Kunstverein Birsfelden,
+    Kunsthalle Lingen and the Kunsthaus Hamburg and in group exhibitions at Museum
+    Ludwig Cologne, Kunsthalle Vienna and Lenbachhaus Munich, amongst others. Also
+    in 2018 Haliti participated in Public Art Munich and the Busan Biennale. In 2019
+    she was a participant in the Fellbach Triennial for sculpture, where she received
+    the Ludwig Gies Prize from the Letter Stiftung. She was nominated for the Preis
+    der Nationalgalerie in 2019 and was exhibited at the Hamburger Bahnhof, Berlin.
+    In 2022, she participated at the Manifesta in Prishtina."
+  Liked: 0

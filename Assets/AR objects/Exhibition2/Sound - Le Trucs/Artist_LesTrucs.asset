@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7484c5630b23204da87e6d1bf9652d6, type: 3}
+  m_Name: Artist_LesTrucs
+  m_EditorClassIdentifier: 
+  Title: Les Trucs
+  Location: Frankfurt a.M. [GER]
+  Link: https://www.instagram.com/les_trucs_/?hl=de
+  ArtistIcon: {fileID: 21300000, guid: beef0d3fb4835465dab4be89ba83b703, type: 3}
+  Description: Les Trucs is a collaboration between Charlotte Simon and Toben Piel,
+    who have been working together since 2008. Their works, whether it's sound concepts
+    for urban spaces, compositions for a moving paper choir, or a basement bar, are
+    always related to the surrounding spaces and situations. Les Trucs perform in
+    DIY structures as well as in contexts of performing and visual arts. They have
+    collaborated with choreographers and directors such as Meg Stuart, Philippe Quesne,
+    contact Gonzo, Schorsch Kamerun, and Eisa Jocson, and have played concerts across
+    Europe, Russia, Israel, and Japan. Together with Benjamin Bascom, they run MMODEMM,
+    a cassette label for experimental electronic dance music. In 2020, they founded
+    Wheel of Fortune, another label that releases conceptual music in connection
+    with 3D-printed objects.
+  Liked: 0

@@ -29,8 +29,9 @@ public class ArtworkShower : MonoBehaviour
         DetailButton.onClick.AddListener(OpenDetails);
     }
 
-    public void Init(ARPointSO point) {
-        ARPhoto.sprite = point.ArtworkImages[0];
+    public void Init(ARPointSO point) 
+    {
+        ARPhoto.sprite = point.ArtworkImages.Count > 0 ? point.ArtworkImages[0] : null;
         Title.text = point.Title;
         Artist.text = point.Artist;
         //Location.text = point.Location;

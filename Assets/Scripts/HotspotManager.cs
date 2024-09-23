@@ -20,6 +20,7 @@ public class HotspotManager : MonoBehaviour
     public Image BackgroundAR;
     public Image ARObjectImage;
     public MeshRenderer Logo;
+    public GameObject Parent;
     
     [Header("UI Designs V2")]
     public MeshRenderer BorderRingMesh;
@@ -27,9 +28,10 @@ public class HotspotManager : MonoBehaviour
     public Material SelectedHotspotInRangeMat;
     public GameObject Shadow;
     
-    [HideInInspector] public bool selected = false;
-    [HideInInspector] public MarkerGroup markerGroup;
-    public bool InPlayerRange => BorderRingMesh.enabled && BorderRingMesh.material == SelectedHotspotInRangeMat;
+    [Header("Runtime")]
+    public bool selected = false;
+    public MarkerGroup markerGroup;
+    public bool inPlayerRange = false;
 
     [HideInInspector]
     public ExhibitionSO ConnectedExhibition;
@@ -93,32 +95,6 @@ public class HotspotManager : MonoBehaviour
         }
 
     }
-    
-    bool isShowingText;
-    public void EnableInfo(bool ShouldEnable) {
-        isShowingText = ShouldEnable;
-        
-        /*
-         // Legacy code to show info about each hotspot
-        if (arPoint.PlaceTextRight) {
-            LeftDistance.enabled = false;
-            LeftTitle.enabled = false;
-            RightTitle.enabled = ShouldEnable;
-            RightDistance.enabled = ShouldEnable;
-        } else {
-            LeftDistance.enabled = ShouldEnable;
-            LeftTitle.enabled = ShouldEnable;
-            RightTitle.enabled = false;
-            RightDistance.enabled = false;
-        }
-        */
-        
-        if (markerGroup != null)
-        {
-            markerGroup.zoomedIn = ShouldEnable;
-            markerGroup.ShowArtworkPoints(ShouldEnable, true);
-        }
-    }
 
     public void SetReach(bool InReach)
     {
@@ -128,16 +104,16 @@ public class HotspotManager : MonoBehaviour
         {
             BorderRingMesh.enabled = true;
             BorderRingMesh.material = SelectedHotspotInRangeMat;
+            inPlayerRange = true;
         }
 
         if (!ZoomedOut && InReach)
         {
-            BorderRingMesh.enabled = true;
-            BorderRingMesh.material = SelectedHotspotInRangeMat;
             if(selected) SelectionMenu.Instance.Open(this, true);
         }
         else if(!InReach)
         {
+            inPlayerRange = false;
             if (selected)
             {
                 BorderRingMesh.enabled = true; 
@@ -195,11 +171,6 @@ public class HotspotManager : MonoBehaviour
             SetStage(true);
         else if (!zoomed && ZoomedOut) 
             SetStage(false);
-        
-        if (zoomLevel >= DetailedZoom) 
-            EnableInfo(true);
-        else 
-            EnableInfo(CanShow);
     }
 
     /// <summary>
@@ -226,8 +197,8 @@ public class HotspotManager : MonoBehaviour
         }
     }
 
-    public void Unfocus() {
-        EnableInfo(false);
+    public void Unfocus() 
+    {
         ShowSelectionBorder(false);
     }
 
@@ -242,13 +213,30 @@ public class HotspotManager : MonoBehaviour
         else if (CanShow) StartAR(arPoint);
         else 
         {
-            if (isShowingText)
+            if (selected)
             {
-                Navigation.SetCustomNavigation(new Vector2((float)arPoint.Longitude, (float)arPoint.Latitude), arPoint.Title, this);
+                //GetDirections();
+                //Navigation.SetCustomNavigation(new Vector2((float)arPoint.Longitude, (float)arPoint.Latitude), arPoint.Title, this);
+            }
+            else
+            {
                 ShowSelectionBorder(true);
             }
-            else EnableInfo(true);
         }
+    }
+
+    public void GetDirections()
+    {
+        string location = arPoint.Latitude + "," + arPoint.Longitude;
+        
+#if UNITY_ANDROID
+        string url = "https://www.google.com/maps/dir/?api=1&destination=" + location;
+        Application.OpenURL(url);
+#elif UNITY_IOS
+            // Apple Maps URL scheme for iOS
+            string url = "http://maps.apple.com/?daddr=" + location;
+            Application.OpenURL(url);
+#endif
     }
 
     public IEnumerator UnTouch() {
@@ -256,10 +244,10 @@ public class HotspotManager : MonoBehaviour
         Touched = false;
     }
 
-    private void ShowSelectionBorder(bool state)
+    public void ShowSelectionBorder(bool state)
     {
         selected = state;
-        markerGroup.SelectedGroup = state;
+        //markerGroup.SelectedGroup = state;
         BorderRingMesh.enabled = state;
         BorderRingMesh.material = SelectedHotspotMat;
 
