@@ -12,18 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d073bbe6a1e3407bb776c8b49e882bd3, type: 3}
   m_Name: Stele
   m_EditorClassIdentifier: 
-  Title: "Stele\_"
-  Artist: 
+  Title: TIME TREE
+  Artist: "Michel M\xFCller"
   Artists:
   - {fileID: 11400000, guid: 4dbf327e76106a047ab608571c39561c, type: 2}
   Year: 2024
-  Location: 
+  Location: Frankfurt am Main
   ShareLink: 
   QR: 
-  Description: 
+  Description: "A new entrance is being created for the Crespo Foundation's main
+    building on Wei\xDFfrauenstra\xDFe in Frankfurt am Main. The centerpiece is a
+    vertical, modular skeletal structure with various integrated functions. Permanently
+    greened, it serves as a display, lighting system, and houses infrastructural
+    elements like counters and bar areas. This enlivens the urban space between the
+    Karmeliterkloster and the Crespo Foundation."
   ARMapImage: {fileID: 0}
   ARMapBackgroundImage: {fileID: 0}
-  ArtworkImages: []
+  ArtworkImages:
+  - {fileID: 21300000, guid: 3e87b362752114e2d9dbb0a0394d40d9, type: 3}
+  - {fileID: 21300000, guid: b1ebc4cd722484d989527713ffdc0b97, type: 3}
+  - {fileID: 21300000, guid: 03247066203664758b6080111796eebe, type: 3}
+  - {fileID: 21300000, guid: 34c551e40c30f44f487572ec5135f5b4, type: 3}
   ARObjectReference:
     m_AssetGUID: 40d954d369c5c7c4c84fe560a048a3f8
     m_SubObjectName: 

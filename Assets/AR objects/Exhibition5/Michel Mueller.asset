@@ -12,9 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7484c5630b23204da87e6d1bf9652d6, type: 3}
   m_Name: Michel Mueller
   m_EditorClassIdentifier: 
-  Title: 'Michel Mueller '
+  Title: "Michel M\xFCller "
   Location: 
-  Link: 
-  ArtistIcon: {fileID: 0}
-  Description: 
+  Link: http://studio-mc.de
+  ArtistIcon: {fileID: 21300000, guid: 9f863bb6550044cdeb6e5421ade3d90a, type: 3}
+  Description: "STUDIO MC was founded in 1998 by Michel M\xFCller and Jessica Coates.
+    The studio is a collaborative network for spaces and objects, based in Darmstadt,
+    Germany. It develops national and international projects, which are basically
+    linked in a cultural, social and environmental context. Sustainability, adaptability,
+    flexibility, resource efficiency, are the recurring issues. The design method
+    may best be described as an integrative approach. A team of specialists from
+    different fields are participating in the projects: structural engeneering, clima
+    engineering, ecological engineering, communication design, industrial design,
+    urban programming, theory of architecture, philosophy and art."
   Liked: 0

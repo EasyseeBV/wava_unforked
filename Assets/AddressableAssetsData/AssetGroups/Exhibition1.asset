@@ -132,6 +132,36 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3e87b362752114e2d9dbb0a0394d40d9
+    m_Address: Assets/AR objects/Exhibition5/Stele1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b1ebc4cd722484d989527713ffdc0b97
+    m_Address: Assets/AR objects/Exhibition5/Stele2.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 03247066203664758b6080111796eebe
+    m_Address: Assets/AR objects/Exhibition5/Stele3.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 34c551e40c30f44f487572ec5135f5b4
+    m_Address: Assets/AR objects/Exhibition5/Stele4.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e1adee42fa5244ab0bb8b1f41853d281
+    m_Address: Assets/AR objects/Exhibition5/MichelMueller.jpg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9f863bb6550044cdeb6e5421ade3d90a
+    m_Address: Assets/AR objects/Exhibition5/WhatsApp Image 2024-10-07 at 10.24.38.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 5f577229926f49f45ada8fda575b4c51, type: 2}
   m_SchemaSet:

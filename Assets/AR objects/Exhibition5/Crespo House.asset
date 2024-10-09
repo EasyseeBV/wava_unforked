@@ -15,12 +15,20 @@ MonoBehaviour:
   Title: 'Crespo House   '
   Artist: Crespo Foundation
   Year: 2024
-  Location: 50.1095553, 8.6778655
+  Location: Frankfurt am Main
   Color:
     serializedVersion: 2
-    rgba: 4278452479
-  Description: 
-  ExhibitionImages: []
+    rgba: 4286116676
+  Description: "A new entrance is being created for the Crespo Foundation's main
+    building on Wei\xDFfrauenstra\xDFe in Frankfurt am Main. The centerpiece is a
+    vertical, modular skeletal structure with various integrated functions. Permanently
+    greened, it serves as a display, lighting system, and houses infrastructural
+    elements like counters and bar areas. This enlivens the urban space between the
+    Karmeliterkloster and the Crespo Foundation."
+  ExhibitionImages:
+  - {fileID: 21300000, guid: 3e87b362752114e2d9dbb0a0394d40d9, type: 3}
+  - {fileID: 21300000, guid: b1ebc4cd722484d989527713ffdc0b97, type: 3}
+  - {fileID: 21300000, guid: 03247066203664758b6080111796eebe, type: 3}
   ArtWorks:
   - {fileID: 11400000, guid: 9b35a4079895b264e889bd400728baba, type: 2}
   ARMapIcon: {fileID: 0}
