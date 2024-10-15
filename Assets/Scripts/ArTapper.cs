@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using System;
+using System.Linq;
 using Messy.Definitions;
+using TMPro;
 using Unity.XR.CoreUtils;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Events;
@@ -12,6 +14,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.Serialization;
+using UnityEngine.Video;
 
 public class ArTapper : MonoBehaviour
 {
@@ -36,6 +39,11 @@ public class ArTapper : MonoBehaviour
     public ARRaycastManager arRaycast;
     [SerializeField] private ARNamebar arNamebar;
     [SerializeField] private ARInfoPage arInfoPage;
+
+    [Header("Debugging")]
+    [SerializeField] private Transform outOfScreenLoadLocation;
+    [SerializeField] private TMP_Text eventLabel;
+    [SerializeField] private GameObject loadingPlane;
     
     private Pose placementPose;
     private ARRaycastHit foundHit;
@@ -43,6 +51,10 @@ public class ArTapper : MonoBehaviour
     private bool placementPoseIsValid = false;
 
     bool StartedAnimation;
+
+    private GameObject cachedArtworkObject = null;
+    private List<VideoPlayer> cachedVideoPlayers = new();
+    private event Action<GameObject> onArtworkReady = null;
     
     void Start()
     {   
@@ -51,6 +63,8 @@ public class ArTapper : MonoBehaviour
         //arRaycast = FindObjectOfType<ARRaycastManager>();
         //anchorManager = gameObject.GetComponent<ARAnchorManager>();
         StartAR();
+        if (ARPointToPlace?.ARObjectReference != null) LoadAssetFromReference(ARPointToPlace?.ARObjectReference);
+        //else eventLabel.text = "No AR object...";
     }
 
     public void StartAR()
@@ -86,22 +100,28 @@ public class ArTapper : MonoBehaviour
             placementIndicator.SetActive(false);
             AnimationIndicator.SetActive(false);
             UIInfoController.Instance.SetText("", 3);
+
+            bool stillLoading = false;
             
-            //Replaced ARObject with ARObjectReference
             if (ARPointToPlace.ARObjectReference != null)
             {
-                //assetReferenceGameObject = ARPointToPlace.ARObjectReference;
-                LoadAssetFromReference(ARPointToPlace.ARObjectReference);
-                //PlacedObject = Instantiate(ARPointToPlace.ARObject);  
-                //PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
+                if (cachedArtworkObject != null) OnArtworkReady(cachedArtworkObject); // if the addressable object is loaded into memory AND ready for use
+                else if(onArtworkReady == null)
+                {
+                    //eventLabel.text = "Artwork still loading";
+                    //loadingPlane.SetActive(true);
+                    loadingPlane.transform.localPosition = placementPose.position + new Vector3(0, 0.75f, 0);;
+                    loadingPlane.transform.localRotation = Quaternion.Euler(90f, 0f, placementPose.rotation.eulerAngles.z);
+                    stillLoading = true;
+                    onArtworkReady += OnArtworkReady; // if the object is still loading subscribe
+                }
             }
-    
-            else
-                PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
-                //Debug.Log("Still null");
+            else PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            
             Vector3 pos = PlacedObject.transform.position;
             pos.z += DistanceWhenActivated;
             PlacedObject.transform.position = pos;
+            if (stillLoading) loadingPlane.transform.position = pos;
             StopAR();
         }
 
@@ -118,30 +138,39 @@ public class ArTapper : MonoBehaviour
 #endif
             if (placementPoseIsValid && Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
             {
-                if (!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) {
+                if (!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) 
+                {
                     StopAR();
                     PlaceObject();
                 }
             }
         }
-
     }
 
     private void PlaceObject()
     {
 #if !UNITY_EDITOR
         //Create an AR Anchor
-        if(anchor==null)
-            anchor = anchorManager.AttachAnchor((ARPlane)foundHit.trackable, foundHit.pose);
+        if(anchor==null)anchor = anchorManager.AttachAnchor((ARPlane)foundHit.trackable, foundHit.pose);
 #endif
 
         if (PlacedObject == null)
         {
             if (ARPointToPlace.ARObjectReference != null)
             {
+                if (cachedArtworkObject != null) OnArtworkReady(cachedArtworkObject); // if the addressable object is loaded into memory AND ready for use
+                else if(onArtworkReady == null)
+                {
+                    //eventLabel.text = "Artwork still loading";
+                    //loadingPlane.SetActive(true);
+                    loadingPlane.transform.localPosition = placementPose.position + new Vector3(0, 0.75f, 0);
+                    loadingPlane.transform.localRotation = Quaternion.Euler(90f, 0f, placementPose.rotation.eulerAngles.z);
+                    onArtworkReady += OnArtworkReady; // if the object is still loading subscribe
+                }
+
                 //PlacedObject = Instantiate(ARPointToPlace.ARObject, placementPose.position, placementPose.rotation);
                 //assetReferenceGameObject = ARPointToPlace.ARObjectReference;
-                LoadAssetFromReference(ARPointToPlace.ARObjectReference);
+                //LoadAssetFromReference(ARPointToPlace.ARObjectReference);
                 //PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
             }
 
@@ -176,6 +205,38 @@ public class ArTapper : MonoBehaviour
             UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
     }
 
+    private void OnArtworkReady(GameObject artworkObject)
+    {
+        onArtworkReady = null;
+
+        loadingPlane.SetActive(false);
+        //eventLabel.text = "Spawned object";
+        
+        PlacedObject = cachedArtworkObject;
+        PlacedObject.SetActive(true);
+        PlacedObject.transform.position = placementPose.position;
+        PlacedObject.transform.rotation = placementPose.rotation;
+                
+        //Track object based on anchor
+        if (anchor != null) PlacedObject.transform.parent = anchor.transform;
+        
+        LoadTopFinder(PlacedObject);
+        
+        Vector3 pos = PlacedObject.transform.position;
+        pos.z += DistanceWhenActivated;
+        PlacedObject.transform.position = pos;
+        StopAR();
+
+        if (cachedVideoPlayers.Count > 0)
+        {
+            foreach (var vp in cachedVideoPlayers)
+            {
+                vp.frame = 0;
+                vp.Play();
+            }
+        }
+    }
+
     public void LoadTopFinder (GameObject ARObject)
     {
         ModelTopFinder topFinder = GetComponent<ModelTopFinder>();
@@ -184,15 +245,12 @@ public class ArTapper : MonoBehaviour
             topFinder.prefabInstance = ARObject;
             topFinder.FindTopmostPointOfModels();
         }
-
     }
 
-    private void UpdatePlacementPose() {
-
-
+    private void UpdatePlacementPose() 
+    {
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.Space))
-            placementPoseIsValid = !placementPoseIsValid;
+        if (Input.GetKeyDown(KeyCode.Space)) placementPoseIsValid = !placementPoseIsValid;
 #else
         var screenCenter = Camera.main.ViewportToScreenPoint(new Vector3(0.5f, 0.5f));
         var hits = new List<ARRaycastHit>();
@@ -214,6 +272,8 @@ public class ArTapper : MonoBehaviour
             var cameraBearing = new Vector3(cameraForward.x, 0, cameraForward.z).normalized;
             placementPose.rotation = Quaternion.LookRotation(cameraBearing);
             placementIndicator.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
+            loadingPlane.transform.localRotation = Quaternion.Euler(90f, 0f, placementPose.rotation.eulerAngles.z);
+
 #endif
         } 
         else 
@@ -232,41 +292,86 @@ public class ArTapper : MonoBehaviour
     {
         if (ARPointToPlace?.ARObjectReference != null)
         {
-            if(PlacedObject!=null)
-                ReleaseAssetInstanceFromMemory(PlacedObject, ARPointToPlace.ARObjectReference);
-            
+            if(PlacedObject!=null) ReleaseAssetInstanceFromMemory(PlacedObject, ARPointToPlace.ARObjectReference);
             ReleaseAssetFromMemory(ARPointToPlace.ARObjectReference);
         }
+
+        foreach (var videoPlayer in cachedVideoPlayers)
+        {
+            videoPlayer.prepareCompleted -= OnVideoPrepared;
+        }
+
+        onArtworkReady = null;
     }
 
 
     public void LoadAssetFromReference(AssetReferenceGameObject assetToLoad)
     {
-        //assetToLoad.InstantiateAsync().Completed += (asyncOperation) => PlacedObject = asyncOperation.Result;
-        //Track object based on anchor
-        //PlacedObject.transform.parent = anchor.transform;
+        //eventLabel.text = "Loading artwork...";
         
-        //assetToLoad.LoadAssetAsync<GameObject>().Completed += (asyncOperationHandle) =>
         Addressables.LoadAssetAsync<GameObject>(assetToLoad).Completed += (asyncOperationHandle) =>
         {
             if (asyncOperationHandle.Status == AsyncOperationStatus.Succeeded)
             {
-                PlacedObject = asyncOperationHandle.Result;
-                GameObject NewPlacedObject = Instantiate(PlacedObject, placementPose.position, placementPose.rotation);
+                cachedArtworkObject = asyncOperationHandle.Result;
+               // eventLabel.text = "Loaded an artwork to memory";
+
+                // Cache all video players
+                cachedVideoPlayers = new();
+                cachedVideoPlayers = GetComponentsInChildren<VideoPlayer>().ToList();
+                if(cachedArtworkObject.TryGetComponent<VideoPlayer>(out var videoPlayer)) cachedVideoPlayers.Add(videoPlayer);
+                
+                if (cachedVideoPlayers.Count > 0)
+                {
+                    prepareCount = 0;
+                   // eventLabel.text = "Preparing videos...";
+                    foreach (var vp in cachedVideoPlayers)
+                    {
+                        vp.playOnAwake = false;
+                        vp.prepareCompleted += OnVideoPrepared;
+                        vp.Prepare();
+                    }
+                }
+                
+                cachedArtworkObject = Instantiate(cachedArtworkObject, outOfScreenLoadLocation.localPosition, Quaternion.identity);
+
+                if (cachedVideoPlayers.Count > 0)
+                {
+                    
+                }
+                else
+                {
+                    cachedArtworkObject.SetActive(false);
+                    onArtworkReady?.Invoke(cachedArtworkObject);
+                }
+                
+                
+                //PlacedObject = asyncOperationHandle.Result;
+                //GameObject NewPlacedObject = Instantiate(PlacedObject, placementPose.position, placementPose.rotation);
                 
                 //Track object based on anchor
-                if (anchor != null)
+                /*if (anchor != null)
                     PlacedObject.transform.parent = anchor.transform;
 
-                LoadTopFinder(NewPlacedObject);
+                LoadTopFinder(NewPlacedObject);*/
             }
             else
-            {   
-                //Do we want some kind of message like this?
+            {
+                //eventLabel.text = "No artwork";
                 UIInfoController.Instance.SetDefaultText("No valid artwork found.");
-                //Debug.Log("Asset not found!");
             }
         };
+    }
+
+    private int prepareCount = 0;
+    private void OnVideoPrepared(VideoPlayer vp)
+    {
+        prepareCount++;
+        if (prepareCount >= cachedVideoPlayers.Count)
+        {
+            cachedArtworkObject.SetActive(true);
+            onArtworkReady?.Invoke(cachedArtworkObject);
+        }
     }
 
     public void ReleaseAssetInstanceFromMemory(GameObject objectToRelease, AssetReferenceGameObject assetReference)
