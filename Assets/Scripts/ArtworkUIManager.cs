@@ -76,7 +76,7 @@ public class ArtworkUIManager : MonoBehaviour
     
     [FormerlySerializedAs("cachedGalleryDisplays")]
     [HideInInspector] public List<ArtworkShower> CachedGalleryDisplays = new ();
-    [HideInInspector] public GalleryFilter.Filter CurrentFilter = GalleryFilter.Filter.Any;
+    [HideInInspector] public GalleryFilter.Filter CurrentFilter = GalleryFilter.Filter.RecentlyAdded;
 
     private void Awake()
     {
@@ -134,25 +134,17 @@ public class ArtworkUIManager : MonoBehaviour
     public void InitArtworks() {
         if (ARInfoManager.ExhibitionsSO == null)
             return;
-        ClearStage();
-        ShowDefaultLayoutArea(true);
-        foreach (ARPointSO point in ARInfoManager.ExhibitionsSO.SelectMany(s => s.ArtWorks).Where( t => t.ArtworkImages.Count != 0)) {
-            ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
-            shower.Init(point);
-            CachedGalleryDisplays.Add(shower);
-        }
         
-        ChangeMenuNavigation(MenuNavigation.Artworks);
-    }
-
-    public void InitArtworks(ExhibitionSO filter) {
-        if (ARInfoManager.ExhibitionsSO == null)
-            return;
         ClearStage();
         ShowDefaultLayoutArea(true);
-        BackArrow.SetActive(true);
-        ExhibitionTitle.text = filter.Title;
-        foreach (ARPointSO point in filter.ArtWorks.Where(t => t.ArtworkImages.Count != 0)) {
+        
+        // Flatten all ArtWorks, filter those with images, and sort by creationDateTime descending
+        var sortedArtworks = ARInfoManager.ExhibitionsSO
+            .SelectMany(exhibition => exhibition.ArtWorks)
+            .Where(artwork => artwork.ArtworkImages.Count != 0)
+            .OrderByDescending(artwork => artwork.creationDateTime);
+        
+        foreach (ARPointSO point in sortedArtworks) {
             ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
             shower.Init(point);
             CachedGalleryDisplays.Add(shower);
@@ -165,36 +157,46 @@ public class ArtworkUIManager : MonoBehaviour
     {
         if (ARInfoManager.ExhibitionsSO == null)
             return;
+        
         ClearStage();
         ShowDefaultLayoutArea(true);
-        foreach (ExhibitionSO exhibition in ARInfoManager.ExhibitionsSO) {
+        
+        // Sort Exhibitions by creationDateTime descending
+        var sortedExhibitions = ARInfoManager.ExhibitionsSO.OrderByDescending(exhibition => exhibition.creationDateTime);
+        
+        foreach (ExhibitionSO exhibition in sortedExhibitions) {
             ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
             card.Init(exhibition);
         }
         
         ChangeMenuNavigation(MenuNavigation.Exhibitions);
     }
-
+    
     public void InitArtists()
     {
         if (ARInfoManager.ExhibitionsSO == null) return;
         
         ClearStage();
         ShowDefaultLayoutArea(false);
-        var cachedArtists = new List<ArtistSO>();
+        List<ArtistSO> unorderedList = new();
         foreach (ExhibitionSO exhibition in ARInfoManager.ExhibitionsSO) 
         {
             foreach (var artwork in exhibition.ArtWorks)
             {
                 foreach (var artist in artwork.Artists)
                 {
-                    if(cachedArtists.Contains(artist)) continue;
-                    
-                    ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
-                    container.Assign(artist);
-                    cachedArtists.Add(artist);
+                    if(unorderedList.Contains(artist)) continue;
+                    if (artist == null) continue;
+                    unorderedList.Add(artist);
                 }
             }
+        }
+
+        var orderedArtistList = unorderedList.OrderByDescending(artist => artist.creationDateTime).ToList();
+        foreach (var artist in orderedArtistList)
+        {
+            ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
+            container.Assign(artist);
         }
         
         ChangeMenuNavigation(MenuNavigation.Artists);
@@ -227,6 +229,9 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void ApplySorting()
     {
+        CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedARPointSO.creationDateTime).ToList();
+
+        return;
         switch (CurrentFilter)
         {
             case GalleryFilter.Filter.NewestToOldest:
@@ -240,6 +245,9 @@ public class ArtworkUIManager : MonoBehaviour
                 break;
             case GalleryFilter.Filter.Location:
                 CachedGalleryDisplays = CachedGalleryDisplays.OrderBy(display => display.cachedARPointSO.Location).ToList();
+                break;
+            case GalleryFilter.Filter.RecentlyAdded:
+                CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedARPointSO.creationDateTime).ToList();
                 break;
             case GalleryFilter.Filter.Any:
             default:

@@ -1,8 +1,7 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-
+using UnityEditor;
 
 namespace Messy.Definitions
 {
@@ -21,5 +20,16 @@ order = 121)]
         public List<ARPointSO> ArtWorks = new List<ARPointSO>();
         public Sprite ARMapIcon;
         [HideInInspector] public bool Liked;
+
+        [Space, ReadOnly] public long creationDateTime;
+
+        private void OnValidate()
+        {
+            if (creationDateTime == 0)
+            {
+                creationDateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                Debug.Log($"Updated the creation date time of the exhibition: {name} | {DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
+            }
+        }
     }
 }

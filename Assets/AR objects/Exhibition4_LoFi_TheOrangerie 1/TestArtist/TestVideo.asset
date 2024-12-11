@@ -61,8 +61,8 @@ MonoBehaviour:
       groupMarkerObject: {fileID: 0}
       artworkPoints: []
       mean: {x: 0, y: 0}
-      gameSpaceMean: {x: 0, y: 0, z: 0}
-      zoomedIn: 0
     borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
   Liked: 0
+  creationDateTime: 1725609693

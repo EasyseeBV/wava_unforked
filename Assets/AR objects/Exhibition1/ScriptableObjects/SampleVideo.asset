@@ -63,8 +63,8 @@ MonoBehaviour:
       artworkPoints:
       - {fileID: 11400000}
       mean: {x: 50.106, y: 8.679}
-      gameSpaceMean: {x: -1584.2157, y: 0, z: 938.7312}
-      zoomedIn: 0
     borderTransform: {fileID: 0}
+    isGroupMarker: 0
   Hotspot: {fileID: 0}
   Liked: 0
+  creationDateTime: 1725466009

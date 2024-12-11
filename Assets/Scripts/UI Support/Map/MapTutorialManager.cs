@@ -19,6 +19,7 @@ public class MapTutorialManager : MonoBehaviour
 
     [Header("Debugging")]
     [SerializeField] private bool alwaysStartTutorial;
+    [SerializeField] private bool dontPromptTutorial;
 
     public static event Action OnTutorialEnded;
     public static bool TutorialActive = false;
@@ -38,6 +39,8 @@ public class MapTutorialManager : MonoBehaviour
             PlayerPrefs.SetInt(TUTORIAL_AR, 0);
             PlayerPrefs.Save();
         }
+
+        if (dontPromptTutorial) return;
         
         if (PlayerPrefs.GetInt(TUTORIAL_FIRST_VISIT, 0) == 0)
         {

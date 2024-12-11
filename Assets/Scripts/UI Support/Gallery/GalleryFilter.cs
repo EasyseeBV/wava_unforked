@@ -13,7 +13,8 @@ public class GalleryFilter : MonoBehaviour
         NewestToOldest,
         OldestToNewest,
         Exhibitions,
-        Location
+        Location,
+        RecentlyAdded
     }
 
     [Serializable]

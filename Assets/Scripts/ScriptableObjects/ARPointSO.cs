@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -33,5 +34,16 @@ namespace Messy.Definitions
         [HideInInspector] public OnlineMapsMarker3D marker = new OnlineMapsMarker3D();
         [HideInInspector] public HotspotManager Hotspot;
         [HideInInspector] public bool Liked;
+        
+        [Space, ReadOnly] public long creationDateTime;
+        
+        private void OnValidate()
+        {
+            if (creationDateTime == 0)
+            {
+                creationDateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                Debug.Log($"Updated the creation date time of the artwork: {name} | {DateTimeOffset.UtcNow.ToUnixTimeSeconds()}");
+            }
+        }
     }
 }
