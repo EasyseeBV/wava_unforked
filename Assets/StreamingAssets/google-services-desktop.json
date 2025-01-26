@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "392230179045",
+    "project_id": "wava-database",
+    "storage_bucket": "wava-database.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392230179045:android:f68c45b3889cf3bff3040c",
+        "android_client_info": {
+          "package_name": "com.wava.ar.game"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJXt9ZFlfqinh2ICz4KFP_g6S_h73wveM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
