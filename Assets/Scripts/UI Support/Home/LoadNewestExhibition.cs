@@ -43,7 +43,6 @@ public class LoadNewestExhibition : MonoBehaviour
                 QuerySnapshot snapshot = task.Result;
                 foreach (DocumentSnapshot document in snapshot.Documents)
                 {
-                    Debug.Log($"Document ID: {document.Id}");
                     if (document.Exists)
                     {
                         var exhibition = document.ConvertTo<ExhibitionData>();

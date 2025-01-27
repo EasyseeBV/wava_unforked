@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Firebase.Extensions;
+using Firebase.Firestore;
 using Messy.Definitions;
 using UnityEngine;
 
@@ -11,27 +13,51 @@ public class LoadNewestArtwork : MonoBehaviour
     [SerializeField] private int showCount = 4;
     [SerializeField] private Transform parent;
 
-    void Start()
-    {
-        var orderedList = new List<ArtworkData>(0);
-        
-        var listArtworks = new List<ArtworkData>();
-        
-        foreach (ArtworkData point in FirebaseLoader.Exhibitions.SelectMany(s => s.artworks)
-                     .Where(t => t.artwork_images.Count != 0))
-        {
-            listArtworks.Add(point);
-        }
-        
-        orderedList = listArtworks.OrderByDescending(point => point.year).ToList();
-        
-        for (int i = 0; i < showCount; i++)
-        {
-            if (i >= orderedList.Count) return;
+    [Header("Debugging")]
+    [SerializeField] private List<Sprite> debugSprites;
+    
+    private void OnEnable() => FirebaseLoader.OnFirestoreInitialized += QueryMostRecent;
+    private void OnDisable() => FirebaseLoader.OnFirestoreInitialized -= QueryMostRecent;
 
-            var card = Instantiate(galleryCard, parent);
-            card.gameObject.SetActive(true);
-            card.LoadARPoint(orderedList[i]);
-        }
+    private void Start()
+    {
+        if (FirebaseLoader.Firestore == null) return;
+        QueryMostRecent();
+    }
+
+    private void QueryMostRecent()
+    {
+        // Create a query against the collection.
+        Query query = FirebaseLoader.Firestore.Collection("artworks").OrderBy("creation_time").Limit(showCount);
+
+        // Execute the query asynchronously
+        query.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompleted)
+            {
+                QuerySnapshot snapshot = task.Result;
+                foreach (DocumentSnapshot document in snapshot.Documents)
+                {
+                    if (document.Exists)
+                    {
+                        var artwork = document.ConvertTo<ArtworkData>();
+                        artwork.artwork_images = new List<Sprite>();
+                        artwork.artwork_images.Add(debugSprites[Random.Range(0, debugSprites.Count)]);
+                        var card = Instantiate(galleryCard, parent);
+                        card.gameObject.SetActive(true);
+                        card.LoadARPoint(artwork);
+                    }
+                }
+
+                if (snapshot.Count == 0)
+                {
+                    Debug.Log("No documents found in the collection.");
+                }
+            }
+            else
+            {
+                Debug.LogError($"Failed to retrieve documents: {task.Exception}");
+            }
+        });
     }
 }

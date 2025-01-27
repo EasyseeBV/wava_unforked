@@ -11,7 +11,7 @@ public class ArtworkData
     [FirestoreProperty] public string title { get; set; }
     [FirestoreProperty] public string description { get; set; }
     
-    [FirestoreProperty] public List<DocumentReference> artist_reference { get; set; } = new List<DocumentReference>();
+    [FirestoreProperty] public List<DocumentReference> artist_references { get; set; } = new List<DocumentReference>();
     public List<ArtistData> artists { get; set; } = new List<ArtistData>();
     
     [FirestoreProperty] public int year { get; set; }

@@ -128,7 +128,7 @@ public class FirebaseLoader : MonoBehaviour
             // Assign artists to artworks using the pre-loaded ArtistsMap
             foreach (var artwork in tempArtworks)
             {
-                foreach (var artistRef in artwork.artist_reference)
+                foreach (var artistRef in artwork.artist_references)
                 {
                     string artistId = artistRef.Id; // Extract the artist document ID
 
