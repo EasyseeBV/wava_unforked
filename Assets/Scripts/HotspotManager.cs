@@ -9,7 +9,7 @@ using System.Collections;
 public class HotspotManager : MonoBehaviour
 {   
     //Replaced ARPoint with ARPointSO
-    [HideInInspector] public ARPointSO arPoint;
+    [HideInInspector] public ArtworkData artwork;
     public TextMeshPro LeftTitle;
     public TextMeshPro LeftDistance;
     public TextMeshPro RightTitle;
@@ -34,7 +34,7 @@ public class HotspotManager : MonoBehaviour
     public bool inPlayerRange = false;
 
     [HideInInspector]
-    public ExhibitionSO ConnectedExhibition;
+    public ExhibitionData ConnectedExhibition;
 
     //[HideInInspector]
     public NavigationMaker Navigation;
@@ -50,36 +50,43 @@ public class HotspotManager : MonoBehaviour
     private bool inReach = false;
     
     //Replaced ARPoint with ARPointSO
-    public void Init(ARPointSO point) {
-        arPoint = point;
-        if (arPoint.PlaceTextRight)
-            RightTitle.text = arPoint.Title;
+    public void Init(ArtworkData point) {
+        artwork = point;
+        if (artwork.place_right)
+            RightTitle.text = artwork.title;
         else
-            LeftTitle.text = arPoint.Title;
+            LeftTitle.text = artwork.title;
 
         //EnableInfo(true);
-        if (ConnectedExhibition != null) {
-            Logo.material.color = ConnectedExhibition.Color;
+        if (ConnectedExhibition != null)
+        {
+            Logo.material.color = Color.green; //ConnectedExhibition.Color;
         }
+
+        Debug.LogWarning("<color=blue>Disabled background images & color setting</color>");
+        
+        /*
         BackgroundAR.sprite = point.ARMapBackgroundImage;
         if (point.ARMapImage)
             ARObjectImage.sprite = point.ARMapImage;
+        */
     }
 
     private void OnEnable() {
-        if (arPoint != null)
+        if (artwork != null)
             OnChangeGpsPosition(_distance);
     }
 
-    public void Update() {
-        Color c = ConnectedExhibition.Color;
+    public void Update()
+    {
+        Color c = Color.green;//ConnectedExhibition.Color;
         c.a = 1f - ARObjectImage.color.a;
         Logo.material.color = c;
     }
 
     public void OnChangeGpsPosition(float distance) {
         _distance = distance;
-        if (arPoint.PlaceTextRight)
+        if (artwork.place_right)
             RightDistance.text = string.Format("{0}km", distance.ToString("F1"));
         else
             LeftDistance.text = string.Format("{0}km", distance.ToString("F1"));
@@ -150,7 +157,7 @@ public class HotspotManager : MonoBehaviour
 
     public bool IsClose()
     {
-        float distance = arPoint.MaxDistance > 0.01f ? arPoint.MaxDistance : 0.12f;
+        float distance = artwork.max_distance > 0.01f ? artwork.max_distance : 0.12f;
         
         bool state = _distance <= distance;
         if (state) OnDistanceValidated?.Invoke(distance);
@@ -163,7 +170,7 @@ public class HotspotManager : MonoBehaviour
         ZoomLevel = zoomLevel;
         Zoom = ZoomLevel;
         
-        OnDistanceValidated?.Invoke(arPoint.MaxDistance > 0.01f ? arPoint.MaxDistance : 0.12f);
+        OnDistanceValidated?.Invoke(artwork.max_distance > 0.01f ? artwork.max_distance : 0.12f);
         
         bool zoomed = zoomLevel < MinZoom;
         
@@ -209,8 +216,12 @@ public class HotspotManager : MonoBehaviour
         Touched = true;
         StartCoroutine(UnTouch());
         
-        if (ZoomedOut) Navigation.FastTravelToPoint(new Vector2((float)arPoint.Longitude, (float)arPoint.Latitude), 17f, 2f);
-        else if (CanShow) StartAR(arPoint);
+        if (ZoomedOut) Navigation.FastTravelToPoint(new Vector2((float)artwork.longitude, (float)artwork.latitude), 17f, 2f);
+        else if (CanShow)
+        {
+            Debug.LogError("START AR HAS BEEN DISABLED");
+            //StartAR(artwork);
+        }
         else 
         {
             if (selected)
@@ -227,7 +238,7 @@ public class HotspotManager : MonoBehaviour
 
     public void GetDirections()
     {
-        string location = arPoint.Latitude + "," + arPoint.Longitude;
+        string location = artwork.latitude + "," + artwork.longitude;
         
 #if UNITY_ANDROID
         string url = "https://www.google.com/maps/dir/?api=1&destination=" + location;
@@ -261,15 +272,18 @@ public class HotspotManager : MonoBehaviour
 
 
     //Replaced ARPoint with ARPointSO
-    public void StartAR(ARPointSO point)
+    public void StartAR(ArtworkData artwork)
     {
-        if (MapTutorialManager.TutorialActive) return;
+        /*if (MapTutorialManager.TutorialActive) return;
         
-        ArTapper.ARPointToPlace = point;
-        ArTapper.PlaceDirectly = point.PlayARObjectDirectly;
+        ArTapper.ARPointToPlace = artwork;
+        ArTapper.PlaceDirectly = artwork.PlayARObjectDirectly;
         ArTapper.DistanceWhenActivated = _distance;
 
         SceneManager.LoadScene("AR");
+
+        return;*/
+
         /*if(string.IsNullOrEmpty(point.AlternateScene)){
             Debug.Log( "Loading Default AR Scene");
             SceneManager.LoadScene("AR");
@@ -279,8 +293,8 @@ public class HotspotManager : MonoBehaviour
         }*/
     }
 
-    public ARPointSO GetHotspotARPointSO()
+    public ArtworkData GetHotspotArtwork()
     {
-        return arPoint;
+        return artwork;
     }
 }

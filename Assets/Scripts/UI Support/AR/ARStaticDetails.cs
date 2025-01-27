@@ -30,7 +30,7 @@ public class ARStaticDetails : MonoBehaviour
     private string currText;
     private bool textNeedsUpdate = true;
 
-    private ARPointSO arPoint;
+    private ArtworkData artwork;
 
     private void Awake()
     {
@@ -38,24 +38,24 @@ public class ARStaticDetails : MonoBehaviour
         contentDescriptionButton.onClick.AddListener(ToggleReadMore);
     }
 
-    public void Open(ARPointSO arPoint)
+    public void Open(ArtworkData artwork)
     {
-        if (arPoint == null)
+        if (artwork == null)
         {
             Debug.LogWarning("Null ARPointSO... aborting");
             return;
         }
-        this.arPoint = arPoint;
+        this.artwork = artwork;
 
         //readingMore = false;
-        contentTitleLabel.text = arPoint.Title;
-        fullLengthDescription = arPoint.Description;
+        contentTitleLabel.text = artwork.title;
+        fullLengthDescription = artwork.description;
         TruncateText();
         
         //artistContainer.Assign(arPoint.Hotspot);
 
-        if (!arPoint.Hotspot?.ConnectedExhibition) return;
-        exhibitionCard.Init(arPoint.Hotspot?.ConnectedExhibition);
+        if (artwork.hotspot?.ConnectedExhibition == null) return;
+        exhibitionCard.Init(artwork.hotspot?.ConnectedExhibition);
     }
     
     private void TruncateText()
@@ -74,7 +74,7 @@ public class ARStaticDetails : MonoBehaviour
         if (contentDescriptionLabel.textInfo.lineCount > 3)
         {
             // Start binary search to find the maximum length that fits within 3 lines
-            fullLengthDescription ??= arPoint.Description;
+            fullLengthDescription ??= artwork.description;
             int min = 0;
             int max = fullLengthDescription.Length;
             string truncatedText = fullLengthDescription;

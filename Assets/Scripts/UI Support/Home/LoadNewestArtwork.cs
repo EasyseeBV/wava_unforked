@@ -11,31 +11,19 @@ public class LoadNewestArtwork : MonoBehaviour
     [SerializeField] private int showCount = 4;
     [SerializeField] private Transform parent;
 
-    [Header("Custom loading")]
-    [SerializeField] private bool loadCustomArtwork = false;
-    [SerializeField] private ARPointSO[] customArtworkOrder;
-    
     void Start()
     {
-        var orderedList = new List<ARPointSO>(0);
-
-        if (!loadCustomArtwork)
+        var orderedList = new List<ArtworkData>(0);
+        
+        var listArtworks = new List<ArtworkData>();
+        
+        foreach (ArtworkData point in FirebaseLoader.Exhibitions.SelectMany(s => s.artworks)
+                     .Where(t => t.artwork_images.Count != 0))
         {
-            var listArtworks = new List<ARPointSO>();
-            
-            foreach (ARPointSO point in ARInfoManager.ExhibitionsSO.SelectMany(s => s.ArtWorks)
-                         .Where(t => t.ArtworkImages.Count != 0))
-            {
-                listArtworks.Add(point);
-            }
-            
-            orderedList = listArtworks.OrderByDescending(point => point.Year).ToList();
+            listArtworks.Add(point);
         }
-        else
-        {
-            orderedList = new List<ARPointSO>(customArtworkOrder);
-        }
-
+        
+        orderedList = listArtworks.OrderByDescending(point => point.year).ToList();
         
         for (int i = 0; i < showCount; i++)
         {

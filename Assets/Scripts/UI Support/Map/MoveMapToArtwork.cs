@@ -5,8 +5,8 @@ public class MoveMapToArtwork : MonoBehaviour
 {
     [SerializeField] private OnlineMaps maps;
 
-    public void Move(ARPointSO arPointSo)
+    public void Move(ArtworkData artwork)
     {
-        maps.SetPosition(arPointSo.Longitude, arPointSo.Latitude);
+        maps.SetPosition(artwork.longitude, artwork.latitude);
     }
 }

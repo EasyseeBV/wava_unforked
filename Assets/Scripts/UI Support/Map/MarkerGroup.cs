@@ -9,7 +9,7 @@ using UnityEngine.Serialization;
 public class MarkerGroup
 {
     public GroupMarkerUI groupMarkerObject;
-    public List<ARPointSO> artworkPoints;
+    public List<ArtworkData> artworkPoints;
     public Vector2 mean; // Using Vector2 to store latitude and longitude
     public bool ZoomedIn
     {
@@ -41,14 +41,14 @@ public class MarkerGroup
     private bool selectedGroup = false;
     private bool showingArtwork = false;
 
-    public MarkerGroup(ARPointSO artwork)
+    public MarkerGroup(ArtworkData artwork)
     {
-        artworkPoints = new List<ARPointSO>();
+        artworkPoints = new List<ArtworkData>();
         artworkPoints.Add(artwork);
-        mean = new Vector2((float)artwork.Latitude, (float)artwork.Longitude);
+        mean = new Vector2((float)artwork.latitude, (float)artwork.longitude);
     }
 
-    public void Add(ARPointSO artwork)
+    public void Add(ArtworkData artwork)
     {
         if (artworkPoints.Contains(artwork)) return;
         artworkPoints.Add(artwork);
@@ -65,8 +65,8 @@ public class MarkerGroup
 
         foreach (var artworkPoint in artworkPoints)
         {
-            totalLat += artworkPoint.Latitude;
-            totalLon += artworkPoint.Longitude;
+            totalLat += artworkPoint.latitude;
+            totalLon += artworkPoint.longitude;
             totalX += artworkPoint.marker.instance.transform.localPosition.x;
             totalZ += artworkPoint.marker.instance.transform.localPosition.z;
         }
@@ -85,9 +85,9 @@ public class MarkerGroup
 
         foreach (var point in artworkPoints)
         {
-            point.Hotspot.Logo.enabled = state;
-            point.Hotspot.Shadow.SetActive(state);
-            point.Hotspot.Parent.SetActive(state);
+            point.hotspot.Logo.enabled = state;
+            point.hotspot.Shadow.SetActive(state);
+            point.hotspot.Parent.SetActive(state);
         }
 
         showingArtwork = state;

@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 public class ArtistDetailsPanel : DetailsPanel
 {
-    private ArtistSO artist;
+    private ArtistData artist;
     
     private enum MenuNavigation
     {
@@ -94,18 +94,18 @@ public class ArtistDetailsPanel : DetailsPanel
         StartCoroutine(LateRebuild());
     }
     
-    public void Fill(ArtistSO artist)
+    public void Fill(ArtistData artist)
     {
         this.artist = artist;
         
         Clear();
 
-        contentTitleLabel.text = artist.Title;
-        profileIcon.sprite = artist.ArtistIcon;
-        fullLengthDescription = artist.Description;
+        contentTitleLabel.text = artist.title;
+        profileIcon.sprite = artist.icon;
+        fullLengthDescription = artist.description;
         TruncateText();
         
-        heartImage.sprite = artist.Liked ? likedSprite : unlikedSprite;
+        // heartImage.sprite = artist.Liked ? likedSprite : unlikedSprite;
         
         ChangeMenu(MenuNavigation.Artworks);
         
@@ -126,29 +126,29 @@ public class ArtistDetailsPanel : DetailsPanel
 
     private void LikeArtwork()
     {
-        if (!artist) return;
+        if (artist == null) return;
 
-        artist.Liked = !artist.Liked;
-        heartImage.sprite = artist.Liked ? likedSprite : unlikedSprite;
+        // artist.Liked = !artist.Liked;
+        // heartImage.sprite = artist.Liked ? likedSprite : unlikedSprite;
     }
 
-    private List<ExhibitionSO> GetExhibitions()
+    private List<ExhibitionData> GetExhibitions()
     {
-        if (ARInfoManager.ExhibitionsSO == null) return null;
+        if (FirebaseLoader.Exhibitions == null) return null;
 
-        List<ExhibitionSO> exhibitions = new();
-        foreach (var exhibition in ARInfoManager.ExhibitionsSO)
+        List<ExhibitionData> exhibitions = new();
+        
+        foreach (var exhibition in FirebaseLoader.Exhibitions)
         {
-            if (exhibition.Artist == artist.Title && !exhibitions.Contains(exhibition))
+            if (exhibition.artists.Contains(artist) && !exhibitions.Contains(exhibition))
             {
                 exhibitions.Add(exhibition);
                 continue;
             }
 
-            foreach (var artwork in exhibition.ArtWorks)
+            foreach (var artwork in exhibition.artworks)
             {
-                if (artwork.Artist == artist.Title ||
-                    artwork.Artists.Contains(artist) && !exhibitions.Contains(exhibition))
+                if (artwork.artists.Contains(artist) && !exhibitions.Contains(exhibition))
                 {
                     exhibitions.Add(exhibition);
                     break;
@@ -159,15 +159,15 @@ public class ArtistDetailsPanel : DetailsPanel
         return exhibitions;
     }
 
-    private List<ARPointSO> GetArtworks()
+    private List<ArtworkData> GetArtworks()
     {
-        if (ARInfoManager.ExhibitionsSO == null) return null;
+        if (FirebaseLoader.Exhibitions == null) return null;
 
-        List<ARPointSO> artworks = new();
+        List<ArtworkData> artworks = new();
         
-        foreach (var exhb in ARInfoManager.ExhibitionsSO)
+        foreach (var exhb in FirebaseLoader.Exhibitions)
         {
-            artworks.AddRange(exhb.ArtWorks.Where(artwork => artwork.Artist == artist.Title || artwork.Artists.Contains(artist)));
+            artworks.AddRange(exhb.artworks.Where(artwork => artwork.artists.Contains(artist)));
         }
 
         return artworks;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Firebase.Firestore;
@@ -6,13 +7,13 @@ using UnityEngine;
 [FirestoreData]
 public class ArtistData
 {
-    [FirestoreProperty] public string Title { get; set; }
-    [FirestoreProperty] public string Description { get; set; }
-    [FirestoreProperty] public string Location { get; set; }
-    [FirestoreProperty] public string Link { get; set; }
-    [FirestoreProperty] public Sprite Thumbnail { get; set; }
+    [FirestoreProperty] public string title { get; set; }
+    [FirestoreProperty] public string description { get; set; }
+    [FirestoreProperty] public string location { get; set; }
+    [FirestoreProperty] public string link { get; set; }
+    [FirestoreProperty] public Sprite icon { get; set; }
     
     // Read Only Data
-    [FirestoreProperty] public long CreationDateTime { get; set; }
-    [FirestoreProperty] public long UpdateDateTime { get; set; }
+    [FirestoreProperty] public DateTime creation_time { get; set; } //  does not work
+    [FirestoreProperty] public DateTime update_time { get; set; } //  does not work
 }

@@ -4,6 +4,7 @@ using Messy.Definitions;
 using UnityEditor;
 using UnityEngine;
 
+// Deprecated
 public class ExhibitionAssigner : MonoBehaviour
 {
     [MenuItem("Tools/Assign Exhibitions")]

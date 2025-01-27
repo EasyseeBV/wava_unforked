@@ -21,7 +21,8 @@ public class ArtworkShower : MonoBehaviour
     public Button ViewButton;
     [Space]
     public TextMeshProUGUI exhibitionTitle;
-    [HideInInspector] public ARPointSO cachedARPointSO;
+    
+    public ArtworkData cachedArtwork { get; set; }
 
     private void Awake()
     {
@@ -29,32 +30,32 @@ public class ArtworkShower : MonoBehaviour
         DetailButton.onClick.AddListener(OpenDetails);
     }
 
-    public void Init(ARPointSO point) 
+    public void Init(ArtworkData artwork) 
     {
-        ARPhoto.sprite = point.ArtworkImages.Count > 0 ? point.ArtworkImages[0] : null;
-        Title.text = point.Title;
-        Artist.text = point.Artist;
+        ARPhoto.sprite = artwork.artwork_images.Count > 0 ? artwork.artwork_images[0] : null;
+        Title.text = artwork.title;
+        Artist.text = artwork.artists.Count > 0 ? artwork.artists[0].title : null;
         //Location.text = point.Location;
-        Year.text = point.Year;
+        Year.text = artwork.year.ToString();
 
-        foreach (var exhibitionSO in ARInfoManager.ExhibitionsSO.Where(exhibitionSO => exhibitionSO.ArtWorks.Contains(point)))
+        foreach (var exhibition in FirebaseLoader.Exhibitions.Where(exhibition => exhibition.artworks.Contains(artwork)))
         {
-            exhibitionTitle.text = exhibitionSO.Title;
+            exhibitionTitle.text = exhibition.title;
             break;
         }
         
-        cachedARPointSO = point;
+        cachedArtwork = artwork;
     }
 
     private void OpenDetails()
     {
-        if (!cachedARPointSO) return;
+        if (cachedArtwork == null) return;
         
         if(ArtworkUIManager.Instance != null)
-            ArtworkUIManager.Instance.OpenDetailedInformation(cachedARPointSO);
+            ArtworkUIManager.Instance.OpenDetailedInformation(cachedArtwork);
         else
         {
-            ArtworkUIManager.SelectedArtwork = cachedARPointSO;
+            ArtworkUIManager.SelectedArtwork = cachedArtwork;
             SceneManager.LoadScene("Exhibition&Art");
         }
     }

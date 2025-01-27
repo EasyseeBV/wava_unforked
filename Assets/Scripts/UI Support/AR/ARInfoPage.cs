@@ -28,7 +28,8 @@ public class ARInfoPage : AnimateInfoBar
         if (!hide)
         {
             Rect.gameObject.SetActive(true);
-            arStaticDetails.Open(ArTapper.ARPointToPlace);
+            Debug.LogError("OPENING AR TAPPER DISABLED");
+            //arStaticDetails.Open(ArTapper.ARPointToPlace);
         }
         
         base.StartRectAnimation(hide);

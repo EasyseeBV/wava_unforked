@@ -30,7 +30,7 @@ public class SelectionMenu : MonoBehaviour
     [Header("Navigation Tools")]
     [SerializeField] private GameObject navigationObject;
 
-    public static ARPointSO SelectedARPoint = null;
+    public static ArtworkData SelectedARPoint = null;
     private HotspotManager cachedHotspot;
     
     private void Awake()
@@ -56,12 +56,12 @@ public class SelectionMenu : MonoBehaviour
     
     public void LoadARPointSO()
     {
-        if (SelectedARPoint)
+        /*if (SelectedARPoint)
         {
             Open(SelectedARPoint.Hotspot, false);
             mapMover.Move(SelectedARPoint);
             SelectedARPoint = null;
-        }
+        }*/
     }
 
     public void Open(HotspotManager hotspot, bool inRange)
@@ -74,12 +74,12 @@ public class SelectionMenu : MonoBehaviour
         
         mapFilterToggle.Close();
         
-        var ar = hotspot.GetHotspotARPointSO();
+        var artwork = hotspot.GetHotspotArtwork();
 
-        hotspotNameLabel[inRange ? 1 : 0].text = ar.Title;
-        distanceLabel[inRange ? 1 : 0].text = $"{ar.MaxDistance:F1}m";
-        artistLabel[inRange ? 1 : 0].text = ar.Artist;
-        artworkLabel[inRange ? 1 : 0].text = hotspot.ConnectedExhibition.Title;
+        hotspotNameLabel[inRange ? 1 : 0].text = artwork.title;
+        distanceLabel[inRange ? 1 : 0].text = $"{artwork.max_distance:F1}m";
+        artistLabel[inRange ? 1 : 0].text = artwork.artists.Count > 0 ? $"{artwork.artists[0].title}" : string.Empty;
+        artworkLabel[inRange ? 1 : 0].text = hotspot.ConnectedExhibition.title;
         
         selectionButton[0].onClick.RemoveAllListeners();
         selectionButton[1].onClick.RemoveAllListeners();
@@ -97,7 +97,7 @@ public class SelectionMenu : MonoBehaviour
     {
         if (!cachedHotspot) return;
         
-        ArtworkUIManager.SelectedArtwork = cachedHotspot.GetHotspotARPointSO();
+        ArtworkUIManager.SelectedArtwork = cachedHotspot.GetHotspotArtwork();
         SceneManager.LoadScene("Exhibition&Art");
     }
 
@@ -105,7 +105,7 @@ public class SelectionMenu : MonoBehaviour
     {
         if (!cachedHotspot) return;
         
-        cachedHotspot.StartAR(cachedHotspot.GetHotspotARPointSO());
+        cachedHotspot.StartAR(cachedHotspot.GetHotspotArtwork());
     }
 
     public void UpdateDistance(float d)

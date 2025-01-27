@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 public class ArtworkDetailsPanel : DetailsPanel
 {
-    private ARPointSO artwork;
+    private ArtworkData artwork;
 
     [Header("Gallery Area")] 
     [SerializeField] private SimpleScrollSnap scrollSnapper;
@@ -41,37 +41,37 @@ public class ArtworkDetailsPanel : DetailsPanel
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
     }
 
-    public void Fill(ARPointSO artwork)
+    public void Fill(ArtworkData artwork)
     {
         this.artwork = artwork;
         
         Clear();
 
-        for (int i = 0; i < artwork.ArtworkImages.Count; i++)
+        for (int i = 0; i < artwork.artwork_images.Count; i++)
         {
             Image artworkImage = scrollSnapper.AddToBack(galleryImagePrefab.gameObject).GetComponent<Image>();
-            artworkImage.sprite = artwork.ArtworkImages[i];
+            artworkImage.sprite = artwork.artwork_images[i];
 
             Image indicator = Instantiate(indicatorImage, indicatorArea).GetComponentInChildren<Image>();
             indicator.color = inactiveColor;
             indicators.Add(indicator);
         }
 
-        for (int i = 0; i < artwork.Artists.Count; i++)
+        for (int i = 0; i < artwork.artists.Count; i++)
         {
             ArtistContainer container = Instantiate(artistContainer, artistArea);
             container.gameObject.SetActive(true);
-            container.Assign(artwork.Artists[i]);
+            container.Assign(artwork.artists[i]);
         }
 
-        ExhibitionSO exhb = GetExhibition();
+        ExhibitionData exhb = GetExhibition();
         exhibitionCard.Init(exhb);
         
-        contentTitleLabel.text = artwork.Title;
-        fullLengthDescription = artwork.Description;
+        contentTitleLabel.text = artwork.title;
+        fullLengthDescription = artwork.description;
         TruncateText();
         
-        heartImage.sprite = artwork.Liked ? likedSprite : unlikedSprite;
+        // heartImage.sprite = artwork.Liked ? likedSprite : unlikedSprite;
         
         showOnMapButton.onClick.RemoveAllListeners();
         showOnMapButton.onClick.AddListener(() =>
@@ -107,19 +107,19 @@ public class ArtworkDetailsPanel : DetailsPanel
 
     private void LikeArtwork()
     {
-        if (!artwork) return;
+        if (artwork == null) return;
 
-        artwork.Liked = !artwork.Liked;
-        heartImage.sprite = artwork.Liked ? likedSprite : unlikedSprite;
+        // artwork.Liked = !artwork.Liked;
+        // heartImage.sprite = artwork.Liked ? likedSprite : unlikedSprite;
     }
 
-    private ExhibitionSO GetExhibition()
+    private ExhibitionData GetExhibition()
     {
-        if (ARInfoManager.ExhibitionsSO == null) return null;
+        if (FirebaseLoader.Exhibitions == null) return null;
 
-        foreach (var exhb in ARInfoManager.ExhibitionsSO)
+        foreach (var exhibition in FirebaseLoader.Exhibitions)
         {
-            if (exhb.ArtWorks.Contains(artwork)) return exhb;
+            if (exhibition.artworks.Contains(artwork)) return exhibition;
         }
 
         return null;

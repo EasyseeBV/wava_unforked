@@ -14,9 +14,9 @@ public class ArtistContainer : MonoBehaviour
     [SerializeField] private TextMeshProUGUI artworkCountLabel;
     [SerializeField] private Button artistPageButton;
 
-    [HideInInspector] public ArtistSO artist;
+    [HideInInspector] public ArtistData artist;
     
-    public void Assign(ArtistSO artist)
+    public void Assign(ArtistData artist)
     {
         if (artist == null)
         {
@@ -27,9 +27,8 @@ public class ArtistContainer : MonoBehaviour
         
         this.artist = artist;
 
-        if(artist.ArtistIcon != null) 
-            profilePicture.sprite = artist.ArtistIcon;
-        artistNameLabel.text = artist.Title;
+        if(artist.icon != null) profilePicture.sprite = artist.icon;
+        artistNameLabel.text = artist.title;
         int works = GetArtistWorkCount();
         artworkCountLabel.text = works == 1 ? "1 Artwork" : $"{GetArtistWorkCount()} Artworks";
         artistPageButton.onClick.AddListener(OpenArtistPage);
@@ -37,14 +36,14 @@ public class ArtistContainer : MonoBehaviour
 
     private int GetArtistWorkCount()
     {
-        if (ARInfoManager.ExhibitionsSO == null) return 0;
+        if (FirebaseLoader.Exhibitions == null) return 0;
 
         int count = 0;
-        foreach (var exh in ARInfoManager.ExhibitionsSO)
+        foreach (var exh in FirebaseLoader.Exhibitions )
         {
-            foreach (var artworks in exh.ArtWorks)
+            foreach (var artworks in exh.artworks)
             {
-                if (artworks.Artists.Contains(artist))
+                if (artworks.artists.Contains(artist))
                 {
                     count++;
                 }
@@ -56,7 +55,7 @@ public class ArtistContainer : MonoBehaviour
 
     private void OpenArtistPage()
     {
-        if (!artist) return;
+        if (artist == null) return;
         
         if(ArtworkUIManager.Instance != null)
             ArtworkUIManager.Instance.OpenDetailedInformation(artist);

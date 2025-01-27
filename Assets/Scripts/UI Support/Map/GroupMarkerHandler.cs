@@ -62,7 +62,7 @@ public class GroupMarkerHandler : MonoBehaviour
     
     private void Group()
     {
-        foreach (var artwork in ARInfoManager.ExhibitionsSO.SelectMany(exhibition => exhibition.ArtWorks))
+        foreach (var artwork in FirebaseLoader.Exhibitions.SelectMany(exhibition => exhibition.artworks))
         {
             TryAddArtwork(artwork);
         }
@@ -99,29 +99,29 @@ public class GroupMarkerHandler : MonoBehaviour
 
             foreach (var arPoint in group.artworkPoints)
             {
-                arPoint.Hotspot.Logo.enabled = false;
-                arPoint.Hotspot.Shadow.SetActive(false);
-                arPoint.Hotspot.Parent.SetActive(false);
+                arPoint.hotspot.Logo.enabled = false;
+                arPoint.hotspot.Shadow.SetActive(false);
+                arPoint.hotspot.Parent.SetActive(false);
                 //arPoint.Hotspot.BorderRingMesh.enabled = false;
             }
         }
     }
     
-    private void TryAddArtwork(ARPointSO artwork)
+    private void TryAddArtwork(ArtworkData artwork)
     {
         foreach (var group in markerGroups)
         {
-            if (HaversineDistance(new Vector2((float)artwork.Latitude, (float)artwork.Longitude), group.mean) <= zoomTolerance)
+            if (HaversineDistance(new Vector2((float)artwork.latitude, (float)artwork.longitude), group.mean) <= zoomTolerance)
             {
                 group.Add(artwork);
-                artwork.Hotspot.markerGroup = group;
+                artwork.hotspot.markerGroup = group;
                 return;
             }
         }
 
         MarkerGroup markerGroup = new MarkerGroup(artwork);
         markerGroups.Add(markerGroup);
-        artwork.Hotspot.markerGroup = markerGroup;
+        artwork.hotspot.markerGroup = markerGroup;
     }
     
     private double HaversineDistance(Vector2 point1, Vector2 point2)

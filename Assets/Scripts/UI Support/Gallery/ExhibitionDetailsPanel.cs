@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class ExhibitionDetailsPanel : DetailsPanel
 {
-    private ExhibitionSO exhibition;
+    private ExhibitionData exhibition;
     
     private enum MenuNavigation
     {
@@ -100,28 +100,28 @@ public class ExhibitionDetailsPanel : DetailsPanel
         StartCoroutine(LateRebuild());
     }
 
-    public void Fill(ExhibitionSO exhibition)
+    public void Fill(ExhibitionData exhibition)
     {
         this.exhibition = exhibition;
         
         Clear();
 
-        for (int i = 0; i < exhibition.ExhibitionImages.Count; i++)
+        for (int i = 0; i < exhibition.exhibition_images.Count; i++)
         {
             Image artworkImage = scrollSnapper.AddToBack(galleryImagePrefab.gameObject).GetComponent<Image>();
-            artworkImage.sprite = exhibition.ExhibitionImages[i];
+            artworkImage.sprite = exhibition.exhibition_images[i];
 
             Image indicator = Instantiate(indicatorImage, indicatorArea).GetComponentInChildren<Image>();
             indicator.color = inactiveColor;
             indicators.Add(indicator);
         }
         
-        contentTitleLabel.text = exhibition.Title;
-        fullLengthDescription = exhibition.Description;
+        contentTitleLabel.text = exhibition.title;
+        fullLengthDescription = exhibition.description;
         
         TruncateText();
         
-        heartImage.sprite = exhibition.Liked ? likedSprite : unlikedSprite;
+        // heartImage.sprite = exhibition.Liked ? likedSprite : unlikedSprite;
         
         ChangeMenu(MenuNavigation.Artworks);
         
@@ -152,10 +152,10 @@ public class ExhibitionDetailsPanel : DetailsPanel
 
     private void LikeArtwork()
     {
-        if (!exhibition) return;
+        if (exhibition == null) return;
 
-        exhibition.Liked = !exhibition.Liked;
-        heartImage.sprite = exhibition.Liked ? likedSprite : unlikedSprite;
+        // exhibition.Liked = !exhibition.Liked;
+        // heartImage.sprite = exhibition.Liked ? likedSprite : unlikedSprite;
     }
 
     private void ChangeIndicator(int newIndex,int oldIndex)
@@ -166,12 +166,12 @@ public class ExhibitionDetailsPanel : DetailsPanel
         indicators[newIndex].color = activeColor;
     }
     
-    private List<ArtistSO> GetArtists()
+    private List<ArtistData> GetArtists()
     {
-        List<ArtistSO> artists = new();
-        foreach (var artwork in exhibition.ArtWorks)
+        List<ArtistData> artists = new();
+        foreach (var artwork in exhibition.artworks)
         {
-            foreach (var artist in artwork.Artists)
+            foreach (var artist in artwork.artists)
             {
                 if (artists.Contains(artist)) continue;
                 artists.Add(artist);
@@ -181,8 +181,8 @@ public class ExhibitionDetailsPanel : DetailsPanel
         return artists;
     }
 
-    private List<ARPointSO> GetArtworks()
+    private List<ArtworkData> GetArtworks()
     {
-        return exhibition.ArtWorks;
+        return exhibition.artworks;
     }
 }

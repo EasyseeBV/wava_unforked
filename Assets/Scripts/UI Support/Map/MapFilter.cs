@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Messy.Definitions;
 using UnityEngine;
 using UnityEngine.UI;
@@ -60,16 +61,16 @@ public class MapFilter : MonoBehaviour
 
     private void FilterMap()
     {
-        foreach (var exhibition in ARInfoManager.ExhibitionsSO)
+        foreach (var exhibition in FirebaseLoader.Exhibitions)
         {
-            foreach (var artwork in exhibition.ArtWorks)
+            foreach (var artwork in exhibition.artworks)
             {
                 FilterArtwork(exhibition, artwork);
             }
         }
     }
 
-    private void FilterArtwork(ExhibitionSO exhibition, ARPointSO artwork)
+    private void FilterArtwork(ExhibitionData exhibition, ArtworkData artwork)
     {
         if (activeFilters.Count <= 0)
         {
@@ -93,13 +94,14 @@ public class MapFilter : MonoBehaviour
                     state = true;
                     break;
                 case Filter.Demo:
-                    state = exhibition.Artist == "WAVA";
+                    
+                    state = exhibition.artists.Any(a => a.title.Equals("WAVA", System.StringComparison.OrdinalIgnoreCase));;
                     break;
                 case Filter.StadelMuseum:
-                    state = artwork.Location == "Frankfurt";
+                    state = artwork.location == "Frankfurt";
                     break;
                 case Filter.ExhibitionLiked:
-                    state = exhibition.Liked;
+                    //state = exhibition.Liked;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(filter), filter, null);

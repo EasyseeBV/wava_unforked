@@ -39,14 +39,14 @@ public class NoArtworkHandler : MonoBehaviour
         double playerLatitude = marker.Latitude;
 
         double closestDistance = double.MaxValue;
-        ARPointSO closestArtwork = null;
+        ArtworkData closestArtwork = null;
 
-        foreach (var exhibition in ARInfoManager.ExhibitionsSO)
+        foreach (var exhibition in FirebaseLoader.Exhibitions)
         {
-            foreach (var artwork in exhibition.ArtWorks)
+            foreach (var artwork in exhibition.artworks)
             {
-                double artworkLongitude = artwork.Longitude;
-                double artworkLatitude = artwork.Latitude;
+                double artworkLongitude = artwork.longitude;
+                double artworkLatitude = artwork.latitude;
 
                 // Calculate the distance using the Haversine formula
                 double distance = CalculateDistance(playerLatitude, playerLongitude, artworkLatitude, artworkLongitude);
@@ -62,7 +62,7 @@ public class NoArtworkHandler : MonoBehaviour
 
         if (closestArtwork != null)
         {
-            maps.SetPosition(closestArtwork.Longitude, closestArtwork.Latitude);
+            maps.SetPosition(closestArtwork.longitude, closestArtwork.latitude);
         }
     }
 

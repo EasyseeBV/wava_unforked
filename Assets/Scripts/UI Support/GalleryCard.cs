@@ -10,7 +10,7 @@ using UnityEngine.SceneManagement;
 public class GalleryCard : MonoBehaviour
 {
     [Header("Loading")]
-    public ARPointSO arPoint;
+    public ArtworkData artwork;
     [SerializeField] private bool loadAssignedARPoint;
     
     [Header("UI References")]
@@ -20,15 +20,15 @@ public class GalleryCard : MonoBehaviour
     [SerializeField] private TMP_Text yearLabel;
     [SerializeField] private Button button;
 
-    [HideInInspector] public ExhibitionSO sourceExhibition;
+    public ExhibitionData sourceExhibition {get; private set;}
 
     private void Start()
     {
-        if (loadAssignedARPoint) LoadARPoint(arPoint);
+        if (loadAssignedARPoint) LoadARPoint(artwork);
         if(button) button.onClick.AddListener(GoToGallery);
     }
 
-    public void LoadARPoint(ARPointSO point)
+    public void LoadARPoint(ArtworkData point)
     {
         if (point == null)
         {
@@ -37,23 +37,24 @@ public class GalleryCard : MonoBehaviour
             return;    
         }
 
-        arPoint = point;
-        
-        artworkImage.sprite = point.ARMapImage;
-        artworkLabel.text = point.Title;
-        artistLabel.text = point.Artist;
-        yearLabel.text = point.Year;
+        artwork = point;
+
+        Debug.LogError("DISABLED LOADING ARTWORK COVER IMAGE");
+        artworkImage.sprite = point.artwork_images[0];//artwork_cover_image;
+        artworkLabel.text = point.title;
+        artistLabel.text = point.artists.Count > 0 ? point.artists[0].title : null;
+        yearLabel.text = point.year.ToString();
     }
 
     private void GoToGallery()
     {
-        if (!arPoint) return;
+        if (artwork == null) return;
         
         if(ArtworkUIManager.Instance != null)
-            ArtworkUIManager.Instance.OpenDetailedInformation(arPoint);
+            ArtworkUIManager.Instance.OpenDetailedInformation(artwork);
         else
         {
-            ArtworkUIManager.SelectedArtwork = arPoint;
+            ArtworkUIManager.SelectedArtwork = artwork;
             SceneManager.LoadScene("Exhibition&Art");
         }
     }

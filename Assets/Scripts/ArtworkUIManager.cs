@@ -27,9 +27,9 @@ public class ArtworkUIManager : MonoBehaviour
     [Space]
     public bool HasSelectionMenu = true;
     public static bool SelectedArtworks = true;
-    public static ExhibitionSO SelectedExhibition = null;
-    public static ARPointSO SelectedArtwork = null;
-    public static ArtistSO SelectedArtist = null;
+    public static ExhibitionData SelectedExhibition = null;
+    public static ArtworkData SelectedArtwork = null;
+    public static ArtistData SelectedArtist = null;
 
     [Header("Layout Groups")] 
     [SerializeField] private ScrollRect visualAreaScrollRect;
@@ -94,22 +94,21 @@ public class ArtworkUIManager : MonoBehaviour
             }
         }*/
 
-        if (SelectedExhibition)
+        if (SelectedExhibition != null)
         {
             OpenDetailedInformation(SelectedExhibition);
             SelectedExhibition = null;
         }
-        else if (SelectedArtwork)
+        else if (SelectedArtwork != null)
         {
             OpenDetailedInformation(SelectedArtwork);
             SelectedArtwork = null;
         }
-        else if (SelectedArtist)
+        else if (SelectedArtist != null)
         {
             OpenDetailedInformation(SelectedArtist);
             SelectedArtist = null;
         }
-        
 
         if (PlayerPrefs.HasKey("DetailedInfoHelpBar"))
         {
@@ -131,22 +130,23 @@ public class ArtworkUIManager : MonoBehaviour
         CachedGalleryDisplays.Clear();
     }
 
-    public void InitArtworks() {
-        if (ARInfoManager.ExhibitionsSO == null)
-            return;
+    public void InitArtworks() 
+    {
+        if (FirebaseLoader.Exhibitions == null) return;
         
         ClearStage();
         ShowDefaultLayoutArea(true);
         
         // Flatten all ArtWorks, filter those with images, and sort by creationDateTime descending
-        var sortedArtworks = ARInfoManager.ExhibitionsSO
-            .SelectMany(exhibition => exhibition.ArtWorks)
-            .Where(artwork => artwork.ArtworkImages.Count != 0)
-            .OrderByDescending(artwork => artwork.creationDateTime);
+        var sortedArtworks = FirebaseLoader.Exhibitions
+            .SelectMany(exhibition => exhibition.artworks)
+            .Where(artwork => artwork.artwork_images.Count != 0)
+            .OrderByDescending(artwork => artwork.creation_time);
         
-        foreach (ARPointSO point in sortedArtworks) {
+        foreach (ArtworkData artwork in sortedArtworks) 
+        {
             ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
-            shower.Init(point);
+            shower.Init(artwork);
             CachedGalleryDisplays.Add(shower);
         }
         
@@ -155,16 +155,16 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitExhibitions() 
     {
-        if (ARInfoManager.ExhibitionsSO == null)
+        if (FirebaseLoader.Exhibitions == null)
             return;
         
         ClearStage();
         ShowDefaultLayoutArea(true);
         
         // Sort Exhibitions by creationDateTime descending
-        var sortedExhibitions = ARInfoManager.ExhibitionsSO.OrderByDescending(exhibition => exhibition.creationDateTime);
+        var sortedExhibitions = FirebaseLoader.Exhibitions.OrderByDescending(exhibition => exhibition.creation_time);
         
-        foreach (ExhibitionSO exhibition in sortedExhibitions) {
+        foreach (ExhibitionData exhibition in sortedExhibitions) {
             ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
             card.Init(exhibition);
         }
@@ -174,16 +174,16 @@ public class ArtworkUIManager : MonoBehaviour
     
     public void InitArtists()
     {
-        if (ARInfoManager.ExhibitionsSO == null) return;
+        if (FirebaseLoader.Exhibitions == null) return;
         
         ClearStage();
         ShowDefaultLayoutArea(false);
-        List<ArtistSO> unorderedList = new();
-        foreach (ExhibitionSO exhibition in ARInfoManager.ExhibitionsSO) 
+        List<ArtistData> unorderedList = new();
+        foreach (ExhibitionData exhibition in FirebaseLoader.Exhibitions) 
         {
-            foreach (var artwork in exhibition.ArtWorks)
+            foreach (var artwork in exhibition.artworks)
             {
-                foreach (var artist in artwork.Artists)
+                foreach (var artist in artwork.artists)
                 {
                     if(unorderedList.Contains(artist)) continue;
                     if (artist == null) continue;
@@ -192,7 +192,7 @@ public class ArtworkUIManager : MonoBehaviour
             }
         }
 
-        var orderedArtistList = unorderedList.OrderByDescending(artist => artist.creationDateTime).ToList();
+        var orderedArtistList = unorderedList.OrderByDescending(artist => artist.creation_time).ToList();
         foreach (var artist in orderedArtistList)
         {
             ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
@@ -229,25 +229,25 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void ApplySorting()
     {
-        CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedARPointSO.creationDateTime).ToList();
+        CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedArtwork.creation_time).ToList();
 
         return;
         switch (CurrentFilter)
         {
             case GalleryFilter.Filter.NewestToOldest:
-                CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedARPointSO.Year).ToList();
+                CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedArtwork.year).ToList();
                 break;
             case GalleryFilter.Filter.OldestToNewest:
-                CachedGalleryDisplays = CachedGalleryDisplays.OrderBy(display => display.cachedARPointSO.Year).ToList();
+                CachedGalleryDisplays = CachedGalleryDisplays.OrderBy(display => display.cachedArtwork.year).ToList();
                 break;
             case GalleryFilter.Filter.Exhibitions:
-                CachedGalleryDisplays = CachedGalleryDisplays.OrderBy(display => display.cachedARPointSO.Artist).ToList();
+                CachedGalleryDisplays = CachedGalleryDisplays.OrderBy(display => display.cachedArtwork.artists).ToList();
                 break;
             case GalleryFilter.Filter.Location:
-                CachedGalleryDisplays = CachedGalleryDisplays.OrderBy(display => display.cachedARPointSO.Location).ToList();
+                CachedGalleryDisplays = CachedGalleryDisplays.OrderBy(display => display.cachedArtwork.location).ToList();
                 break;
             case GalleryFilter.Filter.RecentlyAdded:
-                CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedARPointSO.creationDateTime).ToList();
+                CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedArtwork.creation_time).ToList();
                 break;
             case GalleryFilter.Filter.Any:
             default:
@@ -262,9 +262,11 @@ public class ArtworkUIManager : MonoBehaviour
         }
     }
 
-    public void OpenDetailedInfoFromStaticAR() {
-        if (ArTapper.ARPointToPlace != null)
-            arStaticDetails.Open(ArTapper.ARPointToPlace);
+    public void OpenDetailedInfoFromStaticAR() 
+    {
+        Debug.LogError("DISABLED OPENING INFO");
+        //if (ArTapper.ARPointToPlace != null)
+            //arStaticDetails.Open(ArTapper.ARPointToPlace);
 
         SetBarInActive();
     }
@@ -276,18 +278,18 @@ public class ArtworkUIManager : MonoBehaviour
             InformationHelpBar.SetActive(false);
     }
 
-    public void OpenDetailedInformation(ARPointSO arPoint) 
+    public void OpenDetailedInformation(ArtworkData artwork) 
     {
         artworkDetailsArea?.SetActive(true);
         exhibitionDetailsArea?.SetActive(false);
         artistDetailsArea?.SetActive(false);
-        artworkDetailsPanel?.Fill(arPoint);
-        if (Title) Title.text = arPoint.Title;
-        if (Description) Description.text = arPoint.Description;
-        if (Header) Header.text = arPoint.Title;
+        artworkDetailsPanel?.Fill(artwork);
+        if (Title) Title.text = artwork.title;
+        if (Description) Description.text = artwork.description;
+        if (Header) Header.text = artwork.title;
     }
 
-    public void OpenDetailedInformation(ExhibitionSO exhibition)
+    public void OpenDetailedInformation(ExhibitionData exhibition)
     {
         exhibitionDetailsArea.SetActive(true);
         artworkDetailsArea.SetActive(false);
@@ -295,7 +297,7 @@ public class ArtworkUIManager : MonoBehaviour
         exhibitionDetailsPanel.Fill(exhibition);
     }
     
-    public void OpenDetailedInformation(ArtistSO artist)
+    public void OpenDetailedInformation(ArtistData artist)
     {
         artistDetailsArea.SetActive(true);
         exhibitionDetailsArea.SetActive(false);

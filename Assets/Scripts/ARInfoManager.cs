@@ -5,16 +5,6 @@ using UnityEngine;
 
 public class ARInfoManager : MonoBehaviour
 {
-    //**Deprecate
-    //public List<ARPoint> _ARPoints;
-    //public static List<ARPoint> ARPoints;
-    
-    //Replaced ARPoint with ARPointSO
-    //New Artwork is a new SO asset
-   // public List<ARPointSO> _ARPointsSO;
-   // public static List<ARPointSO> ARPointsSO;
-
-    //public List<ExhibitionSO> _ExhibitionsSO;
     public static List<ExhibitionSO> ExhibitionsSO;
 
     // Start is called before the first frame update
@@ -24,9 +14,6 @@ public class ARInfoManager : MonoBehaviour
         {
             ExhibitionsSO = ARStaticInfo.Instance.Exhibitions;
         }
-        //ExhibitionsSO = _ExhibitionsSO;
-        /*ARPoints = _ARPoints;
-        ARPointsSO = _ARPointsSO;*/
     }
 }
 

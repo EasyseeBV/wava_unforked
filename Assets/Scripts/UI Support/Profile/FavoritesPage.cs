@@ -24,42 +24,42 @@ public class FavoritesPage : MonoBehaviour
     
     public void Open()
     {
-        if (ARInfoManager.ExhibitionsSO == null) return;
+        if (FirebaseLoader.Exhibitions == null) return;
 
-        var exhibitions = ARInfoManager.ExhibitionsSO;
+        var exhibitions = FirebaseLoader.Exhibitions;
         var cachedArtistList = new List<ArtistSO>();
 
         foreach (var exhibition in exhibitions)
         {
-            if (exhibition.Liked)
+            /*if (exhibition.Liked)
             {
                 ExhibitionCard card = Instantiate(exhibitionPrefab, exhibitionArea);
                 card.Init(exhibition);
                 exhibitionCards.Add(card);
-            }
+            }*/
 
-            foreach (var artwork in exhibition.ArtWorks)
+            foreach (var artwork in exhibition.artworks)
             {
-                if (artwork.Liked)
+                /*if (artwork.Liked)
                 {
                     GalleryCard galleryCard = Instantiate(artworkPrefab, artworkArea);
                     galleryCard.LoadARPoint(artwork);
                     galleryCard.sourceExhibition = exhibition;
                     galleryCards.Add(galleryCard);
-                }
+                }*/
 
-                foreach (var artist in artwork.Artists)
+                foreach (var artist in artwork.artists)
                 {
                     cachedArtistList ??= new();
                     if (artist == null) continue;
                     
-                    if (artist.Liked && !cachedArtistList.Contains(artist))
+                    /*if (artist.Liked && !cachedArtistList.Contains(artist))
                     {
                         cachedArtistList.Add(artist);
                         ArtistContainer container = Instantiate(artistPrefab, artistArea);
                         container.Assign(artist);
                         artistContainers.Add(container);
-                    }
+                    }*/
                 }
             }
         }
@@ -131,13 +131,13 @@ public class FavoritesPage : MonoBehaviour
                     state = true;
                     break;
                 case ProfileFilter.Filter.Demo:
-                    state = card.exhibition.Artist == "WAVA";
+                    //state = card.exhibition.Artist == "WAVA";
                     break;
                 case ProfileFilter.Filter.StadelMuseum:
-                    state = card.exhibition.Location == "Frankfurt";
+                    //state = card.exhibition.Location == "Frankfurt";
                     break;
                 case ProfileFilter.Filter.ExhibitionLiked:
-                    state = card.exhibition.Liked;
+                    //state = card.exhibition.Liked;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(filter), filter, null);
@@ -171,13 +171,13 @@ public class FavoritesPage : MonoBehaviour
                     state = true;
                     break;
                 case ProfileFilter.Filter.Demo:
-                    state = card.sourceExhibition.Artist == "WAVA";
+                    //state = card.sourceExhibition.Artist == "WAVA";
                     break;
                 case ProfileFilter.Filter.StadelMuseum:
-                    state = card.sourceExhibition.Location == "Frankfurt";
+                    //state = card.sourceExhibition.Location == "Frankfurt";
                     break;
                 case ProfileFilter.Filter.ExhibitionLiked:
-                    state = card.sourceExhibition.Liked;
+                    //state = card.sourceExhibition.Liked;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(filter), filter, null);
@@ -211,17 +211,17 @@ public class FavoritesPage : MonoBehaviour
                     state = true;
                     break;
                 case ProfileFilter.Filter.Demo:
-                    state = card.artist.Title == "WAVA";
+                    //state = card.artist.Title == "WAVA";
                     break;
                 case ProfileFilter.Filter.StadelMuseum:
                     foreach (var exhCard in exhibitionCards)
                     {
-                        if (exhCard.exhibition.Location == "Frankfurt" &&
+                        /*if (exhCard.exhibition.Location == "Frankfurt" &&
                             exhCard.exhibition.Artist == card.artist.Title)
                         {
                             state = true;
                             break;
-                        }
+                        }*/
 
                         state = false;
                     }
@@ -229,11 +229,11 @@ public class FavoritesPage : MonoBehaviour
                 case ProfileFilter.Filter.ExhibitionLiked:
                     foreach (var galleryCard in galleryCards)
                     {
-                        if (galleryCard.arPoint.Artist == card.artist.Title && galleryCard.sourceExhibition.Liked)
+                        /*f (galleryCard.arPoint.Artist == card.artist.Title && galleryCard.sourceExhibition.Liked)
                         {
                             state = true;
                             break;
-                        }
+                        }*/
                         state = false;
                     }
                     break;
