@@ -16,6 +16,8 @@ public class LoadNewestArtwork : MonoBehaviour
     [Header("Debugging")]
     [SerializeField] private List<Sprite> debugSprites;
     
+    private bool loaded = false;
+    
     private void OnEnable() => FirebaseLoader.OnFirestoreInitialized += QueryMostRecent;
     private void OnDisable() => FirebaseLoader.OnFirestoreInitialized -= QueryMostRecent;
 
@@ -27,6 +29,8 @@ public class LoadNewestArtwork : MonoBehaviour
 
     private void QueryMostRecent()
     {
+        if (loaded) return;
+        
         // Create a query against the collection.
         Query query = FirebaseLoader.Firestore.Collection("artworks").OrderBy("creation_time").Limit(showCount);
 
@@ -52,6 +56,10 @@ public class LoadNewestArtwork : MonoBehaviour
                 if (snapshot.Count == 0)
                 {
                     Debug.Log("No documents found in the collection.");
+                }
+                else
+                {
+                    loaded = true;
                 }
             }
             else
