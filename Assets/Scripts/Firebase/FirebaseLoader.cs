@@ -17,13 +17,15 @@ public class FirebaseLoader : MonoBehaviour
     public static List<ArtistData> Artists { get; private set; } = new List<ArtistData>();
     public static List<ExhibitionData> Exhibitions { get; private set; } = new List<ExhibitionData>();
     
-    private Dictionary<string, ArtistData> ArtistsMap = new Dictionary<string, ArtistData>();
-    private Dictionary<string, ArtworkData> ArtworksMap = new Dictionary<string, ArtworkData>();
+    private static Dictionary<string, ArtistData> ArtistsMap = new Dictionary<string, ArtistData>();
+    private static Dictionary<string, ArtworkData> ArtworksMap = new Dictionary<string, ArtworkData>();
 
     [Header("Debugging")]
     [SerializeField] private Sprite artistIcon;
     [SerializeField] private List<Sprite> artworkImages = new List<Sprite>();
     [SerializeField] private List<Sprite> exhibitionImages = new List<Sprite>();
+    
+    private static DocumentSnapshot lastOpenedDocument = null;
     
     public static Action OnFirestoreInitialized;
     
@@ -223,6 +225,66 @@ public class FirebaseLoader : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError($"Failed to load exhibitions: {e.Message}\n{e.StackTrace}");
+        }
+    }
+    
+    public static async Task FetchDocuments<T>(int limit)
+    {
+        try
+        {
+            if (_firestore == null)
+            {
+                Debug.Log("Firebase database has not loaded");
+                return;
+            }
+
+            string collectionName = "collection";
+            
+            if (typeof(T) == typeof(ArtworkData))
+                collectionName = "artworks";
+            else if (typeof(T) == typeof(ArtistData))
+                collectionName = "artists";
+            else if (typeof(T) == typeof(ExhibitionData))
+                collectionName = "exhibitions";
+            
+            Query query = _firestore.Collection(collectionName).Limit(limit);
+            if (lastOpenedDocument != null) query = query.StartAfter(lastOpenedDocument);
+            QuerySnapshot snapshot = await query.GetSnapshotAsync();
+            
+            foreach (DocumentSnapshot document in snapshot.Documents)
+            {
+                if (document.Exists)
+                {
+                    if (typeof(T) == typeof(ArtworkData))
+                    {
+                        var data = document.ConvertTo<ArtworkData>();
+                        Debug.Log($"Loaded data: {data.title}");
+                        Artworks.Add(data);
+                        ArtworksMap[document.Id] = data;
+                    }
+                    else if (typeof(T) == typeof(ArtistData))
+                    {
+                        var data = document.ConvertTo<ArtistData>();
+                        Debug.Log($"Loaded data: {data.title}");
+                        Artists.Add(data);
+                        ArtistsMap[document.Id] = data;
+                    }
+                    else if (typeof(T) == typeof(ExhibitionData))
+                    {
+                        var data = document.ConvertTo<ExhibitionData>();
+                        Debug.Log($"Loaded data: {data.title}");
+                        Exhibitions.Add(data);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"Artist document {document.Id} does not exist.");
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed to get artists: {e.Message}\n{e.StackTrace}");
         }
     }
 

@@ -155,8 +155,7 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitExhibitions() 
     {
-        if (FirebaseLoader.Exhibitions == null)
-            return;
+        if (FirebaseLoader.Exhibitions == null) return;
         
         ClearStage();
         ShowDefaultLayoutArea(true);

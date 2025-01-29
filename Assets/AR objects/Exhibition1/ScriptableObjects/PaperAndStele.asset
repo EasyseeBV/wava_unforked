@@ -68,7 +68,6 @@ MonoBehaviour:
     updateMarker: 0
     markerGroup:
       groupMarkerObject: {fileID: 0}
-      artworkPoints: []
       mean: {x: 0, y: 0}
     borderTransform: {fileID: 0}
     isGroupMarker: 0
