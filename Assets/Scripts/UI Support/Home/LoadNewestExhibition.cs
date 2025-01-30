@@ -17,64 +17,50 @@ public class LoadNewestExhibition : MonoBehaviour
     [Header("Debugging")]
     [SerializeField] private List<Sprite> exhibitionImages = new List<Sprite>();
     
+    private bool loaded = false;
+    
     private static List<ArtistData> cachedArtists;
 
-    private void OnEnable() => FirebaseLoader.OnFirestoreInitialized += QueryMostRecent;
-    private void OnDisable() => FirebaseLoader.OnFirestoreInitialized -= QueryMostRecent;
-    
+    private void OnEnable() => FirebaseLoader.OnFirestoreInitialized += async () => await QueryMostRecent();
 
-    private void Start()
+    private void OnDisable() => FirebaseLoader.OnFirestoreInitialized -= async () => await QueryMostRecent();
+
+    private async void Start()
     {
         // if (FirebaseLoader.Exhibitions == null || FirebaseLoader.Exhibitions.Count <= 0) return;
         if (FirebaseLoader.Firestore == null) return;
-        QueryMostRecent();
+        await QueryMostRecent();
     }
 
-    private void QueryMostRecent()
+    private async Task QueryMostRecent()
     {
-        // Create a query against the collection.
-        Query query = FirebaseLoader.Firestore.Collection("exhibitions").OrderBy("creation_time").Limit(1);
-
-        // Execute the query asynchronously
-        query.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        if (loaded) return;
+        
+        try
         {
-            if (task.IsCompleted)
+            var exhibition = await FirebaseLoader.FetchSingleDocument<ExhibitionData>("exhibitions", "creation_time", 1);
+            if (exhibition != null)
             {
-                QuerySnapshot snapshot = task.Result;
-                foreach (DocumentSnapshot document in snapshot.Documents)
+                exhibitionCard.Init(exhibition);
+                loaded = true;
+
+                if (FirebaseLoader.Artists.Count > 0)
                 {
-                    if (document.Exists)
+                    artistContainer.Assign(FirebaseLoader.Artists[Random.Range(0, FirebaseLoader.Artists.Count)]);
+                }
+                else
+                {
+                    ArtistData artistData = await FirebaseLoader.GetArtistByIdAsync(exhibition.artist_references[Random.Range(0, exhibition.artist_references.Count)].Id);
+                    if (artistData != null)
                     {
-                        var exhibition = document.ConvertTo<ExhibitionData>();
-                        exhibition.exhibition_images = new List<Sprite>(exhibitionImages);
-                        exhibitionCard.Init(exhibition);
-
-                        if (cachedArtists == null || cachedArtists.Count <= 0)
-                        {
-                            cachedArtists = new List<ArtistData>();
-                            
-                            foreach (var artwork in exhibition.artworks)
-                            {
-                                cachedArtists.AddRange(artwork.artists);
-                            }
-                        }
-
-                        if (cachedArtists.Count > 0)
-                        {
-                            artistContainer.Assign(cachedArtists[Random.Range(0, cachedArtists.Count)]);
-                        }
+                        artistContainer.Assign(artistData);
                     }
                 }
-
-                if (snapshot.Count == 0)
-                {
-                    Debug.Log("No documents found in the collection.");
-                }
             }
-            else
-            {
-                Debug.LogError($"Failed to retrieve documents: {task.Exception}");
-            }
-        });
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error fetching most recent exhibition: {e.Message}");
+        }
     }
 }

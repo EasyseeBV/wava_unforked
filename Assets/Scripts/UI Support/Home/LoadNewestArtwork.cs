@@ -1,9 +1,6 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Firebase.Extensions;
-using Firebase.Firestore;
-using Messy.Definitions;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class LoadNewestArtwork : MonoBehaviour
@@ -18,54 +15,34 @@ public class LoadNewestArtwork : MonoBehaviour
     
     private bool loaded = false;
     
-    private void OnEnable() => FirebaseLoader.OnFirestoreInitialized += QueryMostRecent;
-    private void OnDisable() => FirebaseLoader.OnFirestoreInitialized -= QueryMostRecent;
+    private void OnEnable() => FirebaseLoader.OnFirestoreInitialized += async () => await QueryMostRecent();
+    private void OnDisable() => FirebaseLoader.OnFirestoreInitialized -= async () => await QueryMostRecent();
 
-    private void Start()
+    private async void Start()
     {
         if (FirebaseLoader.Firestore == null) return;
-        QueryMostRecent();
+        await QueryMostRecent();
     }
 
-    private void QueryMostRecent()
+    private async Task QueryMostRecent()
     {
         if (loaded) return;
         
-        // Create a query against the collection.
-        Query query = FirebaseLoader.Firestore.Collection("artworks").OrderBy("creation_time").Limit(showCount);
-
-        // Execute the query asynchronously
-        query.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        try
         {
-            if (task.IsCompleted)
+            Debug.Log("fetching...");
+            var artworkData = await FirebaseLoader.FetchMultipleDocuments<ArtworkData>("artworks", "creation_time", showCount);
+            Debug.Log(artworkData.Count);
+            foreach (var artwork in artworkData)
             {
-                QuerySnapshot snapshot = task.Result;
-                foreach (DocumentSnapshot document in snapshot.Documents)
-                {
-                    if (document.Exists)
-                    {
-                        var artwork = document.ConvertTo<ArtworkData>();
-                        artwork.artwork_images = new List<Sprite>();
-                        artwork.artwork_images.Add(debugSprites[Random.Range(0, debugSprites.Count)]);
-                        var card = Instantiate(galleryCard, parent);
-                        card.gameObject.SetActive(true);
-                        card.LoadARPoint(artwork);
-                    }
-                }
-
-                if (snapshot.Count == 0)
-                {
-                    Debug.Log("No documents found in the collection.");
-                }
-                else
-                {
-                    loaded = true;
-                }
+                var card = Instantiate(galleryCard, parent);
+                card.gameObject.SetActive(true);
+                card.LoadARPoint(artwork);
             }
-            else
-            {
-                Debug.LogError($"Failed to retrieve documents: {task.Exception}");
-            }
-        });
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error fetching most recent exhibition: {e.Message}");
+        }
     }
 }
