@@ -6,6 +6,7 @@ using UnityEngine;
 using Michsky.MUIP;
 using TMPro;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -77,6 +78,9 @@ public class ArtworkUIManager : MonoBehaviour
     [FormerlySerializedAs("cachedGalleryDisplays")]
     [HideInInspector] public List<ArtworkShower> CachedGalleryDisplays = new ();
     [HideInInspector] public GalleryFilter.Filter CurrentFilter = GalleryFilter.Filter.RecentlyAdded;
+    
+    private MenuNavigation currentMenuNavigation = MenuNavigation.Artworks;
+    public static event Action OnNewDocumentAdded;
 
     private void Awake()
     {
@@ -132,14 +136,25 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitArtworks() 
     {
-        if (FirebaseLoader.Exhibitions == null) return;
+        if (FirebaseLoader.Artworks == null) return;
         
         ClearStage();
         ShowDefaultLayoutArea(true);
+
+        FetchNewArtworks();
+        
+        ChangeMenuNavigation(MenuNavigation.Artworks);
+    }
+
+    private async Task FetchNewArtworks()
+    {
+        if (!FirebaseLoader.ArtworkCollectionFull)
+        {
+            await FirebaseLoader.FetchDocuments<ArtworkData>(1);
+        }
         
         // Flatten all ArtWorks, filter those with images, and sort by creationDateTime descending
-        var sortedArtworks = FirebaseLoader.Exhibitions
-            .SelectMany(exhibition => exhibition.artworks)
+        var sortedArtworks = FirebaseLoader.Artworks
             .Where(artwork => artwork.artwork_images.Count != 0)
             .OrderByDescending(artwork => artwork.creation_time);
         
@@ -149,8 +164,6 @@ public class ArtworkUIManager : MonoBehaviour
             shower.Init(artwork);
             CachedGalleryDisplays.Add(shower);
         }
-        
-        ChangeMenuNavigation(MenuNavigation.Artworks);
     }
 
     public void InitExhibitions() 
@@ -159,6 +172,18 @@ public class ArtworkUIManager : MonoBehaviour
         
         ClearStage();
         ShowDefaultLayoutArea(true);
+
+        FetchNewExhibitions();
+        
+        ChangeMenuNavigation(MenuNavigation.Exhibitions);
+    }
+    
+    private async Task FetchNewExhibitions()
+    {
+        if (!FirebaseLoader.ExhibitionCollectionFull)
+        {
+            await FirebaseLoader.FetchDocuments<ExhibitionData>(1);
+        }
         
         // Sort Exhibitions by creationDateTime descending
         var sortedExhibitions = FirebaseLoader.Exhibitions.OrderByDescending(exhibition => exhibition.creation_time);
@@ -167,41 +192,63 @@ public class ArtworkUIManager : MonoBehaviour
             ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
             card.Init(exhibition);
         }
-        
-        ChangeMenuNavigation(MenuNavigation.Exhibitions);
     }
     
     public void InitArtists()
     {
-        if (FirebaseLoader.Exhibitions == null) return;
+        if (FirebaseLoader.Artists == null) return;
         
         ClearStage();
         ShowDefaultLayoutArea(false);
-        List<ArtistData> unorderedList = new();
-        foreach (ExhibitionData exhibition in FirebaseLoader.Exhibitions) 
-        {
-            foreach (var artwork in exhibition.artworks)
-            {
-                foreach (var artist in artwork.artists)
-                {
-                    if(unorderedList.Contains(artist)) continue;
-                    if (artist == null) continue;
-                    unorderedList.Add(artist);
-                }
-            }
-        }
 
-        var orderedArtistList = unorderedList.OrderByDescending(artist => artist.creation_time).ToList();
-        foreach (var artist in orderedArtistList)
-        {
-            ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
-            container.Assign(artist);
-        }
+        FetchNewArtists();
         
         ChangeMenuNavigation(MenuNavigation.Artists);
         LayoutRebuilder.ForceRebuildLayoutImmediate(artistsLayoutArea);
     }
+    
+    private async Task FetchNewArtists()
+    {
+        if (!FirebaseLoader.ArtistCollectionFull)
+        {
+            await FirebaseLoader.FetchDocuments<ExhibitionData>(1);
+        }
+        
+        var sortedArtists = FirebaseLoader.Artists.OrderByDescending(artwork => artwork.creation_time);
+        foreach (var artist in sortedArtists)
+        {
+            ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
+            container.Assign(artist);
+        }
+    }
 
+    public async Task AddNewDocument()
+    {
+        switch (currentMenuNavigation)
+        {
+            case MenuNavigation.Artworks:
+                var artworkDoc = await FirebaseLoader.FetchDocuments<ArtworkData>(1);
+                ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
+                shower.Init(artworkDoc[0]);
+                CachedGalleryDisplays.Add(shower);
+                break;
+            case MenuNavigation.Exhibitions:
+                var exhibitionDoc = await FirebaseLoader.FetchDocuments<ExhibitionData>(1);
+                ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
+                card.Init(exhibitionDoc[0]);
+                break;
+            case MenuNavigation.Artists:
+                var artistDoc = await FirebaseLoader.FetchDocuments<ArtistData>(1);
+                ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
+                container.Assign(artistDoc[0]);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        
+        OnNewDocumentAdded?.Invoke();
+    }
+    
     private void ShowDefaultLayoutArea(bool state)
     {
         visualAreaScrollRect.content = state ? defaultLayoutArea : artistsLayoutArea;
@@ -211,6 +258,8 @@ public class ArtworkUIManager : MonoBehaviour
 
     private void ChangeMenuNavigation(MenuNavigation navigation)
     {
+        currentMenuNavigation = navigation;
+        
         artworkNavigationLabel.color = navigation == MenuNavigation.Artworks ? navigationActive : navigationInactive;
         exhibitionsNavigationLabel.color = navigation == MenuNavigation.Exhibitions ? navigationActive : navigationInactive;
         artistsNavigationLabel.color = navigation == MenuNavigation.Artists ? navigationActive : navigationInactive;

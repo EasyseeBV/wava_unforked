@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -30,11 +31,10 @@ public class LoadNewestArtwork : MonoBehaviour
         
         try
         {
-            Debug.Log("fetching...");
             var artworkData = await FirebaseLoader.FetchMultipleDocuments<ArtworkData>("artworks", "creation_time", showCount);
-            Debug.Log(artworkData.Count);
             foreach (var artwork in artworkData)
             {
+                if (galleryCard == null) return;
                 var card = Instantiate(galleryCard, parent);
                 card.gameObject.SetActive(true);
                 card.LoadARPoint(artwork);

@@ -37,12 +37,25 @@ public class FirebaseLoader : MonoBehaviour
     // Pagination
     private static DocumentSnapshot lastOpenedDocument = null;
 
-    // Initialization Callback
+    // Callbacks
     public static Action OnFirestoreInitialized;
+    public static Action OnNewDocumentsFetched;
 
     // SemaphoreSlim instances for concurrency control
     private static readonly SemaphoreSlim artistSemaphore = new SemaphoreSlim(1, 1);
     private static readonly SemaphoreSlim artworkSemaphore = new SemaphoreSlim(1, 1);
+    
+    // Collection Sizes
+    public static long ArtworkCollectionSize { get; private set; } = -1;
+    public static long ExhibitionCollectionSize { get; private set; } = -1;
+    public static long ArtistCollectionSize { get; private set; } = -1;
+    
+    // Bool states
+    public static bool ArtworkCollectionFull => Artworks.Count >= ArtworkCollectionSize;
+    public static bool ExhibitionCollectionFull => Exhibitions.Count > ExhibitionCollectionSize;
+    public static bool ArtistCollectionFull => Artists.Count >= ArtistCollectionSize;
+    
+    private const int MAX_NOT_IN = 10;
 
     private void Awake()
     {
@@ -70,6 +83,8 @@ public class FirebaseLoader : MonoBehaviour
                 Debug.Log("Firebase initialized successfully.");
 
                 //await LoadAllDataOnStart();
+
+                await GetCollectionCountsAsync();
                 
                 OnFirestoreInitialized?.Invoke();
             }
@@ -193,6 +208,35 @@ public class FirebaseLoader : MonoBehaviour
         await LoadAllArtists();
         await LoadAllArtworks();
         await LoadAllExhibitions();
+    }
+    
+    private async Task GetCollectionCountsAsync()
+    {
+        try
+        {
+            var counts = await Task.WhenAll(
+                GetCollectionCountAsync("artworks"),
+                GetCollectionCountAsync("exhibitions"),
+                GetCollectionCountAsync("artists")
+            );
+
+            ArtworkCollectionSize = counts[0];
+            ExhibitionCollectionSize = counts[1];
+            ArtistCollectionSize = counts[2];
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error fetching collection counts: {ex.Message}");
+            throw;
+        }
+    }
+
+    private async Task<long> GetCollectionCountAsync(string collectionName)
+    {
+        var collectionRef = _firestore.Collection(collectionName);
+        var countQuery = collectionRef.Count;
+        var snapshot = await countQuery.GetSnapshotAsync(AggregateSource.Server);
+        return snapshot.Count;
     }
 
     #endregion
@@ -386,14 +430,16 @@ public class FirebaseLoader : MonoBehaviour
     /// </summary>
     /// <typeparam name="T">The type of data to fetch (ArtworkData, ArtistData, ExhibitionData).</typeparam>
     /// <param name="limit">The maximum number of documents to fetch.</param>
-    public static async Task FetchDocuments<T>(int limit, string sorting = "creation_time")
+    public static async Task<List<T>> FetchDocuments<T>(int limit, string sorting = "creation_time") where T : class
     {
+        List<T> fetchedDocuments = new List<T>();
+
         try
         {
             if (_firestore == null)
             {
                 Debug.LogError("Firebase Firestore has not been initialized.");
-                return;
+                return fetchedDocuments;
             }
 
             string collectionName = typeof(T) switch
@@ -404,11 +450,66 @@ public class FirebaseLoader : MonoBehaviour
                 _ => "collection"
             };
 
-            Query query = _firestore.Collection(collectionName).OrderBy(sorting).Limit(limit);
-            if (lastOpenedDocument != null) query = query.StartAfter(lastOpenedDocument);
-            QuerySnapshot snapshot = await query.GetSnapshotAsync();
+            // Determine the list of cached IDs based on type T
+            List<string> cachedIds = typeof(T) switch
+            {
+                Type t when t == typeof(ArtworkData) => ArtworksMap.Keys.ToList(),
+                Type t when t == typeof(ArtistData) => ArtistsMap.Keys.ToList(),
+                Type t when t == typeof(ExhibitionData) => ExhibitionsMap.Keys.ToList(),
+                _ => new List<string>()
+            };
 
-            foreach (DocumentSnapshot document in snapshot.Documents)
+            // Initialize Firestore collection reference
+            CollectionReference collection = _firestore.Collection(collectionName);
+
+            // Start building the base query
+            Query baseQuery = collection.OrderBy(sorting);
+
+            if (lastOpenedDocument != null)
+            {
+                baseQuery = baseQuery.StartAfter(lastOpenedDocument);
+            }
+
+            // Initialize a list to hold all fetched documents
+            List<DocumentSnapshot> allFetchedDocuments = new List<DocumentSnapshot>();
+
+            if (cachedIds.Count > 0)
+            {
+                // Exclude cached IDs using 'whereNotIn' in batches
+                List<List<string>> batches = SplitList(cachedIds, MAX_NOT_IN);
+
+                foreach (var batch in batches)
+                {
+                    Query query = baseQuery.WhereNotIn(FieldPath.DocumentId, batch).Limit(limit);
+                    QuerySnapshot snapshot = await query.GetSnapshotAsync();
+
+                    foreach (DocumentSnapshot document in snapshot.Documents)
+                    {
+                        if (document.Exists && !cachedIds.Contains(document.Id))
+                        {
+                            allFetchedDocuments.Add(document);
+                            if (allFetchedDocuments.Count >= limit)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (allFetchedDocuments.Count >= limit)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // No cached IDs, perform a single query
+                QuerySnapshot snapshot = await baseQuery.Limit(limit).GetSnapshotAsync();
+                allFetchedDocuments.AddRange(snapshot.Documents);
+            }
+
+            // Process the fetched documents
+            foreach (DocumentSnapshot document in allFetchedDocuments)
             {
                 if (document.Exists)
                 {
@@ -416,28 +517,37 @@ public class FirebaseLoader : MonoBehaviour
                     {
                         var data = document.ConvertTo<ArtworkData>();
                         Debug.Log($"Loaded artwork: '{data.title}'");
-                        data.artwork_images = new List<Sprite>(artworkImagesRef);
-                        Artworks.Add(data);
+                        data.artwork_images = new List<Sprite>(artworkImagesRef); // Ensure artworkImagesRef is defined
                         ArtworksMap[document.Id] = data;
+                        Artworks.Add(data);
+                        fetchedDocuments.Add(data as T);
                     }
                     else if (typeof(T) == typeof(ArtistData))
                     {
                         var data = document.ConvertTo<ArtistData>();
                         Debug.Log($"Loaded artist: '{data.title}'");
-                        data.icon = artistIconRef;
-                        Artists.Add(data);
+                        data.icon = artistIconRef; // Ensure artistIconRef is defined
                         ArtistsMap[document.Id] = data;
+                        Artists.Add(data);
+                        fetchedDocuments.Add(data as T);
                     }
                     else if (typeof(T) == typeof(ExhibitionData))
                     {
                         var data = document.ConvertTo<ExhibitionData>();
                         Debug.Log($"Loaded exhibition: '{data.title}'");
-                        data.exhibition_images = new List<Sprite>(exhibitionImagesRef);
+                        data.exhibition_images = new List<Sprite>(exhibitionImagesRef); // Ensure exhibitionImagesRef is defined
+                        ExhibitionsMap[document.Id] = data;
                         Exhibitions.Add(data);
+                        fetchedDocuments.Add(data as T);
                     }
 
                     // Update lastOpenedDocument for pagination
                     lastOpenedDocument = document;
+
+                    if (fetchedDocuments.Count >= limit)
+                    {
+                        break;
+                    }
                 }
                 else
                 {
@@ -445,10 +555,29 @@ public class FirebaseLoader : MonoBehaviour
                 }
             }
         }
+        catch (FirebaseException fe)
+        {
+            Debug.LogError($"Firebase error while fetching documents: {fe.Message}\n{fe.StackTrace}");
+        }
         catch (Exception e)
         {
-            Debug.LogError($"Failed to fetch documents: {e.Message}\n{e.StackTrace}");
+            Debug.LogError($"Unexpected error while fetching documents: {e.Message}\n{e.StackTrace}");
         }
+
+        OnNewDocumentsFetched?.Invoke();
+        return fetchedDocuments;
+    }
+
+    /// <summary>
+    /// Splits a list into smaller batches.
+    /// </summary>
+    private static List<List<string>> SplitList(List<string> source, int batchSize)
+    {
+        return source
+            .Select((x, i) => new { Index = i, Value = x })
+            .GroupBy(x => x.Index / batchSize)
+            .Select(g => g.Select(x => x.Value).ToList())
+            .ToList();
     }
     
     public static async Task<T> FetchSingleDocument<T>(string collection, string sort, int limit) where T : class
@@ -534,7 +663,6 @@ public class FirebaseLoader : MonoBehaviour
     {
         List<T> results = new List<T>();
         
-
         Query query = _firestore.Collection(collection).OrderBy(sort).Limit(limit);
         QuerySnapshot snapshot = await query.GetSnapshotAsync();
 
