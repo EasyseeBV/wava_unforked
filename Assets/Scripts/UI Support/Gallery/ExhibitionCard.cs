@@ -32,6 +32,12 @@ public class ExhibitionCard : MonoBehaviour
 
     public void Init(ExhibitionData point)
     {
+        if (point == null)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+        
         exhibition = point;
 
         if (point.exhibition_images.Count >= 3)

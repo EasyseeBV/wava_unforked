@@ -32,6 +32,7 @@ public class ArtworkData
     [FirestoreProperty] public DateTime update_time { get; set; }
     
     // World Data
+    public string artwork_id { get; set; }
     public HotspotManager hotspot { get; set; } = null;
     public OnlineMapsMarker3D marker { get; set; } = new OnlineMapsMarker3D();
 }

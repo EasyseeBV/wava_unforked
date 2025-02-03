@@ -22,4 +22,7 @@ public class ExhibitionData
     // Read Only Data
     [FirestoreProperty] public DateTime creation_time { get; set; }
     [FirestoreProperty] public DateTime update_time { get; set; }
+    
+    // World Data
+    public string exhibition_id;
 }

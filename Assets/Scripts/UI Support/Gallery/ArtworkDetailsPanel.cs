@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DanielLochner.Assets.SimpleScrollSnap;
 using Messy.Definitions;
 using TMPro;
@@ -116,12 +117,23 @@ public class ArtworkDetailsPanel : DetailsPanel
     private ExhibitionData GetExhibition()
     {
         if (FirebaseLoader.Exhibitions == null) return null;
-
+        
         foreach (var exhibition in FirebaseLoader.Exhibitions)
         {
             if (exhibition.artworks.Contains(artwork)) return exhibition;
+            else
+            {
+                if (exhibition.artwork_references.Any(documentReference => documentReference.Id == artwork.artwork_id))
+                {
+                    exhibition.artworks.Add(artwork);
+                    return exhibition;
+                }
+            }
         }
-
+        
+        // query firebase for an exhibition document that contains the saved artwork document id in its artwork_reference list and return that instead
+        Debug.LogWarning("Returning null for exhibition - this feature needs to be implemented (fetching firebase document by id in a list)");
+        
         return null;
     }
 

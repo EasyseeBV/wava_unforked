@@ -32,9 +32,16 @@ public class ArtworkShower : MonoBehaviour
 
     public void Init(ArtworkData artwork) 
     {
+        if (artwork == null)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+        
         ARPhoto.sprite = artwork.artwork_images.Count > 0 ? artwork.artwork_images[0] : null;
         Title.text = artwork.title;
         Artist.text = artwork.artists.Count > 0 ? artwork.artists[0].title : null;
+
         //Location.text = point.Location;
         Year.text = artwork.year.ToString();
 

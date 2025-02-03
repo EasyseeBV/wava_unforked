@@ -168,6 +168,7 @@ public class ARMapPointMaker : MonoBehaviour {
     private void OnChangeGps(Vector2 position) {
         AnyCloseEnough = false;
 
+        // adjust to work better - it breaks right now
         HotspotManager manager = FirebaseLoader.Exhibitions.SelectMany(s => s.artworks).OrderBy(t => t.hotspot._distance).FirstOrDefault().hotspot;
         if (manager.IsClose()) {
             if (ClosestHotspot != null) {

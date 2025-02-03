@@ -302,6 +302,7 @@ public class FirebaseLoader : MonoBehaviour
                 {
                     ArtworkData artwork = artworkDoc.ConvertTo<ArtworkData>();
                     Debug.Log($"Loaded artwork: '{artwork.title}'");
+                    artwork.artwork_id = artworkDoc.Id;
                     artwork.artwork_images = new List<Sprite>(artworkImagesRef); // Assign artwork images
                     tempArtworks.Add(artwork);
                     ArtworksMap[artworkDoc.Id] = artwork; // Populate the cache
@@ -518,6 +519,7 @@ public class FirebaseLoader : MonoBehaviour
                         var data = document.ConvertTo<ArtworkData>();
                         Debug.Log($"Loaded artwork: '{data.title}'");
                         data.artwork_images = new List<Sprite>(artworkImagesRef); // Ensure artworkImagesRef is defined
+                        data.artwork_id = document.Id;
                         ArtworksMap[document.Id] = data;
                         Artworks.Add(data);
                         fetchedDocuments.Add(data as T);
@@ -606,6 +608,8 @@ public class FirebaseLoader : MonoBehaviour
             
             Debug.Log($"Loaded artwork: '{data.title}'");
             data.artwork_images = new List<Sprite>(artworkImagesRef);
+            data.artwork_id = document.Id;
+            Debug.Log("set data name too " + document.Id);
             Artworks.Add(data);
             ArtworksMap[document.Id] = data;
             
@@ -682,6 +686,7 @@ public class FirebaseLoader : MonoBehaviour
                 {
                     Debug.Log($"Loaded artwork: '{data.title}'");
                     data.artwork_images = new List<Sprite>(artworkImagesRef);
+                    data.artwork_id = document.Id;
                     Artworks.Add(data);
                     ArtworksMap[document.Id] = data;
                     results.Add(data as T);

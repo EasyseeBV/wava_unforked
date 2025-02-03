@@ -16,4 +16,7 @@ public class ArtistData
     // Read Only Data
     [FirestoreProperty] public DateTime creation_time { get; set; } //  does not work
     [FirestoreProperty] public DateTime update_time { get; set; } //  does not work
+    
+    // World data
+    public string artist_id;
 }

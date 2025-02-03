@@ -185,7 +185,7 @@ public class ArtworkUIManager : MonoBehaviour
             await FirebaseLoader.FetchDocuments<ExhibitionData>(1);
         }
         
-        // Sort Exhibitions by creationDateTime descending
+        // Sort Exhibitions by creation_time descending
         var sortedExhibitions = FirebaseLoader.Exhibitions.OrderByDescending(exhibition => exhibition.creation_time);
         
         foreach (ExhibitionData exhibition in sortedExhibitions) {
@@ -227,21 +227,30 @@ public class ArtworkUIManager : MonoBehaviour
         switch (currentMenuNavigation)
         {
             case MenuNavigation.Artworks:
+                if (FirebaseLoader.ArtworkCollectionFull) return;
+                
                 var artworkDoc = await FirebaseLoader.FetchDocuments<ArtworkData>(1);
                 ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
                 shower.Init(artworkDoc[0]);
                 CachedGalleryDisplays.Add(shower);
                 break;
+            
             case MenuNavigation.Exhibitions:
+                if (FirebaseLoader.ExhibitionCollectionFull) return;
+                
                 var exhibitionDoc = await FirebaseLoader.FetchDocuments<ExhibitionData>(1);
                 ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
                 card.Init(exhibitionDoc[0]);
                 break;
+            
             case MenuNavigation.Artists:
+                if (FirebaseLoader.ArtistCollectionFull) return;
+                
                 var artistDoc = await FirebaseLoader.FetchDocuments<ArtistData>(1);
                 ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
                 container.Assign(artistDoc[0]);
                 break;
+            
             default:
                 throw new ArgumentOutOfRangeException();
         }

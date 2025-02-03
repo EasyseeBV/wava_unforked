@@ -35,7 +35,6 @@ public class ScrollDetector : MonoBehaviour
         
         if (currentScroll <= adjustedThreshold)
         {
-            Debug.Log("Fetch new document from firestore here.");
             paused = true;
             ArtworkUIManager.Instance.AddNewDocument();
         }
