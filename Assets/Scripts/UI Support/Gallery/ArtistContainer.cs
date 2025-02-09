@@ -27,7 +27,7 @@ public class ArtistContainer : MonoBehaviour
         
         this.artist = artist;
 
-        if(artist.icon != null) profilePicture.sprite = artist.icon;
+        if(artist.iconImage != null) profilePicture.sprite = artist.iconImage;
         artistNameLabel.text = artist.title;
         int works = GetArtistWorkCount();
         artworkCountLabel.text = works == 1 ? "1 Artwork" : $"{GetArtistWorkCount()} Artworks";

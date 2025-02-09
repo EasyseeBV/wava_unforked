@@ -16,8 +16,10 @@ public class ArtworkData
     
     [FirestoreProperty] public int year { get; set; }
     [FirestoreProperty] public string location { get; set; }
-    [FirestoreProperty] public string artwork_cover_image { get; set; } // used for reference to thumbnail image url?
-    [FirestoreProperty] public List<Sprite> artwork_images { get; set; } = new List<Sprite>();
+    
+    [FirestoreProperty] public List<string> artwork_image_references { get; set; } = new List<string>();
+    public List<Sprite> images { get; set; } = new List<Sprite>();
+    
     
     // AR Settings
     [FirestoreProperty] public double latitude { get; set; }

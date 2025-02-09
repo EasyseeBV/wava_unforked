@@ -40,7 +40,7 @@ public class GalleryCard : MonoBehaviour
         artwork = point;
 
         Debug.LogError("DISABLED LOADING ARTWORK COVER IMAGE");
-        artworkImage.sprite = point.artwork_images[0];//artwork_cover_image;
+        artworkImage.sprite = point.images[0];//artwork_cover_image;
         artworkLabel.text = point.title;
         artistLabel.text = point.artists.Count > 0 ? point.artists[0].title : null;
         yearLabel.text = point.year.ToString();

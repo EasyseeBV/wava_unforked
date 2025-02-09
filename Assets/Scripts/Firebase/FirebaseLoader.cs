@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Firebase;
 using Firebase.Firestore;
 using UnityEngine;
+using UnityEngine.Networking;
 using Action = System.Action;
 
 public class FirebaseLoader : MonoBehaviour
@@ -23,12 +24,6 @@ public class FirebaseLoader : MonoBehaviour
     private static Dictionary<string, ArtistData> ArtistsMap = new Dictionary<string, ArtistData>();
     private static Dictionary<string, ArtworkData> ArtworksMap = new Dictionary<string, ArtworkData>();
     private static Dictionary<string, ExhibitionData> ExhibitionsMap = new Dictionary<string, ExhibitionData>();
-
-    // References to Sprites
-    [Header("Debugging")]
-    [SerializeField] private Sprite artistIcon;
-    [SerializeField] private List<Sprite> artworkImages = new List<Sprite>();
-    [SerializeField] private List<Sprite> exhibitionImages = new List<Sprite>();
 
     private static Sprite artistIconRef;
     private static List<Sprite> artworkImagesRef = new List<Sprite>();
@@ -60,12 +55,6 @@ public class FirebaseLoader : MonoBehaviour
     private void Awake()
     {
         if (_firestore != null) return;
-
-        // Assign Sprite References
-        artistIconRef = artistIcon;
-        artworkImagesRef = artworkImages;
-        exhibitionImagesRef = exhibitionImages;
-
         InitializeFirebase();
     }
 
@@ -101,7 +90,7 @@ public class FirebaseLoader : MonoBehaviour
 
     #region Helper Methods for Fetching Single Items
 
-    /// <summary>
+    /// <summary> 2711
     /// Retrieves an ArtistData by ID, fetching from Firestore if not present in the cache.
     /// </summary>
     /// <param name="artistId">The ID of the artist.</param>
@@ -129,7 +118,7 @@ public class FirebaseLoader : MonoBehaviour
             if (document.Exists)
             {
                 ArtistData artist = document.ConvertTo<ArtistData>();
-                artist.icon = artistIconRef; // Assign the icon
+                artist.iconImage = artistIconRef; // Assign the icon
                 ArtistsMap[artistId] = artist; // Add to cache
                 Artists.Add(artist); // Add to list
                 Debug.Log($"Loaded artist '{artist.title}' from Firestore.");
@@ -180,7 +169,7 @@ public class FirebaseLoader : MonoBehaviour
             if (document.Exists)
             {
                 ArtworkData artwork = document.ConvertTo<ArtworkData>();
-                artwork.artwork_images = new List<Sprite>(artworkImagesRef); // Assign artwork images
+                artwork.images = new List<Sprite>(artworkImagesRef); // Assign artwork images
                 ArtworksMap[artworkId] = artwork; // Add to cache
                 Artworks.Add(artwork); // Add to list
                 Debug.Log($"Loaded artwork '{artwork.title}' from Firestore.");
@@ -264,7 +253,7 @@ public class FirebaseLoader : MonoBehaviour
                 {
                     ArtistData artist = document.ConvertTo<ArtistData>();
                     Debug.Log($"Loaded artist '{artist.title}'");
-                    artist.icon = artistIconRef; // Assign the icon
+                    artist.iconImage = artistIconRef; // Assign the icon
                     Artists.Add(artist);
                     ArtistsMap[document.Id] = artist; // Populate the cache
                 }
@@ -303,7 +292,7 @@ public class FirebaseLoader : MonoBehaviour
                     ArtworkData artwork = artworkDoc.ConvertTo<ArtworkData>();
                     Debug.Log($"Loaded artwork: '{artwork.title}'");
                     artwork.artwork_id = artworkDoc.Id;
-                    artwork.artwork_images = new List<Sprite>(artworkImagesRef); // Assign artwork images
+                    artwork.images = new List<Sprite>(artworkImagesRef); // Assign artwork images
                     tempArtworks.Add(artwork);
                     ArtworksMap[artworkDoc.Id] = artwork; // Populate the cache
                 }
@@ -362,7 +351,7 @@ public class FirebaseLoader : MonoBehaviour
                 if (exhibitionDoc.Exists)
                 {
                     ExhibitionData exhibition = exhibitionDoc.ConvertTo<ExhibitionData>();
-                    exhibition.exhibition_images = new List<Sprite>(exhibitionImagesRef); // Assign exhibition images
+                    exhibition.images = new List<Sprite>(exhibitionImagesRef); // Assign exhibition images
                     Debug.Log($"Loaded exhibition: '{exhibition.title}'");
                     tempExhibitions.Add(exhibition);
                     ExhibitionsMap[exhibitionDoc.Id] = exhibition;
@@ -518,8 +507,9 @@ public class FirebaseLoader : MonoBehaviour
                     {
                         var data = document.ConvertTo<ArtworkData>();
                         Debug.Log($"Loaded artwork: '{data.title}'");
-                        data.artwork_images = new List<Sprite>(artworkImagesRef); // Ensure artworkImagesRef is defined
+                        data.images = new List<Sprite>(artworkImagesRef); // Ensure artworkImagesRef is defined
                         data.artwork_id = document.Id;
+                        await LoadArtworkImages(data);
                         ArtworksMap[document.Id] = data;
                         Artworks.Add(data);
                         fetchedDocuments.Add(data as T);
@@ -528,7 +518,8 @@ public class FirebaseLoader : MonoBehaviour
                     {
                         var data = document.ConvertTo<ArtistData>();
                         Debug.Log($"Loaded artist: '{data.title}'");
-                        data.icon = artistIconRef; // Ensure artistIconRef is defined
+                        data.iconImage = artistIconRef; // Ensure artistIconRef is defined
+                        await LoadArtworkImages(data);
                         ArtistsMap[document.Id] = data;
                         Artists.Add(data);
                         fetchedDocuments.Add(data as T);
@@ -537,7 +528,8 @@ public class FirebaseLoader : MonoBehaviour
                     {
                         var data = document.ConvertTo<ExhibitionData>();
                         Debug.Log($"Loaded exhibition: '{data.title}'");
-                        data.exhibition_images = new List<Sprite>(exhibitionImagesRef); // Ensure exhibitionImagesRef is defined
+                        data.images = new List<Sprite>(exhibitionImagesRef); // Ensure exhibitionImagesRef is defined
+                        await LoadArtworkImages(data);
                         ExhibitionsMap[document.Id] = data;
                         Exhibitions.Add(data);
                         fetchedDocuments.Add(data as T);
@@ -607,9 +599,9 @@ public class FirebaseLoader : MonoBehaviour
             }
             
             Debug.Log($"Loaded artwork: '{data.title}'");
-            data.artwork_images = new List<Sprite>(artworkImagesRef);
+            data.images = new List<Sprite>(artworkImagesRef);
             data.artwork_id = document.Id;
-            Debug.Log("set data name too " + document.Id);
+            await LoadArtworkImages(data);
             Artworks.Add(data);
             ArtworksMap[document.Id] = data;
             
@@ -631,7 +623,8 @@ public class FirebaseLoader : MonoBehaviour
             }
             
             Debug.Log($"Loaded artist: '{data.title}'");
-            data.icon = artistIconRef;
+            data.iconImage = artistIconRef;
+            await LoadArtworkImages(data);
             Artists.Add(data);
             ArtistsMap[document.Id] = data;
             
@@ -653,7 +646,8 @@ public class FirebaseLoader : MonoBehaviour
             }
             
             Debug.Log($"Loaded exhibition: '{data.title}'");
-            data.exhibition_images = new List<Sprite>(exhibitionImagesRef);
+            data.images = new List<Sprite>(exhibitionImagesRef);
+            await LoadArtworkImages(data);
             Exhibitions.Add(data);
             ExhibitionsMap[document.Id] = data;
             
@@ -685,8 +679,9 @@ public class FirebaseLoader : MonoBehaviour
                 if (data != null)
                 {
                     Debug.Log($"Loaded artwork: '{data.title}'");
-                    data.artwork_images = new List<Sprite>(artworkImagesRef);
+                    data.images = new List<Sprite>(artworkImagesRef);
                     data.artwork_id = document.Id;
+                    await LoadArtworkImages(data);
                     Artworks.Add(data);
                     ArtworksMap[document.Id] = data;
                     results.Add(data as T);
@@ -705,7 +700,8 @@ public class FirebaseLoader : MonoBehaviour
                 if (data != null)
                 {
                     Debug.Log($"Loaded artist: '{data.title}'");
-                    data.icon = artistIconRef;
+                    data.iconImage = artistIconRef;
+                    await LoadArtworkImages(data);
                     Artists.Add(data);
                     ArtistsMap[document.Id] = data;
                     results.Add(data as T);
@@ -724,7 +720,8 @@ public class FirebaseLoader : MonoBehaviour
                 if (data != null)
                 {
                     Debug.Log($"Loaded exhibition: '{data.title}'");
-                    data.exhibition_images = new List<Sprite>(exhibitionImagesRef);
+                    data.images = new List<Sprite>(exhibitionImagesRef);
+                    await LoadArtworkImages(data);
                     Exhibitions.Add(data);
                     ExhibitionsMap[document.Id] = data;
                     results.Add(data as T);
@@ -739,30 +736,65 @@ public class FirebaseLoader : MonoBehaviour
     #endregion
 
     #region Exhibition Images Loading
-
-    /*
+    
     /// <summary>
     /// Loads exhibition images from URLs and converts them to Sprites.
     /// </summary>
     /// <param name="exhibition">The exhibition for which to load images.</param>
-    private async Task LoadExhibitionImages(ExhibitionData exhibition)
+    private static async Task LoadArtworkImages<T>(T data)
     {
-        foreach (var imageUrl in exhibition.exhibition_images)
+        ArtworkData artwork = null;
+        ExhibitionData exhibition = null;
+        ArtistData artist = null;
+        
+        switch (data)
+        {
+            case ArtworkData artworkData:
+                artwork = artworkData;
+                break;
+            case ExhibitionData exhibitionData:
+                exhibition = exhibitionData;
+                break;
+            case ArtistData artistData:
+                artist = artistData;
+                break;
+        }
+
+        var urls = artwork != null ? artwork.artwork_image_references :
+            exhibition != null ? exhibition.exhibition_image_references : new List<string>();
+        
+        foreach (var imageUrl in urls)
         {
             try
             {
                 UnityWebRequest request = UnityWebRequestTexture.GetTexture(imageUrl);
                 var operation = request.SendWebRequest();
 
-                while (!operation.isDone)
-                    await Task.Yield();
+                while (!operation.isDone) await Task.Yield();
 
                 if (request.result == UnityWebRequest.Result.Success)
                 {
                     Texture2D texture = DownloadHandlerTexture.GetContent(request);
                     Sprite sprite = SpriteFromTexture2D(texture);
-                    exhibition.exhibition_images.Add(sprite);
-                    Debug.Log($"Loaded exhibition image from URL: {imageUrl}");
+
+                    if (artwork != null)
+                    {
+                        if (!artwork.images.Contains(sprite))
+                        {
+                            artwork.images.Add(sprite);
+                            Debug.Log($"Loaded artwork image from URL: {imageUrl}");
+                        }
+                        else Debug.Log($"Artwork [{artwork.title}] already contained sprite [{imageUrl}]");   
+                    }
+                    else if (exhibition != null)
+                    {
+                        if (!exhibition.images.Contains(sprite))
+                        {
+                            exhibition.images.Add(sprite);
+                            Debug.Log($"Loaded exhibition image from URL: {imageUrl}");
+                        }
+                        else Debug.Log($"Exhibition [{exhibition.title}] already contained sprite [{imageUrl}]");
+                    }
                 }
                 else
                 {
@@ -774,6 +806,33 @@ public class FirebaseLoader : MonoBehaviour
                 Debug.LogError($"Error loading exhibition image from URL '{imageUrl}': {e.Message}");
             }
         }
+
+        if (artist != null)
+        {
+            try
+            {
+                UnityWebRequest request = UnityWebRequestTexture.GetTexture(artist.icon);
+                var operation = request.SendWebRequest();
+
+                while (!operation.isDone) await Task.Yield();
+
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    Texture2D texture = DownloadHandlerTexture.GetContent(request);
+                    Sprite sprite = SpriteFromTexture2D(texture);
+                    artist.iconImage = sprite;
+                    Debug.Log($"Loaded artist icon for {artist.title}");
+                }
+                else
+                {
+                    Debug.LogWarning($"Failed to load icon for [{artist.title}] from URL '{artist.icon}': {request.error}");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Error loading artist icon for [{artist.title}] from URL '{artist.icon}': {e.Message}");
+            }
+        }
     }
 
     /// <summary>
@@ -781,37 +840,10 @@ public class FirebaseLoader : MonoBehaviour
     /// </summary>
     /// <param name="texture">The Texture2D to convert.</param>
     /// <returns>A Sprite created from the Texture2D.</returns>
-    private Sprite SpriteFromTexture2D(Texture2D texture)
+    private static Sprite SpriteFromTexture2D(Texture2D texture)
     {
         return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
     }
-
-    /// <summary>
-    /// Logs the loaded data for verification.
-    /// </summary>
-    private void LogLoadedData()
-    {
-        Debug.Log("----- Loaded Data Summary -----");
-        Debug.Log($"Artists Loaded: {Artists.Count}");
-        Debug.Log($"Artworks Loaded: {Artworks.Count}");
-        Debug.Log($"Exhibitions Loaded: {Exhibitions.Count}");
-
-        // Optionally, log details
-        foreach (var exhibition in Exhibitions)
-        {
-            Debug.Log($"Exhibition: {exhibition.title}");
-            foreach (var artist in exhibition.artists)
-            {
-                Debug.Log($"  Artist: {artist.title}");
-            }
-            foreach (var artwork in exhibition.artworks)
-            {
-                Debug.Log($"  Artwork: {artwork.title}");
-            }
-        }
-        Debug.Log("----- End of Summary -----");
-    }
-    */
 
     #endregion
 }

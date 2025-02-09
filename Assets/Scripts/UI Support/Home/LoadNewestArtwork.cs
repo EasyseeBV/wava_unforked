@@ -43,7 +43,7 @@ public class LoadNewestArtwork : MonoBehaviour
         catch (Exception e)
         {
             loaded = false;
-            Debug.LogError($"Error fetching most recent exhibition: {e.Message}");
+            Debug.LogError($"Error fetching most recent artwork: {e.Message}");
         }
     }
 }

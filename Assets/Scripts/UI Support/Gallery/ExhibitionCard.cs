@@ -40,31 +40,31 @@ public class ExhibitionCard : MonoBehaviour
         
         exhibition = point;
 
-        if (point.exhibition_images.Count >= 3)
+        if (point.images.Count >= 3)
         {
             singleCoverImageObject.SetActive(false);
             multCoverImageObject.SetActive(true);
             
-            image0.sprite = point.exhibition_images[0];
-            image1.sprite = point.exhibition_images[1];
-            image2.sprite = point.exhibition_images[2];
+            image0.sprite = point.images[0];
+            image1.sprite = point.images[1];
+            image2.sprite = point.images[2];
         }
-        else if (point.artworks.Count >= 3 && point.artworks[0].artwork_images.Count > 0 
-                                           && point.artworks[1].artwork_images.Count > 0 
-                                           && point.artworks[2].artwork_images.Count > 0)
+        else if (point.artworks.Count >= 3 && point.artworks[0].images.Count > 0 
+                                           && point.artworks[1].images.Count > 0 
+                                           && point.artworks[2].images.Count > 0)
         {
             singleCoverImageObject.SetActive(false);
             multCoverImageObject.SetActive(true);
             
-            image0.sprite = point.artworks[0].artwork_images[0];
-            image1.sprite = point.artworks[0].artwork_images[0];
-            image2.sprite = point.artworks[0].artwork_images[0];
+            image0.sprite = point.artworks[0].images[0];
+            image1.sprite = point.artworks[0].images[0];
+            image2.sprite = point.artworks[0].images[0];
         }
-        else if(point.exhibition_images.Count > 0)
+        else if(point.images.Count > 0)
         {
             singleCoverImageObject.SetActive(true);
             multCoverImageObject.SetActive(false);
-            singleImage.sprite = point.exhibition_images[0];
+            singleImage.sprite = point.images[0];
         }
         else
         {

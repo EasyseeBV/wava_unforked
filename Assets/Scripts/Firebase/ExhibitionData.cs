@@ -17,7 +17,9 @@ public class ExhibitionData
     
     [FirestoreProperty] public int year { get; set; }
     [FirestoreProperty] public string location { get; set; }
-    [FirestoreProperty] public List<Sprite> exhibition_images { get; set; }
+    
+    [FirestoreProperty] public List<string> exhibition_image_references { get; set; } = new List<string>();
+    public List<Sprite> images { get; set; }
     
     // Read Only Data
     [FirestoreProperty] public DateTime creation_time { get; set; }

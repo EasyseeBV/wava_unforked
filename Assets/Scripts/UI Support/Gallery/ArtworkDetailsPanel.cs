@@ -48,10 +48,10 @@ public class ArtworkDetailsPanel : DetailsPanel
         
         Clear();
 
-        for (int i = 0; i < artwork.artwork_images.Count; i++)
+        for (int i = 0; i < artwork.images.Count; i++)
         {
             Image artworkImage = scrollSnapper.AddToBack(galleryImagePrefab.gameObject).GetComponent<Image>();
-            artworkImage.sprite = artwork.artwork_images[i];
+            artworkImage.sprite = artwork.images[i];
 
             Image indicator = Instantiate(indicatorImage, indicatorArea).GetComponentInChildren<Image>();
             indicator.color = inactiveColor;

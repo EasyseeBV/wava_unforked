@@ -106,10 +106,10 @@ public class ExhibitionDetailsPanel : DetailsPanel
         
         Clear();
 
-        for (int i = 0; i < exhibition.exhibition_images.Count; i++)
+        for (int i = 0; i < exhibition.images.Count; i++)
         {
             Image artworkImage = scrollSnapper.AddToBack(galleryImagePrefab.gameObject).GetComponent<Image>();
-            artworkImage.sprite = exhibition.exhibition_images[i];
+            artworkImage.sprite = exhibition.images[i];
 
             Image indicator = Instantiate(indicatorImage, indicatorArea).GetComponentInChildren<Image>();
             indicator.color = inactiveColor;

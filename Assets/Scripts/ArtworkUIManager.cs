@@ -155,7 +155,7 @@ public class ArtworkUIManager : MonoBehaviour
         
         // Flatten all ArtWorks, filter those with images, and sort by creationDateTime descending
         var sortedArtworks = FirebaseLoader.Artworks
-            .Where(artwork => artwork.artwork_images.Count != 0)
+            .Where(artwork => artwork.images.Count != 0)
             .OrderByDescending(artwork => artwork.creation_time);
         
         foreach (ArtworkData artwork in sortedArtworks) 

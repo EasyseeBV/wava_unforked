@@ -101,7 +101,7 @@ public class ArtistDetailsPanel : DetailsPanel
         Clear();
 
         contentTitleLabel.text = artist.title;
-        profileIcon.sprite = artist.icon;
+        profileIcon.sprite = artist.iconImage;
         fullLengthDescription = artist.description;
         TruncateText();
         

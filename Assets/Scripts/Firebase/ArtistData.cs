@@ -11,7 +11,8 @@ public class ArtistData
     [FirestoreProperty] public string description { get; set; }
     [FirestoreProperty] public string location { get; set; }
     [FirestoreProperty] public string link { get; set; }
-    [FirestoreProperty] public Sprite icon { get; set; }
+    [FirestoreProperty] public string icon { get; set; }
+    public Sprite iconImage { get; set; }
     
     // Read Only Data
     [FirestoreProperty] public DateTime creation_time { get; set; } //  does not work

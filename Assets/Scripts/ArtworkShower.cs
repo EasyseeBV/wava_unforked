@@ -38,7 +38,7 @@ public class ArtworkShower : MonoBehaviour
             return;
         }
         
-        ARPhoto.sprite = artwork.artwork_images.Count > 0 ? artwork.artwork_images[0] : null;
+        ARPhoto.sprite = artwork.images.Count > 0 ? artwork.images[0] : null;
         Title.text = artwork.title;
         Artist.text = artwork.artists.Count > 0 ? artwork.artists[0].title : null;
 
