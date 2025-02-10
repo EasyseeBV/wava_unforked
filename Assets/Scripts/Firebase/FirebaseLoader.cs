@@ -25,10 +25,6 @@ public class FirebaseLoader : MonoBehaviour
     private static Dictionary<string, ArtworkData> ArtworksMap = new Dictionary<string, ArtworkData>();
     private static Dictionary<string, ExhibitionData> ExhibitionsMap = new Dictionary<string, ExhibitionData>();
 
-    private static Sprite artistIconRef;
-    private static List<Sprite> artworkImagesRef = new List<Sprite>();
-    private static List<Sprite> exhibitionImagesRef = new List<Sprite>();
-
     // Pagination
     private static DocumentSnapshot lastOpenedDocument = null;
 
@@ -118,7 +114,6 @@ public class FirebaseLoader : MonoBehaviour
             if (document.Exists)
             {
                 ArtistData artist = document.ConvertTo<ArtistData>();
-                artist.iconImage = artistIconRef; // Assign the icon
                 ArtistsMap[artistId] = artist; // Add to cache
                 Artists.Add(artist); // Add to list
                 Debug.Log($"Loaded artist '{artist.title}' from Firestore.");
@@ -169,7 +164,7 @@ public class FirebaseLoader : MonoBehaviour
             if (document.Exists)
             {
                 ArtworkData artwork = document.ConvertTo<ArtworkData>();
-                artwork.images = new List<Sprite>(artworkImagesRef); // Assign artwork images
+                artwork.images = new List<Sprite>(); 
                 ArtworksMap[artworkId] = artwork; // Add to cache
                 Artworks.Add(artwork); // Add to list
                 Debug.Log($"Loaded artwork '{artwork.title}' from Firestore.");
@@ -253,7 +248,6 @@ public class FirebaseLoader : MonoBehaviour
                 {
                     ArtistData artist = document.ConvertTo<ArtistData>();
                     Debug.Log($"Loaded artist '{artist.title}'");
-                    artist.iconImage = artistIconRef; // Assign the icon
                     Artists.Add(artist);
                     ArtistsMap[document.Id] = artist; // Populate the cache
                 }
@@ -292,7 +286,7 @@ public class FirebaseLoader : MonoBehaviour
                     ArtworkData artwork = artworkDoc.ConvertTo<ArtworkData>();
                     Debug.Log($"Loaded artwork: '{artwork.title}'");
                     artwork.artwork_id = artworkDoc.Id;
-                    artwork.images = new List<Sprite>(artworkImagesRef); // Assign artwork images
+                    artwork.images = new List<Sprite>(); 
                     tempArtworks.Add(artwork);
                     ArtworksMap[artworkDoc.Id] = artwork; // Populate the cache
                 }
@@ -351,7 +345,7 @@ public class FirebaseLoader : MonoBehaviour
                 if (exhibitionDoc.Exists)
                 {
                     ExhibitionData exhibition = exhibitionDoc.ConvertTo<ExhibitionData>();
-                    exhibition.images = new List<Sprite>(exhibitionImagesRef); // Assign exhibition images
+                    exhibition.images = new List<Sprite>(); 
                     Debug.Log($"Loaded exhibition: '{exhibition.title}'");
                     tempExhibitions.Add(exhibition);
                     ExhibitionsMap[exhibitionDoc.Id] = exhibition;
@@ -408,6 +402,66 @@ public class FirebaseLoader : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError($"Failed to load exhibitions: {e.Message}\n{e.StackTrace}");
+        }
+    }
+
+    public static async Task LoadRemainingArtworks()
+    {
+        Debug.Log("Trying to load remaining artworks");
+
+        try
+        {
+            CollectionReference artworksRef = _firestore.Collection("artworks");
+            List<string> loadedIds = new List<string>(ArtworksMap.Keys);
+
+            List<Task<QuerySnapshot>> tasks = new List<Task<QuerySnapshot>>();
+            List<ArtworkData> newArtworks = new List<ArtworkData>();
+
+            if (loadedIds.Count == 0)
+            {
+                QuerySnapshot snapshot = await artworksRef.GetSnapshotAsync();
+                ProcessArtworks(snapshot, newArtworks);
+            }
+            else
+            {
+                // Firestore allows at most 10 elements in `WhereNotIn`
+                for (int i = 0; i < loadedIds.Count; i += 10)
+                {
+                    List<string> batch = loadedIds.GetRange(i, Mathf.Min(10, loadedIds.Count - i));
+                    Query query = artworksRef.WhereNotIn(FieldPath.DocumentId, batch);
+                    tasks.Add(query.GetSnapshotAsync());
+                }
+
+                await Task.WhenAll(tasks);
+
+                foreach (var task in tasks)
+                {
+                    ProcessArtworks(task.Result, newArtworks);
+                }
+            }
+
+            Debug.Log($"Loaded {newArtworks.Count} new artworks.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed to load remaining artworks: {e.Message}\n{e.StackTrace}");
+        }
+    }
+
+    private static async void ProcessArtworks(QuerySnapshot snapshot, List<ArtworkData> newArtworks)
+    {
+        foreach (DocumentSnapshot document in snapshot.Documents)
+        {
+            if (!ArtworksMap.ContainsKey(document.Id))
+            {
+                ArtworkData artwork = document.ConvertTo<ArtworkData>();
+                artwork.artwork_id = document.Id;
+                await LoadArtworkImages(artwork);
+                ArtworksMap.Add(document.Id, artwork);
+                Artworks.Add(artwork);
+                newArtworks.Add(artwork);
+                Debug.Log($"Loaded Artwork: {document.Id}");
+            }
         }
     }
 
@@ -507,7 +561,7 @@ public class FirebaseLoader : MonoBehaviour
                     {
                         var data = document.ConvertTo<ArtworkData>();
                         Debug.Log($"Loaded artwork: '{data.title}'");
-                        data.images = new List<Sprite>(artworkImagesRef); // Ensure artworkImagesRef is defined
+                        data.images = new List<Sprite>();
                         data.artwork_id = document.Id;
                         await LoadArtworkImages(data);
                         ArtworksMap[document.Id] = data;
@@ -518,7 +572,6 @@ public class FirebaseLoader : MonoBehaviour
                     {
                         var data = document.ConvertTo<ArtistData>();
                         Debug.Log($"Loaded artist: '{data.title}'");
-                        data.iconImage = artistIconRef; // Ensure artistIconRef is defined
                         await LoadArtworkImages(data);
                         ArtistsMap[document.Id] = data;
                         Artists.Add(data);
@@ -528,7 +581,7 @@ public class FirebaseLoader : MonoBehaviour
                     {
                         var data = document.ConvertTo<ExhibitionData>();
                         Debug.Log($"Loaded exhibition: '{data.title}'");
-                        data.images = new List<Sprite>(exhibitionImagesRef); // Ensure exhibitionImagesRef is defined
+                        data.images = new List<Sprite>();
                         await LoadArtworkImages(data);
                         ExhibitionsMap[document.Id] = data;
                         Exhibitions.Add(data);
@@ -599,7 +652,7 @@ public class FirebaseLoader : MonoBehaviour
             }
             
             Debug.Log($"Loaded artwork: '{data.title}'");
-            data.images = new List<Sprite>(artworkImagesRef);
+            data.images = new List<Sprite>();
             data.artwork_id = document.Id;
             await LoadArtworkImages(data);
             Artworks.Add(data);
@@ -623,7 +676,6 @@ public class FirebaseLoader : MonoBehaviour
             }
             
             Debug.Log($"Loaded artist: '{data.title}'");
-            data.iconImage = artistIconRef;
             await LoadArtworkImages(data);
             Artists.Add(data);
             ArtistsMap[document.Id] = data;
@@ -646,7 +698,7 @@ public class FirebaseLoader : MonoBehaviour
             }
             
             Debug.Log($"Loaded exhibition: '{data.title}'");
-            data.images = new List<Sprite>(exhibitionImagesRef);
+            data.images = new List<Sprite>();
             await LoadArtworkImages(data);
             Exhibitions.Add(data);
             ExhibitionsMap[document.Id] = data;
@@ -679,7 +731,7 @@ public class FirebaseLoader : MonoBehaviour
                 if (data != null)
                 {
                     Debug.Log($"Loaded artwork: '{data.title}'");
-                    data.images = new List<Sprite>(artworkImagesRef);
+                    data.images = new List<Sprite>();
                     data.artwork_id = document.Id;
                     await LoadArtworkImages(data);
                     Artworks.Add(data);
@@ -700,7 +752,6 @@ public class FirebaseLoader : MonoBehaviour
                 if (data != null)
                 {
                     Debug.Log($"Loaded artist: '{data.title}'");
-                    data.iconImage = artistIconRef;
                     await LoadArtworkImages(data);
                     Artists.Add(data);
                     ArtistsMap[document.Id] = data;
@@ -720,7 +771,7 @@ public class FirebaseLoader : MonoBehaviour
                 if (data != null)
                 {
                     Debug.Log($"Loaded exhibition: '{data.title}'");
-                    data.images = new List<Sprite>(exhibitionImagesRef);
+                    data.images = new List<Sprite>();
                     await LoadArtworkImages(data);
                     Exhibitions.Add(data);
                     ExhibitionsMap[document.Id] = data;

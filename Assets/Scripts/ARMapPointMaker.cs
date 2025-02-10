@@ -33,6 +33,25 @@ public class ARMapPointMaker : MonoBehaviour {
     public IEnumerator IEInstatiateHotspot()
     {
         yield return new WaitForSecondsRealtime(3f);
+
+        foreach (var artwork in FirebaseLoader.Artworks)
+        {
+            Debug.Log("Loading an artwork point...");
+            artwork.marker = control.marker3DManager.Create(artwork.longitude, artwork.latitude, ZoomedInMapObject);
+            artwork.marker.instance.name = artwork.title;
+            artwork.hotspot = artwork.marker.instance.GetComponent<HotspotManager>();
+            artwork.marker.sizeType = OnlineMapsMarker3D.SizeType.realWorld;
+            artwork.marker.instance.layer = LayerMask.NameToLayer("Hotspot");
+            artwork.marker.borderTransform = artwork.hotspot.BorderRingMesh.gameObject.transform;
+            artwork.hotspot.Navigation = GetComponent<NavigationMaker>();
+            artwork.hotspot.ConnectedExhibition = FirebaseLoader.Exhibitions[0];
+            Debug.LogWarning("ConnectedExhibition removed temp");
+            artwork.hotspot.Init(artwork);
+            artwork.hotspot.MinZoom = minZoom;
+            artwork.hotspot.OnChangeGpsPosition(OnlineMapsUtils.DistanceBetweenPoints(OnlineMapsLocationService.instance.position, new Vector2((float)artwork.longitude, (float)artwork.latitude)).magnitude);
+
+        }
+        
         foreach (ExhibitionData exhibition in FirebaseLoader.Exhibitions)
         {
             foreach (ArtworkData artwork in exhibition.artworks)

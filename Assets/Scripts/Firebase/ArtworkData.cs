@@ -20,7 +20,6 @@ public class ArtworkData
     [FirestoreProperty] public List<string> artwork_image_references { get; set; } = new List<string>();
     public List<Sprite> images { get; set; } = new List<Sprite>();
     
-    
     // AR Settings
     [FirestoreProperty] public double latitude { get; set; }
     [FirestoreProperty] public double longitude { get; set; }
