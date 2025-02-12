@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ARStaticObjectDebugLoader : MonoBehaviour
 {
-    public ARPointSO Artwork;
+    public ArtworkData Artwork;
     public bool AddARPoint = false;
 
     private void Start()
@@ -19,7 +19,7 @@ public class ARStaticObjectDebugLoader : MonoBehaviour
         if (AddARPoint)
         {
             AddARPoint = false;
-            ArTapper.ARPointToPlace = Artwork;
+            ArTapper.ArtworkToPlace = Artwork;
         }
     }
 }

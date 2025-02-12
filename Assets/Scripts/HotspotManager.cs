@@ -219,8 +219,7 @@ public class HotspotManager : MonoBehaviour
         if (ZoomedOut) Navigation.FastTravelToPoint(new Vector2((float)artwork.longitude, (float)artwork.latitude), 17f, 2f);
         else if (CanShow)
         {
-            Debug.LogError("START AR HAS BEEN DISABLED");
-            //StartAR(artwork);
+            StartAR(artwork);
         }
         else 
         {
@@ -274,15 +273,15 @@ public class HotspotManager : MonoBehaviour
     //Replaced ARPoint with ARPointSO
     public void StartAR(ArtworkData artwork)
     {
-        /*if (MapTutorialManager.TutorialActive) return;
+        // needs to be reenabled
+        if (MapTutorialManager.TutorialActive) return;
         
-        ArTapper.ARPointToPlace = artwork;
-        ArTapper.PlaceDirectly = artwork.PlayARObjectDirectly;
+        ArTapper.ArtworkToPlace = artwork;
+        ArTapper.PlaceDirectly = false; //artwork.PlayARObjectDirectly;
+        Debug.LogWarning("PlaceObjectDirectly was disabled");
         ArTapper.DistanceWhenActivated = _distance;
 
         SceneManager.LoadScene("AR");
-
-        return;*/
 
         /*if(string.IsNullOrEmpty(point.AlternateScene)){
             Debug.Log( "Loading Default AR Scene");

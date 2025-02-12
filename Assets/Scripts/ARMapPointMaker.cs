@@ -45,14 +45,14 @@ public class ARMapPointMaker : MonoBehaviour {
             artwork.marker.borderTransform = artwork.hotspot.BorderRingMesh.gameObject.transform;
             artwork.hotspot.Navigation = GetComponent<NavigationMaker>();
             artwork.hotspot.ConnectedExhibition = FirebaseLoader.Exhibitions[0];
-            Debug.LogWarning("ConnectedExhibition removed temp");
+            Debug.LogWarning("ConnectedExhibition removed temp - needs to retrieve it from the loader");
             artwork.hotspot.Init(artwork);
             artwork.hotspot.MinZoom = minZoom;
             artwork.hotspot.OnChangeGpsPosition(OnlineMapsUtils.DistanceBetweenPoints(OnlineMapsLocationService.instance.position, new Vector2((float)artwork.longitude, (float)artwork.latitude)).magnitude);
 
         }
         
-        foreach (ExhibitionData exhibition in FirebaseLoader.Exhibitions)
+        /*foreach (ExhibitionData exhibition in FirebaseLoader.Exhibitions)
         {
             foreach (ArtworkData artwork in exhibition.artworks)
             {
@@ -71,9 +71,9 @@ public class ARMapPointMaker : MonoBehaviour {
                 /*if (SelectionMenu.SelectedARPoint == artwork)
                 {
                     SelectionMenu.Instance.LoadARPointSO();
-                }*/
+                }#1#
             }
-        }
+        }*/
 
         map.OnChangeZoom += OnChangeZoom;
         map.OnChangePosition += OnChangePosition;
@@ -156,7 +156,7 @@ public class ARMapPointMaker : MonoBehaviour {
         anyVisible = false;
         
         //Replaced ARPoint with ARPointSO
-        foreach (ArtworkData item in FirebaseLoader.Exhibitions.SelectMany(s => s.artworks)) {
+        foreach (ArtworkData item in FirebaseLoader.Artworks) {
             item.hotspot.SetFormat(map.zoom);
             item.marker.scale = 1150f * ((Screen.width + Screen.height) / 2f) / Mathf.Pow(2, (map.zoom + map.zoomScale) * 0.85f);
             if (item.marker.inMapView)
@@ -169,7 +169,7 @@ public class ARMapPointMaker : MonoBehaviour {
         anyVisible = false;
 
         //Replaced ARPoint with ARPointSO
-        foreach (ArtworkData item in FirebaseLoader.Exhibitions.SelectMany(s => s.artworks)) {
+        foreach (ArtworkData item in FirebaseLoader.Artworks) {
             if (item.marker.inMapView) {
                 anyVisible = true;
             }
@@ -188,8 +188,8 @@ public class ARMapPointMaker : MonoBehaviour {
         AnyCloseEnough = false;
 
         // adjust to work better - it breaks right now
-        HotspotManager manager = FirebaseLoader.Exhibitions.SelectMany(s => s.artworks).OrderBy(t => t.hotspot._distance).FirstOrDefault().hotspot;
-        if (manager.IsClose()) {
+        HotspotManager manager = FirebaseLoader.Artworks.OrderBy(t => t.hotspot._distance).FirstOrDefault()?.hotspot;
+        if (manager != null && manager.IsClose()) {
             if (ClosestHotspot != null) {
                 ClosestHotspot.CanShow = false;
                 ClosestHotspot.SetReach(false);
@@ -199,9 +199,8 @@ public class ARMapPointMaker : MonoBehaviour {
             ClosestHotspot.CanShow = true;
             ClosestHotspot.SetReach(true);
         }
-
-        //Replaced ARPoint with ARPointSO
-        foreach (ArtworkData item in FirebaseLoader.Exhibitions.SelectMany(s => s.artworks)) {
+        
+        foreach (ArtworkData item in FirebaseLoader.Artworks) {
             item.hotspot.OnChangeGpsPosition(OnlineMapsUtils.DistanceBetweenPoints(position, new Vector2((float)item.longitude, (float)item.latitude)).magnitude);
             if (item.hotspot.IsClose()) {
                 AnyCloseEnough = true;

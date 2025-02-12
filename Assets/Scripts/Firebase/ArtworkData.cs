@@ -32,6 +32,11 @@ public class ArtworkData
     [FirestoreProperty] public DateTime creation_time { get; set; }
     [FirestoreProperty] public DateTime update_time { get; set; }
     
+    // Content
+    [FirestoreProperty] public string media_content { get; set; } // media references
+    [FirestoreProperty] public string content_url { get; set; } // direct references
+    [FirestoreProperty] public string preset { get; set; } // preset enum name
+    
     // World Data
     public string artwork_id { get; set; }
     public HotspotManager hotspot { get; set; } = null;

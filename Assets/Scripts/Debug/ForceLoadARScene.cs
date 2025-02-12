@@ -9,17 +9,17 @@ using UnityEngine.SceneManagement;
 public class ForceLoadARScene : MonoBehaviour
 {
     [SerializeField] private Button btn;
-    [SerializeField] private ARPointSO arPointSo;
+    [SerializeField] private ArtworkData arPointSo;
 
     private void Awake()
     {
         btn.onClick.AddListener(() => StartAR(arPointSo));
     }
 
-    public void StartAR(ARPointSO point)
+    public void StartAR(ArtworkData point)
     {
-        ArTapper.ARPointToPlace = point;
-        ArTapper.PlaceDirectly = point.PlayARObjectDirectly;
+        ArTapper.ArtworkToPlace = point;
+        ArTapper.PlaceDirectly = point.place_right;
         ArTapper.DistanceWhenActivated = 100f;
 
         SceneManager.LoadSceneAsync("AR");

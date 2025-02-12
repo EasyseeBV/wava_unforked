@@ -34,29 +34,27 @@ public class NoArtworkHandler : MonoBehaviour
 
     private void FindClosestArtwork()
     {
+        Debug.Log("finding closest artwork...");
         var marker = PlayerMarker.Instance.MapsMarker;
         double playerLongitude = marker.Longitude;
         double playerLatitude = marker.Latitude;
 
         double closestDistance = double.MaxValue;
         ArtworkData closestArtwork = null;
-
-        foreach (var exhibition in FirebaseLoader.Exhibitions)
+        
+        foreach (var artwork in FirebaseLoader.Artworks)
         {
-            foreach (var artwork in exhibition.artworks)
+            double artworkLongitude = artwork.longitude;
+            double artworkLatitude = artwork.latitude;
+
+            // Calculate the distance using the Haversine formula
+            double distance = CalculateDistance(playerLatitude, playerLongitude, artworkLatitude, artworkLongitude);
+
+            // Check if this artwork is closer than the previously found one
+            if (distance < closestDistance)
             {
-                double artworkLongitude = artwork.longitude;
-                double artworkLatitude = artwork.latitude;
-
-                // Calculate the distance using the Haversine formula
-                double distance = CalculateDistance(playerLatitude, playerLongitude, artworkLatitude, artworkLongitude);
-
-                // Check if this artwork is closer than the previously found one
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    closestArtwork = artwork;
-                }
+                closestDistance = distance;
+                closestArtwork = artwork;
             }
         }
 

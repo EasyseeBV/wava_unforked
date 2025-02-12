@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using System;
+using System.IO;
 using System.Linq;
 using Messy.Definitions;
 using TMPro;
@@ -21,8 +22,7 @@ public class ArTapper : MonoBehaviour
     public ARAnchorManager anchorManager;
     public ARAnchor anchor;
     
-    //Replaced ARPoint with ARPointSO
-    public static ARPointSO ARPointToPlace;
+    public static ArtworkData ArtworkToPlace;
 
     public GameObject placementIndicator;
     public GameObject AnimationIndicator;
@@ -44,12 +44,18 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private Transform outOfScreenLoadLocation;
     [SerializeField] private TMP_Text eventLabel;
     [SerializeField] private GameObject loadingPlane;
+
+    [Header("Firebase Preloaded elements")]
+    [SerializeField] private ARVideoObject arVideoObject;
     
     private Pose placementPose;
     private ARRaycastHit foundHit;
 
     private bool placementPoseIsValid = false;
 
+    private bool videoPlayerReady = false;
+    private bool hasContent = false;
+    
     bool StartedAnimation;
 
     private GameObject cachedArtworkObject = null;
@@ -62,8 +68,12 @@ public class ArTapper : MonoBehaviour
         //arOrigin = FindObjectOfType<XROrigin>();
         //arRaycast = FindObjectOfType<ARRaycastManager>();
         //anchorManager = gameObject.GetComponent<ARAnchorManager>();
+        
         StartAR();
-        if (ARPointToPlace?.ARObjectReference != null) LoadAssetFromReference(ARPointToPlace?.ARObjectReference);
+        LoadContent();
+
+        // being replaced with firebase loading
+        //if (ArtworkToPlace?.ARObjectReference != null) LoadAssetFromReference(ArtworkToPlace?.ARObjectReference);
         //else eventLabel.text = "No AR object...";
     }
 
@@ -103,7 +113,8 @@ public class ArTapper : MonoBehaviour
 
             bool stillLoading = false;
             
-            if (ARPointToPlace.ARObjectReference != null)
+            // DISABLED
+            if (hasContent)
             {
                 if (cachedArtworkObject != null) OnArtworkReady(cachedArtworkObject); // if the addressable object is loaded into memory AND ready for use
                 else if(onArtworkReady == null)
@@ -154,9 +165,16 @@ public class ArTapper : MonoBehaviour
         if(anchor==null)anchor = anchorManager.AttachAnchor((ARPlane)foundHit.trackable, foundHit.pose);
 #endif
 
+        if (videoPlayerReady)
+        {
+            arVideoObject.Play();
+            cachedArtworkObject = arVideoObject.gameObject;
+        }
+        
         if (PlacedObject == null)
         {
-            if (ARPointToPlace.ARObjectReference != null)
+            // DISABLED
+            if (hasContent)
             {
                 if (cachedArtworkObject != null) OnArtworkReady(cachedArtworkObject); // if the addressable object is loaded into memory AND ready for use
                 else if(onArtworkReady == null)
@@ -173,13 +191,11 @@ public class ArTapper : MonoBehaviour
                 //LoadAssetFromReference(ARPointToPlace.ARObjectReference);
                 //PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
             }
-
             else
             {
                 PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube), placementPose.position, placementPose.rotation);
                 LoadTopFinder(PlacedObject);
             }
-            //Debug.Log("Still null");
         }
         else
         {
@@ -193,13 +209,13 @@ public class ArTapper : MonoBehaviour
         //Track object based on anchor
         //PlacedObject.transform.parent = anchor.transform;
         
-        arNamebar.SetNamebarLabel(ARPointToPlace.Title);
+        arNamebar.SetNamebarLabel(ArtworkToPlace.title);
         arInfoPage.CanOpen = true;
         
         //placementIndicator.SetActive(false);
         //AnimationIndicator.SetActive(false);
 
-        if (ARPointToPlace.IsAudio)
+        if (ArtworkToPlace.media_content != null && Path.GetExtension(ArtworkToPlace.media_content) == ".mp3")
             UIInfoController.Instance.SetDefaultText("Adjust volume to hear artwork");
         else
             UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
@@ -290,11 +306,12 @@ public class ArTapper : MonoBehaviour
 
     public void OnDisable()
     {
-        if (ARPointToPlace?.ARObjectReference != null)
+        // DISABLED
+        /*if (ArtworkToPlace?.ARObjectReference != null)
         {
-            if(PlacedObject!=null) ReleaseAssetInstanceFromMemory(PlacedObject, ARPointToPlace.ARObjectReference);
-            ReleaseAssetFromMemory(ARPointToPlace.ARObjectReference);
-        }
+            if(PlacedObject!=null) ReleaseAssetInstanceFromMemory(PlacedObject, ArtworkToPlace.ARObjectReference);
+            ReleaseAssetFromMemory(ArtworkToPlace.ARObjectReference);
+        }*/
 
         foreach (var videoPlayer in cachedVideoPlayers)
         {
@@ -303,7 +320,36 @@ public class ArTapper : MonoBehaviour
 
         onArtworkReady = null;
     }
+    
+    private void LoadContent()
+    {
+        if (ArtworkToPlace == null)
+        {
+            Debug.LogWarning("Artwork to place is missing");
+            return;
+        }
 
+        if (!string.IsNullOrEmpty(ArtworkToPlace.media_content))
+        {
+            Debug.Log($"content [{ArtworkToPlace.title}] was a media piece with the url: " + ArtworkToPlace.media_content);
+            arVideoObject.PrepareVideo(ArtworkToPlace.media_content, player =>
+            {
+                Debug.Log("Video prepared");
+                videoPlayerReady = true;
+            });
+            hasContent = true;
+        }
+        else if (!string.IsNullOrEmpty(ArtworkToPlace.content_url))
+        {
+            Debug.Log($"content [{ArtworkToPlace.title}] was a direct model url: " + ArtworkToPlace.content_url);
+            hasContent = true;
+        }
+        else if (!string.IsNullOrEmpty(ArtworkToPlace.preset))
+        {
+            Debug.Log($"content [{ArtworkToPlace.title}] was an enum: " + ArtworkToPlace.preset);
+            hasContent = true;
+        }
+    }
 
     public void LoadAssetFromReference(AssetReferenceGameObject assetToLoad)
     {

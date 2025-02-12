@@ -11,23 +11,30 @@ public class TopInfoViewer : MonoBehaviour
     public TextMeshProUGUI Title;
     public TextMeshProUGUI Maker;
 
+    private void Start()
+    {
+        _camera = Camera.main;
+    }
+
     public void ShowInfoOnTop(bool Has3Dmodel)
     {
-        if (ArTapper.ARPointToPlace != null)
+        if (ArTapper.ArtworkToPlace != null)
         {
             IsObject.SetActive(Has3Dmodel);
             IsMusic.SetActive(!Has3Dmodel);
-            Title.text = ArTapper.ARPointToPlace.Title;
-            Maker.text = "by " + ArTapper.ARPointToPlace.Artist;
+            Title.text = ArTapper.ArtworkToPlace.title;
+            Maker.text = "by " + (ArTapper.ArtworkToPlace.artists.Count > 0 ? ArTapper.ArtworkToPlace.artists[0].title : "");
         }
     }
     public Camera targetCamera;
+    private Camera _camera;
+
     private void Update()
     {
-        if (Camera.main != null)
+        if (_camera != null)
         {
             // Rotate the UI element to face the camera
-            Vector3 targetPosition = transform.position + (transform.position - Camera.main.transform.position);
+            Vector3 targetPosition = transform.position + (transform.position - _camera.transform.position);
             transform.LookAt(targetPosition, Vector3.up);
         }
     }

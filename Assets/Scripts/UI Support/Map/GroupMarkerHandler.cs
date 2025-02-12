@@ -62,7 +62,7 @@ public class GroupMarkerHandler : MonoBehaviour
     
     private void Group()
     {
-        foreach (var artwork in FirebaseLoader.Exhibitions.SelectMany(exhibition => exhibition.artworks))
+        foreach (var artwork in FirebaseLoader.Artworks)
         {
             TryAddArtwork(artwork);
         }
