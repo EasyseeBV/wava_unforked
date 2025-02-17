@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using Messy.Definitions;
 using TMPro;
+using TriLibCore;
 using Unity.XR.CoreUtils;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Events;
@@ -47,6 +48,8 @@ public class ArTapper : MonoBehaviour
 
     [Header("Firebase Preloaded elements")]
     [SerializeField] private ARVideoObject arVideoObject;
+    [SerializeField] private ARModelObject arModelObject;
+    [SerializeField] private bool testContent;
     
     private Pose placementPose;
     private ARRaycastHit foundHit;
@@ -64,28 +67,15 @@ public class ArTapper : MonoBehaviour
     
     void Start()
     {   
-        //arSession?.Reset(); // This casuses crashes on android, but it is needed in the future
-        //arOrigin = FindObjectOfType<XROrigin>();
-        //arRaycast = FindObjectOfType<ARRaycastManager>();
-        //anchorManager = gameObject.GetComponent<ARAnchorManager>();
-        
         StartAR();
         LoadContent();
-
-        // being replaced with firebase loading
-        //if (ArtworkToPlace?.ARObjectReference != null) LoadAssetFromReference(ArtworkToPlace?.ARObjectReference);
-        //else eventLabel.text = "No AR object...";
     }
 
     public void StartAR()
     {   
-        //OnDemandRendering.renderFrameInterval = 1;
         AnimationIndicator.SetActive(true);   
         placementIndicator.SetActive(false);
-        //AR-Camera is scanning the area. Please scan the floor in front of you using your phone’s camera. The artwork will appear automatically once the scan is completed. Show less...
         searching = true;
-        //UIInfoController.Instance.SetText("Tap on the Wava button to let it appear", 0);
-        //UIInfoController.Instance.SetText("Scan the space around you", 0);
         UIInfoController.Instance.SetScanText(
             "AR-Camera is scanning the area. Please <u>scan the floor in front of you.</u> <color=black>Learn more...</color>",
             "AR-Camera is scanning the area. Please scan the floor in front of you using your phone’s camera. The artwork will appear automatically once the scan is completed. <color=black>Show less...</color>");
@@ -95,12 +85,8 @@ public class ArTapper : MonoBehaviour
     {
         AnimationIndicator.SetActive(false);
         placementIndicator.SetActive(false);
-        //UIInfoController.Instance.SetText("", 3);
         UIInfoController.Instance.RemoveAllText();
         searching = false;
-        
-        //if ARPointToPlace?.ARObject.slowDownUpdate
-        //OnDemandRendering.renderFrameInterval = 6;
     }
 
     void Update()
@@ -113,7 +99,6 @@ public class ArTapper : MonoBehaviour
 
             bool stillLoading = false;
             
-            // DISABLED
             if (hasContent)
             {
                 if (cachedArtworkObject != null) OnArtworkReady(cachedArtworkObject); // if the addressable object is loaded into memory AND ready for use
@@ -173,7 +158,6 @@ public class ArTapper : MonoBehaviour
         
         if (PlacedObject == null)
         {
-            // DISABLED
             if (hasContent)
             {
                 if (cachedArtworkObject != null) OnArtworkReady(cachedArtworkObject); // if the addressable object is loaded into memory AND ready for use
@@ -211,9 +195,6 @@ public class ArTapper : MonoBehaviour
         
         arNamebar.SetNamebarLabel(ArtworkToPlace.title);
         arInfoPage.CanOpen = true;
-        
-        //placementIndicator.SetActive(false);
-        //AnimationIndicator.SetActive(false);
 
         if (ArtworkToPlace.media_content != null && Path.GetExtension(ArtworkToPlace.media_content) == ".mp3")
             UIInfoController.Instance.SetDefaultText("Adjust volume to hear artwork");
@@ -226,7 +207,6 @@ public class ArTapper : MonoBehaviour
         onArtworkReady = null;
 
         loadingPlane.SetActive(false);
-        //eventLabel.text = "Spawned object";
         
         PlacedObject = cachedArtworkObject;
         PlacedObject.SetActive(true);
@@ -320,16 +300,23 @@ public class ArTapper : MonoBehaviour
 
         onArtworkReady = null;
     }
-    
+
+    private AssetLoaderOptions assetLoaderOptions;
     private void LoadContent()
     {
-        if (ArtworkToPlace == null)
+        if (ArtworkToPlace == null || ArtworkToPlace.media_content == null)
         {
-            Debug.LogWarning("Artwork to place is missing");
+            Debug.LogWarning("Artwork to place is missing or there is no content available.");
             return;
         }
-
-        if (!string.IsNullOrEmpty(ArtworkToPlace.media_content))
+        
+        var uri = new Uri(ArtworkToPlace.media_content);
+        string encodedPath = uri.AbsolutePath;
+        string decodedPath = Uri.UnescapeDataString(encodedPath);
+        string fileName = Path.GetFileName(decodedPath);
+        var extension = Path.GetExtension(fileName);
+        
+        if (extension is ".mp4" or ".mvk") // video formats
         {
             Debug.Log($"content [{ArtworkToPlace.title}] was a media piece with the url: " + ArtworkToPlace.media_content);
             arVideoObject.PrepareVideo(ArtworkToPlace.media_content, player =>
@@ -339,16 +326,60 @@ public class ArTapper : MonoBehaviour
             });
             hasContent = true;
         }
-        else if (!string.IsNullOrEmpty(ArtworkToPlace.content_url))
+        else if (extension is ".fbx" or ".obj" or ".gltf" or ".gltf2") // model format
         {
-            Debug.Log($"content [{ArtworkToPlace.title}] was a direct model url: " + ArtworkToPlace.content_url);
-            hasContent = true;
+            if (assetLoaderOptions == null)
+            {
+                assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
+            }
+
+            Debug.Log("attempting to download: " + ArtworkToPlace.media_content);
+            
+            var webRequest = AssetDownloader.CreateWebRequest(ArtworkToPlace.media_content);
+            
+            AssetDownloader.LoadModelFromUri(
+                webRequest,
+                onLoad: OnLoad,
+                onMaterialsLoad: OnMaterialsLoad,
+                onProgress: OnProgress,
+                onError: OnError,
+                wrapperGameObject: null,
+                assetLoaderOptions: assetLoaderOptions,
+                fileExtension: extension
+            );
+            
         }
-        else if (!string.IsNullOrEmpty(ArtworkToPlace.preset))
+        else if (extension is ".assetbundle") // unity asset bundle format 
         {
-            Debug.Log($"content [{ArtworkToPlace.title}] was an enum: " + ArtworkToPlace.preset);
-            hasContent = true;
+            Debug.LogWarning("AssetBundles are currently not supported");
         }
+        else
+        {
+            Debug.LogError($"Could not load any media from the file format: {extension}");
+        }
+    }
+    
+    private void OnError(IContextualizedError obj)
+    {
+        Debug.LogError($"An error occurred while loading your model: {obj.GetInnerException()}");
+    }
+    
+    private void OnProgress(AssetLoaderContext assetLoaderContext, float progress)
+    {
+        Debug.Log($"Loading Model. Progress: {progress:P}");
+    }
+    
+    private void OnLoad(AssetLoaderContext assetLoaderContext)
+    {
+        Debug.Log("Model mesh and hierarchy loaded successfully. Proceeding to load materials...");
+        var obj = Instantiate(assetLoaderContext.RootGameObject);
+        obj.name = "Loaded Model";
+        arModelObject.Show(obj, ArtworkToPlace.transforms);
+    }
+    
+    private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext)
+    {
+        Debug.Log("All materials have been applied. The model is fully loaded.");
     }
 
     public void LoadAssetFromReference(AssetReferenceGameObject assetToLoad)

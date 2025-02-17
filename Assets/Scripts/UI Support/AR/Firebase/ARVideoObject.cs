@@ -5,11 +5,13 @@ using UnityEngine.Video;
 public class ARVideoObject : MonoBehaviour
 {
     [Header("References")]
+    [SerializeField] private GameObject content;
     [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private VideoPlayer videoPlayer;
 
     public void PrepareVideo(string url, Action<VideoPlayer> onComplete)
     {
+        content.SetActive(true);
         videoPlayer.url = url;
         videoPlayer.Prepare();
         

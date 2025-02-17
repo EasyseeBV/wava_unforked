@@ -34,11 +34,39 @@ public class ArtworkData
     
     // Content
     [FirestoreProperty] public string media_content { get; set; } // media references
-    [FirestoreProperty] public string content_url { get; set; } // direct references
-    [FirestoreProperty] public string preset { get; set; } // preset enum name
+    [FirestoreProperty] public TransformsData transforms { get; set; }
     
     // World Data
     public string artwork_id { get; set; }
     public HotspotManager hotspot { get; set; } = null;
     public OnlineMapsMarker3D marker { get; set; } = new OnlineMapsMarker3D();
+}
+
+[FirestoreData]
+public class TransformsData
+{
+    // Nested map for position offsets
+    [FirestoreProperty] public PositionOffset position_offset { get; set; }
+    
+    // Rotation (direct value)
+    [FirestoreProperty] public float rotation { get; set; }
+    
+    // Nested map for scale values
+    [FirestoreProperty] public Scale scale { get; set; }
+}
+
+[FirestoreData]
+public class PositionOffset
+{
+    [FirestoreProperty] public float x_offset { get; set; }
+    [FirestoreProperty] public float y_offset { get; set; }
+    [FirestoreProperty] public float z_offset { get; set; }
+}
+
+[FirestoreData]
+public class Scale
+{
+    [FirestoreProperty] public float x_scale { get; set; }
+    [FirestoreProperty] public float y_scale { get; set; }
+    [FirestoreProperty] public float z_scale { get; set; }
 }
