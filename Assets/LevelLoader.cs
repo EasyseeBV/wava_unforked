@@ -42,15 +42,15 @@ public class LevelLoader : MonoBehaviour
         
         while (!operation.isDone)
         {
-            if (operation.progress < 0.9f)
+            if (operation.progress < 0.9f || !FirebaseLoader.Initialized)
             {
                 loadingImage.transform.Rotate(Vector3.forward * (rotationSpeed * Time.deltaTime));
             }
-            else if (operation.progress >= 0.9f && transitionComplete)
+            else if (operation.progress >= 0.9f && transitionComplete && FirebaseLoader.Initialized)
             {
                 operation.allowSceneActivation = true;
             }
-            else if(operation.progress >= 0.9f && !transitionComplete)
+            else if(operation.progress >= 0.9f && !transitionComplete && FirebaseLoader.Initialized)
             {
                 loadingImage.gameObject.SetActive(false);
                 iconImage.gameObject.SetActive(true);

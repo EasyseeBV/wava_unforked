@@ -40,16 +40,17 @@ public class ArTapper : MonoBehaviour
     public ARRaycastManager arRaycast;
     [SerializeField] private ARNamebar arNamebar;
     [SerializeField] private ARInfoPage arInfoPage;
+    
+    [Header("Firebase Preloaded elements")]
+    [SerializeField] private ARVideoObject arVideoObject;
+    [SerializeField] private ARModelObject arModelObject;
+    [SerializeField] private bool testContent;
 
     [Header("Debugging")]
     [SerializeField] private Transform outOfScreenLoadLocation;
     [SerializeField] private TMP_Text eventLabel;
     [SerializeField] private GameObject loadingPlane;
-
-    [Header("Firebase Preloaded elements")]
-    [SerializeField] private ARVideoObject arVideoObject;
-    [SerializeField] private ARModelObject arModelObject;
-    [SerializeField] private bool testContent;
+    [Space] [SerializeField] private bool placeObject;
     
     private Pose placementPose;
     private ARRaycastHit foundHit;
@@ -58,17 +59,78 @@ public class ArTapper : MonoBehaviour
 
     private bool videoPlayerReady = false;
     private bool hasContent = false;
+    private bool containsVideo = false;
     
     bool StartedAnimation;
 
     private GameObject cachedArtworkObject = null;
-    private List<VideoPlayer> cachedVideoPlayers = new();
-    private event Action<GameObject> onArtworkReady = null;
     
-    void Start()
+    private void Start()
     {   
         StartAR();
         LoadContent();
+    }
+    
+    private void Update()
+    {
+        if (searching && PlaceDirectly)
+        {
+            HandlePlacementSearching();
+        }
+
+        if (searching)
+        {
+            UpdatePlacementPose();
+
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.P) && placementPoseIsValid) {
+                StopAR();
+                PlaceObject();
+            }
+            
+            if (placeObject)
+            {
+                placeObject = false;
+                OnArtworkReady();
+            }
+                
+#endif
+            if (placementPoseIsValid && Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
+            {
+                if (!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) 
+                {
+                    StopAR();
+                    PlaceObject();
+                }
+            }
+        }
+    }
+
+    private void HandlePlacementSearching()
+    {
+        placementIndicator.SetActive(false);
+        AnimationIndicator.SetActive(false);
+        UIInfoController.Instance.SetText("", 3);
+
+        bool stillLoading = false;
+            
+        if (hasContent)
+        {
+            if (cachedArtworkObject != null) OnArtworkReady(); // if the object is loaded into memory AND ready for use
+            else
+            {
+                loadingPlane.transform.localPosition = placementPose.position + new Vector3(0, 0.75f, 0);;
+                loadingPlane.transform.localRotation = Quaternion.Euler(90f, 0f, placementPose.rotation.eulerAngles.z);
+                stillLoading = true;
+            }
+        }
+        else PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
+            
+        Vector3 pos = PlacedObject.transform.position;
+        pos.z += DistanceWhenActivated;
+        PlacedObject.transform.position = pos;
+        if (stillLoading) loadingPlane.transform.position = pos;
+        StopAR();
     }
 
     public void StartAR()
@@ -89,60 +151,6 @@ public class ArTapper : MonoBehaviour
         searching = false;
     }
 
-    void Update()
-    {
-        if (searching && PlaceDirectly)
-        {
-            placementIndicator.SetActive(false);
-            AnimationIndicator.SetActive(false);
-            UIInfoController.Instance.SetText("", 3);
-
-            bool stillLoading = false;
-            
-            if (hasContent)
-            {
-                if (cachedArtworkObject != null) OnArtworkReady(cachedArtworkObject); // if the addressable object is loaded into memory AND ready for use
-                else if(onArtworkReady == null)
-                {
-                    //eventLabel.text = "Artwork still loading";
-                    //loadingPlane.SetActive(true);
-                    loadingPlane.transform.localPosition = placementPose.position + new Vector3(0, 0.75f, 0);;
-                    loadingPlane.transform.localRotation = Quaternion.Euler(90f, 0f, placementPose.rotation.eulerAngles.z);
-                    stillLoading = true;
-                    onArtworkReady += OnArtworkReady; // if the object is still loading subscribe
-                }
-            }
-            else PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
-            
-            Vector3 pos = PlacedObject.transform.position;
-            pos.z += DistanceWhenActivated;
-            PlacedObject.transform.position = pos;
-            if (stillLoading) loadingPlane.transform.position = pos;
-            StopAR();
-        }
-
-        if (searching)
-        {
-            UpdatePlacementPose();
-
-#if UNITY_EDITOR
-            if (Input.GetKeyDown(KeyCode.P) && placementPoseIsValid) {
-                StopAR();
-                PlaceObject();
-            }
-                
-#endif
-            if (placementPoseIsValid && Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-            {
-                if (!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) 
-                {
-                    StopAR();
-                    PlaceObject();
-                }
-            }
-        }
-    }
-
     private void PlaceObject()
     {
 #if !UNITY_EDITOR
@@ -160,20 +168,7 @@ public class ArTapper : MonoBehaviour
         {
             if (hasContent)
             {
-                if (cachedArtworkObject != null) OnArtworkReady(cachedArtworkObject); // if the addressable object is loaded into memory AND ready for use
-                else if(onArtworkReady == null)
-                {
-                    //eventLabel.text = "Artwork still loading";
-                    //loadingPlane.SetActive(true);
-                    loadingPlane.transform.localPosition = placementPose.position + new Vector3(0, 0.75f, 0);
-                    loadingPlane.transform.localRotation = Quaternion.Euler(90f, 0f, placementPose.rotation.eulerAngles.z);
-                    onArtworkReady += OnArtworkReady; // if the object is still loading subscribe
-                }
-
-                //PlacedObject = Instantiate(ARPointToPlace.ARObject, placementPose.position, placementPose.rotation);
-                //assetReferenceGameObject = ARPointToPlace.ARObjectReference;
-                //LoadAssetFromReference(ARPointToPlace.ARObjectReference);
-                //PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
+                if (cachedArtworkObject != null) OnArtworkReady(); // if the object is loaded into memory AND ready for use
             }
             else
             {
@@ -202,11 +197,11 @@ public class ArTapper : MonoBehaviour
             UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
     }
 
-    private void OnArtworkReady(GameObject artworkObject)
+    private void OnArtworkReady()
     {
-        onArtworkReady = null;
-
         loadingPlane.SetActive(false);
+        
+        if (!containsVideo) arModelObject.Show(ArtworkToPlace.transforms);
         
         PlacedObject = cachedArtworkObject;
         PlacedObject.SetActive(true);
@@ -222,18 +217,9 @@ public class ArTapper : MonoBehaviour
         pos.z += DistanceWhenActivated;
         PlacedObject.transform.position = pos;
         StopAR();
-
-        if (cachedVideoPlayers.Count > 0)
-        {
-            foreach (var vp in cachedVideoPlayers)
-            {
-                vp.frame = 0;
-                vp.Play();
-            }
-        }
     }
 
-    public void LoadTopFinder (GameObject ARObject)
+    private void LoadTopFinder (GameObject ARObject)
     {
         ModelTopFinder topFinder = GetComponent<ModelTopFinder>();
         if (topFinder != null)
@@ -284,23 +270,6 @@ public class ArTapper : MonoBehaviour
         }
     }
 
-    public void OnDisable()
-    {
-        // DISABLED
-        /*if (ArtworkToPlace?.ARObjectReference != null)
-        {
-            if(PlacedObject!=null) ReleaseAssetInstanceFromMemory(PlacedObject, ArtworkToPlace.ARObjectReference);
-            ReleaseAssetFromMemory(ArtworkToPlace.ARObjectReference);
-        }*/
-
-        foreach (var videoPlayer in cachedVideoPlayers)
-        {
-            videoPlayer.prepareCompleted -= OnVideoPrepared;
-        }
-
-        onArtworkReady = null;
-    }
-
     private AssetLoaderOptions assetLoaderOptions;
     private void LoadContent()
     {
@@ -319,6 +288,7 @@ public class ArTapper : MonoBehaviour
         if (extension is ".mp4" or ".mvk") // video formats
         {
             Debug.Log($"content [{ArtworkToPlace.title}] was a media piece with the url: " + ArtworkToPlace.media_content);
+            containsVideo = true;
             arVideoObject.PrepareVideo(ArtworkToPlace.media_content, player =>
             {
                 Debug.Log("Video prepared");
@@ -336,6 +306,7 @@ public class ArTapper : MonoBehaviour
             Debug.Log("attempting to download: " + ArtworkToPlace.media_content);
             
             var webRequest = AssetDownloader.CreateWebRequest(ArtworkToPlace.media_content);
+            containsVideo = false;
             
             AssetDownloader.LoadModelFromUri(
                 webRequest,
@@ -347,18 +318,21 @@ public class ArTapper : MonoBehaviour
                 assetLoaderOptions: assetLoaderOptions,
                 fileExtension: extension
             );
-            
+            hasContent = true;
         }
         else if (extension is ".assetbundle") // unity asset bundle format 
         {
+            containsVideo = false;
             Debug.LogWarning("AssetBundles are currently not supported");
         }
         else
         {
+            containsVideo = false;
             Debug.LogError($"Could not load any media from the file format: {extension}");
         }
     }
     
+    #region Model Loading Callbacks
     private void OnError(IContextualizedError obj)
     {
         Debug.LogError($"An error occurred while loading your model: {obj.GetInnerException()}");
@@ -372,93 +346,15 @@ public class ArTapper : MonoBehaviour
     private void OnLoad(AssetLoaderContext assetLoaderContext)
     {
         Debug.Log("Model mesh and hierarchy loaded successfully. Proceeding to load materials...");
-        var obj = Instantiate(assetLoaderContext.RootGameObject);
-        obj.name = "Loaded Model";
-        arModelObject.Show(obj, ArtworkToPlace.transforms);
+        arModelObject.Assign(assetLoaderContext.RootGameObject);
     }
     
     private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext)
     {
         Debug.Log("All materials have been applied. The model is fully loaded.");
+        var obj = assetLoaderContext.RootGameObject;
+        obj.name = "Loaded Model";
+        cachedArtworkObject = obj;
     }
-
-    public void LoadAssetFromReference(AssetReferenceGameObject assetToLoad)
-    {
-        //eventLabel.text = "Loading artwork...";
-        
-        Addressables.LoadAssetAsync<GameObject>(assetToLoad).Completed += (asyncOperationHandle) =>
-        {
-            if (asyncOperationHandle.Status == AsyncOperationStatus.Succeeded)
-            {
-                cachedArtworkObject = asyncOperationHandle.Result;
-               // eventLabel.text = "Loaded an artwork to memory";
-
-                // Cache all video players
-                cachedVideoPlayers = new();
-                cachedVideoPlayers = GetComponentsInChildren<VideoPlayer>().ToList();
-                if(cachedArtworkObject.TryGetComponent<VideoPlayer>(out var videoPlayer)) cachedVideoPlayers.Add(videoPlayer);
-                
-                if (cachedVideoPlayers.Count > 0)
-                {
-                    prepareCount = 0;
-                   // eventLabel.text = "Preparing videos...";
-                    foreach (var vp in cachedVideoPlayers)
-                    {
-                        vp.playOnAwake = false;
-                        vp.prepareCompleted += OnVideoPrepared;
-                        vp.Prepare();
-                    }
-                }
-                
-                cachedArtworkObject = Instantiate(cachedArtworkObject, outOfScreenLoadLocation.localPosition, Quaternion.identity);
-
-                if (cachedVideoPlayers.Count > 0)
-                {
-                    
-                }
-                else
-                {
-                    cachedArtworkObject.SetActive(false);
-                    onArtworkReady?.Invoke(cachedArtworkObject);
-                }
-                
-                
-                //PlacedObject = asyncOperationHandle.Result;
-                //GameObject NewPlacedObject = Instantiate(PlacedObject, placementPose.position, placementPose.rotation);
-                
-                //Track object based on anchor
-                /*if (anchor != null)
-                    PlacedObject.transform.parent = anchor.transform;
-
-                LoadTopFinder(NewPlacedObject);*/
-            }
-            else
-            {
-                //eventLabel.text = "No artwork";
-                UIInfoController.Instance.SetDefaultText("No valid artwork found.");
-            }
-        };
-    }
-
-    private int prepareCount = 0;
-    private void OnVideoPrepared(VideoPlayer vp)
-    {
-        prepareCount++;
-        if (prepareCount >= cachedVideoPlayers.Count)
-        {
-            cachedArtworkObject.SetActive(true);
-            onArtworkReady?.Invoke(cachedArtworkObject);
-        }
-    }
-
-    public void ReleaseAssetInstanceFromMemory(GameObject objectToRelease, AssetReferenceGameObject assetReference)
-    {
-        assetReference.ReleaseInstance(objectToRelease);
-    }
-    
-    public void ReleaseAssetFromMemory(AssetReferenceGameObject assetReference)
-    {
-        assetReference.ReleaseAsset();
-    }
+    #endregion
 }
-

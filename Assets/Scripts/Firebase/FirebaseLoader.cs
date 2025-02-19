@@ -14,6 +14,8 @@ public class FirebaseLoader : MonoBehaviour
     // Firestore Instance
     public static FirebaseFirestore Firestore => _firestore;
     private static FirebaseFirestore _firestore = null;
+    
+    public static bool Initialized { get; private set; } = false;
 
     // Data Collections
     public static List<ArtworkData> Artworks { get; private set; } = new List<ArtworkData>();
@@ -70,7 +72,8 @@ public class FirebaseLoader : MonoBehaviour
                 //await LoadAllDataOnStart();
 
                 await GetCollectionCountsAsync();
-                
+
+                Initialized = true;
                 OnFirestoreInitialized?.Invoke();
             }
             else
