@@ -28,7 +28,6 @@ public class LoadNewestArtwork : MonoBehaviour
 
     private async Task QueryMostRecent()
     {
-        Debug.Log("querying most recent artworks...");
         if (loaded) return;
         
         try
@@ -43,8 +42,7 @@ public class LoadNewestArtwork : MonoBehaviour
                 );
             }
             else artworkData = await FirebaseLoader.FetchMultipleDocuments<ArtworkData>("artworks", "creation_time", showCount);
-
-            Debug.Log("found artworks: " + artworkData.Count);
+            
             
             foreach (var artwork in artworkData)
             {

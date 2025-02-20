@@ -37,17 +37,24 @@ public class GalleryCard : MonoBehaviour
             return;    
         }
 
-        artwork = point;
-
-        if (point.images == null || point.images.Count == 0)
+        try
         {
-            await FirebaseLoader.LoadArtworkImages(point);
-        }
+            artwork = point;
+
+            if (point.images == null || point.images.Count == 0)
+            {
+                await FirebaseLoader.LoadArtworkImages(point);
+            }
         
-        artworkImage.sprite = point.images is { Count: > 0 } ? point.images[0] : null;//artwork_cover_image;
-        artworkLabel.text = point.title;
-        artistLabel.text = point.artists.Count > 0 ? point.artists[0].title : null;
-        yearLabel.text = point.year.ToString();
+            artworkImage.sprite = point.images is { Count: > 0 } ? point.images[0] : null;//artwork_cover_image;
+            artworkLabel.text = point.title;
+            artistLabel.text = point.artists.Count > 0 ? point.artists[0].title : null;
+            yearLabel.text = point.year.ToString();
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Failed to load ARPoint: " + e);
+        }
     }
 
     private void GoToGallery()

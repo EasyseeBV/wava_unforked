@@ -151,6 +151,12 @@ public class FirebaseLoader : MonoBehaviour
     
     private static async Task<ArtworkData> ReadArtworkDocument(DocumentSnapshot document)
     {
+        if (ArtworksMap.ContainsKey(document.Id))
+        {
+            Debug.LogWarning("Reading an already existing document...");
+            return ArtworksMap[document.Id];    
+        }
+        
         ArtworkData artwork = document.ConvertTo<ArtworkData>();
         artwork.artwork_id = document.Id;
         await LoadArtworkImages(artwork);
@@ -425,15 +431,15 @@ public class FirebaseLoader : MonoBehaviour
                     {
                         ArtworkData data = null;
                         
-                        data = !ArtworksMap.TryGetValue(document.Id, out var value) ? ReadArtworkDocument(document).Result : value;
+                        data = await ReadArtworkDocument(document);
                         
                         fetchedDocuments.Add(data as T);
                         hasArtworks = true;
                     }
                     else if (typeof(T) == typeof(ArtistData))
                     {
-                        var data = ReadArtistDocument(document);
-                        fetchedDocuments.Add(data.Result as T);
+                        var data = await ReadArtistDocument(document);
+                        fetchedDocuments.Add(data as T);
                         hasArtists = true;
                     }
                     else if (typeof(T) == typeof(ExhibitionData))
@@ -511,7 +517,7 @@ public class FirebaseLoader : MonoBehaviour
             }
 
             // If the stored data does not exist, read the document
-            data = !ArtworksMap.TryGetValue(document.Id, out var value) ? ReadArtworkDocument(document).Result : value;
+            data = await ReadArtworkDocument(document);
             
             AppCache.SaveArtworksCache();
             
@@ -586,7 +592,7 @@ public class FirebaseLoader : MonoBehaviour
                 var data = document.ConvertTo<ArtworkData>();
                 if (data != null)
                 {
-                    data = !ArtworksMap.TryGetValue(document.Id, out var value) ? ReadArtworkDocument(document).Result : value;
+                    data = await ReadArtworkDocument(document);
                     results.Add(data as T);
                     hasArtworks = true;
                 }
