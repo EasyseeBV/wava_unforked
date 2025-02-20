@@ -12,14 +12,8 @@ using Random = UnityEngine.Random;
 public class LoadNewestExhibition : MonoBehaviour
 {
     [SerializeField] private ExhibitionCard exhibitionCard;
-    [SerializeField] private ArtistContainer artistContainer;
-
-    [Header("Debugging")]
-    [SerializeField] private List<Sprite> exhibitionImages = new List<Sprite>();
     
     private bool loaded = false;
-    
-    private static List<ArtistData> cachedArtists;
 
     private void OnEnable() => FirebaseLoader.OnFirestoreInitialized += async () => await QueryMostRecent();
 
@@ -38,24 +32,23 @@ public class LoadNewestExhibition : MonoBehaviour
         
         try
         {
-            var exhibition = await FirebaseLoader.FetchSingleDocument<ExhibitionData>("exhibitions", "creation_time", 1);
+            ExhibitionData exhibition = null;
+            if (FirebaseLoader.ExhibitionCollectionFull)
+            {
+                Debug.Log("full collection.. loading from collection");
+                exhibition = FirebaseLoader.Exhibitions.OrderByDescending(e => e.creation_date_time).FirstOrDefault();
+            }
+            
+            if (exhibition == null) exhibition = await FirebaseLoader.FetchSingleDocument<ExhibitionData>("exhibitions", "creation_time", 1);
+            
             if (exhibition != null)
             {
                 exhibitionCard.Init(exhibition);
                 loaded = true;
-
-                if (FirebaseLoader.Artists.Count > 0)
-                {
-                    artistContainer.Assign(FirebaseLoader.Artists[Random.Range(0, FirebaseLoader.Artists.Count)]);
-                }
-                else
-                {
-                    ArtistData artistData = await FirebaseLoader.GetArtistByIdAsync(exhibition.artist_references[Random.Range(0, exhibition.artist_references.Count)].Id);
-                    if (artistData != null)
-                    {
-                        artistContainer.Assign(artistData);
-                    }
-                }
+            }
+            else
+            {
+                Debug.Log("exhibition was null");
             }
         }
         catch (Exception e)

@@ -46,15 +46,18 @@ public class ArtworkUIManager : MonoBehaviour
     [Header("Artwork Details")] 
     [SerializeField] private ArtworkDetailsPanel artworkDetailsPanel;
     [SerializeField] private GameObject artworkDetailsArea;
+    [SerializeField] private int minArtworkCount = 3;
 
-    [Header("Gallery Details")] 
+    [Header("Exhibition Details")] 
     [SerializeField] private ExhibitionDetailsPanel exhibitionDetailsPanel;
     [SerializeField] private GameObject exhibitionDetailsArea;
-
+    [SerializeField] private int minExhibitionCount = 3;
+    
     [Header("Artist Details")] 
     [SerializeField] private ArtistDetailsPanel artistDetailsPanel;
     [SerializeField] private GameObject artistDetailsArea;
-
+    [SerializeField] private int minArtistCount = 8;
+    
     [Header("Old Details Method")]
     public ARStaticDetails arStaticDetails;
     public GameObject DetailedPage;
@@ -136,8 +139,6 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitArtworks() 
     {
-        if (FirebaseLoader.Artworks == null) return;
-        
         ClearStage();
         ShowDefaultLayoutArea(true);
 
@@ -148,15 +149,15 @@ public class ArtworkUIManager : MonoBehaviour
 
     private async Task FetchNewArtworks()
     {
-        if (!FirebaseLoader.ArtworkCollectionFull)
+        if (!FirebaseLoader.ArtworkCollectionFull && FirebaseLoader.Artworks.Count < minArtworkCount)
         {
-            await FirebaseLoader.FetchDocuments<ArtworkData>(1);
+            await FirebaseLoader.FetchDocuments<ArtworkData>(Mathf.Abs(minArtworkCount - FirebaseLoader.Artworks.Count));
         }
         
         // Flatten all ArtWorks, filter those with images, and sort by creationDateTime descending
         var sortedArtworks = FirebaseLoader.Artworks
             .Where(artwork => artwork.images.Count != 0)
-            .OrderByDescending(artwork => artwork.creation_time);
+            .OrderByDescending(artwork => artwork.creation_date_time);
         
         foreach (ArtworkData artwork in sortedArtworks) 
         {
@@ -168,8 +169,6 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitExhibitions() 
     {
-        if (FirebaseLoader.Exhibitions == null) return;
-        
         ClearStage();
         ShowDefaultLayoutArea(true);
 
@@ -180,15 +179,26 @@ public class ArtworkUIManager : MonoBehaviour
     
     private async Task FetchNewExhibitions()
     {
-        if (!FirebaseLoader.ExhibitionCollectionFull)
+        if (!FirebaseLoader.ExhibitionCollectionFull && FirebaseLoader.ExhibitionCollectionSize < minExhibitionCount)
         {
-            await FirebaseLoader.FetchDocuments<ExhibitionData>(1);
+            await FirebaseLoader.LoadRemainingExhibitions();
+        }
+        else if (!FirebaseLoader.ExhibitionCollectionFull && FirebaseLoader.Exhibitions.Count < minExhibitionCount)
+        {
+            await FirebaseLoader.FetchDocuments<ExhibitionData>(Mathf.Abs(minExhibitionCount - FirebaseLoader.Exhibitions.Count));
         }
         
         // Sort Exhibitions by creation_time descending
-        var sortedExhibitions = FirebaseLoader.Exhibitions.OrderByDescending(exhibition => exhibition.creation_time);
+        var sortedExhibitions = FirebaseLoader.Exhibitions.OrderByDescending(exhibition => exhibition.creation_date_time);
+
+        foreach (var exhibition in FirebaseLoader.Exhibitions)
+        {
+            Debug.Log("FOUND: " + exhibition.title);
+        }
         
-        foreach (ExhibitionData exhibition in sortedExhibitions) {
+        foreach (ExhibitionData exhibition in sortedExhibitions) 
+        {
+            Debug.Log("adding exhibition: " + exhibition.title);
             ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
             card.Init(exhibition);
         }
@@ -196,8 +206,6 @@ public class ArtworkUIManager : MonoBehaviour
     
     public void InitArtists()
     {
-        if (FirebaseLoader.Artists == null) return;
-        
         ClearStage();
         ShowDefaultLayoutArea(false);
 
@@ -209,9 +217,9 @@ public class ArtworkUIManager : MonoBehaviour
     
     private async Task FetchNewArtists()
     {
-        if (!FirebaseLoader.ArtistCollectionFull)
+        if (!FirebaseLoader.ArtistCollectionFull && FirebaseLoader.Artists.Count < minArtistCount)
         {
-            await FirebaseLoader.FetchDocuments<ExhibitionData>(1);
+            await FirebaseLoader.FetchDocuments<ArtistData>(Mathf.Abs(minArtistCount - FirebaseLoader.Artists.Count));
         }
         
         var sortedArtists = FirebaseLoader.Artists.OrderByDescending(artwork => artwork.creation_time);
@@ -286,7 +294,7 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void ApplySorting()
     {
-        CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedArtwork.creation_time).ToList();
+        CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedArtwork.creation_date_time).ToList();
 
         return;
         switch (CurrentFilter)

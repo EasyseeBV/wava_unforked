@@ -30,51 +30,63 @@ public class ExhibitionCard : MonoBehaviour
         if(interactionButton) interactionButton.onClick.AddListener(OpenExhibitionPage);
     }
 
-    public void Init(ExhibitionData point)
+    public async void Init(ExhibitionData point)
     {
         if (point == null)
         {
             gameObject.SetActive(false);
             return;
         }
-        
-        exhibition = point;
 
-        if (point.images.Count >= 3)
+        try
         {
-            singleCoverImageObject.SetActive(false);
-            multCoverImageObject.SetActive(true);
-            
-            image0.sprite = point.images[0];
-            image1.sprite = point.images[1];
-            image2.sprite = point.images[2];
-        }
-        else if (point.artworks.Count >= 3 && point.artworks[0].images.Count > 0 
-                                           && point.artworks[1].images.Count > 0 
-                                           && point.artworks[2].images.Count > 0)
-        {
-            singleCoverImageObject.SetActive(false);
-            multCoverImageObject.SetActive(true);
-            
-            image0.sprite = point.artworks[0].images[0];
-            image1.sprite = point.artworks[0].images[0];
-            image2.sprite = point.artworks[0].images[0];
-        }
-        else if(point.images.Count > 0)
-        {
-            singleCoverImageObject.SetActive(true);
-            multCoverImageObject.SetActive(false);
-            singleImage.sprite = point.images[0];
-        }
-        else
-        {
-            singleCoverImageObject.SetActive(true);
-            multCoverImageObject.SetActive(false);
-            singleImage.sprite = null;
-        }
+            exhibition = point;
 
-        titleLabel.text = point.title;
-        yearLocationLabel.text = point.year + " · " + point.location;
+            if (point.images == null || point.images.Count == 0)
+            {
+                await FirebaseLoader.LoadArtworkImages(point);
+            }
+
+            if (point.images.Count >= 3)
+            {
+                singleCoverImageObject.SetActive(false);
+                multCoverImageObject.SetActive(true);
+            
+                image0.sprite = point.images[0];
+                image1.sprite = point.images[1];
+                image2.sprite = point.images[2];
+            }
+            else if (point.artworks.Count >= 3 && point.artworks[0].images.Count > 0 
+                                               && point.artworks[1].images.Count > 0 
+                                               && point.artworks[2].images.Count > 0)
+            {
+                singleCoverImageObject.SetActive(false);
+                multCoverImageObject.SetActive(true);
+            
+                image0.sprite = point.artworks[0].images[0];
+                image1.sprite = point.artworks[0].images[0];
+                image2.sprite = point.artworks[0].images[0];
+            }
+            else if(point.images.Count > 0)
+            {
+                singleCoverImageObject.SetActive(true);
+                multCoverImageObject.SetActive(false);
+                singleImage.sprite = point.images[0];
+            }
+            else
+            {
+                singleCoverImageObject.SetActive(true);
+                multCoverImageObject.SetActive(false);
+                singleImage.sprite = null;
+            }
+
+            titleLabel.text = point.title;
+            yearLocationLabel.text = point.year + " · " + point.location;
+        }
+        catch(Exception e)
+        {
+            Debug.Log("Failed to fill ExhibitionCard: " + e);
+        }
     }
 
     protected void OpenExhibitionPage()

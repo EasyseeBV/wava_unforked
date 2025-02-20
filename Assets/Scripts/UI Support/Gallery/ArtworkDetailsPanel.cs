@@ -29,6 +29,10 @@ public class ArtworkDetailsPanel : DetailsPanel
     [Header("Artists")] 
     [SerializeField] private Transform artistArea;
     [SerializeField] private ArtistContainer artistContainer;
+    
+    [Header("Download Button")]
+    [SerializeField] private Button downloadButton;
+    [SerializeField] private GameObject downloadedCheckmark;
 
     [Header("Exhibition")]
     [SerializeField] private ExhibitionCard exhibitionCard;
@@ -40,6 +44,7 @@ public class ArtworkDetailsPanel : DetailsPanel
         base.Setup();
         heartButton.onClick.AddListener(LikeArtwork);
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
+        downloadButton.onClick.AddListener(DownloadArtwork);
     }
 
     public void Fill(ArtworkData artwork)
@@ -72,6 +77,11 @@ public class ArtworkDetailsPanel : DetailsPanel
         fullLengthDescription = artwork.description;
         TruncateText();
         
+        if (AppCache.ArtworkDownloads.Any(artworkDownloadHolder => artworkDownloadHolder.artwork_id == artwork.artwork_id))
+        {
+            downloadedCheckmark.SetActive(true);
+        }
+
         // heartImage.sprite = artwork.Liked ? likedSprite : unlikedSprite;
         
         showOnMapButton.onClick.RemoveAllListeners();
@@ -112,6 +122,21 @@ public class ArtworkDetailsPanel : DetailsPanel
 
         // artwork.Liked = !artwork.Liked;
         // heartImage.sprite = artwork.Liked ? likedSprite : unlikedSprite;
+    }
+
+    private void DownloadArtwork()
+    {
+        if (artwork == null) return;
+        
+        if (AppCache.ArtworkDownloads.Any(artworkDownloadHolder => artworkDownloadHolder.artwork_id == artwork.artwork_id))
+        {
+            downloadedCheckmark.SetActive(false);
+            AppCache.DeleteDownloadedImagesForArtwork(artwork.artwork_id);
+            return;
+        }
+        
+        downloadedCheckmark.SetActive(true);
+        AppCache.DownloadArtworkImages(artwork);
     }
 
     private ExhibitionData GetExhibition()

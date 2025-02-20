@@ -94,13 +94,18 @@ public class ArtistDetailsPanel : DetailsPanel
         StartCoroutine(LateRebuild());
     }
     
-    public void Fill(ArtistData artist)
+    public async void Fill(ArtistData artist)
     {
         this.artist = artist;
         
         Clear();
 
         contentTitleLabel.text = artist.title;
+        if (this.artist.iconImage == null)
+        {
+            await FirebaseLoader.LoadArtworkImages(artist);
+        }
+        
         profileIcon.sprite = artist.iconImage;
         fullLengthDescription = artist.description;
         TruncateText();

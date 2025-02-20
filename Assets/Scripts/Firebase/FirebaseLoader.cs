@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,9 +19,9 @@ public class FirebaseLoader : MonoBehaviour
     public static bool Initialized { get; private set; } = false;
 
     // Data Collections
-    public static List<ArtworkData> Artworks { get; private set; } = new List<ArtworkData>();
-    public static List<ArtistData> Artists { get; private set; } = new List<ArtistData>();
-    public static List<ExhibitionData> Exhibitions { get; private set; } = new List<ExhibitionData>();
+    public static List<ArtworkData> Artworks { get; set; } = new List<ArtworkData>();
+    public static List<ArtistData> Artists { get; set; } = new List<ArtistData>();
+    public static List<ExhibitionData> Exhibitions { get; set; } = new List<ExhibitionData>();
 
     // Caching Maps
     private static Dictionary<string, ArtistData> ArtistsMap = new Dictionary<string, ArtistData>();
@@ -45,7 +46,7 @@ public class FirebaseLoader : MonoBehaviour
     
     // Bool states
     public static bool ArtworkCollectionFull => Artworks.Count >= ArtworkCollectionSize;
-    public static bool ExhibitionCollectionFull => Exhibitions.Count > ExhibitionCollectionSize;
+    public static bool ExhibitionCollectionFull => Exhibitions.Count >= ExhibitionCollectionSize;
     public static bool ArtistCollectionFull => Artists.Count >= ArtistCollectionSize;
     
     private const int MAX_NOT_IN = 10;
@@ -69,8 +70,13 @@ public class FirebaseLoader : MonoBehaviour
                 _firestore = FirebaseFirestore.DefaultInstance;
                 Debug.Log("Firebase initialized successfully.");
 
-                //await LoadAllDataOnStart();
+                if (_firestore.Settings == null)
+                {
+                    Debug.LogWarning("Firestore settings are empty");
+                }
 
+                AppCache.LoadLocalCaches();
+                
                 await GetCollectionCountsAsync();
 
                 Initialized = true;
@@ -86,116 +92,94 @@ public class FirebaseLoader : MonoBehaviour
             Debug.LogError($"Firebase initialization failed: {e.Message}\n{e.StackTrace}");
         }
     }
+    
+    #region Add Data
+
+    public static void AddArtworkData(ArtworkData data)
+    {
+        if (ArtworksMap.ContainsKey(data.artwork_id))
+        {
+            Debug.LogWarning("Tried to add an exhibition with a document id already stored in the artwork map: " + data.title);
+            return;
+        }
+        
+        Artworks.Add(data);
+        ArtworksMap[data.artwork_id] = data;
+    }
+
+    public static void AddArtistData(ArtistData data)
+    {
+        if (ArtistsMap.ContainsKey(data.artist_id))
+        {
+            Debug.LogWarning("Tried to add an exhibition with a document id already stored in the artist map: " + data.title);
+            return;
+        }
+        
+        Artists.Add(data);
+        ArtistsMap[data.artist_id] = data;
+    }
+
+    public static void AddExhibitionData(ExhibitionData data)
+    {
+        if (ExhibitionsMap.ContainsKey(data.exhibition_id))
+        {
+            Debug.LogWarning("Tried to add an exhibition with a document id already stored in the exhibition map: " + data.title);
+            return;
+        }
+        
+        Exhibitions.Add(data);
+        ExhibitionsMap[data.exhibition_id] = data;
+    }
+    
+    #endregion
+    
+    #region Convert Document to Data
+    
+    private static async Task<ExhibitionData> ReadExhibitionDocument(DocumentSnapshot document)
+    {
+        ExhibitionData exhibition = document.ConvertTo<ExhibitionData>();
+        exhibition.exhibition_id = document.Id;
+        await LoadArtworkImages(exhibition);
+        exhibition.creation_date_time = exhibition.creation_time.ToDateTime();
+        exhibition.update_date_time = exhibition.update_time.ToDateTime();
+        ExhibitionsMap.Add(document.Id, exhibition);
+        Exhibitions.Add(exhibition);
+        Debug.Log($"Loaded Artwork: {document.Id}");
+        
+        return exhibition;
+    }
+    
+    private static async Task<ArtworkData> ReadArtworkDocument(DocumentSnapshot document)
+    {
+        ArtworkData artwork = document.ConvertTo<ArtworkData>();
+        artwork.artwork_id = document.Id;
+        await LoadArtworkImages(artwork);
+        artwork.creation_date_time = artwork.creation_time.ToDateTime();
+        artwork.update_date_time = artwork.update_time.ToDateTime();
+        ArtworksMap.Add(document.Id, artwork);
+        Artworks.Add(artwork);
+        Debug.Log($"Loaded Artwork: {document.Id}");
+        
+        return artwork;
+    }
+    
+    private static async Task<ArtistData> ReadArtistDocument(DocumentSnapshot document)
+    {
+        ArtistData artist = document.ConvertTo<ArtistData>();
+        artist.artist_id = document.Id;
+        await LoadArtworkImages(artist);
+        artist.creation_date_time = artist.creation_time.ToDateTime();
+        artist.update_date_time = artist.update_time.ToDateTime();
+        ArtistsMap[document.Id] = artist;
+        Artists.Add(artist);
+        Debug.Log($"Loaded artist: '{artist.title}'");
+        
+        return artist;
+    }
+    
+    #endregion
 
     #region Helper Methods for Fetching Single Items
-
-    /// <summary> 2711
-    /// Retrieves an ArtistData by ID, fetching from Firestore if not present in the cache.
-    /// </summary>
-    /// <param name="artistId">The ID of the artist.</param>
-    /// <returns>The ArtistData object or null if not found.</returns>
-    public static async Task<ArtistData> GetArtistByIdAsync(string artistId)
-    {
-        // Check if artist is already in the map
-        if (ArtistsMap.TryGetValue(artistId, out ArtistData existingArtist))
-        {
-            return existingArtist;
-        }
-
-        await artistSemaphore.WaitAsync();
-        
-        try
-        {
-            // Double-check after acquiring semaphore
-            if (ArtistsMap.TryGetValue(artistId, out existingArtist))
-            {
-                return existingArtist;
-            }
-
-            // Fetch from Firestore
-            DocumentSnapshot document = await _firestore.Collection("artists").Document(artistId).GetSnapshotAsync();
-            if (document.Exists)
-            {
-                ArtistData artist = document.ConvertTo<ArtistData>();
-                ArtistsMap[artistId] = artist; // Add to cache
-                Artists.Add(artist); // Add to list
-                Debug.Log($"Loaded artist '{artist.title}' from Firestore.");
-                return artist;
-            }
-            else
-            {
-                Debug.LogWarning($"Artist document '{artistId}' does not exist in Firestore.");
-                return null;
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Failed to load artist '{artistId}': {e.Message}\n{e.StackTrace}");
-            return null;
-        }
-        finally
-        {
-            artistSemaphore.Release();
-        }
-    }
-
-    /// <summary>
-    /// Retrieves an ArtworkData by ID, fetching from Firestore if not present in the cache.
-    /// </summary>
-    /// <param name="artworkId">The ID of the artwork.</param>
-    /// <returns>The ArtworkData object or null if not found.</returns>
-    public static async Task<ArtworkData> GetArtworkByIdAsync(string artworkId)
-    {
-        // Check if artwork is already in the map
-        if (ArtworksMap.TryGetValue(artworkId, out ArtworkData existingArtwork))
-        {
-            return existingArtwork;
-        }
-
-        await artworkSemaphore.WaitAsync();
-        
-        try
-        {
-            // Double-check after acquiring semaphore
-            if (ArtworksMap.TryGetValue(artworkId, out existingArtwork))
-            {
-                return existingArtwork;
-            }
-
-            // Fetch from Firestore
-            DocumentSnapshot document = await _firestore.Collection("artworks").Document(artworkId).GetSnapshotAsync();
-            if (document.Exists)
-            {
-                ArtworkData artwork = document.ConvertTo<ArtworkData>();
-                artwork.images = new List<Sprite>(); 
-                ArtworksMap[artworkId] = artwork; // Add to cache
-                Artworks.Add(artwork); // Add to list
-                Debug.Log($"Loaded artwork '{artwork.title}' from Firestore.");
-                return artwork;
-            }
-            else
-            {
-                Debug.LogWarning($"Artwork document '{artworkId}' does not exist in Firestore.");
-                return null;
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Failed to load artwork '{artworkId}': {e.Message}\n{e.StackTrace}");
-            return null;
-        }
-        finally
-        {
-            artworkSemaphore.Release();
-        }
-    }
-
-    private async Task LoadAllDataOnStart()
-    {
-        await LoadAllArtists();
-        await LoadAllArtworks();
-        await LoadAllExhibitions();
-    }
     
     private async Task GetCollectionCountsAsync()
     {
@@ -228,185 +212,7 @@ public class FirebaseLoader : MonoBehaviour
 
     #endregion
     
-    #region Loading All FirebaseData
-    
-    /// <summary>
-    /// Loads all artists from Firestore and populates the cache and list.
-    /// </summary>
-    public static async Task LoadAllArtists()
-    {
-        try
-        {
-            if (_firestore == null)
-            {
-                Debug.LogError("Firebase Firestore has not been initialized.");
-                return;
-            }
-
-            QuerySnapshot snapshot = await _firestore.Collection("artists").GetSnapshotAsync();
-
-            foreach (DocumentSnapshot document in snapshot.Documents)
-            {
-                if (document.Exists)
-                {
-                    ArtistData artist = document.ConvertTo<ArtistData>();
-                    Debug.Log($"Loaded artist '{artist.title}'");
-                    Artists.Add(artist);
-                    ArtistsMap[document.Id] = artist; // Populate the cache
-                }
-                else
-                {
-                    Debug.LogWarning($"Artist document '{document.Id}' does not exist.");
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Failed to load artists: {e.Message}\n{e.StackTrace}");
-        }
-    }
-
-    /// <summary>
-    /// Loads all artworks from Firestore, assigns associated artists, and populates the cache and list.
-    /// </summary>
-    private static async Task LoadAllArtworks()
-    {
-        try
-        {
-            if (_firestore == null)
-            {
-                Debug.LogError("Firebase Firestore has not been initialized.");
-                return;
-            }
-
-            QuerySnapshot artworkSnapshot = await _firestore.Collection("artworks").GetSnapshotAsync();
-            List<ArtworkData> tempArtworks = new List<ArtworkData>();
-
-            foreach (DocumentSnapshot artworkDoc in artworkSnapshot.Documents)
-            {
-                if (artworkDoc.Exists)
-                {
-                    ArtworkData artwork = artworkDoc.ConvertTo<ArtworkData>();
-                    Debug.Log($"Loaded artwork: '{artwork.title}'");
-                    artwork.artwork_id = artworkDoc.Id;
-                    artwork.images = new List<Sprite>(); 
-                    tempArtworks.Add(artwork);
-                    ArtworksMap[artworkDoc.Id] = artwork; // Populate the cache
-                }
-                else
-                {
-                    Debug.LogWarning($"Artwork document '{artworkDoc.Id}' does not exist.");
-                }
-            }
-
-            // Assign artists to artworks using the pre-loaded ArtistsMap or fetch if missing
-            foreach (var artwork in tempArtworks)
-            {
-                foreach (var artistRef in artwork.artist_references)
-                {
-                    string artistId = artistRef.Id; // Extract the artist document ID
-
-                    ArtistData artist = await GetArtistByIdAsync(artistId);
-                    if (artist != null)
-                    {
-                        artwork.artists.Add(artist);
-                        Debug.Log($"Assigned artist '{artist.title}' to artwork '{artwork.title}'");
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Artist with ID '{artistId}' could not be assigned to artwork '{artwork.title}'.");
-                    }
-                }
-
-                Artworks.Add(artwork);
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Failed to load artworks: {e.Message}\n{e.StackTrace}");
-        }
-    }
-
-    /// <summary>
-    /// Loads all exhibitions from Firestore, assigns associated artists and artworks, and populates the list.
-    /// </summary>
-    private static async Task LoadAllExhibitions()
-    {
-        try
-        {
-            if (_firestore == null)
-            {
-                Debug.LogError("Firebase Firestore has not been initialized.");
-                return;
-            }
-
-            QuerySnapshot exhibitionSnapshot = await _firestore.Collection("exhibitions").GetSnapshotAsync();
-            List<ExhibitionData> tempExhibitions = new List<ExhibitionData>();
-
-            foreach (DocumentSnapshot exhibitionDoc in exhibitionSnapshot.Documents)
-            {
-                if (exhibitionDoc.Exists)
-                {
-                    ExhibitionData exhibition = exhibitionDoc.ConvertTo<ExhibitionData>();
-                    exhibition.images = new List<Sprite>(); 
-                    Debug.Log($"Loaded exhibition: '{exhibition.title}'");
-                    tempExhibitions.Add(exhibition);
-                    ExhibitionsMap[exhibitionDoc.Id] = exhibition;
-                }
-                else
-                {
-                    Debug.LogWarning($"Exhibition document '{exhibitionDoc.Id}' does not exist.");
-                }
-            }
-
-            // Assign artists and artworks to exhibitions using the pre-loaded maps or fetch if missing
-            foreach (var exhibition in tempExhibitions)
-            {
-                // Associate Artists
-                foreach (var artistRef in exhibition.artist_references)
-                {
-                    string artistId = artistRef.Id;
-
-                    ArtistData artist = await GetArtistByIdAsync(artistId);
-                    if (artist != null)
-                    {
-                        exhibition.artists.Add(artist);
-                        Debug.Log($"Assigned artist '{artist.title}' to exhibition '{exhibition.title}'");
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Artist with ID '{artistId}' could not be assigned to exhibition '{exhibition.title}'.");
-                    }
-                }
-
-                // Associate Artworks
-                foreach (var artworkRef in exhibition.artwork_references)
-                {
-                    string artworkId = artworkRef.Id;
-
-                    ArtworkData artwork = await GetArtworkByIdAsync(artworkId);
-                    if (artwork != null)
-                    {
-                        exhibition.artworks.Add(artwork);
-                        Debug.Log($"Assigned artwork '{artwork.title}' to exhibition '{exhibition.title}'");
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Artwork with ID '{artworkId}' could not be assigned to exhibition '{exhibition.title}'.");
-                    }
-                }
-
-                // Optionally load exhibition images if needed
-                // await LoadExhibitionImages(exhibition);
-
-                Exhibitions.Add(exhibition);
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Failed to load exhibitions: {e.Message}\n{e.StackTrace}");
-        }
-    }
+    #region Loading Chunks
 
     public static async Task LoadRemainingArtworks()
     {
@@ -451,21 +257,74 @@ public class FirebaseLoader : MonoBehaviour
         }
     }
 
+    public static async Task LoadRemainingExhibitions()
+    {
+        Debug.Log("Trying to load remaining exhibitions...");
+
+        try
+        {
+            CollectionReference artworksRef = _firestore.Collection("exhibitions");
+            List<string> loadedIds = new List<string>(ExhibitionsMap.Keys);
+
+            List<Task<QuerySnapshot>> tasks = new List<Task<QuerySnapshot>>();
+            List<ExhibitionData> newExhibitions = new List<ExhibitionData>();
+
+            if (loadedIds.Count == 0)
+            {
+                QuerySnapshot snapshot = await artworksRef.GetSnapshotAsync();
+                ProcessExhibitions(snapshot, newExhibitions);
+            }
+            else
+            {
+                // Firestore allows at most 10 elements in `WhereNotIn`
+                for (int i = 0; i < loadedIds.Count; i += 10)
+                {
+                    List<string> batch = loadedIds.GetRange(i, Mathf.Min(10, loadedIds.Count - i));
+                    Query query = artworksRef.WhereNotIn(FieldPath.DocumentId, batch);
+                    tasks.Add(query.GetSnapshotAsync());
+                }
+
+                await Task.WhenAll(tasks);
+
+                foreach (var task in tasks)
+                {
+                    
+                    ProcessExhibitions(task.Result, newExhibitions);
+                }
+            }
+
+            Debug.Log($"Loaded {newExhibitions.Count} new newExhibitions.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed to load remaining artworks: {e.Message}\n{e.StackTrace}");
+        }
+    }
+    
     private static async void ProcessArtworks(QuerySnapshot snapshot, List<ArtworkData> newArtworks)
     {
         foreach (DocumentSnapshot document in snapshot.Documents)
         {
             if (!ArtworksMap.ContainsKey(document.Id))
             {
-                ArtworkData artwork = document.ConvertTo<ArtworkData>();
-                artwork.artwork_id = document.Id;
-                await LoadArtworkImages(artwork);
-                ArtworksMap.Add(document.Id, artwork);
-                Artworks.Add(artwork);
-                newArtworks.Add(artwork);
-                Debug.Log($"Loaded Artwork: {document.Id}");
+                newArtworks.Add(await ReadArtworkDocument(document));
             }
         }
+        
+        AppCache.SaveArtworksCache();
+    }
+    
+    private static async void ProcessExhibitions(QuerySnapshot snapshot, List<ExhibitionData> newExhibitions)
+    {
+        foreach (DocumentSnapshot document in snapshot.Documents)
+        {
+            if (!ExhibitionsMap.ContainsKey(document.Id))
+            {
+                newExhibitions.Add(await ReadExhibitionDocument(document));
+            }
+        }
+        
+        AppCache.SaveArtworksCache();
     }
 
     #endregion
@@ -505,6 +364,8 @@ public class FirebaseLoader : MonoBehaviour
                 Type t when t == typeof(ExhibitionData) => ExhibitionsMap.Keys.ToList(),
                 _ => new List<string>()
             };
+
+            bool hasArtworks = false, hasArtists = false, hasExhibitions = false;
 
             // Initialize Firestore collection reference
             CollectionReference collection = _firestore.Collection(collectionName);
@@ -562,33 +423,24 @@ public class FirebaseLoader : MonoBehaviour
                 {
                     if (typeof(T) == typeof(ArtworkData))
                     {
-                        var data = document.ConvertTo<ArtworkData>();
-                        Debug.Log($"Loaded artwork: '{data.title}'");
-                        data.images = new List<Sprite>();
-                        data.artwork_id = document.Id;
-                        await LoadArtworkImages(data);
-                        ArtworksMap[document.Id] = data;
-                        Artworks.Add(data);
+                        ArtworkData data = null;
+                        
+                        data = !ArtworksMap.TryGetValue(document.Id, out var value) ? ReadArtworkDocument(document).Result : value;
+                        
                         fetchedDocuments.Add(data as T);
+                        hasArtworks = true;
                     }
                     else if (typeof(T) == typeof(ArtistData))
                     {
-                        var data = document.ConvertTo<ArtistData>();
-                        Debug.Log($"Loaded artist: '{data.title}'");
-                        await LoadArtworkImages(data);
-                        ArtistsMap[document.Id] = data;
-                        Artists.Add(data);
-                        fetchedDocuments.Add(data as T);
+                        var data = ReadArtistDocument(document);
+                        fetchedDocuments.Add(data.Result as T);
+                        hasArtists = true;
                     }
                     else if (typeof(T) == typeof(ExhibitionData))
                     {
-                        var data = document.ConvertTo<ExhibitionData>();
-                        Debug.Log($"Loaded exhibition: '{data.title}'");
-                        data.images = new List<Sprite>();
-                        await LoadArtworkImages(data);
-                        ExhibitionsMap[document.Id] = data;
-                        Exhibitions.Add(data);
+                        var data = await ReadExhibitionDocument(document);
                         fetchedDocuments.Add(data as T);
+                        hasExhibitions = true;
                     }
 
                     // Update lastOpenedDocument for pagination
@@ -603,6 +455,10 @@ public class FirebaseLoader : MonoBehaviour
                 {
                     Debug.LogWarning($"Document '{document.Id}' does not exist in collection '{collectionName}'.");
                 }
+                
+                if (hasArtworks) AppCache.SaveArtworksCache();
+                if (hasExhibitions) AppCache.SaveExhibitionsCache();
+                if (hasArtists) AppCache.SaveArtistsCache();
             }
         }
         catch (FirebaseException fe)
@@ -653,13 +509,11 @@ public class FirebaseLoader : MonoBehaviour
                 Debug.LogWarning($"Could not find an Artwork data for document '{document.Id}'. With the sort request: '{sort}'.");
                 return null;
             }
+
+            // If the stored data does not exist, read the document
+            data = !ArtworksMap.TryGetValue(document.Id, out var value) ? ReadArtworkDocument(document).Result : value;
             
-            Debug.Log($"Loaded artwork: '{data.title}'");
-            data.images = new List<Sprite>();
-            data.artwork_id = document.Id;
-            await LoadArtworkImages(data);
-            Artworks.Add(data);
-            ArtworksMap[document.Id] = data;
+            AppCache.SaveArtworksCache();
             
             return data as T;
         }
@@ -677,11 +531,10 @@ public class FirebaseLoader : MonoBehaviour
                 Debug.LogWarning($"Could not find an Artist data for document '{document.Id}'. With the sort request: '{sort}'.");
                 return null;
             }
+
+            data = await ReadArtistDocument(document);
             
-            Debug.Log($"Loaded artist: '{data.title}'");
-            await LoadArtworkImages(data);
-            Artists.Add(data);
-            ArtistsMap[document.Id] = data;
+            AppCache.SaveArtistsCache();
             
             return data as T;
         }
@@ -700,11 +553,9 @@ public class FirebaseLoader : MonoBehaviour
                 return null;
             }
             
-            Debug.Log($"Loaded exhibition: '{data.title}'");
-            data.images = new List<Sprite>();
-            await LoadArtworkImages(data);
-            Exhibitions.Add(data);
-            ExhibitionsMap[document.Id] = data;
+            data = await ReadExhibitionDocument(document);
+            
+            AppCache.SaveExhibitionsCache();
             
             return data as T;
         }
@@ -718,6 +569,8 @@ public class FirebaseLoader : MonoBehaviour
         
         Query query = _firestore.Collection(collection).OrderBy(sort).Limit(limit);
         QuerySnapshot snapshot = await query.GetSnapshotAsync();
+        
+        bool hasArtworks = false, hasArtists = false, hasExhibitions = false;
 
         foreach (var document in snapshot.Documents)
         {
@@ -733,13 +586,9 @@ public class FirebaseLoader : MonoBehaviour
                 var data = document.ConvertTo<ArtworkData>();
                 if (data != null)
                 {
-                    Debug.Log($"Loaded artwork: '{data.title}'");
-                    data.images = new List<Sprite>();
-                    data.artwork_id = document.Id;
-                    await LoadArtworkImages(data);
-                    Artworks.Add(data);
-                    ArtworksMap[document.Id] = data;
+                    data = !ArtworksMap.TryGetValue(document.Id, out var value) ? ReadArtworkDocument(document).Result : value;
                     results.Add(data as T);
+                    hasArtworks = true;
                 }
             }
             else if (typeof(T) == typeof(ArtistData))
@@ -754,11 +603,9 @@ public class FirebaseLoader : MonoBehaviour
                 var data = document.ConvertTo<ArtistData>();
                 if (data != null)
                 {
-                    Debug.Log($"Loaded artist: '{data.title}'");
-                    await LoadArtworkImages(data);
-                    Artists.Add(data);
-                    ArtistsMap[document.Id] = data;
+                    data = await ReadArtistDocument(document);
                     results.Add(data as T);
+                    hasArtists = true;
                 }
             }
             else if (typeof(T) == typeof(ExhibitionData))
@@ -773,15 +620,16 @@ public class FirebaseLoader : MonoBehaviour
                 var data = document.ConvertTo<ExhibitionData>();
                 if (data != null)
                 {
-                    Debug.Log($"Loaded exhibition: '{data.title}'");
-                    data.images = new List<Sprite>();
-                    await LoadArtworkImages(data);
-                    Exhibitions.Add(data);
-                    ExhibitionsMap[document.Id] = data;
+                    data = await ReadExhibitionDocument(document);
                     results.Add(data as T);
+                    hasExhibitions = true;
                 }
             }
         }
+        
+        if (hasArtworks) AppCache.SaveArtworksCache();
+        if (hasExhibitions) AppCache.SaveExhibitionsCache();
+        if (hasArtists) AppCache.SaveArtistsCache();
 
         return results;
     }
@@ -795,7 +643,7 @@ public class FirebaseLoader : MonoBehaviour
     /// Loads exhibition images from URLs and converts them to Sprites.
     /// </summary>
     /// <param name="exhibition">The exhibition for which to load images.</param>
-    private static async Task LoadArtworkImages<T>(T data)
+    public static async Task LoadArtworkImages<T>(T data)
     {
         ArtworkData artwork = null;
         ExhibitionData exhibition = null;

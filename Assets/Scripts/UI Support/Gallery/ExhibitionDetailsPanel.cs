@@ -100,11 +100,16 @@ public class ExhibitionDetailsPanel : DetailsPanel
         StartCoroutine(LateRebuild());
     }
 
-    public void Fill(ExhibitionData exhibition)
+    public async void Fill(ExhibitionData exhibition)
     {
         this.exhibition = exhibition;
         
         Clear();
+
+        if (exhibition.images == null || exhibition.images.Count == 0)
+        {
+            await FirebaseLoader.LoadArtworkImages(exhibition);
+        }
 
         for (int i = 0; i < exhibition.images.Count; i++)
         {

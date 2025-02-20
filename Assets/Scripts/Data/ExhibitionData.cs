@@ -18,12 +18,16 @@ public class ExhibitionData
     [FirestoreProperty] public int year { get; set; }
     [FirestoreProperty] public string location { get; set; }
     
+    [FirestoreProperty] public bool published { get; set; }
+    [FirestoreProperty] public string color { get; set; }
+    
     [FirestoreProperty] public List<string> exhibition_image_references { get; set; } = new List<string>();
-    public List<Sprite> images { get; set; }
+    public List<Sprite> images { get; set; } = new List<Sprite>();
     
     // Read Only Data
-    [FirestoreProperty] public DateTime creation_time { get; set; }
-    [FirestoreProperty] public DateTime update_time { get; set; }
+    [FirestoreProperty] public Timestamp creation_time { get; set; }
+    [FirestoreProperty] public Timestamp update_time { get; set; }
+    public DateTime creation_date_time, update_date_time;
     
     // World Data
     public string exhibition_id;

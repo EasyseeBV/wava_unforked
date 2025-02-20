@@ -16,7 +16,7 @@ public class ArtistContainer : MonoBehaviour
 
     [HideInInspector] public ArtistData artist;
     
-    public void Assign(ArtistData artist)
+    public async void Assign(ArtistData artist)
     {
         if (artist == null)
         {
@@ -27,6 +27,7 @@ public class ArtistContainer : MonoBehaviour
         
         this.artist = artist;
 
+        if(artist.iconImage == null) await FirebaseLoader.LoadArtworkImages(artist);
         if(artist.iconImage != null) profilePicture.sprite = artist.iconImage;
         artistNameLabel.text = artist.title;
         int works = GetArtistWorkCount();

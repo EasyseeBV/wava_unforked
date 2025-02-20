@@ -28,7 +28,7 @@ public class GalleryCard : MonoBehaviour
         if(button) button.onClick.AddListener(GoToGallery);
     }
 
-    public void LoadARPoint(ArtworkData point)
+    public async void LoadARPoint(ArtworkData point)
     {
         if (point == null)
         {
@@ -38,6 +38,11 @@ public class GalleryCard : MonoBehaviour
         }
 
         artwork = point;
+
+        if (point.images == null || point.images.Count == 0)
+        {
+            await FirebaseLoader.LoadArtworkImages(point);
+        }
         
         artworkImage.sprite = point.images is { Count: > 0 } ? point.images[0] : null;//artwork_cover_image;
         artworkLabel.text = point.title;

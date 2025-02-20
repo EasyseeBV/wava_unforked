@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -27,22 +28,36 @@ public class LoadNewestArtwork : MonoBehaviour
 
     private async Task QueryMostRecent()
     {
+        Debug.Log("querying most recent artworks...");
         if (loaded) return;
-        loaded = true;
+        
         try
         {
-            var artworkData = await FirebaseLoader.FetchMultipleDocuments<ArtworkData>("artworks", "creation_time", showCount);
+            List<ArtworkData> artworkData = new List<ArtworkData>();
+            if (FirebaseLoader.ArtworkCollectionFull)
+            {
+                artworkData = new List<ArtworkData>(
+                    FirebaseLoader.Artworks
+                        .OrderByDescending(e => e.creation_date_time)
+                        .Take(showCount)
+                );
+            }
+            else artworkData = await FirebaseLoader.FetchMultipleDocuments<ArtworkData>("artworks", "creation_time", showCount);
+
+            Debug.Log("found artworks: " + artworkData.Count);
+            
             foreach (var artwork in artworkData)
             {
                 if (galleryCard == null) return;
                 var card = Instantiate(galleryCard, parent);
                 card.gameObject.SetActive(true);
                 card.LoadARPoint(artwork);
+                loaded = true;
             }
+            
         }
         catch (Exception e)
         {
-            loaded = false;
             Debug.LogError($"Error fetching most recent artwork: {e.Message}");
         }
     }

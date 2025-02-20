@@ -29,8 +29,9 @@ public class ArtworkData
     public bool place_right { get; set; }
     
     // Read Only Data
-    [FirestoreProperty] public DateTime creation_time { get; set; }
-    [FirestoreProperty] public DateTime update_time { get; set; }
+    [FirestoreProperty] public Timestamp creation_time { get; set; }
+    [FirestoreProperty] public Timestamp update_time { get; set; }
+    public DateTime creation_date_time, update_date_time;
     
     // Content
     [FirestoreProperty] public string media_content { get; set; } // media references

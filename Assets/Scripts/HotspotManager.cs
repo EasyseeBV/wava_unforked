@@ -60,7 +60,35 @@ public class HotspotManager : MonoBehaviour
         //EnableInfo(true);
         if (ConnectedExhibition != null)
         {
-            Logo.material.color = Color.green; //ConnectedExhibition.Color;
+            Color parsedColor = Color.white; // default color
+            switch (ConnectedExhibition.color.ToLower())
+            {
+                case "green":
+                    parsedColor = Color.green;
+                    break;
+                case "red":
+                    parsedColor = Color.red;
+                    break;
+                case "blue":
+                    parsedColor = Color.blue;
+                    break;
+                case "yellow":
+                    parsedColor = Color.yellow;
+                    break;
+                case "purple":
+                    parsedColor = new Color(152f, 66f, 245f, 255f);
+                    break;
+                case "pink":
+                    parsedColor = new Color(231f, 147f, 250f, 255f);;
+                    break;
+                case "orange":
+                    parsedColor = new Color(245f, 115f, 66f, 255f);;
+                    break;
+                default:
+                    parsedColor = Color.green;
+                    break;
+            }
+            Logo.material.color = parsedColor;
         }
 
         Debug.LogWarning("<color=blue>Disabled background images & color setting</color>");
