@@ -37,11 +37,11 @@ public class LoadNewestArtwork : MonoBehaviour
             {
                 artworkData = new List<ArtworkData>(
                     FirebaseLoader.Artworks
-                        .OrderByDescending(e => e.creation_date_time)
+                        .OrderBy(e => e.update_date_time)
                         .Take(showCount)
                 );
             }
-            else artworkData = await FirebaseLoader.FetchMultipleDocuments<ArtworkData>("artworks", "creation_time", showCount);
+            else artworkData = await FirebaseLoader.FetchMultipleDocuments<ArtworkData>("artworks", "update_time", showCount);
             
             
             foreach (var artwork in artworkData)

@@ -36,10 +36,10 @@ public class LoadNewestExhibition : MonoBehaviour
             if (FirebaseLoader.ExhibitionCollectionFull)
             {
                 Debug.Log("full collection.. loading from collection");
-                exhibition = FirebaseLoader.Exhibitions.OrderByDescending(e => e.creation_date_time).FirstOrDefault();
+                exhibition = FirebaseLoader.Exhibitions.OrderByDescending(e => e.update_date_time).FirstOrDefault();
             }
             
-            if (exhibition == null) exhibition = await FirebaseLoader.FetchSingleDocument<ExhibitionData>("exhibitions", "creation_time", 1);
+            if (exhibition == null) exhibition = await FirebaseLoader.FetchSingleDocument<ExhibitionData>("exhibitions", "update_time", 1);
             
             if (exhibition != null)
             {

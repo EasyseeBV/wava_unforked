@@ -49,8 +49,10 @@ public class HotspotManager : MonoBehaviour
     
     private bool inReach = false;
     
+    
     //Replaced ARPoint with ARPointSO
-    public void Init(ArtworkData point) {
+    public void Init(ArtworkData point) 
+    {
         artwork = point;
         if (artwork.place_right)
             RightTitle.text = artwork.title;
@@ -60,6 +62,7 @@ public class HotspotManager : MonoBehaviour
         //EnableInfo(true);
         if (ConnectedExhibition != null)
         {
+            Debug.Log("setting a color: " + ConnectedExhibition.color.ToLower());
             Color parsedColor = Color.white; // default color
             switch (ConnectedExhibition.color.ToLower())
             {
@@ -90,8 +93,12 @@ public class HotspotManager : MonoBehaviour
             }
             Logo.material.color = parsedColor;
         }
+        else
+        {
+            Debug.Log("ConnectedExhibition is null");
+        }
 
-        Debug.LogWarning("<color=blue>Disabled background images & color setting</color>");
+//        Debug.LogWarning("<color=blue>Disabled background images & color setting</color>");
         
         /*
         BackgroundAR.sprite = point.ARMapBackgroundImage;
@@ -107,9 +114,9 @@ public class HotspotManager : MonoBehaviour
 
     public void Update()
     {
-        Color c = Color.green;//ConnectedExhibition.Color;
+        /*Color c = Color.green;//ConnectedExhibition.Color;
         c.a = 1f - ARObjectImage.color.a;
-        Logo.material.color = c;
+        Logo.material.color = c;*/
     }
 
     public void OnChangeGpsPosition(float distance) {
