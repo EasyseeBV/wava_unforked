@@ -34,8 +34,7 @@ public class ArtworkData
     public DateTime creation_date_time, update_date_time;
     
     // Content
-    [FirestoreProperty] public string media_content { get; set; } // media references
-    [FirestoreProperty] public TransformsData transforms { get; set; }
+    [FirestoreProperty] public List<MediaContentData> media_content_list { get; set; } = new List<MediaContentData>();
     
     // World Data
     public string artwork_id { get; set; }
@@ -44,8 +43,11 @@ public class ArtworkData
 }
 
 [FirestoreData]
-public class TransformsData
+public class MediaContentData
 {
+    // Firebase download link for data
+    [FirestoreProperty] public string media_content { get; set; }
+    
     // Nested map for position offsets
     [FirestoreProperty] public PositionOffset position_offset { get; set; }
     

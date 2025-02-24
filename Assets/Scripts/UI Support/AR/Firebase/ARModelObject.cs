@@ -8,41 +8,48 @@ public class ARModelObject : MonoBehaviour
     [SerializeField] private GameObject modelLocation;
     [SerializeField] private GameObject content;
 
-    private GameObject cachedModel = null;
-    private MeshRenderer cachedMeshRenderer;
+    private List<GameObject> cachedModels = new();
+    private List<MeshRenderer> cachedMeshRenderers;
+    private List<MediaContentData> mediaContentData = new();
 
-    public void Assign(GameObject model)
+    public void Assign(GameObject model, MediaContentData contentData)
     {
-        cachedModel = model;
-        cachedMeshRenderer = cachedModel.GetComponentInChildren<MeshRenderer>();
+        cachedModels.Add(model);
+        mediaContentData.Add(contentData);
+        var cachedMeshRenderer = model.GetComponentInChildren<MeshRenderer>();
         cachedMeshRenderer.transform.localPosition = Vector3.zero;
         cachedMeshRenderer.enabled = false;
+        cachedMeshRenderers.Add(cachedMeshRenderer);
     }
 
-    public void Show(TransformsData transformsData)
+    public void Show()
     {
         content.SetActive(true);
-        cachedModel.transform.SetParent(modelLocation.transform);
+
+        for (int i = 0; i < cachedModels.Count; i++)
+        {
+            cachedModels[i].transform.SetParent(modelLocation.transform);
         
-        cachedMeshRenderer.enabled = true;
+            cachedMeshRenderers[i].enabled = true;
         
-        // Apply position offset
-        Vector3 offset = new Vector3(
-            transformsData.position_offset.x_offset,
-            transformsData.position_offset.y_offset,
-            transformsData.position_offset.z_offset
-        );
-        cachedModel.transform.position += offset; // You may choose to set or add this offset based on your needs
+            // Apply position offset
+            Vector3 offset = new Vector3(
+                mediaContentData[i].position_offset.x_offset,
+                mediaContentData[i].position_offset.y_offset,
+                mediaContentData[i].position_offset.z_offset
+            );
+            cachedModels[i].transform.position += offset; // You may choose to set or add this offset based on your needs
     
-        // Apply rotation (assuming the rotation value is in degrees around the Y axis)
-        cachedModel.transform.rotation = Quaternion.Euler(0f, transformsData.rotation, 0f);
+            // Apply rotation (assuming the rotation value is in degrees around the Y axis)
+            cachedModels[i].transform.rotation = Quaternion.Euler(0f, mediaContentData[i].rotation, 0f);
     
-        // Apply scale
-        Vector3 newScale = new Vector3(
-            transformsData.scale.x_scale,
-            transformsData.scale.y_scale,
-            transformsData.scale.z_scale
-        );
-        cachedModel.transform.localScale = newScale;
+            // Apply scale
+            Vector3 newScale = new Vector3(
+                mediaContentData[i].scale.x_scale,
+                mediaContentData[i].scale.y_scale,
+                mediaContentData[i].scale.z_scale
+            );
+            cachedModels[i].transform.localScale = newScale;
+        }
     }
 }

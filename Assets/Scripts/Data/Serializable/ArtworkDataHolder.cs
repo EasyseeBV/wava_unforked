@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [Serializable]
 public class ArtworkDataHolder
@@ -17,8 +18,8 @@ public class ArtworkDataHolder
     public bool place_right;
     public string creation_time; // stored as ISO string
     public string update_time;   // stored as ISO string
-    public string media_content;
-    public TransformsDataHolder transforms;
+    // Removed media_content string property
+    public List<MediaContentDataHolder> media_content_list;
     public string artwork_id;
 
     public static ArtworkDataHolder ToHolder(ArtworkData artwork)
@@ -43,8 +44,16 @@ public class ArtworkDataHolder
         holder.place_right = artwork.place_right;
         holder.creation_time = artwork.creation_date_time.ToString("o");
         holder.update_time = artwork.update_date_time.ToString("o");
-        holder.media_content = artwork.media_content;
-        holder.transforms = TransformsDataHolder.FromTransformsData(artwork.transforms);
+
+        // Convert the list of MediaContentData to holder objects
+        holder.media_content_list = new List<MediaContentDataHolder>();
+        if (artwork.media_content_list != null)
+        {
+            foreach (var media in artwork.media_content_list)
+            {
+                holder.media_content_list.Add(MediaContentDataHolder.FromTransformsData(media));
+            }
+        }
         holder.artwork_id = artwork.artwork_id;
         return holder;
     }
@@ -71,38 +80,50 @@ public class ArtworkDataHolder
         artwork.place_right = holder.place_right;
         artwork.creation_date_time = DateTime.Parse(holder.creation_time);
         artwork.update_date_time = DateTime.Parse(holder.update_time);
-        artwork.media_content = holder.media_content;
-        artwork.transforms = TransformsDataHolder.ToTransformsData(holder.transforms);
+
+        // Convert back the list of media content holders to MediaContentData objects
+        artwork.media_content_list = new List<MediaContentData>();
+        if (holder.media_content_list != null)
+        {
+            foreach (var mediaHolder in holder.media_content_list)
+            {
+                artwork.media_content_list.Add(MediaContentDataHolder.ToTransformsData(mediaHolder));
+            }
+        }
         artwork.artwork_id = holder.artwork_id;
         return artwork;
     }
 }
 
 [Serializable]
-public class TransformsDataHolder
+public class MediaContentDataHolder
 {
+    // Now holds the media content string from MediaContentData
+    public string media_content;
     public PositionOffsetHolder position_offset;
     public float rotation;
     public ScaleHolder scale;
 
-    public static TransformsDataHolder FromTransformsData(TransformsData transforms)
+    public static MediaContentDataHolder FromTransformsData(MediaContentData mediaContent)
     {
-        if (transforms == null) return null;
-        TransformsDataHolder holder = new TransformsDataHolder();
-        holder.position_offset = PositionOffsetHolder.FromPositionOffset(transforms.position_offset);
-        holder.rotation = transforms.rotation;
-        holder.scale = ScaleHolder.FromScale(transforms.scale);
+        if (mediaContent == null) return null;
+        MediaContentDataHolder holder = new MediaContentDataHolder();
+        holder.media_content = mediaContent.media_content;
+        holder.position_offset = PositionOffsetHolder.FromPositionOffset(mediaContent.position_offset);
+        holder.rotation = mediaContent.rotation;
+        holder.scale = ScaleHolder.FromScale(mediaContent.scale);
         return holder;
     }
 
-    public static TransformsData ToTransformsData(TransformsDataHolder holder)
+    public static MediaContentData ToTransformsData(MediaContentDataHolder holder)
     {
         if (holder == null) return null;
-        TransformsData transforms = new TransformsData();
-        transforms.position_offset = PositionOffsetHolder.ToPositionOffset(holder.position_offset);
-        transforms.rotation = holder.rotation;
-        transforms.scale = ScaleHolder.ToScale(holder.scale);
-        return transforms;
+        MediaContentData mediaContent = new MediaContentData();
+        mediaContent.media_content = holder.media_content;
+        mediaContent.position_offset = PositionOffsetHolder.ToPositionOffset(holder.position_offset);
+        mediaContent.rotation = holder.rotation;
+        mediaContent.scale = ScaleHolder.ToScale(holder.scale);
+        return mediaContent;
     }
 }
 
@@ -116,13 +137,23 @@ public class PositionOffsetHolder
     public static PositionOffsetHolder FromPositionOffset(PositionOffset offset)
     {
         if (offset == null) return null;
-        return new PositionOffsetHolder { x_offset = offset.x_offset, y_offset = offset.y_offset, z_offset = offset.z_offset };
+        return new PositionOffsetHolder 
+        { 
+            x_offset = offset.x_offset, 
+            y_offset = offset.y_offset, 
+            z_offset = offset.z_offset 
+        };
     }
 
     public static PositionOffset ToPositionOffset(PositionOffsetHolder holder)
     {
         if (holder == null) return null;
-        return new PositionOffset { x_offset = holder.x_offset, y_offset = holder.y_offset, z_offset = holder.z_offset };
+        return new PositionOffset 
+        { 
+            x_offset = holder.x_offset, 
+            y_offset = holder.y_offset, 
+            z_offset = holder.z_offset 
+        };
     }
 }
 
@@ -136,12 +167,22 @@ public class ScaleHolder
     public static ScaleHolder FromScale(Scale scale)
     {
         if (scale == null) return null;
-        return new ScaleHolder { x_scale = scale.x_scale, y_scale = scale.y_scale, z_scale = scale.z_scale };
+        return new ScaleHolder 
+        { 
+            x_scale = scale.x_scale, 
+            y_scale = scale.y_scale, 
+            z_scale = scale.z_scale 
+        };
     }
 
     public static Scale ToScale(ScaleHolder holder)
     {
         if (holder == null) return null;
-        return new Scale { x_scale = holder.x_scale, y_scale = holder.y_scale, z_scale = holder.z_scale };
+        return new Scale 
+        { 
+            x_scale = holder.x_scale, 
+            y_scale = holder.y_scale, 
+            z_scale = holder.z_scale 
+        };
     }
 }

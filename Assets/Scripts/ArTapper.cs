@@ -13,6 +13,7 @@ using Unity.XR.CoreUtils;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.Serialization;
@@ -40,10 +41,12 @@ public class ArTapper : MonoBehaviour
     public ARRaycastManager arRaycast;
     [SerializeField] private ARNamebar arNamebar;
     [SerializeField] private ARInfoPage arInfoPage;
-    
+
     [Header("Firebase Preloaded elements")]
+    [SerializeField] private ARObject arObject;
     [SerializeField] private ARVideoObject arVideoObject;
     [SerializeField] private ARModelObject arModelObject;
+    [SerializeField] private ARAudioObject arAudioObject;
     [SerializeField] private bool testContent;
 
     [Header("Debugging")]
@@ -64,6 +67,9 @@ public class ArTapper : MonoBehaviour
     bool StartedAnimation;
 
     private GameObject cachedArtworkObject = null;
+    private int contentTotalCount, contentLoadedCount = 0;
+    
+    private List<ARAudioObject> audioObjects = new List<ARAudioObject>();
     
     private void Start()
     {   
@@ -157,12 +163,6 @@ public class ArTapper : MonoBehaviour
         //Create an AR Anchor
         if(anchor==null)anchor = anchorManager.AttachAnchor((ARPlane)foundHit.trackable, foundHit.pose);
 #endif
-
-        if (videoPlayerReady)
-        {
-            arVideoObject.Play();
-            cachedArtworkObject = arVideoObject.gameObject;
-        }
         
         if (PlacedObject == null)
         {
@@ -191,17 +191,14 @@ public class ArTapper : MonoBehaviour
         arNamebar.SetNamebarLabel(ArtworkToPlace.title);
         arInfoPage.CanOpen = true;
 
-        if (ArtworkToPlace.media_content != null && Path.GetExtension(ArtworkToPlace.media_content) == ".mp3")
-            UIInfoController.Instance.SetDefaultText("Adjust volume to hear artwork");
-        else
-            UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
+        UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
     }
 
     private void OnArtworkReady()
     {
         loadingPlane.SetActive(false);
         
-        if (!containsVideo) arModelObject.Show(ArtworkToPlace.transforms);
+        arObject.Show();
         
         PlacedObject = cachedArtworkObject;
         PlacedObject.SetActive(true);
@@ -273,62 +270,66 @@ public class ArTapper : MonoBehaviour
     private AssetLoaderOptions assetLoaderOptions;
     private void LoadContent()
     {
-        if (ArtworkToPlace == null || ArtworkToPlace.media_content == null)
+        if (ArtworkToPlace?.media_content_list == null || ArtworkToPlace.media_content_list.Count == 0)
         {
             Debug.LogWarning("Artwork to place is missing or there is no content available.");
             return;
         }
-        
-        var uri = new Uri(ArtworkToPlace.media_content);
-        string encodedPath = uri.AbsolutePath;
-        string decodedPath = Uri.UnescapeDataString(encodedPath);
-        string fileName = Path.GetFileName(decodedPath);
-        var extension = Path.GetExtension(fileName);
-        
-        if (extension is ".mp4" or ".mvk") // video formats
-        {
-            Debug.Log($"content [{ArtworkToPlace.title}] was a media piece with the url: " + ArtworkToPlace.media_content);
-            containsVideo = true;
-            arVideoObject.PrepareVideo(ArtworkToPlace.media_content, player =>
-            {
-                Debug.Log("Video prepared");
-                videoPlayerReady = true;
-            });
-            hasContent = true;
-        }
-        else if (extension is ".fbx" or ".obj" or ".gltf" or ".gltf2") // model format
-        {
-            if (assetLoaderOptions == null)
-            {
-                assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
-            }
 
-            Debug.Log("attempting to download: " + ArtworkToPlace.media_content);
-            
-            var webRequest = AssetDownloader.CreateWebRequest(ArtworkToPlace.media_content);
-            containsVideo = false;
-            
-            AssetDownloader.LoadModelFromUri(
-                webRequest,
-                onLoad: OnLoad,
-                onMaterialsLoad: OnMaterialsLoad,
-                onProgress: OnProgress,
-                onError: OnError,
-                wrapperGameObject: null,
-                assetLoaderOptions: assetLoaderOptions,
-                fileExtension: extension
-            );
-            hasContent = true;
-        }
-        else if (extension is ".assetbundle") // unity asset bundle format 
+        foreach (var content in ArtworkToPlace.media_content_list)
         {
+            contentTotalCount++;
+            var uri = new Uri(content.media_content);
+            string encodedPath = uri.AbsolutePath;
+            string decodedPath = Uri.UnescapeDataString(encodedPath);
+            string fileName = Path.GetFileName(decodedPath);
+            var extension = Path.GetExtension(fileName);
             containsVideo = false;
-            Debug.LogWarning("AssetBundles are currently not supported");
-        }
-        else
-        {
-            containsVideo = false;
-            Debug.LogError($"Could not load any media from the file format: {extension}");
+            
+            if (extension is ".mp4" or ".mvk") // video formats
+            {
+                Debug.Log($"content [{ArtworkToPlace.title}] contained a media piece");
+                Debug.LogWarning("Content positioning, scale and rotation still needs to be adjusted");
+                
+                containsVideo = true;
+                arVideoObject.PrepareVideo(content, player =>
+                {
+                    Debug.Log("Video prepared");
+                    contentLoadedCount++;
+                });
+            }
+            else if (extension is ".mp3")
+            {
+                Debug.Log($"content [{ArtworkToPlace.title}] contained an audio piece");
+                StartCoroutine(DownloadAudioClip(content.media_content));
+            }
+            else if (extension is ".fbx" or ".obj" or ".gltf" or ".gltf2") // model format
+            {
+                if (assetLoaderOptions == null)
+                {
+                    assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
+                }
+
+                Debug.Log("attempting to download: " + content.media_content);
+                
+                var webRequest = AssetDownloader.CreateWebRequest(content.media_content);
+                
+                AssetDownloader.LoadModelFromUri(
+                    webRequest,
+                    onLoad: OnLoad,
+                    onMaterialsLoad: c => { OnMaterialsLoad(c, content); },
+                    onProgress: OnProgress,
+                    onError: OnError,
+                    wrapperGameObject: null,
+                    assetLoaderOptions: assetLoaderOptions,
+                    fileExtension: extension
+                );
+            }
+            else
+            {
+                Debug.LogError($"Could not load any media from the file format: {extension}");
+                contentTotalCount--;
+            }
         }
     }
     
@@ -336,6 +337,7 @@ public class ArTapper : MonoBehaviour
     private void OnError(IContextualizedError obj)
     {
         Debug.LogError($"An error occurred while loading your model: {obj.GetInnerException()}");
+        contentTotalCount--;
     }
     
     private void OnProgress(AssetLoaderContext assetLoaderContext, float progress)
@@ -346,15 +348,42 @@ public class ArTapper : MonoBehaviour
     private void OnLoad(AssetLoaderContext assetLoaderContext)
     {
         Debug.Log("Model mesh and hierarchy loaded successfully. Proceeding to load materials...");
-        arModelObject.Assign(assetLoaderContext.RootGameObject);
     }
     
-    private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext)
+    private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext, MediaContentData mediaContentData)
     {
         Debug.Log("All materials have been applied. The model is fully loaded.");
+        arModelObject.Assign(assetLoaderContext.RootGameObject, mediaContentData);
+        contentLoadedCount++;
         var obj = assetLoaderContext.RootGameObject;
         obj.name = "Loaded Model";
         cachedArtworkObject = obj;
     }
     #endregion
+    
+    private IEnumerator DownloadAudioClip(string url)
+    {
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.MPEG))
+        {
+            yield return www.SendWebRequest();
+
+            if (www.result != UnityWebRequest.Result.Success)
+            {
+                contentTotalCount--;
+                Debug.LogError("Error downloading audio: " + www.error);
+            }
+            else
+            {
+                contentLoadedCount++;
+                AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
+                var audioObject = Instantiate(arAudioObject);
+                audioObjects.Add(audioObject);
+                audioObject.StoreAudio(clip);
+                if (contentTotalCount == 1)
+                {
+                    audioObject.PlayAudio();
+                }
+            }
+        }
+    }
 }
