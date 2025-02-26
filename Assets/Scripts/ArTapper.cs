@@ -44,9 +44,6 @@ public class ArTapper : MonoBehaviour
 
     [Header("Firebase Preloaded elements")]
     [SerializeField] private ARObject arObject;
-    [SerializeField] private ARVideoObject arVideoObject;
-    [SerializeField] private ARModelObject arModelObject;
-    [SerializeField] private ARAudioObject arAudioObject;
     [SerializeField] private bool testContent;
 
     [Header("Debugging")]
@@ -68,8 +65,6 @@ public class ArTapper : MonoBehaviour
 
     private GameObject cachedArtworkObject = null;
     private int contentTotalCount, contentLoadedCount = 0;
-    
-    private List<ARAudioObject> audioObjects = new List<ARAudioObject>();
     
     private void Start()
     {   
@@ -110,6 +105,13 @@ public class ArTapper : MonoBehaviour
                 }
             }
         }
+
+        if (testContent)
+        {
+            testContent = false;
+            StopAR();
+            PlaceObject();
+        }
     }
 
     private void HandlePlacementSearching()
@@ -130,7 +132,11 @@ public class ArTapper : MonoBehaviour
                 stillLoading = true;
             }
         }
-        else PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
+        else
+        {
+            Debug.Log("no content found...");
+            PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
+        }
             
         Vector3 pos = PlacedObject.transform.position;
         pos.z += DistanceWhenActivated;
@@ -266,17 +272,18 @@ public class ArTapper : MonoBehaviour
             AnimationIndicator.transform.eulerAngles = curAngle;
         }
     }
-
-    private AssetLoaderOptions assetLoaderOptions;
+    
     private void LoadContent()
     {
-        if (ArtworkToPlace?.media_content_list == null || ArtworkToPlace.media_content_list.Count == 0)
+        if (ArtworkToPlace?.content_list == null || ArtworkToPlace.content_list.Count == 0)
         {
             Debug.LogWarning("Artwork to place is missing or there is no content available.");
             return;
         }
 
-        foreach (var content in ArtworkToPlace.media_content_list)
+        hasContent = true;
+
+        foreach (var content in ArtworkToPlace.content_list)
         {
             contentTotalCount++;
             var uri = new Uri(content.media_content);
@@ -292,7 +299,7 @@ public class ArTapper : MonoBehaviour
                 Debug.LogWarning("Content positioning, scale and rotation still needs to be adjusted");
                 
                 containsVideo = true;
-                arVideoObject.PrepareVideo(content, player =>
+                arObject.Add(content, player =>
                 {
                     Debug.Log("Video prepared");
                     contentLoadedCount++;
@@ -305,11 +312,8 @@ public class ArTapper : MonoBehaviour
             }
             else if (extension is ".fbx" or ".obj" or ".gltf" or ".gltf2") // model format
             {
-                if (assetLoaderOptions == null)
-                {
-                    assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
-                }
-
+                var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
+                
                 Debug.Log("attempting to download: " + content.media_content);
                 
                 var webRequest = AssetDownloader.CreateWebRequest(content.media_content);
@@ -353,10 +357,10 @@ public class ArTapper : MonoBehaviour
     private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext, MediaContentData mediaContentData)
     {
         Debug.Log("All materials have been applied. The model is fully loaded.");
-        arModelObject.Assign(assetLoaderContext.RootGameObject, mediaContentData);
         contentLoadedCount++;
         var obj = assetLoaderContext.RootGameObject;
         obj.name = "Loaded Model";
+        arObject.Add(obj, mediaContentData);
         cachedArtworkObject = obj;
     }
     #endregion
@@ -376,12 +380,10 @@ public class ArTapper : MonoBehaviour
             {
                 contentLoadedCount++;
                 AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
-                var audioObject = Instantiate(arAudioObject);
-                audioObjects.Add(audioObject);
-                audioObject.StoreAudio(clip);
+                arObject.Add(clip);
                 if (contentTotalCount == 1)
                 {
-                    audioObject.PlayAudio();
+                    arObject.Show();
                 }
             }
         }

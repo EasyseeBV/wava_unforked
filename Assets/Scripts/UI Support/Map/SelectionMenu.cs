@@ -30,6 +30,9 @@ public class SelectionMenu : MonoBehaviour
     [Header("Navigation Tools")]
     [SerializeField] private GameObject navigationObject;
 
+    [Header("Debug")]
+    [SerializeField] private Button openButton;
+    
     public static ArtworkData SelectedARPoint = null;
     private HotspotManager cachedHotspot;
     
@@ -42,11 +45,21 @@ public class SelectionMenu : MonoBehaviour
         
         exitButtons[0].onClick.AddListener(OpenArtwork);
         exitButtons[1].onClick.AddListener(StartAR);
+        
+        openButton.onClick.AddListener(StartAR);
+        
+#if UNITY_EDITOR
+        openButton.gameObject.SetActive(true);        
+#endif
     }
 
     private void OnEnable()
     {
         if(OnlineMapsControlBase.instance) OnlineMapsControlBase.instance.OnMapClick += OnMapClicked;
+        
+#if UNITY_EDITOR
+        openButton.gameObject.SetActive(true);        
+#endif
     }
 
     private void OnDisable()

@@ -47,9 +47,9 @@ public class ArtworkDataHolder
 
         // Convert the list of MediaContentData to holder objects
         holder.media_content_list = new List<MediaContentDataHolder>();
-        if (artwork.media_content_list != null)
+        if (artwork.content_list != null)
         {
-            foreach (var media in artwork.media_content_list)
+            foreach (var media in artwork.content_list)
             {
                 holder.media_content_list.Add(MediaContentDataHolder.FromTransformsData(media));
             }
@@ -82,12 +82,12 @@ public class ArtworkDataHolder
         artwork.update_date_time = DateTime.Parse(holder.update_time);
 
         // Convert back the list of media content holders to MediaContentData objects
-        artwork.media_content_list = new List<MediaContentData>();
+        artwork.content_list = new List<MediaContentData>();
         if (holder.media_content_list != null)
         {
             foreach (var mediaHolder in holder.media_content_list)
             {
-                artwork.media_content_list.Add(MediaContentDataHolder.ToTransformsData(mediaHolder));
+                artwork.content_list.Add(MediaContentDataHolder.ToTransformsData(mediaHolder));
             }
         }
         artwork.artwork_id = holder.artwork_id;
@@ -109,9 +109,9 @@ public class MediaContentDataHolder
         if (mediaContent == null) return null;
         MediaContentDataHolder holder = new MediaContentDataHolder();
         holder.media_content = mediaContent.media_content;
-        holder.position_offset = PositionOffsetHolder.FromPositionOffset(mediaContent.position_offset);
-        holder.rotation = mediaContent.rotation;
-        holder.scale = ScaleHolder.FromScale(mediaContent.scale);
+        holder.position_offset = PositionOffsetHolder.FromPositionOffset(mediaContent.transforms.position_offset);
+        holder.rotation = mediaContent.transforms.rotation;
+        holder.scale = ScaleHolder.FromScale(mediaContent.transforms.scale);
         return holder;
     }
 
@@ -120,9 +120,9 @@ public class MediaContentDataHolder
         if (holder == null) return null;
         MediaContentData mediaContent = new MediaContentData();
         mediaContent.media_content = holder.media_content;
-        mediaContent.position_offset = PositionOffsetHolder.ToPositionOffset(holder.position_offset);
-        mediaContent.rotation = holder.rotation;
-        mediaContent.scale = ScaleHolder.ToScale(holder.scale);
+        mediaContent.transforms.position_offset = PositionOffsetHolder.ToPositionOffset(holder.position_offset);
+        mediaContent.transforms.rotation = holder.rotation;
+        mediaContent.transforms.scale = ScaleHolder.ToScale(holder.scale);
         return mediaContent;
     }
 }

@@ -157,10 +157,13 @@ public class ARMapPointMaker : MonoBehaviour {
         
         //Replaced ARPoint with ARPointSO
         foreach (ArtworkData item in FirebaseLoader.Artworks) {
-            item.hotspot.SetFormat(map.zoom);
-            item.marker.scale = 1150f * ((Screen.width + Screen.height) / 2f) / Mathf.Pow(2, (map.zoom + map.zoomScale) * 0.85f);
-            if (item.marker.inMapView)
-                anyVisible = true;
+            if (item.hotspot != null)
+            {
+                item.hotspot.SetFormat(map.zoom);
+                item.marker.scale = 1150f * ((Screen.width + Screen.height) / 2f) / Mathf.Pow(2, (map.zoom + map.zoomScale) * 0.85f);
+                if (item.marker.inMapView)
+                    anyVisible = true;
+            }
         }
         UpdateUI();
     }

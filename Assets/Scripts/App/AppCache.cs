@@ -34,6 +34,8 @@ public static class AppCache
 
     public static void LoadLocalCaches()
     {
+        Debug.Log("Cache disabled");
+        return;
         Debug.Log("Loading local caches...");
         EnsureDirectoryExists(artistsCachePath);
         EnsureDirectoryExists(artworksCachePath);
