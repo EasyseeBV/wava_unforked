@@ -146,6 +146,7 @@ public class GroupMarkerHandler : MonoBehaviour
     {
         foreach (var group in markerGroups.Where(group => group.artworkPoints.Count > 1))
         {
+            if (group.groupMarkerObject == null) continue;
             group.groupMarkerObject.marker.scale = 1150f * ((Screen.width + Screen.height) / 2f) / Mathf.Pow(2, (map.zoom + map.zoomScale) * 0.85f);
         }
         

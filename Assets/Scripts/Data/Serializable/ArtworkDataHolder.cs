@@ -21,6 +21,8 @@ public class ArtworkDataHolder
     // Removed media_content string property
     public List<MediaContentDataHolder> media_content_list;
     public string artwork_id;
+    public string preset;
+    public string alt_scene;
 
     public static ArtworkDataHolder ToHolder(ArtworkData artwork)
     {

@@ -62,34 +62,43 @@ public class FirebaseLoader : MonoBehaviour
     /// </summary>
     private async void InitializeFirebase()
     {
-        try
+        while (!Initialized)
         {
-            DependencyStatus dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
-            if (dependencyStatus == DependencyStatus.Available)
+            try
             {
-                _firestore = FirebaseFirestore.DefaultInstance;
-                Debug.Log("Firebase initialized successfully.");
-
-                if (_firestore.Settings == null)
+                DependencyStatus dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
+                if (dependencyStatus == DependencyStatus.Available)
                 {
-                    Debug.LogWarning("Firestore settings are empty");
+                    _firestore = FirebaseFirestore.DefaultInstance;
+                    Debug.Log("Firebase initialized successfully.");
+
+                    if (_firestore.Settings == null)
+                    {
+                        Debug.LogWarning("Firestore settings are empty");
+                    }
+
+                    AppCache.LoadLocalCaches();
+                    await GetCollectionCountsAsync();
+
+                    Initialized = true;
+                    OnFirestoreInitialized?.Invoke();
+                    break; // Exit loop upon successful initialization.
                 }
-
-                AppCache.LoadLocalCaches();
-                
-                await GetCollectionCountsAsync();
-
-                Initialized = true;
-                OnFirestoreInitialized?.Invoke();
+                else
+                {
+                    Debug.LogError($"Could not resolve all Firebase dependencies: {dependencyStatus}");
+                }
             }
-            else
+            catch (Exception e)
             {
-                Debug.LogError($"Could not resolve all Firebase dependencies: {dependencyStatus}");
+                Debug.LogError($"Firebase initialization failed: {e.Message}\n{e.StackTrace}");
             }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"Firebase initialization failed: {e.Message}\n{e.StackTrace}");
+
+            if (!Initialized)
+            {
+                Debug.LogWarning("Retrying Firebase initialization in 5 seconds...");
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
         }
     }
     
@@ -149,7 +158,7 @@ public class FirebaseLoader : MonoBehaviour
         return exhibition;
     }
     
-    private static async Task<ArtworkData> ReadArtworkDocument(DocumentSnapshot document)
+    private static async Task<ArtworkData> ReadArtworkDocument(DocumentSnapshot document, bool loadImages = true)
     {
         if (ArtworksMap.ContainsKey(document.Id))
         {
@@ -159,9 +168,13 @@ public class FirebaseLoader : MonoBehaviour
         
         ArtworkData artwork = document.ConvertTo<ArtworkData>();
         artwork.artwork_id = document.Id;
-        await LoadArtworkImages(artwork);
+        if (loadImages) await LoadArtworkImages(artwork);
         artwork.creation_date_time = artwork.creation_time.ToDateTime();
         artwork.update_date_time = artwork.update_time.ToDateTime();
+        foreach (var documentReference in artwork.artist_references)
+        {
+            artwork.artists.Add(await ReadArtistDocumentReference(documentReference));
+        }
         ArtworksMap.Add(document.Id, artwork);
         Artworks.Add(artwork);
         Debug.Log($"Loaded Artwork: {document.Id}");
@@ -181,6 +194,53 @@ public class FirebaseLoader : MonoBehaviour
         Debug.Log($"Loaded artist: '{artist.title}'");
         
         return artist;
+    }
+
+    private static async Task<ArtistData> ReadArtistDocumentReference(DocumentReference document)
+    {
+        foreach (var artist in Artists.Where(artist => artist.artist_id == document.Id))
+        {
+            return artist;
+        }
+        
+        DocumentSnapshot snapshot = await document.GetSnapshotAsync();
+        
+        if (!snapshot.Exists)
+        {
+            Debug.LogError("Artist document does not exist for reference: " + document.Id);
+            return null;
+        }
+        
+        return await ReadArtistDocument(snapshot);
+    }
+
+    public static async Task<ExhibitionData> FindRelatedExhibition(string artwork_id)
+    {
+        // Get the Firestore database instance.
+        var db = FirebaseFirestore.DefaultInstance;
+
+        // Create a DocumentReference for the artwork.
+        DocumentReference artworkRef = db.Collection("artworks").Document(artwork_id);
+
+        // Build the query to find exhibitions that reference this artwork.
+        Query query = db.Collection("exhibitions").WhereArrayContains("artwork_references", artworkRef);
+
+        // Await the snapshot asynchronously.
+        QuerySnapshot snapshot = await query.GetSnapshotAsync();
+
+        // If at least one document is returned, convert the first document to ExhibitionData.
+        if (snapshot != null && snapshot.Count > 0)
+        {
+            DocumentSnapshot exhibitionDoc = snapshot.Documents.FirstOrDefault();
+            if (exhibitionDoc != null)
+            {
+                ExhibitionData exhibitionData = exhibitionDoc.ConvertTo<ExhibitionData>();
+                return exhibitionData;
+            }
+        }
+
+        // If no exhibition is found, return null.
+        return null;
     }
     
     #endregion
@@ -220,46 +280,37 @@ public class FirebaseLoader : MonoBehaviour
     
     #region Loading Chunks
 
-    public static async Task LoadRemainingArtworks()
+    public static async Task LoadRemainingArtworks(Action onComplete)
     {
-        Debug.Log("Trying to load remaining artworks");
+        Debug.Log("Trying to load all artworks");
 
         try
         {
             CollectionReference artworksRef = _firestore.Collection("artworks");
-            List<string> loadedIds = new List<string>(ArtworksMap.Keys);
-
-            List<Task<QuerySnapshot>> tasks = new List<Task<QuerySnapshot>>();
+            QuerySnapshot snapshot = await artworksRef.GetSnapshotAsync();
             List<ArtworkData> newArtworks = new List<ArtworkData>();
 
-            if (loadedIds.Count == 0)
+            foreach (var document in snapshot.Documents)
             {
-                QuerySnapshot snapshot = await artworksRef.GetSnapshotAsync();
-                ProcessArtworks(snapshot, newArtworks);
-            }
-            else
-            {
-                // Firestore allows at most 10 elements in `WhereNotIn`
-                for (int i = 0; i < loadedIds.Count; i += 10)
+                string id = document.Id;
+                // If the artwork already exists in the map, ignore it
+                if (ArtworksMap.ContainsKey(id))
                 {
-                    List<string> batch = loadedIds.GetRange(i, Mathf.Min(10, loadedIds.Count - i));
-                    Query query = artworksRef.WhereNotIn(FieldPath.DocumentId, batch);
-                    tasks.Add(query.GetSnapshotAsync());
+                    continue;
                 }
 
-                await Task.WhenAll(tasks);
-
-                foreach (var task in tasks)
-                {
-                    ProcessArtworks(task.Result, newArtworks);
-                }
+                // Convert the document into your ArtworkData object
+                ArtworkData artwork = await ReadArtworkDocument(document, false);
+                ArtworksMap[id] = artwork;
+                newArtworks.Add(artwork);
             }
 
             Debug.Log($"Loaded {newArtworks.Count} new artworks.");
+            onComplete?.Invoke();
         }
         catch (Exception e)
         {
-            Debug.LogError($"Failed to load remaining artworks: {e.Message}\n{e.StackTrace}");
+            Debug.LogError($"Failed to load artworks: {e.Message}\n{e.StackTrace}");
         }
     }
 
@@ -640,7 +691,11 @@ public class FirebaseLoader : MonoBehaviour
         return results;
     }
 
-
+    public static ExhibitionData GetConnectedExhibition(ArtworkData artwork)
+    {
+        return (from exhibition in Exhibitions from artworkReference in exhibition.artwork_references where artworkReference.Id == artwork.artwork_id select exhibition).FirstOrDefault();
+    }
+    
     #endregion
 
     #region Exhibition Images Loading
@@ -711,7 +766,7 @@ public class FirebaseLoader : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError($"Error loading exhibition image from URL '{imageUrl}': {e.Message}");
+                Debug.LogError($"Error loading image from URL '{imageUrl}': {e.Message}");
             }
         }
 

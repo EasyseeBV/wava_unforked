@@ -95,6 +95,7 @@ public class HotspotManager : MonoBehaviour
         }
         else
         {
+            Logo.material.color = Color.green;
             Debug.Log("ConnectedExhibition is null");
         }
 
@@ -316,15 +317,18 @@ public class HotspotManager : MonoBehaviour
         Debug.LogWarning("PlaceObjectDirectly was disabled");
         ArTapper.DistanceWhenActivated = _distance;
 
-        SceneManager.LoadScene("AR");
+        //SceneManager.LoadScene("AR");
 
-        /*if(string.IsNullOrEmpty(point.AlternateScene)){
+        if(string.IsNullOrEmpty(artwork.alt_scene))
+        {
             Debug.Log( "Loading Default AR Scene");
             SceneManager.LoadScene("AR");
-        }else{
-            Debug.Log( "Loading Alternate Scene "+point.AlternateScene );
-            SceneManager.LoadScene(point.AlternateScene);
-        }*/
+        }
+        else
+        {
+            Debug.Log( "Loading Alternate Scene " + artwork.alt_scene);
+            SceneManager.LoadScene(artwork.alt_scene);
+        }
     }
 
     public ArtworkData GetHotspotArtwork()

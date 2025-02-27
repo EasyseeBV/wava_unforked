@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DanielLochner.Assets.SimpleScrollSnap;
 using Messy.Definitions;
 using TMPro;
@@ -70,8 +71,7 @@ public class ArtworkDetailsPanel : DetailsPanel
             container.Assign(artwork.artists[i]);
         }
 
-        ExhibitionData exhb = GetExhibition();
-        exhibitionCard.Init(exhb);
+        GetExhibition();
         
         contentTitleLabel.text = artwork.title;
         fullLengthDescription = artwork.description;
@@ -139,27 +139,36 @@ public class ArtworkDetailsPanel : DetailsPanel
         AppCache.DownloadArtworkImages(artwork);
     }
 
-    private ExhibitionData GetExhibition()
+    private async void GetExhibition()
     {
-        if (FirebaseLoader.Exhibitions == null) return null;
-        
-        foreach (var exhibition in FirebaseLoader.Exhibitions)
+        if (FirebaseLoader.Exhibitions == null) return;
+
+        try
         {
-            if (exhibition.artworks.Contains(artwork)) return exhibition;
-            else
+            foreach (var exhibition in FirebaseLoader.Exhibitions)
             {
-                if (exhibition.artwork_references.Any(documentReference => documentReference.Id == artwork.artwork_id))
+                if (exhibition.artworks.Contains(artwork))
                 {
-                    exhibition.artworks.Add(artwork);
-                    return exhibition;
+                    exhibitionCard.Init(exhibition);
+                    return;
+                }
+                else
+                {
+                    if (exhibition.artwork_references.Any(documentReference => documentReference.Id == artwork.artwork_id))
+                    {
+                        exhibition.artworks.Add(artwork);
+                        exhibitionCard.Init(exhibition);
+                        return;
+                    }
                 }
             }
+
+            exhibitionCard.Init(await FirebaseLoader.FindRelatedExhibition(artwork.artwork_id));
         }
-        
-        // query firebase for an exhibition document that contains the saved artwork document id in its artwork_reference list and return that instead
-        Debug.LogWarning("Returning null for exhibition - this feature needs to be implemented (fetching firebase document by id in a list)");
-        
-        return null;
+        catch (Exception e)
+        {
+            Debug.LogWarning("Could not load exhibition: " + e.StackTrace);
+        }
     }
 
     private void ChangeIndicator(int newIndex,int oldIndex)

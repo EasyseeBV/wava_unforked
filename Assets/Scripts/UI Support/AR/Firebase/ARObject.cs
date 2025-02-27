@@ -126,6 +126,8 @@ public class ARObject : MonoBehaviour
 
         foreach (var obj in models)
         {
+            obj.SetActive(true);
+            
             if (obj.TryGetComponent<MeshRenderer>(out var mesh))
             {
                 mesh.enabled = true;

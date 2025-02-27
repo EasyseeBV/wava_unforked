@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Messy.Definitions;
 using TMPro;
 using UnityEngine;
@@ -37,21 +38,7 @@ public class ArtistContainer : MonoBehaviour
 
     private int GetArtistWorkCount()
     {
-        if (FirebaseLoader.Exhibitions == null) return 0;
-
-        int count = 0;
-        foreach (var exh in FirebaseLoader.Exhibitions )
-        {
-            foreach (var artworks in exh.artworks)
-            {
-                if (artworks.artists.Contains(artist))
-                {
-                    count++;
-                }
-            }
-        }
-
-        return count;
+        return FirebaseLoader.Artworks == null ? 0 : FirebaseLoader.Artworks.Count(artwork => artwork.artists.Contains(artist));
     }
 
     private void OpenArtistPage()

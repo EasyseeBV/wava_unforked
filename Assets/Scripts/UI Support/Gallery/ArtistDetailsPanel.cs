@@ -148,16 +148,11 @@ public class ArtistDetailsPanel : DetailsPanel
             if (exhibition.artists.Contains(artist) && !exhibitions.Contains(exhibition))
             {
                 exhibitions.Add(exhibition);
-                continue;
             }
 
-            foreach (var artwork in exhibition.artworks)
+            foreach (var artwork in exhibition.artworks.Where(artwork => artwork.artists.Contains(artist) && !exhibitions.Contains(exhibition)))
             {
-                if (artwork.artists.Contains(artist) && !exhibitions.Contains(exhibition))
-                {
-                    exhibitions.Add(exhibition);
-                    break;
-                }
+                exhibitions.Add(exhibition);
             }
         }
 
@@ -166,15 +161,6 @@ public class ArtistDetailsPanel : DetailsPanel
 
     private List<ArtworkData> GetArtworks()
     {
-        if (FirebaseLoader.Exhibitions == null) return null;
-
-        List<ArtworkData> artworks = new();
-        
-        foreach (var exhb in FirebaseLoader.Exhibitions)
-        {
-            artworks.AddRange(exhb.artworks.Where(artwork => artwork.artists.Contains(artist)));
-        }
-
-        return artworks;
+        return FirebaseLoader.Artworks == null ? null : FirebaseLoader.Artworks.Where(artwork => artwork.artists.Contains(artist)).ToList();
     }
 }

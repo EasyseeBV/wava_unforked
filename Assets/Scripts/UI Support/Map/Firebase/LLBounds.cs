@@ -10,7 +10,7 @@ public class LLBounds : MonoBehaviour
 
     private void Awake()
     {
-        _ = FirebaseLoader.LoadRemainingArtworks();
+        //_ = FirebaseLoader.LoadRemainingArtworks();
     }
 
     private void Update()

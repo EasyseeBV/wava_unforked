@@ -43,14 +43,15 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private ARInfoPage arInfoPage;
 
     [Header("Firebase Preloaded elements")]
-    [SerializeField] private ARObject arObject;
+    [SerializeField] private ARObject arObjectPrefab;
     [SerializeField] private bool testContent;
 
     [Header("Debugging")]
     [SerializeField] private Transform outOfScreenLoadLocation;
     [SerializeField] private TMP_Text eventLabel;
     [SerializeField] private GameObject loadingPlane;
-    [Space] [SerializeField] private bool placeObject;
+
+    private ARObject arObject;
     
     private Pose placementPose;
     private ARRaycastHit foundHit;
@@ -65,9 +66,11 @@ public class ArTapper : MonoBehaviour
 
     private GameObject cachedArtworkObject = null;
     private int contentTotalCount, contentLoadedCount = 0;
-    
+    private bool allContentLoaded = false;
+
     private void Start()
     {   
+        arObject = Instantiate(arObjectPrefab);
         StartAR();
         LoadContent();
     }
@@ -87,12 +90,6 @@ public class ArTapper : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.P) && placementPoseIsValid) {
                 StopAR();
                 PlaceObject();
-            }
-            
-            if (placeObject)
-            {
-                placeObject = false;
-                OnArtworkReady();
             }
                 
 #endif
@@ -246,7 +243,7 @@ public class ArTapper : MonoBehaviour
         {
             placementIndicator.SetActive(true);
             AnimationIndicator.SetActive(false);
-            UIInfoController.Instance.arTutorialManager.ShowPlaceHint();//SetText("Tap on the Wava button to let it appear", 0);
+            UIInfoController.Instance.arTutorialManager.ShowPlaceHint();// shows text popup to tell the player to place the object
 #if !UNITY_EDITOR
             placementPose = hits[0].pose;
 
@@ -258,7 +255,6 @@ public class ArTapper : MonoBehaviour
             placementPose.rotation = Quaternion.LookRotation(cameraBearing);
             placementIndicator.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
             loadingPlane.transform.localRotation = Quaternion.Euler(90f, 0f, placementPose.rotation.eulerAngles.z);
-
 #endif
         } 
         else 
@@ -279,7 +275,7 @@ public class ArTapper : MonoBehaviour
         {
             Debug.LogWarning("Artwork to place is missing or there is no content available.");
             return;
-        }
+        } 
 
         hasContent = true;
 
@@ -303,6 +299,7 @@ public class ArTapper : MonoBehaviour
                 {
                     Debug.Log("Video prepared");
                     contentLoadedCount++;
+                    if (contentLoadedCount >= contentTotalCount) allContentLoaded = true;
                 });
             }
             else if (extension is ".mp3")
@@ -342,6 +339,7 @@ public class ArTapper : MonoBehaviour
     {
         Debug.LogError($"An error occurred while loading your model: {obj.GetInnerException()}");
         contentTotalCount--;
+        if (contentLoadedCount >= contentTotalCount) allContentLoaded = true;
     }
     
     private void OnProgress(AssetLoaderContext assetLoaderContext, float progress)
@@ -362,6 +360,8 @@ public class ArTapper : MonoBehaviour
         obj.name = "Loaded Model";
         arObject.Add(obj, mediaContentData);
         cachedArtworkObject = obj;
+        
+        if (contentLoadedCount >= contentTotalCount) allContentLoaded = true;
     }
     #endregion
     
@@ -385,6 +385,8 @@ public class ArTapper : MonoBehaviour
                 {
                     arObject.Show();
                 }
+                
+                if (contentLoadedCount >= contentTotalCount) allContentLoaded = true;
             }
         }
     }

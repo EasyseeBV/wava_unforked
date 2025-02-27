@@ -12,8 +12,9 @@ public class ArtworkData
     [FirestoreProperty] public string description { get; set; }
     
     [FirestoreProperty] public List<DocumentReference> artist_references { get; set; } = new List<DocumentReference>();
+
     public List<ArtistData> artists { get; set; } = new List<ArtistData>();
-    
+
     [FirestoreProperty] public int year { get; set; }
     [FirestoreProperty] public string location { get; set; }
     
@@ -25,8 +26,7 @@ public class ArtworkData
     [FirestoreProperty] public double longitude { get; set; }
     [FirestoreProperty] public float max_distance { get; set; }
 
-    //[FirestoreProperty]
-    public bool place_right { get; set; }
+    [FirestoreProperty] public bool place_right { get; set; }
     
     // Read Only Data
     [FirestoreProperty] public Timestamp creation_time { get; set; }
@@ -35,6 +35,8 @@ public class ArtworkData
     
     // Content
     [FirestoreProperty] public List<MediaContentData> content_list { get; set; } = new List<MediaContentData>();
+    [FirestoreProperty] public string preset { get; set; }
+    [FirestoreProperty] public string alt_scene { get; set; }
     
     // World Data
     public string artwork_id { get; set; }

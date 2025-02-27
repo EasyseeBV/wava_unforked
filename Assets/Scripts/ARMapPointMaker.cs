@@ -25,18 +25,21 @@ public class ARMapPointMaker : MonoBehaviour {
     }
     
     //Replaced ARPoint with ARPointSO
-    public void InstantiateHotspots() {
-
-        StartCoroutine(IEInstatiateHotspot());
+    public void InstantiateHotspots()
+    {
+        FirebaseLoader.LoadRemainingArtworks(() =>
+        {
+            StartCoroutine(IEInstatiateHotspot());
+        });
     }
 
     public IEnumerator IEInstatiateHotspot()
     {
-        yield return new WaitForSecondsRealtime(3f);
+        yield return new WaitForSecondsRealtime(1f);
 
         foreach (var artwork in FirebaseLoader.Artworks)
         {
-            Debug.Log("Loading an artwork point...");
+            Debug.Log("Loading an artwork point as a marker...");
             artwork.marker = control.marker3DManager.Create(artwork.longitude, artwork.latitude, ZoomedInMapObject);
             artwork.marker.instance.name = artwork.title;
             artwork.hotspot = artwork.marker.instance.GetComponent<HotspotManager>();
@@ -44,37 +47,13 @@ public class ARMapPointMaker : MonoBehaviour {
             artwork.marker.instance.layer = LayerMask.NameToLayer("Hotspot");
             artwork.marker.borderTransform = artwork.hotspot.BorderRingMesh.gameObject.transform;
             artwork.hotspot.Navigation = GetComponent<NavigationMaker>();
-            artwork.hotspot.ConnectedExhibition = FirebaseLoader.Exhibitions[0];
+            artwork.hotspot.ConnectedExhibition = FirebaseLoader.GetConnectedExhibition(artwork);//FirebaseLoader.Exhibitions[0];
             Debug.LogWarning("ConnectedExhibition removed temp - needs to retrieve it from the loader");
             artwork.hotspot.Init(artwork);
             artwork.hotspot.MinZoom = minZoom;
             artwork.hotspot.OnChangeGpsPosition(OnlineMapsUtils.DistanceBetweenPoints(OnlineMapsLocationService.instance.position, new Vector2((float)artwork.longitude, (float)artwork.latitude)).magnitude);
-
         }
         
-        /*foreach (ExhibitionData exhibition in FirebaseLoader.Exhibitions)
-        {
-            foreach (ArtworkData artwork in exhibition.artworks)
-            {
-                artwork.marker = control.marker3DManager.Create(artwork.longitude, artwork.latitude, ZoomedInMapObject);
-                artwork.marker.instance.name = artwork.title;
-                artwork.hotspot = artwork.marker.instance.GetComponent<HotspotManager>();
-                artwork.marker.sizeType = OnlineMapsMarker3D.SizeType.realWorld;
-                artwork.marker.instance.layer = LayerMask.NameToLayer("Hotspot");
-                artwork.marker.borderTransform = artwork.hotspot.BorderRingMesh.gameObject.transform;
-                artwork.hotspot.Navigation = GetComponent<NavigationMaker>();
-                artwork.hotspot.ConnectedExhibition = exhibition;
-                artwork.hotspot.Init(artwork);
-                artwork.hotspot.MinZoom = minZoom;
-                artwork.hotspot.OnChangeGpsPosition(OnlineMapsUtils.DistanceBetweenPoints(OnlineMapsLocationService.instance.position, new Vector2((float)artwork.longitude, (float)artwork.latitude)).magnitude);
-                
-                /*if (SelectionMenu.SelectedARPoint == artwork)
-                {
-                    SelectionMenu.Instance.LoadARPointSO();
-                }#1#
-            }
-        }*/
-
         map.OnChangeZoom += OnChangeZoom;
         map.OnChangePosition += OnChangePosition;
         OnlineMapsLocationService.instance.OnLocationChanged += OnChangeGps;

@@ -156,11 +156,15 @@ public class ArtworkUIManager : MonoBehaviour
         
         // Flatten all ArtWorks, filter those with images, and sort by creationDateTime descending
         var sortedArtworks = FirebaseLoader.Artworks
-            .Where(artwork => artwork.images.Count != 0)
             .OrderByDescending(artwork => artwork.creation_date_time);
         
         foreach (ArtworkData artwork in sortedArtworks) 
         {
+            if (artwork.images == null || artwork.images.Count == 0)
+            {
+                await FirebaseLoader.LoadArtworkImages(artwork);
+            }
+            
             ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
             shower.Init(artwork);
             CachedGalleryDisplays.Add(shower);
@@ -191,12 +195,7 @@ public class ArtworkUIManager : MonoBehaviour
         // Sort Exhibitions by creation_time descending
         var sortedExhibitions = FirebaseLoader.Exhibitions.OrderByDescending(exhibition => exhibition.creation_date_time);
 
-        foreach (var exhibition in FirebaseLoader.Exhibitions)
-        {
-            Debug.Log("FOUND: " + exhibition.title);
-        }
-        
-        foreach (ExhibitionData exhibition in sortedExhibitions) 
+        foreach (ExhibitionData exhibition in sortedExhibitions)
         {
             Debug.Log("adding exhibition: " + exhibition.title);
             ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
@@ -235,7 +234,11 @@ public class ArtworkUIManager : MonoBehaviour
         switch (currentMenuNavigation)
         {
             case MenuNavigation.Artworks:
-                if (FirebaseLoader.ArtworkCollectionFull) return;
+                if (FirebaseLoader.ArtworkCollectionFull)
+                {
+                    Debug.Log("collection full");
+                    return;
+                }
                 
                 var artworkDoc = await FirebaseLoader.FetchDocuments<ArtworkData>(1);
                 ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
