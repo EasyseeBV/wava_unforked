@@ -51,6 +51,10 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private TMP_Text eventLabel;
     [SerializeField] private GameObject loadingPlane;
 
+    [Header("Presets")] // cleaned up in a future phase
+    [SerializeField] private GameObject coin;
+    [SerializeField] private GameObject bird;
+
     private ARObject arObject;
     
     private Pose placementPose;
@@ -203,7 +207,7 @@ public class ArTapper : MonoBehaviour
         
         arObject.Show();
         
-        PlacedObject = cachedArtworkObject;
+        PlacedObject = arObject.gameObject;
         PlacedObject.SetActive(true);
         PlacedObject.transform.position = placementPose.position;
         PlacedObject.transform.rotation = placementPose.rotation;
@@ -325,6 +329,19 @@ public class ArTapper : MonoBehaviour
                     assetLoaderOptions: assetLoaderOptions,
                     fileExtension: extension
                 );
+            }
+            else if (!string.IsNullOrEmpty(ArtworkToPlace.preset) && ArtworkToPlace.preset != "None")
+            {
+                if (ArtworkToPlace.preset == "Bird Animation")
+                {
+                    var birdObj = Instantiate(bird);
+                    arObject.Add(birdObj);
+                }
+                else if (ArtworkToPlace.preset == "Coin Clicker")
+                {
+                    var coinObj = Instantiate(coin);
+                    arObject.Add(coinObj);
+                }
             }
             else
             {

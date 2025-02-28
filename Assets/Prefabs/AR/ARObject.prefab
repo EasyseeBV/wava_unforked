@@ -705,6 +705,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   placementParent: {fileID: 2093994055249617595}
   content: {fileID: 4836842824124184089}
+  shadowPlane: {fileID: 9060701052909607838}
   videoPlayer: {fileID: 4573886694495907699}
   audioSource: {fileID: 220277665838253420}
 --- !u!1 &4836842824124184089

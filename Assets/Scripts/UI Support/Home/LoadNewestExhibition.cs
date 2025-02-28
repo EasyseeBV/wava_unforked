@@ -38,8 +38,12 @@ public class LoadNewestExhibition : MonoBehaviour
                 Debug.Log("full collection.. loading from collection");
                 exhibition = FirebaseLoader.Exhibitions.OrderByDescending(e => e.update_date_time).FirstOrDefault();
             }
-            
-            if (exhibition == null) exhibition = await FirebaseLoader.FetchSingleDocument<ExhibitionData>("exhibitions", "update_time", 1);
+
+            if (exhibition == null)
+            {
+                exhibition = await FirebaseLoader.FetchSingleDocument<ExhibitionData>("exhibitions", "update_time", 1);
+                await FirebaseLoader.LoadRemainingExhibitions();
+            }
             
             if (exhibition != null)
             {

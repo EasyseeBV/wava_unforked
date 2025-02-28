@@ -146,6 +146,12 @@ public class FirebaseLoader : MonoBehaviour
     
     private static async Task<ExhibitionData> ReadExhibitionDocument(DocumentSnapshot document)
     {
+        if (ExhibitionsMap.ContainsKey(document.Id))
+        {
+            Debug.LogWarning("Reading an already existing [Exhibition] document...");
+            return ExhibitionsMap[document.Id];    
+        }
+        
         ExhibitionData exhibition = document.ConvertTo<ExhibitionData>();
         exhibition.exhibition_id = document.Id;
         await LoadArtworkImages(exhibition);
@@ -162,7 +168,7 @@ public class FirebaseLoader : MonoBehaviour
     {
         if (ArtworksMap.ContainsKey(document.Id))
         {
-            Debug.LogWarning("Reading an already existing document...");
+            Debug.LogWarning("Reading an already existing [Artwork] document...");
             return ArtworksMap[document.Id];    
         }
         

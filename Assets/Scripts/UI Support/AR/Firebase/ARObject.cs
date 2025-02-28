@@ -9,6 +9,7 @@ public class ARObject : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform placementParent;
     [SerializeField] private GameObject content;
+    [SerializeField] private Renderer shadowPlane;
 
     [Header("Templates")]
     [SerializeField] private VideoPlayer videoPlayer;
@@ -17,6 +18,9 @@ public class ARObject : MonoBehaviour
     private List<GameObject> models = new List<GameObject>();
     private List<VideoPlayer> videoPlayers = new List<VideoPlayer>();
     private List<AudioSource> audioSources = new List<AudioSource>();
+
+    private bool showPreset = false;
+    private GameObject presetObject = null;
     
     // Adding Models
     public void Add(GameObject obj, MediaContentData contentData)
@@ -25,21 +29,15 @@ public class ARObject : MonoBehaviour
         
         models.Add(obj);
         
+        obj.transform.SetParent(placementParent);
+        
         if (contentData == null || contentData.transforms.position_offset == null || contentData.transforms.scale == null) {
             Debug.LogError("MediaContentData or one of its properties is null.");
             return;
         }
-        
-        // Apply position offset
-        Vector3 offset = new Vector3(
-            contentData.transforms.position_offset.x_offset,
-            contentData.transforms.position_offset.y_offset,
-            contentData.transforms.position_offset.z_offset
-        );
-        obj.transform.position += offset; // You may choose to set or add this offset based on your needs
     
         // Apply rotation (assuming the rotation value is in degrees around the Y axis)
-        obj.transform.rotation = Quaternion.Euler(0f, contentData.transforms.rotation, 0f);
+        obj.transform.localRotation = Quaternion.Euler(0f, contentData.transforms.rotation, 0f);
     
         // Apply scale
         Debug.Log($"x{contentData.transforms.scale.x_scale}, y{contentData.transforms.scale.y_scale}, z{contentData.transforms.scale.z_scale}");
@@ -49,6 +47,14 @@ public class ARObject : MonoBehaviour
             contentData.transforms.scale.z_scale
         );
         obj.transform.localScale = newScale;
+        
+        // Apply position offset
+        Vector3 offset = new Vector3(
+            contentData.transforms.position_offset.x_offset,
+            contentData.transforms.position_offset.y_offset,
+            contentData.transforms.position_offset.z_offset
+        );
+        obj.transform.localPosition = offset;
 
         if (obj.TryGetComponent<MeshRenderer>(out var mesh))
         {
@@ -65,7 +71,15 @@ public class ARObject : MonoBehaviour
             }
         }
         
-        obj.transform.SetParent(placementParent);
+        obj.transform.localPosition = offset;
+        
+        obj.SetActive(false);
+    }
+
+    public void Add(GameObject obj)
+    {
+        showPreset = true;
+        presetObject = obj;
         obj.SetActive(false);
     }
 
@@ -83,7 +97,7 @@ public class ARObject : MonoBehaviour
             mediaContentData.transforms.position_offset.y_offset,
             mediaContentData.transforms.position_offset.z_offset
         );
-        player.gameObject.transform.position += offset; // You may choose to set or add this offset based on your needs
+        player.gameObject.transform.position += offset;
     
         // Apply rotation (assuming the rotation value is in degrees around the Y axis)
         player.gameObject.transform.rotation = Quaternion.Euler(0f, mediaContentData.transforms.rotation, 0f);
@@ -116,6 +130,12 @@ public class ARObject : MonoBehaviour
 
     public void Show()
     {
+        if (showPreset)
+        {
+            presetObject.SetActive(true);
+            return;
+        }
+        
         content.SetActive(true);
         
         foreach (var vp in videoPlayers)
@@ -146,5 +166,44 @@ public class ARObject : MonoBehaviour
         {
             source.Play();
         }
+        
+        // Adjust the shadow plane so its top is at the bottom of the spawned objects.
+        AdjustShadowPlane();
+    }
+    
+    // This method computes the combined bounds of all child renderers under placementParent,
+    // excluding the shadow plane itself, and repositions the shadow plane accordingly.
+    private void AdjustShadowPlane()
+    {
+        Renderer[] renderers = placementParent.GetComponentsInChildren<Renderer>();
+        List<Renderer> objectRenderers = new List<Renderer>();
+        foreach (Renderer rend in renderers)
+        {
+            if (rend != shadowPlane)
+                objectRenderers.Add(rend);
+        }
+        
+        if (objectRenderers.Count == 0)
+            return;
+        
+        Bounds combinedBounds = objectRenderers[0].bounds;
+        foreach (Renderer rend in objectRenderers)
+        {
+            combinedBounds.Encapsulate(rend.bounds);
+        }
+        
+        // Get the lowest Y point of the combined bounds.
+        float lowestY = combinedBounds.min.y;
+        
+        // Get the height of the shadow plane (assuming its pivot is at its center).
+        float planeHeight = shadowPlane.bounds.size.y;
+        
+        // Adjust the shadow plane so that its top (center + half its height) sits at the lowest Y.
+        Vector3 currentPos = shadowPlane.transform.position;
+        shadowPlane.transform.position = new Vector3(
+            currentPos.x, 
+            lowestY - planeHeight / 2, 
+            currentPos.z
+        );
     }
 }

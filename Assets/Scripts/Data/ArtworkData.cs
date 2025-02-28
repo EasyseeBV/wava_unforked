@@ -35,7 +35,7 @@ public class ArtworkData
     
     // Content
     [FirestoreProperty] public List<MediaContentData> content_list { get; set; } = new List<MediaContentData>();
-    [FirestoreProperty] public string preset { get; set; }
+    [FirestoreProperty] public string preset { get; set; } = "None";
     [FirestoreProperty] public string alt_scene { get; set; }
     
     // World Data
