@@ -54,7 +54,11 @@ public class ARStaticDetails : MonoBehaviour
         
         //artistContainer.Assign(arPoint.Hotspot);
 
-        if (artwork.hotspot?.ConnectedExhibition == null) return;
+        if (artwork.hotspot?.ConnectedExhibition == null)
+        {
+            exhibitionCard.gameObject.SetActive(false);
+            return;
+        }
         exhibitionCard.Init(artwork.hotspot?.ConnectedExhibition);
     }
     
