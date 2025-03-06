@@ -173,21 +173,29 @@ public class ExhibitionDetailsPanel : DetailsPanel
     
     private List<ArtistData> GetArtists()
     {
-        List<ArtistData> artists = new();
-        foreach (var artwork in exhibition.artworks)
+        var _artists = new List<ArtistData>();
+        foreach (var artist in FirebaseLoader.Artists)
         {
-            foreach (var artist in artwork.artists)
+            if (exhibition.artists.Contains(artist))
             {
-                if (artists.Contains(artist)) continue;
-                artists.Add(artist);
+                _artists.Add(artist);
             }
         }
 
-        return artists;
+        return _artists;
     }
 
     private List<ArtworkData> GetArtworks()
     {
-        return exhibition.artworks;
+        var _artworks = new List<ArtworkData>();
+        foreach (var artist in FirebaseLoader.Artworks)
+        {
+            if (exhibition.artworks.Contains(artist))
+            {
+                _artworks.Add(artist);
+            }
+        }
+
+        return _artworks;
     }
 }
