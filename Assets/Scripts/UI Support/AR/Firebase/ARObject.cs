@@ -8,6 +8,7 @@ public class ARObject : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Transform placementParent;
+    [SerializeField] private Transform videoPlacementArea;
     [SerializeField] private GameObject content;
     [SerializeField] private Renderer shadowPlane;
 
@@ -86,7 +87,8 @@ public class ARObject : MonoBehaviour
     // Adding Video
     public void Add(MediaContentData mediaContentData, Action<VideoPlayer> onComplete)
     {
-        var player = Instantiate(videoPlayer, placementParent);
+        Debug.Log("Adding and preparing video...");
+        var player = Instantiate(videoPlayer, videoPlacementArea);
         videoPlayers.Add(player);
         player.url = mediaContentData.media_content;
         player.Prepare();
@@ -114,6 +116,7 @@ public class ARObject : MonoBehaviour
         handler = (VideoPlayer vp) =>
         {
             player.prepareCompleted -= handler;
+            player.gameObject.transform.SetParent(placementParent);
             onComplete.Invoke(vp);
         };
 
@@ -140,7 +143,7 @@ public class ARObject : MonoBehaviour
         
         foreach (var vp in videoPlayers)
         {
-            vp.GetComponent<MeshRenderer>().enabled = true;
+            vp.gameObject.GetComponent<MeshRenderer>().enabled = true;
             vp.Play();
         }
 

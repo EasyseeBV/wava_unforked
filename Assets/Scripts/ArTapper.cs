@@ -1,23 +1,22 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
-using UnityEngine.XR.ARSubsystems;
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using Messy.Definitions;
 using TMPro;
 using TriLibCore;
 using Unity.XR.CoreUtils;
-using UnityEngine.AddressableAssets;
-using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.Serialization;
 using UnityEngine.Video;
+using UnityEngine.Events;
+using System.Linq;
+using Messy.Definitions;
+using UnityEngine.XR.ARSubsystems;
 
 public class ArTapper : MonoBehaviour
 {
@@ -110,6 +109,7 @@ public class ArTapper : MonoBehaviour
         if (testContent)
         {
             testContent = false;
+            OnArtworkReady();
             StopAR();
             PlaceObject();
         }
@@ -179,6 +179,7 @@ public class ArTapper : MonoBehaviour
             }
             else
             {
+                Debug.Log("No content found..");
                 PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube), placementPose.position, placementPose.rotation);
                 LoadTopFinder(PlacedObject);
             }
@@ -395,6 +396,7 @@ public class ArTapper : MonoBehaviour
             }
             else
             {
+                Debug.Log("AudioClip downloaded");
                 contentLoadedCount++;
                 AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
                 arObject.Add(clip);
