@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using DanielLochner.Assets.SimpleScrollSnap;
 using Messy.Definitions;
 using TMPro;
@@ -58,7 +60,7 @@ public class ExhibitionDetailsPanel : DetailsPanel
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
     }
 
-    private void ChangeMenu(MenuNavigation menu)
+    private async void ChangeMenu(MenuNavigation menu)
     {
         if (currentMenu == menu) return;
 
@@ -74,11 +76,13 @@ public class ExhibitionDetailsPanel : DetailsPanel
         {
             Destroy(child.gameObject);
         }
-        
+
+        Debug.Log("switching menu too " + menu);
         switch(menu)
         {
             case MenuNavigation.Artworks:
-                var artworks = GetArtworks();
+                var artworks = await GetArtworks();
+                Debug.Log("got artworks: " + artworks.Count);
                 for (int i = 0; i < artworks.Count; i++)
                 {
                     ArtworkShower artwork = Instantiate(artworkShowerPrefab, layoutArea);
@@ -86,7 +90,8 @@ public class ExhibitionDetailsPanel : DetailsPanel
                 }
                 break;
             case MenuNavigation.Artists:
-                var artists = GetArtists();
+                var artists = await GetArtists();
+                Debug.Log("got artist: " + artists.Count);
                 for (int i = 0; i < artists.Count; i++)
                 {
                     ArtistContainer container = Instantiate(artistContainer, layoutArea);
@@ -109,9 +114,10 @@ public class ExhibitionDetailsPanel : DetailsPanel
         if (exhibition.images == null || exhibition.images.Count == 0)
         {
             await FirebaseLoader.LoadArtworkImages(exhibition);
+            
         }
 
-        for (int i = 0; i < exhibition.images.Count; i++)
+        for (int i = 0; i < exhibition.images?.Count; i++)
         {
             Image artworkImage = scrollSnapper.AddToBack(galleryImagePrefab.gameObject).GetComponent<Image>();
             artworkImage.sprite = exhibition.images[i];
@@ -171,31 +177,51 @@ public class ExhibitionDetailsPanel : DetailsPanel
         indicators[newIndex].color = activeColor;
     }
     
-    private List<ArtistData> GetArtists()
+    private async Task<List<ArtistData>> GetArtists()
     {
-        var _artists = new List<ArtistData>();
-        foreach (var artist in FirebaseLoader.Artists)
+        try
         {
-            if (exhibition.artists.Contains(artist))
+            var _artists = new List<ArtistData>();
+            foreach (var artist in FirebaseLoader.Artists)
             {
-                _artists.Add(artist);
-            }
-        }
+                if (exhibition.artists.Contains(artist) && !_artists.Contains(artist))
+                {
+                    _artists.Add(artist);
+                }
 
-        return _artists;
+                if (exhibition.artist_references.Any(docRef => docRef.Id == artist.artist_id) &&
+                    !_artists.Contains(artist))
+                {
+                    _artists.Add(artist);
+                    exhibition.artists.Add(artist);
+                }
+            }
+
+            return _artists;
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Could not load artists: " + e);
+            
+            return exhibition.artists;
+        }
     }
 
-    private List<ArtworkData> GetArtworks()
+    private async Task<List<ArtworkData>> GetArtworks()
     {
-        var _artworks = new List<ArtworkData>();
-        foreach (var artist in FirebaseLoader.Artworks)
+        try
         {
-            if (exhibition.artworks.Contains(artist))
+            if (exhibition.artworks.Count < exhibition.artwork_references.Count)
             {
-                _artworks.Add(artist);
+                await FirebaseLoader.FillExhibitionArtworkData(exhibition);
             }
-        }
 
-        return _artworks;
+            return exhibition.artworks;
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Failed to load artworks: " + e);
+            return exhibition.artworks;
+        }
     }
 }

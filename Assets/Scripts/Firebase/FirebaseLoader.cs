@@ -390,6 +390,21 @@ public class FirebaseLoader : MonoBehaviour
         AppCache.SaveArtworksCache();
     }
 
+    public static async Task FillExhibitionArtworkData(ExhibitionData exhibition)
+    {
+        exhibition.artworks = new List<ArtworkData>();
+
+        foreach (var artworkReference in exhibition.artwork_references)
+        {
+            if (ArtworksMap.TryGetValue(artworkReference.Id, out var value)) exhibition.artworks.Add(value);
+            else exhibition.artworks.Add(await ReadArtworkDocument(await artworkReference.GetSnapshotAsync()));
+        }
+
+        if (exhibition.artworks.Count >= exhibition.artwork_references.Count) return;
+        
+        
+    }
+
     #endregion
 
     #region Fetching

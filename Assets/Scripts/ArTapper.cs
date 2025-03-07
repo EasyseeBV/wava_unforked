@@ -66,8 +66,7 @@ public class ArTapper : MonoBehaviour
     private bool containsVideo = false;
     
     bool StartedAnimation;
-
-    private GameObject cachedArtworkObject = null;
+    
     private int contentTotalCount, contentLoadedCount = 0;
     private bool allContentLoaded = false;
 
@@ -109,7 +108,7 @@ public class ArTapper : MonoBehaviour
         if (testContent)
         {
             testContent = false;
-            OnArtworkReady();
+            //OnArtworkReady();
             StopAR();
             PlaceObject();
         }
@@ -123,15 +122,9 @@ public class ArTapper : MonoBehaviour
 
         bool stillLoading = false;
             
-        if (hasContent)
+        if (hasContent && allContentLoaded)
         {
-            if (cachedArtworkObject != null) OnArtworkReady(); // if the object is loaded into memory AND ready for use
-            else
-            {
-                loadingPlane.transform.localPosition = placementPose.position + new Vector3(0, 0.75f, 0);;
-                loadingPlane.transform.localRotation = Quaternion.Euler(90f, 0f, placementPose.rotation.eulerAngles.z);
-                stillLoading = true;
-            }
+            OnArtworkReady();
         }
         else
         {
@@ -173,9 +166,9 @@ public class ArTapper : MonoBehaviour
         
         if (PlacedObject == null)
         {
-            if (hasContent)
+            if (hasContent && allContentLoaded)
             {
-                if (cachedArtworkObject != null) OnArtworkReady(); // if the object is loaded into memory AND ready for use
+                OnArtworkReady(); // if the object is loaded into memory AND ready for use
             }
             else
             {
@@ -377,7 +370,6 @@ public class ArTapper : MonoBehaviour
         var obj = assetLoaderContext.RootGameObject;
         obj.name = "Loaded Model";
         arObject.Add(obj, mediaContentData);
-        cachedArtworkObject = obj;
         
         if (contentLoadedCount >= contentTotalCount) allContentLoaded = true;
     }
