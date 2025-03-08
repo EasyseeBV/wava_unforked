@@ -300,15 +300,20 @@ public class FirebaseLoader : MonoBehaviour
             {
                 string id = document.Id;
                 // If the artwork already exists in the map, ignore it
-                if (ArtworksMap.ContainsKey(id))
+                if (ArtworksMap.ContainsKey(id)) continue;
+                
+                try
                 {
-                    continue;
+                    // Attempt to convert the document into your ArtworkData object
+                    ArtworkData artwork = await ReadArtworkDocument(document, false);
+                    ArtworksMap[id] = artwork;
+                    newArtworks.Add(artwork);
                 }
-
-                // Convert the document into your ArtworkData object
-                ArtworkData artwork = await ReadArtworkDocument(document, false);
-                ArtworksMap[id] = artwork;
-                newArtworks.Add(artwork);
+                catch (Exception ex)
+                {
+                    // Log error with the specific document ID
+                    Debug.LogError($"Error processing document {id}: {ex.Message}\n{ex.StackTrace}");
+                }
             }
 
             Debug.Log($"Loaded {newArtworks.Count} new artworks.");
