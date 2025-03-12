@@ -103,7 +103,7 @@ public class MediaContentDataHolder
     // Now holds the media content string from MediaContentData
     public string media_content;
     public PositionOffsetHolder position_offset;
-    public float rotation;
+    public RotationHolder rotation;
     public ScaleHolder scale;
 
     public static MediaContentDataHolder FromTransformsData(MediaContentData mediaContent)
@@ -112,7 +112,7 @@ public class MediaContentDataHolder
         MediaContentDataHolder holder = new MediaContentDataHolder();
         holder.media_content = mediaContent.media_content;
         holder.position_offset = PositionOffsetHolder.FromPositionOffset(mediaContent.transforms.position_offset);
-        holder.rotation = mediaContent.transforms.rotation;
+        holder.rotation = RotationHolder.FromRotation(mediaContent.transforms.rotation);
         holder.scale = ScaleHolder.FromScale(mediaContent.transforms.scale);
         return holder;
     }
@@ -123,7 +123,7 @@ public class MediaContentDataHolder
         MediaContentData mediaContent = new MediaContentData();
         mediaContent.media_content = holder.media_content;
         mediaContent.transforms.position_offset = PositionOffsetHolder.ToPositionOffset(holder.position_offset);
-        mediaContent.transforms.rotation = holder.rotation;
+        mediaContent.transforms.rotation = RotationHolder.ToRotation(holder.rotation);
         mediaContent.transforms.scale = ScaleHolder.ToScale(holder.scale);
         return mediaContent;
     }
@@ -185,6 +185,36 @@ public class ScaleHolder
             x_scale = holder.x_scale, 
             y_scale = holder.y_scale, 
             z_scale = holder.z_scale 
+        };
+    }
+}
+
+[Serializable]
+public class RotationHolder
+{
+    public float x_rotation;
+    public float y_rotation;
+    public float z_rotation;
+
+    public static RotationHolder FromRotation(Rotation rotation)
+    {
+        if (rotation == null) return null;
+        return new RotationHolder() 
+        { 
+            x_rotation = rotation.x_rotation, 
+            y_rotation = rotation.y_rotation, 
+            z_rotation = rotation.z_rotation 
+        };
+    }
+
+    public static Rotation ToRotation(RotationHolder holder)
+    {
+        if (holder == null) return null;
+        return new Rotation 
+        { 
+            x_rotation = holder.x_rotation, 
+            y_rotation = holder.y_rotation, 
+            z_rotation = holder.z_rotation 
         };
     }
 }

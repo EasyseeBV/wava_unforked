@@ -11,12 +11,14 @@ public class ARObject : MonoBehaviour
     [SerializeField] private Transform videoPlacementArea;
     [SerializeField] private GameObject content;
     [SerializeField] private Renderer shadowPlane;
+    [SerializeField] private ARUIImage arUIImageTemplate;
 
     [Header("Templates")]
     [SerializeField] private VideoPlayer videoPlayer;
     [SerializeField] private AudioSource audioSource;
     
     private List<GameObject> models = new List<GameObject>();
+    private List<ARUIImage> uis = new List<ARUIImage>();
     private List<VideoPlayer> videoPlayers = new List<VideoPlayer>();
     private List<AudioSource> audioSources = new List<AudioSource>();
 
@@ -38,7 +40,7 @@ public class ARObject : MonoBehaviour
         }
     
         // Apply rotation (assuming the rotation value is in degrees around the Y axis)
-        obj.transform.localRotation = Quaternion.Euler(0f, contentData.transforms.rotation, 0f);
+        obj.transform.localRotation = Quaternion.Euler(contentData.transforms.rotation.x_rotation, contentData.transforms.rotation.y_rotation, contentData.transforms.rotation.z_rotation);
     
         // Apply scale
         Debug.Log($"x{contentData.transforms.scale.x_scale}, y{contentData.transforms.scale.y_scale}, z{contentData.transforms.scale.z_scale}");
@@ -102,7 +104,7 @@ public class ARObject : MonoBehaviour
         player.gameObject.transform.position += offset;
     
         // Apply rotation (assuming the rotation value is in degrees around the Y axis)
-        player.gameObject.transform.rotation = Quaternion.Euler(0f, mediaContentData.transforms.rotation, 0f);
+        player.gameObject.transform.rotation = Quaternion.Euler(mediaContentData.transforms.rotation.x_rotation, mediaContentData.transforms.rotation.y_rotation, mediaContentData.transforms.rotation.z_rotation);
     
         // Apply scale
         Vector3 newScale = new Vector3(
@@ -126,9 +128,48 @@ public class ARObject : MonoBehaviour
     // Adding Audio
     public void Add(AudioClip clip)
     {
-        var source = Instantiate(audioSource);
+        if (clip == null)
+        {
+            Debug.LogError("AudioClip failed to load");
+        }
+        
+        var source = Instantiate(audioSource, placementParent);
         source.clip = clip;
         audioSources.Add(source);
+    }
+
+    public void Add(Sprite sprite, MediaContentData contentData)
+    {
+        var ui = Instantiate(arUIImageTemplate, placementParent);
+        ui.gameObject.SetActive(true);
+        ui.AssignSprite(sprite);
+        
+        if (contentData == null || contentData.transforms.position_offset == null || contentData.transforms.scale == null) {
+            Debug.LogError("MediaContentData or one of its properties is null.");
+            return;
+        }
+    
+        // Apply rotation (assuming the rotation value is in degrees around the Y axis)
+        ui.transform.localRotation = Quaternion.Euler(contentData.transforms.rotation.x_rotation, contentData.transforms.rotation.y_rotation, contentData.transforms.rotation.z_rotation);
+    
+        // Apply scale
+        Debug.Log($"x{contentData.transforms.scale.x_scale}, y{contentData.transforms.scale.y_scale}, z{contentData.transforms.scale.z_scale}");
+        Vector3 newScale = new Vector3(
+            contentData.transforms.scale.x_scale,
+            contentData.transforms.scale.y_scale,
+            contentData.transforms.scale.z_scale
+        );
+        ui.transform.localScale = newScale;
+        
+        // Apply position offset
+        Vector3 offset = new Vector3(
+            contentData.transforms.position_offset.x_offset,
+            contentData.transforms.position_offset.y_offset,
+            contentData.transforms.position_offset.z_offset
+        );
+        ui.transform.localPosition = offset;
+        
+        uis.Add(ui);
     }
 
     public void Show()
@@ -168,6 +209,11 @@ public class ARObject : MonoBehaviour
         foreach (var source in audioSources)
         {
             source.Play();
+        }
+
+        foreach (var ui in uis)
+        {
+            ui.Show();
         }
         
         // Adjust the shadow plane so its top is at the bottom of the spawned objects.

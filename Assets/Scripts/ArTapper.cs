@@ -161,7 +161,7 @@ public class ArTapper : MonoBehaviour
     {
 #if !UNITY_EDITOR
         //Create an AR Anchor
-        if(anchor==null)anchor = anchorManager.AttachAnchor((ARPlane)foundHit.trackable, foundHit.pose);
+        if(anchor==null) anchor = anchorManager.AttachAnchor((ARPlane)foundHit.trackable, foundHit.pose);
 #endif
         
         if (PlacedObject == null)
@@ -324,6 +324,11 @@ public class ArTapper : MonoBehaviour
                     fileExtension: extension
                 );
             }
+            else if (extension is ".png" or ".jpg" or ".jpeg")
+            {
+                Debug.Log($"content [{ArtworkToPlace.title}] contained an image piece");
+                StartCoroutine(DownloadImageAsSprite(content.media_content, content));
+            }
             else if (!string.IsNullOrEmpty(ArtworkToPlace.preset) && ArtworkToPlace.preset != "None")
             {
                 if (ArtworkToPlace.preset == "Bird Animation")
@@ -398,6 +403,30 @@ public class ArTapper : MonoBehaviour
                 }
                 
                 if (contentLoadedCount >= contentTotalCount) allContentLoaded = true;
+            }
+        }
+    }
+    
+    private IEnumerator DownloadImageAsSprite(string imageUrl, MediaContentData content)
+    {
+        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imageUrl))
+        {
+            yield return uwr.SendWebRequest();
+
+            if (uwr.result != UnityWebRequest.Result.Success)
+            {
+                Debug.LogError($"Failed to download image: {uwr.error}");
+            }
+            else
+            {
+                Texture2D texture = DownloadHandlerTexture.GetContent(uwr);
+                // Create a sprite with the texture. The pivot is set to the center.
+                Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                arObject.Add(sprite, content);
+                Debug.Log("Image downloaded and sprite created.");
+                contentLoadedCount++;
+                if (contentLoadedCount >= contentTotalCount)
+                    allContentLoaded = true;
             }
         }
     }

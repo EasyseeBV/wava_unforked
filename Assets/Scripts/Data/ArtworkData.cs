@@ -61,7 +61,7 @@ public class TransformsData
     [FirestoreProperty] public PositionOffset position_offset { get; set; } = new PositionOffset();
     
     // Rotation (direct value)
-    [FirestoreProperty] public float rotation { get; set; } = 0;
+    [FirestoreProperty] public Rotation rotation { get; set; } = new Rotation();
     
     // Nested map for scale values
     [FirestoreProperty] public Scale scale { get; set; } = new Scale();
@@ -81,4 +81,12 @@ public class Scale
     [FirestoreProperty] public float x_scale { get; set; } = 1;
     [FirestoreProperty] public float y_scale { get; set; } = 1;
     [FirestoreProperty] public float z_scale { get; set; } = 1;
+}
+
+[FirestoreData]
+public class Rotation
+{
+    [FirestoreProperty] public float x_rotation { get; set; } = 0;
+    [FirestoreProperty] public float y_rotation { get; set; } = 0;
+    [FirestoreProperty] public float z_rotation { get; set; } = 0;
 }
