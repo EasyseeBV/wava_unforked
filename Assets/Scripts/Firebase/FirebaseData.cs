@@ -1,10 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
-using Firebase.Firestore;
+using System.Threading.Tasks;
 using UnityEngine;
 
-[FirestoreData]
-public class FirebaseData
+public abstract class FirebaseData
 {
-    [FirestoreProperty] public string ArtworkTitle { get; set; }
+    public string id { get; set; } = string.Empty;
+    public List<string> cached { get; set; } = new List<string>();
 }

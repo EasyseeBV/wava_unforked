@@ -41,12 +41,13 @@ public class GalleryCard : MonoBehaviour
         {
             artwork = point;
 
-            if (point.images == null || point.images.Count == 0)
+            if (point.artwork_image_references.Count > 0)
             {
-                await FirebaseLoader.LoadArtworkImages(point);
+                var images = await point.GetImages(1);
+                artworkImage.sprite = images[0];
             }
-        
-            artworkImage.sprite = point.images is { Count: > 0 } ? point.images[0] : null;//artwork_cover_image;
+            else artworkImage.sprite = null;
+            
             artworkLabel.text = point.title;
             artistLabel.text = point.artists.Count > 0 ? point.artists[0].title : null;
             yearLabel.text = point.year.ToString();

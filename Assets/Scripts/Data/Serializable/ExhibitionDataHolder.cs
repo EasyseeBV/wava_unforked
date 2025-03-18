@@ -17,6 +17,7 @@ public class ExhibitionDataHolder
     public string exhibition_id;
     public bool published;
     public string color;
+    public List<string> cache = new List<string>();
 
     public static ExhibitionDataHolder FromExhibitionData(ExhibitionData exhibition)
     {
@@ -44,9 +45,10 @@ public class ExhibitionDataHolder
         holder.exhibition_image_references = new List<string>(exhibition.exhibition_image_references);
         holder.creation_date_time = exhibition.creation_date_time.ToString("O");
         holder.update_date_time = exhibition.update_date_time.ToString("o");
-        holder.exhibition_id = exhibition.exhibition_id;
+        holder.exhibition_id = exhibition.id;
         holder.published = exhibition.published;
         holder.color = exhibition.color;
+        holder.cache = new List<string>(exhibition.cached);
         return holder;
     }
 
@@ -76,9 +78,10 @@ public class ExhibitionDataHolder
         exhibition.exhibition_image_references = new List<string>(holder.exhibition_image_references);
         exhibition.creation_date_time = DateTime.Parse(holder.creation_date_time);
         exhibition.update_date_time = DateTime.Parse(holder.update_date_time);
-        exhibition.exhibition_id = holder.exhibition_id;
+        exhibition.id = holder.exhibition_id;
         exhibition.published = holder.published;
         exhibition.color = holder.color;
+        exhibition.cached = new List<string>(holder.cache);
         return exhibition;
     }
 }

@@ -101,12 +101,7 @@ public class ArtistDetailsPanel : DetailsPanel
         Clear();
 
         contentTitleLabel.text = artist.title;
-        if (this.artist.iconImage == null)
-        {
-            await FirebaseLoader.LoadArtworkImages(artist);
-        }
-        
-        profileIcon.sprite = artist.iconImage;
+        profileIcon.sprite = await artist.GetIcon();
         fullLengthDescription = artist.description;
         TruncateText();
         

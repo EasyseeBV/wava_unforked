@@ -29,12 +29,12 @@ public class DownloadScreen : MonoBehaviour
         downloadButtons.Clear();
 
         // Iterate through cached artwork downloads and create a button for each that has media
-        foreach (var download in AppCache.ArtworkDownloads)
+        /*foreach (var download in AppCache.ArtworkDownloads)
         {
             if (download.mediaPaths != null && download.mediaPaths.Count > 0)
             {
                 // Find the associated ArtworkData using the artwork_id
-                ArtworkData artwork = FirebaseLoader.Artworks.FirstOrDefault(a => a.artwork_id == download.artwork_id);
+                ArtworkData artwork = FirebaseLoader.Artworks.FirstOrDefault(a => a.id == download.artwork_id);
                 if (artwork != null)
                 {
                     DownloadCachedButton newButton = Instantiate(downloadCachedButton, layout);
@@ -43,7 +43,7 @@ public class DownloadScreen : MonoBehaviour
                     downloadButtons.Add(newButton);
                 }
             }
-        }
+        }*/
         
         content.SetActive(true);
     }

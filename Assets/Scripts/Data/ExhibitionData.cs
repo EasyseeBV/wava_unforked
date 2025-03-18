@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Firebase.Firestore;
 using UnityEngine;
 
 [FirestoreData]
-public class ExhibitionData
+public class ExhibitionData : FirebaseData
 {
     [FirestoreProperty] public string title { get; set; }
     [FirestoreProperty] public string description { get; set; }
@@ -22,13 +23,46 @@ public class ExhibitionData
     [FirestoreProperty] public string color { get; set; }
     
     [FirestoreProperty] public List<string> exhibition_image_references { get; set; } = new List<string>();
-    public List<Sprite> images { get; set; } = new List<Sprite>();
     
     // Read Only Data
     [FirestoreProperty] public Timestamp creation_time { get; set; }
     [FirestoreProperty] public Timestamp update_time { get; set; }
     public DateTime creation_date_time, update_date_time;
     
-    // World Data
-    public string exhibition_id;
+    private DataList loadedImages = new DataList();
+    
+    public async Task<List<Sprite>> GetAllImages()
+    {
+        // all have been loaded already
+        if (loadedImages.Count() >= exhibition_image_references.Count)
+        {
+            return loadedImages.Get();
+        }
+        
+        // load all
+        var allImages = new List<Sprite>();
+        foreach (var imageRef in exhibition_image_references)
+        {
+            var spr = await loadedImages.Get(this, imageRef);
+            allImages.Add(spr);
+        }
+
+        AppCache.SaveExhibitionsCache();
+        
+        return allImages;
+    }
+
+    public async Task<List<Sprite>> GetImages(int count)
+    {
+        var allImages = new List<Sprite>();
+        for (int i = 0; i < Mathf.Clamp(exhibition_image_references.Count, 0, count); i++)
+        {
+            var spr = await loadedImages.Get(this, exhibition_image_references[i]);
+            allImages.Add(spr);
+        }
+        
+        AppCache.SaveExhibitionsCache();
+
+        return allImages;
+    }
 }

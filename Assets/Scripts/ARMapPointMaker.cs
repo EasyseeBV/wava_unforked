@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Linq;
+using System.Threading.Tasks;
 using Messy.Definitions;
 using UnityEngine;
 
@@ -29,17 +30,19 @@ public class ARMapPointMaker : MonoBehaviour {
     {
         FirebaseLoader.LoadRemainingArtworks(() =>
         {
-            StartCoroutine(IEInstatiateHotspot());
+            //StartCoroutine(IEInstatiateHotspot());
+            InstantiateHotspotsAsync();
         });
     }
 
-    public IEnumerator IEInstatiateHotspot()
+    public async Task InstantiateHotspotsAsync()
     {
-        yield return new WaitForSecondsRealtime(1f);
+        await FirebaseLoader.LoadRemainingExhibitions();
+        
+        //await Task.Delay(1000);  // Waits for 1 second
 
         foreach (var artwork in FirebaseLoader.Artworks)
         {
-            Debug.Log("Loading an artwork point as a marker...");
             artwork.marker = control.marker3DManager.Create(artwork.longitude, artwork.latitude, ZoomedInMapObject);
             artwork.marker.instance.name = artwork.title;
             artwork.hotspot = artwork.marker.instance.GetComponent<HotspotManager>();
@@ -47,13 +50,12 @@ public class ARMapPointMaker : MonoBehaviour {
             artwork.marker.instance.layer = LayerMask.NameToLayer("Hotspot");
             artwork.marker.borderTransform = artwork.hotspot.BorderRingMesh.gameObject.transform;
             artwork.hotspot.Navigation = GetComponent<NavigationMaker>();
-            artwork.hotspot.ConnectedExhibition = FirebaseLoader.GetConnectedExhibition(artwork);//FirebaseLoader.Exhibitions[0];
-            Debug.LogWarning("ConnectedExhibition removed temp - needs to retrieve it from the loader");
+            artwork.hotspot.ConnectedExhibition = FirebaseLoader.GetConnectedExhibition(artwork);
             artwork.hotspot.Init(artwork);
             artwork.hotspot.MinZoom = minZoom;
-            artwork.hotspot.OnChangeGpsPosition(OnlineMapsUtils.DistanceBetweenPoints(OnlineMapsLocationService.instance.position, new Vector2((float)artwork.longitude, (float)artwork.latitude)).magnitude);
         }
-        
+    
+        // Additional event subscriptions and method calls
         map.OnChangeZoom += OnChangeZoom;
         map.OnChangePosition += OnChangePosition;
         OnlineMapsLocationService.instance.OnLocationChanged += OnChangeGps;
@@ -61,7 +63,6 @@ public class ARMapPointMaker : MonoBehaviour {
         OnChangePosition();
         OnChangeZoom();
         OnHotspotsSpawned?.Invoke();
-        //groupMarkers?.Group();
     }
 
     bool StartedTouch;

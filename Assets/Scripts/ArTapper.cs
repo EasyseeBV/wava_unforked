@@ -126,7 +126,11 @@ public class ArTapper : MonoBehaviour
         {
             OnArtworkReady();
         }
-        else
+        else if (hasContent && !allContentLoaded)
+        {
+            StartCoroutine(WaitForLoad());
+        }
+        else if(!hasContent)
         {
             Debug.Log("no content found...");
             PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
@@ -137,6 +141,12 @@ public class ArTapper : MonoBehaviour
         PlacedObject.transform.position = pos;
         if (stillLoading) loadingPlane.transform.position = pos;
         StopAR();
+    }
+
+    private IEnumerator WaitForLoad()
+    {
+        yield return new WaitUntil(() => allContentLoaded);
+        OnArtworkReady();
     }
 
     public void StartAR()
@@ -168,12 +178,16 @@ public class ArTapper : MonoBehaviour
         {
             if (hasContent && allContentLoaded)
             {
-                OnArtworkReady(); // if the object is loaded into memory AND ready for use
+                OnArtworkReady();
             }
-            else
+            else if (hasContent && !allContentLoaded)
             {
-                Debug.Log("No content found..");
-                PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube), placementPose.position, placementPose.rotation);
+                StartCoroutine(WaitForLoad());
+            }
+            else if(!hasContent)
+            {
+                Debug.Log("no content found...");
+                PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
                 LoadTopFinder(PlacedObject);
             }
         }

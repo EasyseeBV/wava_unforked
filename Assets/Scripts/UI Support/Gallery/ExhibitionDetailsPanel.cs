@@ -105,27 +105,11 @@ public class ExhibitionDetailsPanel : DetailsPanel
         StartCoroutine(LateRebuild());
     }
 
-    public async void Fill(ExhibitionData exhibition)
+    public void Fill(ExhibitionData exhibition)
     {
         this.exhibition = exhibition;
         
         Clear();
-
-        if (exhibition.images == null || exhibition.images.Count == 0)
-        {
-            await FirebaseLoader.LoadArtworkImages(exhibition);
-            
-        }
-
-        for (int i = 0; i < exhibition.images?.Count; i++)
-        {
-            Image artworkImage = scrollSnapper.AddToBack(galleryImagePrefab.gameObject).GetComponent<Image>();
-            artworkImage.sprite = exhibition.images[i];
-
-            Image indicator = Instantiate(indicatorImage, indicatorArea).GetComponentInChildren<Image>();
-            indicator.color = inactiveColor;
-            indicators.Add(indicator);
-        }
         
         contentTitleLabel.text = exhibition.title;
         fullLengthDescription = exhibition.description;
@@ -136,9 +120,33 @@ public class ExhibitionDetailsPanel : DetailsPanel
         
         ChangeMenu(MenuNavigation.Artworks);
         
-        StartCoroutine(LateRebuild());
         scrollSnapper.Setup();
         ChangeIndicator(0, 0);
+
+        FillImages();
+    }
+
+    private async void FillImages()
+    {
+        try
+        {
+            var images = await exhibition.GetAllImages();
+            foreach (var spr in images)
+            {
+                Image artworkImage = scrollSnapper.AddToBack(galleryImagePrefab.gameObject).GetComponent<Image>();
+                artworkImage.sprite = spr;
+
+                Image indicator = Instantiate(indicatorImage, indicatorArea).GetComponentInChildren<Image>();
+                indicator.color = inactiveColor;
+                indicators.Add(indicator);
+            }
+            
+            StartCoroutine(LateRebuild());
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Failed to fill exhibition image: " + e);
+        }
     }
 
     private void Clear()
@@ -189,7 +197,7 @@ public class ExhibitionDetailsPanel : DetailsPanel
                     _artists.Add(artist);
                 }
 
-                if (exhibition.artist_references.Any(docRef => docRef.Id == artist.artist_id) &&
+                if (exhibition.artist_references.Any(docRef => docRef.Id == artist.id) &&
                     !_artists.Contains(artist))
                 {
                     _artists.Add(artist);

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Firebase;
@@ -106,38 +107,38 @@ public class FirebaseLoader : MonoBehaviour
 
     public static void AddArtworkData(ArtworkData data)
     {
-        if (ArtworksMap.ContainsKey(data.artwork_id))
+        if (ArtworksMap.ContainsKey(data.id))
         {
             Debug.LogWarning("Tried to add an exhibition with a document id already stored in the artwork map: " + data.title);
             return;
         }
         
         Artworks.Add(data);
-        ArtworksMap[data.artwork_id] = data;
+        ArtworksMap[data.id] = data;
     }
 
     public static void AddArtistData(ArtistData data)
     {
-        if (ArtistsMap.ContainsKey(data.artist_id))
+        if (ArtistsMap.ContainsKey(data.id))
         {
             Debug.LogWarning("Tried to add an exhibition with a document id already stored in the artist map: " + data.title);
             return;
         }
         
         Artists.Add(data);
-        ArtistsMap[data.artist_id] = data;
+        ArtistsMap[data.id] = data;
     }
 
     public static void AddExhibitionData(ExhibitionData data)
     {
-        if (ExhibitionsMap.ContainsKey(data.exhibition_id))
+        if (ExhibitionsMap.ContainsKey(data.id))
         {
             Debug.LogWarning("Tried to add an exhibition with a document id already stored in the exhibition map: " + data.title);
             return;
         }
         
         Exhibitions.Add(data);
-        ExhibitionsMap[data.exhibition_id] = data;
+        ExhibitionsMap[data.id] = data;
     }
     
     #endregion
@@ -153,13 +154,13 @@ public class FirebaseLoader : MonoBehaviour
         }
         
         ExhibitionData exhibition = document.ConvertTo<ExhibitionData>();
-        exhibition.exhibition_id = document.Id;
-        await LoadArtworkImages(exhibition);
+        exhibition.id = document.Id;
+        //await LoadArtworkImages(exhibition);
         exhibition.creation_date_time = exhibition.creation_time.ToDateTime();
         exhibition.update_date_time = exhibition.update_time.ToDateTime();
         ExhibitionsMap.Add(document.Id, exhibition);
         Exhibitions.Add(exhibition);
-        Debug.Log($"Loaded Artwork: {document.Id}");
+        Debug.Log($"[Firebase] Loaded Exhibition: {document.Id}");
         
         return exhibition;
     }
@@ -173,8 +174,7 @@ public class FirebaseLoader : MonoBehaviour
         }
         
         ArtworkData artwork = document.ConvertTo<ArtworkData>();
-        artwork.artwork_id = document.Id;
-        if (loadImages) await LoadArtworkImages(artwork);
+        artwork.id = document.Id;
         artwork.creation_date_time = artwork.creation_time.ToDateTime();
         artwork.update_date_time = artwork.update_time.ToDateTime();
         foreach (var documentReference in artwork.artist_references)
@@ -183,7 +183,7 @@ public class FirebaseLoader : MonoBehaviour
         }
         ArtworksMap.Add(document.Id, artwork);
         Artworks.Add(artwork);
-        Debug.Log($"Loaded Artwork: {document.Id}");
+        Debug.Log($"[Firebase] Loaded Artwork: {document.Id}");
         
         return artwork;
     }
@@ -191,20 +191,19 @@ public class FirebaseLoader : MonoBehaviour
     private static async Task<ArtistData> ReadArtistDocument(DocumentSnapshot document)
     {
         ArtistData artist = document.ConvertTo<ArtistData>();
-        artist.artist_id = document.Id;
-        await LoadArtworkImages(artist);
+        artist.id = document.Id;
         artist.creation_date_time = artist.creation_time.ToDateTime();
         artist.update_date_time = artist.update_time.ToDateTime();
         ArtistsMap[document.Id] = artist;
         Artists.Add(artist);
-        Debug.Log($"Loaded artist: '{artist.title}'");
+        Debug.Log($"[Firebase] Loaded artist: '{artist.title}'");
         
         return artist;
     }
 
     private static async Task<ArtistData> ReadArtistDocumentReference(DocumentReference document)
     {
-        foreach (var artist in Artists.Where(artist => artist.artist_id == document.Id))
+        foreach (var artist in Artists.Where(artist => artist.id == document.Id))
         {
             return artist;
         }
@@ -719,119 +718,63 @@ public class FirebaseLoader : MonoBehaviour
 
     public static ExhibitionData GetConnectedExhibition(ArtworkData artwork)
     {
-        return (from exhibition in Exhibitions from artworkReference in exhibition.artwork_references where artworkReference.Id == artwork.artwork_id select exhibition).FirstOrDefault();
+        return (from exhibition in Exhibitions from artworkReference in exhibition.artwork_references where artworkReference.Id == artwork.id select exhibition).FirstOrDefault();
     }
     
     #endregion
 
-    #region Exhibition Images Loading
-    
-    /// <summary>
-    /// Loads exhibition images from URLs and converts them to Sprites.
-    /// </summary>
-    /// <param name="exhibition">The exhibition for which to load images.</param>
-    public static async Task LoadArtworkImages<T>(T data)
+    #region Downloading Media
+
+    public static async Task<string> DownloadMedia(string path)
     {
-        ArtworkData artwork = null;
-        ExhibitionData exhibition = null;
-        ArtistData artist = null;
-        
-        switch (data)
+        if (string.IsNullOrEmpty(path))
         {
-            case ArtworkData artworkData:
-                artwork = artworkData;
-                break;
-            case ExhibitionData exhibitionData:
-                exhibition = exhibitionData;
-                break;
-            case ArtistData artistData:
-                artist = artistData;
-                break;
+            Debug.LogWarning("Tried loading an empty string...");
+            return string.Empty;
         }
 
-        var urls = artwork != null ? artwork.artwork_image_references :
-            exhibition != null ? exhibition.exhibition_image_references : new List<string>();
-        
-        foreach (var imageUrl in urls)
+        try
         {
-            try
+            // Ensure the media folder exists
+            if (!Directory.Exists(AppCache.MediaFolder))
             {
-                UnityWebRequest request = UnityWebRequestTexture.GetTexture(imageUrl);
-                var operation = request.SendWebRequest();
-
-                while (!operation.isDone) await Task.Yield();
-
-                if (request.result == UnityWebRequest.Result.Success)
-                {
-                    Texture2D texture = DownloadHandlerTexture.GetContent(request);
-                    Sprite sprite = SpriteFromTexture2D(texture);
-
-                    if (artwork != null)
-                    {
-                        if (!artwork.images.Contains(sprite))
-                        {
-                            artwork.images.Add(sprite);
-                            Debug.Log($"Loaded artwork image from URL: {imageUrl}");
-                        }
-                        else Debug.Log($"Artwork [{artwork.title}] already contained sprite [{imageUrl}]");   
-                    }
-                    else if (exhibition != null)
-                    {
-                        if (!exhibition.images.Contains(sprite))
-                        {
-                            exhibition.images.Add(sprite);
-                            Debug.Log($"Loaded exhibition image from URL: {imageUrl}");
-                        }
-                        else Debug.Log($"Exhibition [{exhibition.title}] already contained sprite [{imageUrl}]");
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning($"Failed to load image from URL '{imageUrl}': {request.error}");
-                }
+                Directory.CreateDirectory(AppCache.MediaFolder);
             }
-            catch (Exception e)
+
+            // Determine file name from the URL
+            Uri uri = new Uri(path);
+            string fileName = Path.GetFileName(uri.LocalPath);
+
+            // If we didn't get a valid file name, default to a GUID-based name with a .png extension.
+            if (string.IsNullOrEmpty(fileName) || !fileName.Contains("."))
             {
-                Debug.LogError($"Error loading image from URL '{imageUrl}': {e.Message}");
+                fileName = Guid.NewGuid().ToString() + ".png";
             }
+
+            string localPath = Path.Combine(AppCache.MediaFolder, fileName);
+
+            // Optionally check if the file already exists
+            if (File.Exists(localPath))
+            {
+                Debug.Log($"File already exists at {localPath}");
+                return localPath;
+            }
+
+            // Download the media data using HttpClient
+            using HttpClient client = new HttpClient();
+            byte[] data = await client.GetByteArrayAsync(path);
+            await File.WriteAllBytesAsync(localPath, data);
+
+            Debug.Log("Downloaded: " + fileName);
+
+            return localPath;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error downloading media: {e.Message}");
         }
 
-        if (artist != null)
-        {
-            try
-            {
-                UnityWebRequest request = UnityWebRequestTexture.GetTexture(artist.icon);
-                var operation = request.SendWebRequest();
-
-                while (!operation.isDone) await Task.Yield();
-
-                if (request.result == UnityWebRequest.Result.Success)
-                {
-                    Texture2D texture = DownloadHandlerTexture.GetContent(request);
-                    Sprite sprite = SpriteFromTexture2D(texture);
-                    artist.iconImage = sprite;
-                    Debug.Log($"Loaded artist icon for {artist.title}");
-                }
-                else
-                {
-                    Debug.LogWarning($"Failed to load icon for [{artist.title}] from URL '{artist.icon}': {request.error}");
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Error loading artist icon for [{artist.title}] from URL '{artist.icon}': {e.Message}");
-            }
-        }
-    }
-
-    /// <summary>
-    /// Converts a Texture2D to a Sprite.
-    /// </summary>
-    /// <param name="texture">The Texture2D to convert.</param>
-    /// <returns>A Sprite created from the Texture2D.</returns>
-    private static Sprite SpriteFromTexture2D(Texture2D texture)
-    {
-        return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+        return string.Empty;
     }
 
     #endregion

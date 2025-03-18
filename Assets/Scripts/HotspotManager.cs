@@ -79,13 +79,13 @@ public class HotspotManager : MonoBehaviour
                     parsedColor = Color.yellow;
                     break;
                 case "purple":
-                    parsedColor = new Color(152f, 66f, 245f, 255f);
+                    parsedColor = new Color(0.5f, 0.1f, 0.9f, 255f);
                     break;
                 case "pink":
-                    parsedColor = new Color(231f, 147f, 250f, 255f);;
+                    parsedColor = new Color(0.9f, 0.4f, 0.95f, 255f);;
                     break;
                 case "orange":
-                    parsedColor = new Color(245f, 115f, 66f, 255f);;
+                    parsedColor = new Color(0.95f, 0.35f, 0.1f, 255f);;
                     break;
                 default:
                     parsedColor = Color.green;

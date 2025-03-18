@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
@@ -38,7 +39,6 @@ public class ArtworkShower : MonoBehaviour
             return;
         }
         
-        ARPhoto.sprite = artwork.images.Count > 0 ? artwork.images[0] : null;
         Title.text = artwork.title;
         Artist.text = artwork.artists.Count > 0 ? artwork.artists[0].title : null;
 
@@ -52,6 +52,26 @@ public class ArtworkShower : MonoBehaviour
         }
         
         cachedArtwork = artwork;
+
+        SetImage(artwork);
+    }
+
+    private async Task SetImage(ArtworkData artwork)
+    {
+        try
+        {
+            if (artwork.artwork_image_references.Count > 0)
+            {
+                var images = await artwork.GetImages(1);
+                ARPhoto.sprite = images.Count > 0 ? images[0] : null;
+            }
+            else ARPhoto.sprite = null;
+        }
+        catch (Exception e)
+        {
+            ARPhoto.sprite = null;
+            Debug.Log("Failed to set ArtworkShower image: " + e);
+        }
     }
 
     private void OpenDetails()

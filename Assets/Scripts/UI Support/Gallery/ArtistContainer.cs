@@ -28,8 +28,7 @@ public class ArtistContainer : MonoBehaviour
         
         this.artist = artist;
 
-        if(artist.iconImage == null) await FirebaseLoader.LoadArtworkImages(artist);
-        if(artist.iconImage != null) profilePicture.sprite = artist.iconImage;
+        profilePicture.sprite = await artist.GetIcon();
         artistNameLabel.text = artist.title;
         int works = GetArtistWorkCount();
         artworkCountLabel.text = works == 1 ? "1 Artwork" : $"{GetArtistWorkCount()} Artworks";

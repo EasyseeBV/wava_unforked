@@ -158,13 +158,9 @@ public class ArtworkUIManager : MonoBehaviour
         var sortedArtworks = FirebaseLoader.Artworks
             .OrderByDescending(artwork => artwork.creation_date_time);
         
-        foreach (ArtworkData artwork in sortedArtworks) 
+        foreach (ArtworkData artwork in sortedArtworks)
         {
-            if (artwork.images == null || artwork.images.Count == 0)
-            {
-                await FirebaseLoader.LoadArtworkImages(artwork);
-            }
-            
+            await artwork.GetAllImages();
             ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
             shower.Init(artwork);
             CachedGalleryDisplays.Add(shower);

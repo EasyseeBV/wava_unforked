@@ -54,16 +54,6 @@ public class ArtworkDetailsPanel : DetailsPanel
         
         Clear();
 
-        for (int i = 0; i < artwork.images.Count; i++)
-        {
-            Image artworkImage = scrollSnapper.AddToBack(galleryImagePrefab.gameObject).GetComponent<Image>();
-            artworkImage.sprite = artwork.images[i];
-
-            Image indicator = Instantiate(indicatorImage, indicatorArea).GetComponentInChildren<Image>();
-            indicator.color = inactiveColor;
-            indicators.Add(indicator);
-        }
-
         for (int i = 0; i < artwork.artists.Count; i++)
         {
             ArtistContainer container = Instantiate(artistContainer, artistArea);
@@ -77,12 +67,7 @@ public class ArtworkDetailsPanel : DetailsPanel
         fullLengthDescription = artwork.description;
         TruncateText();
         
-        if (AppCache.ArtworkDownloads.Any(artworkDownloadHolder => artworkDownloadHolder.artwork_id == artwork.artwork_id))
-        {
-            downloadedCheckmark.SetActive(true);
-        }
-
-        // heartImage.sprite = artwork.Liked ? likedSprite : unlikedSprite;
+        downloadedCheckmark.SetActive(false);
         
         showOnMapButton.onClick.RemoveAllListeners();
         showOnMapButton.onClick.AddListener(() =>
@@ -93,9 +78,40 @@ public class ArtworkDetailsPanel : DetailsPanel
         
         scrollSnapper.Setup();
         ChangeIndicator(0, 0);
-        
-        StartCoroutine(LateRebuild());
+
+        SetImages(artwork);
     }
+
+    private async Task SetImages(ArtworkData _artwork)
+    {
+        try
+        {
+            var images = await _artwork.GetAllImages();
+            foreach (var spr in images)
+            {
+                if (spr != null)
+                {
+                    Image artworkImage = scrollSnapper.AddToBack(galleryImagePrefab.gameObject).GetComponent<Image>();
+                    artworkImage.sprite = spr;
+
+                    Image indicator = Instantiate(indicatorImage, indicatorArea).GetComponentInChildren<Image>();
+                    indicator.color = inactiveColor;
+                    indicators.Add(indicator);
+                }
+                else
+                {
+                    Debug.LogWarning("A null image was loaded from ArtworkDetailsPanel");
+                }
+            }
+
+            StartCoroutine(LateRebuild());
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Failed to load all ArtworkDetailsImages: " + e);
+        }
+    }
+    
 
     private void Clear()
     {
@@ -127,16 +143,18 @@ public class ArtworkDetailsPanel : DetailsPanel
     private void DownloadArtwork()
     {
         if (artwork == null) return;
+
+        Debug.LogWarning("Download artwork is disabled temp...");
         
-        if (AppCache.ArtworkDownloads.Any(artworkDownloadHolder => artworkDownloadHolder.artwork_id == artwork.artwork_id))
+        /*if (AppCache.ArtworkDownloads.Any(artworkDownloadHolder => artworkDownloadHolder.artwork_id == artwork.id))
         {
             downloadedCheckmark.SetActive(false);
-            AppCache.DeleteDownloadedImagesForArtwork(artwork.artwork_id);
+            AppCache.DeleteDownloadedImagesForArtwork(artwork.id);
             return;
         }
         
         downloadedCheckmark.SetActive(true);
-        AppCache.DownloadArtworkImages(artwork);
+        AppCache.DownloadArtworkImages(artwork);*/
     }
 
     private async void GetExhibition()
@@ -154,7 +172,7 @@ public class ArtworkDetailsPanel : DetailsPanel
                 }
                 else
                 {
-                    if (exhibition.artwork_references.Any(documentReference => documentReference.Id == artwork.artwork_id))
+                    if (exhibition.artwork_references.Any(documentReference => documentReference.Id == artwork.id))
                     {
                         exhibition.artworks.Add(artwork);
                         exhibitionCard.Init(exhibition);
@@ -163,7 +181,7 @@ public class ArtworkDetailsPanel : DetailsPanel
                 }
             }
 
-            exhibitionCard.Init(await FirebaseLoader.FindRelatedExhibition(artwork.artwork_id));
+            exhibitionCard.Init(await FirebaseLoader.FindRelatedExhibition(artwork.id));
         }
         catch (Exception e)
         {

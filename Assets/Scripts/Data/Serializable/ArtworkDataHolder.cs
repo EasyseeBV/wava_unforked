@@ -23,6 +23,7 @@ public class ArtworkDataHolder
     public string artwork_id;
     public string preset;
     public string alt_scene;
+    private List<string> cache = new List<string>();
 
     public static ArtworkDataHolder ToHolder(ArtworkData artwork)
     {
@@ -46,6 +47,9 @@ public class ArtworkDataHolder
         holder.place_right = artwork.place_right;
         holder.creation_time = artwork.creation_date_time.ToString("o");
         holder.update_time = artwork.update_date_time.ToString("o");
+        holder.cache = new List<string>(artwork.cached);
+        holder.preset = artwork.preset;
+        holder.alt_scene = artwork.alt_scene;
 
         // Convert the list of MediaContentData to holder objects
         holder.media_content_list = new List<MediaContentDataHolder>();
@@ -56,7 +60,7 @@ public class ArtworkDataHolder
                 holder.media_content_list.Add(MediaContentDataHolder.FromTransformsData(media));
             }
         }
-        holder.artwork_id = artwork.artwork_id;
+        holder.artwork_id = artwork.id;
         return holder;
     }
 
@@ -82,6 +86,9 @@ public class ArtworkDataHolder
         artwork.place_right = holder.place_right;
         artwork.creation_date_time = DateTime.Parse(holder.creation_time);
         artwork.update_date_time = DateTime.Parse(holder.update_time);
+        artwork.cached = new List<string>(holder.cache);
+        artwork.preset = holder.preset;
+        artwork.alt_scene = holder.alt_scene;
 
         // Convert back the list of media content holders to MediaContentData objects
         artwork.content_list = new List<MediaContentData>();
@@ -92,7 +99,7 @@ public class ArtworkDataHolder
                 artwork.content_list.Add(MediaContentDataHolder.ToTransformsData(mediaHolder));
             }
         }
-        artwork.artwork_id = holder.artwork_id;
+        artwork.id = holder.artwork_id;
         return artwork;
     }
 }

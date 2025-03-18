@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Firebase.Firestore;
 using UnityEngine;
 
 [FirestoreData]
-public class ArtworkData
+public class ArtworkData : FirebaseData
 {
+    #region Firestore Properties
     // Main Data
     [FirestoreProperty] public string title { get; set; }
     [FirestoreProperty] public string description { get; set; }
@@ -17,9 +19,9 @@ public class ArtworkData
 
     [FirestoreProperty] public int year { get; set; }
     [FirestoreProperty] public string location { get; set; }
+    [FirestoreProperty] public bool published { get; set; }
     
     [FirestoreProperty] public List<string> artwork_image_references { get; set; } = new List<string>();
-    public List<Sprite> images { get; set; } = new List<Sprite>();
     
     // AR Settings
     [FirestoreProperty] public double latitude { get; set; }
@@ -31,17 +33,63 @@ public class ArtworkData
     // Read Only Data
     [FirestoreProperty] public Timestamp creation_time { get; set; }
     [FirestoreProperty] public Timestamp update_time { get; set; }
-    public DateTime creation_date_time, update_date_time;
     
     // Content
     [FirestoreProperty] public List<MediaContentData> content_list { get; set; } = new List<MediaContentData>();
     [FirestoreProperty] public string preset { get; set; } = "None";
     [FirestoreProperty] public string alt_scene { get; set; }
     
-    // World Data
-    public string artwork_id { get; set; }
+    #endregion
+    
+    #region Loaded data
+    
+    public DateTime creation_date_time, update_date_time;
+    
     public HotspotManager hotspot { get; set; } = null;
     public OnlineMapsMarker3D marker { get; set; } = new OnlineMapsMarker3D();
+
+    private DataList loadedImages = new DataList();
+    
+    #endregion
+
+    #region Methods
+
+    public async Task<List<Sprite>> GetAllImages()
+    {
+        // all have been loaded already
+        if (loadedImages.Count() >= artwork_image_references.Count)
+        {
+            return loadedImages.Get();
+        }
+        
+        // load all
+        var allImages = new List<Sprite>();
+        foreach (var imageRef in artwork_image_references)
+        {
+            var spr = await loadedImages.Get(this, imageRef);
+            allImages.Add(spr);
+        }
+
+        AppCache.SaveArtworksCache();
+        
+        return allImages;
+    }
+
+    public async Task<List<Sprite>> GetImages(int count)
+    {
+        var allImages = new List<Sprite>();
+        for (int i = 0; i < Mathf.Clamp(artwork_image_references.Count, 0, count); i++)
+        {
+            var spr = await loadedImages.Get(this, artwork_image_references[i]);
+            allImages.Add(spr);
+        }
+        
+        AppCache.SaveArtworksCache();
+
+        return allImages;
+    }
+
+    #endregion
 }
 
 [FirestoreData]

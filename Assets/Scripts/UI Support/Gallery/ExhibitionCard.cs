@@ -42,36 +42,38 @@ public class ExhibitionCard : MonoBehaviour
         {
             exhibition = point;
 
-            if (point.images == null || point.images.Count == 0)
+            if (point.exhibition_image_references.Count >= 3)
             {
-                await FirebaseLoader.LoadArtworkImages(point);
-            }
+                singleCoverImageObject.SetActive(false);
+                multCoverImageObject.SetActive(true);
 
-            if (point.images.Count >= 3)
+                var images = await point.GetImages(3);
+                
+                image0.sprite = images.Count >= 0 ? images[0] : null;
+                image1.sprite = images.Count >= 1 ? images[1] : null;
+                image2.sprite = images.Count >= 2 ? images[2] : null;
+            }
+            else if (point.artworks.Count >= 3 && point.artworks[0].artwork_image_references.Count > 0 
+                                               && point.artworks[1].artwork_image_references.Count > 0 
+                                               && point.artworks[2].artwork_image_references.Count > 0)
             {
                 singleCoverImageObject.SetActive(false);
                 multCoverImageObject.SetActive(true);
-            
-                image0.sprite = point.images[0];
-                image1.sprite = point.images[1];
-                image2.sprite = point.images[2];
+
+                var artworkImages1 = await point.artworks[0].GetImages(1);
+                var artworkImages2 = await point.artworks[1].GetImages(1);
+                var artworkImages3 = await point.artworks[2].GetImages(1);
+                
+                image0.sprite = artworkImages1[0];
+                image1.sprite = artworkImages2[0];
+                image2.sprite = artworkImages3[0];
             }
-            else if (point.artworks.Count >= 3 && point.artworks[0].images.Count > 0 
-                                               && point.artworks[1].images.Count > 0 
-                                               && point.artworks[2].images.Count > 0)
-            {
-                singleCoverImageObject.SetActive(false);
-                multCoverImageObject.SetActive(true);
-            
-                image0.sprite = point.artworks[0].images[0];
-                image1.sprite = point.artworks[0].images[0];
-                image2.sprite = point.artworks[0].images[0];
-            }
-            else if(point.images.Count > 0)
+            else if(point.exhibition_image_references.Count > 0)
             {
                 singleCoverImageObject.SetActive(true);
                 multCoverImageObject.SetActive(false);
-                singleImage.sprite = point.images[0];
+                var images = await point.GetImages(1);
+                singleImage.sprite = images.Count >= 0 ? images[0] : null;
             }
             else
             {

@@ -13,6 +13,7 @@ public class ArtistDataHolder
     public string creation_time; // ISO string
     public string update_time;   // ISO string
     public string artist_id;
+    public List<string> cache = new List<string>();
 
     public static ArtistDataHolder FromArtistData(ArtistData artist)
     {
@@ -24,7 +25,8 @@ public class ArtistDataHolder
         holder.icon = artist.icon;
         holder.creation_time = artist.creation_time.ToDateTime().ToString("o");
         holder.update_time = artist.update_time.ToDateTime().ToString("o");
-        holder.artist_id = artist.artist_id;
+        holder.artist_id = artist.id;
+        holder.cache = new List<string>(artist.cached);
         return holder;
     }
 
@@ -38,7 +40,8 @@ public class ArtistDataHolder
         artist.icon = holder.icon;
         artist.creation_date_time = DateTime.Parse(holder.creation_time);
         artist.update_date_time = DateTime.Parse(holder.update_time);
-        artist.artist_id = holder.artist_id;
+        artist.id = holder.artist_id;
+        artist.cached = new List<string>(holder.cache);
         return artist;
     }
 }
