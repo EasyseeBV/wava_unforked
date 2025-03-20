@@ -70,6 +70,8 @@ public class ArTapper : MonoBehaviour
     private int contentTotalCount, contentLoadedCount = 0;
     private bool allContentLoaded = false;
 
+    public Dictionary<int, GameObject> contentDict = new Dictionary<int, GameObject>();
+    
     private void Start()
     {   
         arObject = Instantiate(arObjectPrefab);
@@ -119,8 +121,6 @@ public class ArTapper : MonoBehaviour
         placementIndicator.SetActive(false);
         AnimationIndicator.SetActive(false);
         UIInfoController.Instance.SetText("", 3);
-
-        bool stillLoading = false;
             
         if (hasContent && allContentLoaded)
         {
@@ -128,6 +128,11 @@ public class ArTapper : MonoBehaviour
         }
         else if (hasContent && !allContentLoaded)
         {
+            Vector3 _pos = PlacedObject.transform.position;
+            _pos.z += DistanceWhenActivated;
+            loadingPlane.SetActive(true);
+            loadingPlane.transform.position = _pos;
+            
             StartCoroutine(WaitForLoad());
         }
         else if(!hasContent)
@@ -139,13 +144,13 @@ public class ArTapper : MonoBehaviour
         Vector3 pos = PlacedObject.transform.position;
         pos.z += DistanceWhenActivated;
         PlacedObject.transform.position = pos;
-        if (stillLoading) loadingPlane.transform.position = pos;
         StopAR();
     }
 
     private IEnumerator WaitForLoad()
     {
         yield return new WaitUntil(() => allContentLoaded);
+        loadingPlane.gameObject.SetActive(false);
         OnArtworkReady();
     }
 
@@ -291,8 +296,9 @@ public class ArTapper : MonoBehaviour
 
         hasContent = true;
 
-        foreach (var content in ArtworkToPlace.content_list)
+        for (int i = 0; i < ArtworkToPlace.content_list.Count; i++)
         {
+            var content = ArtworkToPlace.content_list[i];
             contentTotalCount++;
             var uri = new Uri(content.media_content);
             string encodedPath = uri.AbsolutePath;
@@ -326,11 +332,12 @@ public class ArTapper : MonoBehaviour
                 Debug.Log("attempting to download: " + content.media_content);
                 
                 var webRequest = AssetDownloader.CreateWebRequest(content.media_content);
-                
+
+                var i1 = i;
                 AssetDownloader.LoadModelFromUri(
                     webRequest,
                     onLoad: OnLoad,
-                    onMaterialsLoad: c => { OnMaterialsLoad(c, content); },
+                    onMaterialsLoad: c => { OnMaterialsLoad(c, content, i1); },
                     onProgress: OnProgress,
                     onError: OnError,
                     wrapperGameObject: null,
@@ -382,11 +389,12 @@ public class ArTapper : MonoBehaviour
         Debug.Log("Model mesh and hierarchy loaded successfully. Proceeding to load materials...");
     }
     
-    private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext, MediaContentData mediaContentData)
+    private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext, MediaContentData mediaContentData, int index)
     {
         Debug.Log("All materials have been applied. The model is fully loaded.");
         contentLoadedCount++;
         var obj = assetLoaderContext.RootGameObject;
+        contentDict.TryAdd(index, obj);
         obj.name = "Loaded Model";
         arObject.Add(obj, mediaContentData);
         

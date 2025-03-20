@@ -26,6 +26,7 @@ public class ArtworkDetailsPanel : DetailsPanel
 
     [Header("Interactions")]
     [SerializeField] private Button showOnMapButton;
+    [SerializeField] private Button developerARTest;
     
     [Header("Artists")] 
     [SerializeField] private Transform artistArea;
@@ -46,6 +47,16 @@ public class ArtworkDetailsPanel : DetailsPanel
         heartButton.onClick.AddListener(LikeArtwork);
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
         downloadButton.onClick.AddListener(DownloadArtwork);
+        if (Debug.isDebugBuild)
+        {
+            developerARTest.gameObject.SetActive(true);
+            developerARTest.onClick.AddListener(() =>
+            {
+                ArTapper.ArtworkToPlace = artwork;
+                ArTapper.DistanceWhenActivated = 100f;
+                SceneManager.LoadSceneAsync("AR");
+            });
+        }
     }
 
     public void Fill(ArtworkData artwork)
