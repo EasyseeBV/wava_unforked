@@ -35,11 +35,12 @@ public class DeveloperButton : MonoBehaviour
     {
         ToggledOn = !ToggledOn;
         outsideRingImage.color = ToggledOn ? selectedColor : Color.white;
-        if (ToggledOn) OnClickAction?.Invoke(view, this);
+        OnClickAction?.Invoke(view, this);
     }
 
     public void Untoggle()
     {
-        if (ToggledOn) OnClick();
+        ToggledOn = false;
+        outsideRingImage.color = Color.white;
     }
 }

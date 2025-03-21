@@ -50,10 +50,22 @@ public class ARMapPointMaker : MonoBehaviour {
             artwork.marker.instance.layer = LayerMask.NameToLayer("Hotspot");
             artwork.marker.borderTransform = artwork.hotspot.BorderRingMesh.gameObject.transform;
             artwork.hotspot.Navigation = GetComponent<NavigationMaker>();
-            artwork.hotspot.ConnectedExhibition = FirebaseLoader.GetConnectedExhibition(artwork);
+            artwork.hotspot.ConnectedExhibition = await FirebaseLoader.FindRelatedExhibition(artwork.id);
             artwork.hotspot.Init(artwork);
             artwork.hotspot.MinZoom = minZoom;
-        }
+        }   
+        
+        /*foreach (var exhibition in FirebaseLoader.Exhibitions)
+        {
+            if (exhibition.artworks.Count < exhibition.artwork_references.Count)
+            {
+                await FirebaseLoader.FillExhibitionArtworkData(exhibition);
+            }
+
+            Debug.Log($"loaded: {exhibition.artworks.Count} | contains: {exhibition.artwork_references.Count}");
+            
+            
+        }*/
     
         // Additional event subscriptions and method calls
         map.OnChangeZoom += OnChangeZoom;

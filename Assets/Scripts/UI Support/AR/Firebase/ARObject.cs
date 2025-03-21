@@ -138,7 +138,7 @@ public class ARObject : MonoBehaviour
         audioSources.Add(source);
     }
 
-    public void Add(Sprite sprite, MediaContentData contentData)
+    public GameObject Add(Sprite sprite, MediaContentData contentData)
     {
         var ui = Instantiate(arUIImageTemplate, placementParent);
         ui.gameObject.SetActive(true);
@@ -146,7 +146,7 @@ public class ARObject : MonoBehaviour
         
         if (contentData == null || contentData.transforms.position_offset == null || contentData.transforms.scale == null) {
             Debug.LogError("MediaContentData or one of its properties is null.");
-            return;
+            return ui.gameObject;
         }
     
         // Apply rotation (assuming the rotation value is in degrees around the Y axis)
@@ -170,6 +170,8 @@ public class ARObject : MonoBehaviour
         ui.transform.localPosition = offset;
         
         uis.Add(ui);
+
+        return ui.gameObject;
     }
 
     public void Show()

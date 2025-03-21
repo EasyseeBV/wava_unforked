@@ -53,7 +53,7 @@ public class ArtworkDetailsPanel : DetailsPanel
             developerARTest.onClick.AddListener(() =>
             {
                 ArTapper.ArtworkToPlace = artwork;
-                ArTapper.DistanceWhenActivated = 100f;
+                ArTapper.DistanceWhenActivated = 2f;
                 SceneManager.LoadSceneAsync("AR");
             });
         }

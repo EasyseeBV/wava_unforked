@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Firebase.Extensions;
+using Firebase.Firestore;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -34,6 +36,13 @@ public class DeveloperModeARView : MonoBehaviour
     [SerializeField] private DeveloperSaveButton developerSaveButton;
     [SerializeField] private DeveloperResetButton developerResetButton;
 
+    [Header("Content View")]
+    [SerializeField] private DeveloperContentButton contentButtonPrefab;
+    [SerializeField] private Transform contentContainer;
+    [SerializeField] private TMP_Text currentViewLabel;
+    [SerializeField] private Button contentViewButton;
+    [SerializeField] private GameObject contentViewContent;
+
     [Header("Transform View")]
     [SerializeField] private GameObject transformContent;
     [SerializeField] private TMP_Text transformTypeLabel;
@@ -46,14 +55,16 @@ public class DeveloperModeARView : MonoBehaviour
     private ArTapper ar;
     
     private List<TransformsData> editedTransformDatas = new List<TransformsData>();
+    private List<DeveloperContentButton> cachedContentButtons = new List<DeveloperContentButton>();
 
     private int viewNumber = 0;
     
     private void Awake()
     {
+        content.SetActive(false);
+
         if (!Debug.isDebugBuild)
         {
-            content.SetActive(false);
             enableDeveloperWindowButton.gameObject.SetActive(false);
             return;
         }
@@ -66,10 +77,37 @@ public class DeveloperModeARView : MonoBehaviour
         }
         
         enableDeveloperWindowButton.onClick.AddListener(() => EnableDeveloperWindow(true));
+        contentViewButton.onClick.AddListener(() =>
+        {
+            contentViewContent.SetActive(!contentViewContent.activeInHierarchy);
+            if (contentViewContent.activeInHierarchy)
+            {
+                foreach (var contentButton in cachedContentButtons)
+                {
+                    contentButton.gameObject.SetActive(false);
+                }
+        
+                cachedContentButtons.Clear();
+
+                foreach (var key in ar.contentDict.Keys)
+                {
+                    var contentButton = Instantiate(contentButtonPrefab, contentContainer);
+                    contentButton.SetValue(key, i =>
+                    {
+                        viewNumber = key;
+                        currentViewLabel.text = i.ToString();
+                        contentViewContent.SetActive(false);
+                    });
+                    cachedContentButtons.Add(contentButton);
+                }
+            }
+        });
         
         xInputField.onEndEdit.AddListener(value => WriteData(float.Parse(value), ARAxis.X));
         yInputField.onEndEdit.AddListener(value => WriteData(float.Parse(value), ARAxis.Y));
         zInputField.onEndEdit.AddListener(value => WriteData(float.Parse(value), ARAxis.Z));
+
+        developerSaveButton.SubscribeSaveClick(OnSave);
     }
 
     private void OnEnable() => developerResetButton.OnClick += OnReset;
@@ -79,6 +117,10 @@ public class DeveloperModeARView : MonoBehaviour
     {
         content.SetActive(state);
         cameraButtonContent.SetActive(!state);
+        
+        editedTransformDatas.Clear();
+
+        if (!state) return;
 
         foreach (var data in ArTapper.ArtworkToPlace.content_list.Select(mediaContentData => mediaContentData.transforms).Select(originalData => new TransformsData()
                  {
@@ -202,15 +244,65 @@ public class DeveloperModeARView : MonoBehaviour
 
     private void OnSave()
     {
-        // get all editable data
-        // convert to dictionary <string "content_list", object editedList>
-        // Get document ref: db.Collection("artworks").Document("ArTapper.ArtworkToPlace.id");
-        // document ref.UpdateAsync(dictionary).ContinueWithOnMainThread
-        // notify user on screen that the data has been uploaded
+        var firestore = FirebaseLoader.Firestore;
+
+        DocumentReference documentReference = firestore.Collection("artworks").Document(ArTapper.ArtworkToPlace.id);
+        List<MediaContentData> newContentList = new List<MediaContentData>();
+
+        for (int i = 0; i < ArTapper.ArtworkToPlace.content_list.Count; i++)
+        {
+            MediaContentData mediaContentData = new MediaContentData()
+            {
+                media_content = ArTapper.ArtworkToPlace.content_list[i].media_content,
+                transforms = new TransformsData()
+                {
+                    position_offset = new PositionOffset()
+                    {
+                        x_offset = editedTransformDatas[i].position_offset.x_offset,
+                        y_offset = editedTransformDatas[i].position_offset.x_offset,
+                        z_offset = editedTransformDatas[i].position_offset.x_offset,
+                    },
+                    scale = new Scale()
+                    {
+                        x_scale = editedTransformDatas[i].scale.x_scale,
+                        y_scale = editedTransformDatas[i].scale.y_scale,
+                        z_scale = editedTransformDatas[i].scale.z_scale
+                    },
+                    rotation = new Rotation()
+                    {
+                        x_rotation = editedTransformDatas[i].rotation.x_rotation,
+                        y_rotation = editedTransformDatas[i].rotation.y_rotation,
+                        z_rotation = editedTransformDatas[i].rotation.z_rotation
+                    }
+                }
+            };
+            
+            newContentList.Add(mediaContentData);
+        }
+
+        Dictionary<string, object> updates = new Dictionary<string, object>()
+        {
+            { "content_list", newContentList}
+        };
+        
+        documentReference.UpdateAsync(updates).ContinueWithOnMainThread(task =>
+        {
+            if (task.IsCompletedSuccessfully || task.IsCompleted)
+            {
+                Debug.Log($"{ArTapper.ArtworkToPlace.title}'s content has been updated");
+                ArTapper.ArtworkToPlace.content_list = new List<MediaContentData>(newContentList);
+                AppCache.SaveArtworksCache();
+            }
+            else
+            {
+                Debug.Log("Failed to update content...");
+            }
+        });
     }
 
     private void OnReset()
     {
+        developerSaveButton.SetIsSavable(false);
         editedTransformDatas.Clear();
         foreach (var data in ArTapper.ArtworkToPlace.content_list.Select(mediaContentData => mediaContentData.transforms).Select(originalData => new TransformsData()
                  {

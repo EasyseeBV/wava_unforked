@@ -11,7 +11,7 @@ public class ArtworkDataHolder
     public List<ArtistDataHolder> artists;
     public int year;
     public string location;
-    public List<string> artwork_image_references;
+    public List<string> artwork_image_references = new List<string>();
     public double latitude;
     public double longitude;
     public float max_distance;

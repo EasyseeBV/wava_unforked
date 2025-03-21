@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [Serializable]
@@ -7,11 +8,11 @@ public class ExhibitionDataHolder
 {
     public string title;
     public string description;
-    public List<ArtistDataHolder> artists;
-    public List<ArtworkDataHolder> artworks;
+    public List<string> artist_ids = new List<string>();
+    public List<string> artwork_ids = new List<string>();
     public int year;
     public string location;
-    public List<string> exhibition_image_references;
+    public List<string> exhibition_image_references = new List<string>();
     public string creation_date_time; // ISO string
     public string update_date_time;   // ISO string
     public string exhibition_id;
@@ -24,20 +25,20 @@ public class ExhibitionDataHolder
         ExhibitionDataHolder holder = new ExhibitionDataHolder();
         holder.title = exhibition.title;
         holder.description = exhibition.description;
-        holder.artists = new List<ArtistDataHolder>();
+        holder.artist_ids = new List<string>();
         if (exhibition.artists != null)
         {
             foreach (var artist in exhibition.artists)
             {
-                holder.artists.Add(ArtistDataHolder.FromArtistData(artist));
+                holder.artist_ids.Add(artist.id);
             }
         }
-        holder.artworks = new List<ArtworkDataHolder>();
+        holder.artwork_ids = new List<string>();
         if (exhibition.artworks != null)
         {
             foreach (var artwork in exhibition.artworks)
             {
-                holder.artworks.Add(ArtworkDataHolder.ToHolder(artwork));
+                holder.artwork_ids.Add(artwork.id);
             }
         }
         holder.year = exhibition.year;
@@ -58,19 +59,19 @@ public class ExhibitionDataHolder
         exhibition.title = holder.title;
         exhibition.description = holder.description;
         exhibition.artists = new List<ArtistData>();
-        if (holder.artists != null)
+        if (holder.artist_ids != null)
         {
-            foreach (var artistHolder in holder.artists)
+            foreach (var artistData in holder.artist_ids.SelectMany(artistID => FirebaseLoader.Artists.Where(artistData => artistData.id == artistID && !exhibition.artists.Contains(artistData))))
             {
-                exhibition.artists.Add(ArtistDataHolder.ToArtistData(artistHolder));
+                exhibition.artists.Add(artistData);
             }
         }
         exhibition.artworks = new List<ArtworkData>();
-        if (holder.artworks != null)
+        if (holder.artwork_ids != null)
         {
-            foreach (var artworkHolder in holder.artworks)
+            foreach (var artworkData in holder.artwork_ids.SelectMany(artworkStr => FirebaseLoader.Artworks.Where(artworkData => artworkData.id == artworkStr && !exhibition.artworks.Contains(artworkData))))
             {
-                exhibition.artworks.Add(ArtworkDataHolder.FromHolder(artworkHolder));
+                exhibition.artworks.Add(artworkData);
             }
         }
         exhibition.year = holder.year;

@@ -94,14 +94,13 @@ public static class AppCache
     
     private static async Task LoadExhibitionCache()
     {
-        return;
         if (File.Exists(exhibitionDataCachePath))
         {
             try 
             {
                 string json = await File.ReadAllTextAsync(exhibitionDataCachePath);
                 ExhibitionDataHolderListWrapper wrapper = JsonUtility.FromJson<ExhibitionDataHolderListWrapper>(json);
-                if (wrapper != null && wrapper.exhibitions != null)
+                if (wrapper is { exhibitions: not null })
                 {
                     foreach (var exhibition in wrapper.exhibitions.Select(ExhibitionDataHolder.FromHolder))
                     {
@@ -159,7 +158,6 @@ public static class AppCache
 
     public static async Task SaveExhibitionsCache()
     {
-        return;
         try
         {
             await EnsureDirectoryExists(exhibitionDataCachePath);

@@ -77,6 +77,8 @@ public class ArTapper : MonoBehaviour
         arObject = Instantiate(arObjectPrefab);
         StartAR();
         LoadContent();
+
+        Debug.Log("d: " + DistanceWhenActivated);
     }
     
     private void Update()
@@ -133,6 +135,7 @@ public class ArTapper : MonoBehaviour
             loadingPlane.SetActive(true);
             loadingPlane.transform.position = _pos;
             
+            StartCoroutine(WaitForLoad());
             StartCoroutine(WaitForLoad());
         }
         else if(!hasContent)
@@ -348,7 +351,7 @@ public class ArTapper : MonoBehaviour
             else if (extension is ".png" or ".jpg" or ".jpeg")
             {
                 Debug.Log($"content [{ArtworkToPlace.title}] contained an image piece");
-                StartCoroutine(DownloadImageAsSprite(content.media_content, content));
+                StartCoroutine(DownloadImageAsSprite(content.media_content, content, i));
             }
             else if (!string.IsNullOrEmpty(ArtworkToPlace.preset) && ArtworkToPlace.preset != "None")
             {
@@ -429,7 +432,7 @@ public class ArTapper : MonoBehaviour
         }
     }
     
-    private IEnumerator DownloadImageAsSprite(string imageUrl, MediaContentData content)
+    private IEnumerator DownloadImageAsSprite(string imageUrl, MediaContentData content, int index)
     {
         using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imageUrl))
         {
@@ -444,7 +447,8 @@ public class ArTapper : MonoBehaviour
                 Texture2D texture = DownloadHandlerTexture.GetContent(uwr);
                 // Create a sprite with the texture. The pivot is set to the center.
                 Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-                arObject.Add(sprite, content);
+                var uiObj = arObject.Add(sprite, content);
+                contentDict.TryAdd(index, uiObj);
                 Debug.Log("Image downloaded and sprite created.");
                 contentLoadedCount++;
                 if (contentLoadedCount >= contentTotalCount)

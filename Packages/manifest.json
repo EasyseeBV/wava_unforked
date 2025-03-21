@@ -3,6 +3,7 @@
     "com.github.asus4.mediapipe": "2.10.0-p1",
     "com.github.asus4.tflite": "2.10.0-p1",
     "com.github.asus4.tflite.common": "2.10.0-p1",
+    "com.unity.2d.sprite": "1.0.0",
     "com.unity.addressables": "1.22.3",
     "com.unity.ai.navigation": "1.1.5",
     "com.unity.formats.fbx": "4.2.1",

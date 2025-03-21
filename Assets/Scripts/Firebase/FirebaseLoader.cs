@@ -147,10 +147,10 @@ public class FirebaseLoader : MonoBehaviour
     
     private static async Task<ExhibitionData> ReadExhibitionDocument(DocumentSnapshot document)
     {
-        if (ExhibitionsMap.ContainsKey(document.Id))
+        if (ExhibitionsMap.TryGetValue(document.Id, out var exhibitionDocument))
         {
             Debug.LogWarning("Reading an already existing [Exhibition] document...");
-            return ExhibitionsMap[document.Id];    
+            return exhibitionDocument;    
         }
         
         ExhibitionData exhibition = document.ConvertTo<ExhibitionData>();
@@ -167,10 +167,10 @@ public class FirebaseLoader : MonoBehaviour
     
     private static async Task<ArtworkData> ReadArtworkDocument(DocumentSnapshot document, bool loadImages = true)
     {
-        if (ArtworksMap.ContainsKey(document.Id))
+        if (ArtworksMap.TryGetValue(document.Id, out var artworkDocument))
         {
             Debug.LogWarning("Reading an already existing [Artwork] document...");
-            return ArtworksMap[document.Id];    
+            return artworkDocument;    
         }
         
         ArtworkData artwork = document.ConvertTo<ArtworkData>();
@@ -190,6 +190,12 @@ public class FirebaseLoader : MonoBehaviour
     
     private static async Task<ArtistData> ReadArtistDocument(DocumentSnapshot document)
     {
+        if (ArtistsMap.TryGetValue(document.Id, out var artistDocument))
+        {
+            Debug.LogWarning("Reading an already existing [Artist] document...");
+            return artistDocument;    
+        }
+        
         ArtistData artist = document.ConvertTo<ArtistData>();
         artist.id = document.Id;
         artist.creation_date_time = artist.creation_time.ToDateTime();
@@ -221,6 +227,11 @@ public class FirebaseLoader : MonoBehaviour
 
     public static async Task<ExhibitionData> FindRelatedExhibition(string artwork_id)
     {
+        foreach (var exhibition in Exhibitions.Where(exhibition => exhibition.artworks.Any(artwork => artwork.id == artwork_id)))
+        {
+            return exhibition;
+        }
+        
         // Get the Firestore database instance.
         var db = FirebaseFirestore.DefaultInstance;
 
@@ -237,11 +248,10 @@ public class FirebaseLoader : MonoBehaviour
         if (snapshot != null && snapshot.Count > 0)
         {
             DocumentSnapshot exhibitionDoc = snapshot.Documents.FirstOrDefault();
-            if (exhibitionDoc != null)
-            {
-                ExhibitionData exhibitionData = exhibitionDoc.ConvertTo<ExhibitionData>();
-                return exhibitionData;
-            }
+            var exhibition = await ReadExhibitionDocument(exhibitionDoc);
+            await FillExhibitionArtworkData(exhibition);
+            await AppCache.SaveExhibitionsCache();
+            return exhibition;
         }
 
         // If no exhibition is found, return null.
@@ -355,7 +365,6 @@ public class FirebaseLoader : MonoBehaviour
 
                 foreach (var task in tasks)
                 {
-                    
                     ProcessExhibitions(task.Result, newExhibitions);
                 }
             }
@@ -403,10 +412,9 @@ public class FirebaseLoader : MonoBehaviour
             if (ArtworksMap.TryGetValue(artworkReference.Id, out var value)) exhibition.artworks.Add(value);
             else exhibition.artworks.Add(await ReadArtworkDocument(await artworkReference.GetSnapshotAsync()));
         }
-
-        if (exhibition.artworks.Count >= exhibition.artwork_references.Count) return;
         
-        
+        await AppCache.SaveArtworksCache();
+        await AppCache.SaveExhibitionsCache();
     }
 
     #endregion

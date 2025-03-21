@@ -189,23 +189,19 @@ public class ExhibitionDetailsPanel : DetailsPanel
     {
         try
         {
-            var _artists = new List<ArtistData>();
-            foreach (var artist in FirebaseLoader.Artists)
+            var artistsInArtworks = new List<ArtistData>();
+            
+            if (exhibition.artworks.Count < exhibition.artwork_references.Count)
             {
-                if (exhibition.artists.Contains(artist) && !_artists.Contains(artist))
-                {
-                    _artists.Add(artist);
-                }
-
-                if (exhibition.artist_references.Any(docRef => docRef.Id == artist.id) &&
-                    !_artists.Contains(artist))
-                {
-                    _artists.Add(artist);
-                    exhibition.artists.Add(artist);
-                }
+                await FirebaseLoader.FillExhibitionArtworkData(exhibition);
             }
 
-            return _artists;
+            foreach (var artist in from artwork in exhibition.artworks from artist in artwork.artists where !artistsInArtworks.Contains(artist) select artist)
+            {
+                artistsInArtworks.Add(artist);
+            }
+
+            return artistsInArtworks;
         }
         catch (Exception e)
         {
