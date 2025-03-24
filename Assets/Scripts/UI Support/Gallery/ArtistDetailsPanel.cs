@@ -134,20 +134,29 @@ public class ArtistDetailsPanel : DetailsPanel
 
     private List<ExhibitionData> GetExhibitions()
     {
-        if (FirebaseLoader.Exhibitions == null) return null;
-
         List<ExhibitionData> exhibitions = new();
-        
+        var artworks = GetArtworks();
+
         foreach (var exhibition in FirebaseLoader.Exhibitions)
         {
-            if (exhibition.artists.Contains(artist) && !exhibitions.Contains(exhibition))
+            foreach (var artwork in artworks)
             {
-                exhibitions.Add(exhibition);
-            }
+                if (exhibition.artworks.Contains(artwork))
+                {
+                    if (!exhibitions.Contains(exhibition)) exhibitions.Add(exhibition);
+                    continue;
+                }
 
-            foreach (var artwork in exhibition.artworks.Where(artwork => artwork.artists.Contains(artist) && !exhibitions.Contains(exhibition)))
-            {
-                exhibitions.Add(exhibition);
+                if (exhibition.artwork_references.Any(artworkRef => artworkRef.Id == artwork.id))
+                {
+                    if (!exhibitions.Contains(exhibition)) exhibitions.Add(exhibition);
+                    continue;
+                }
+                
+                if (exhibition.artworks.Any(artworkRef => artworkRef.title == artwork.title))
+                {
+                    if (!exhibitions.Contains(exhibition)) exhibitions.Add(exhibition);
+                }
             }
         }
 
@@ -156,6 +165,22 @@ public class ArtistDetailsPanel : DetailsPanel
 
     private List<ArtworkData> GetArtworks()
     {
-        return FirebaseLoader.Artworks == null ? null : FirebaseLoader.Artworks.Where(artwork => artwork.artists.Contains(artist)).ToList();
+        List<ArtworkData> works = new();
+        
+        foreach (var artwork in FirebaseLoader.Artworks)
+        {
+            if (artwork.artists.Contains(artist))
+            {
+                works.Add(artwork);
+                continue;
+            }
+
+            if (artwork.artists.Any(artistData => artistData.id == artist.id || artistData.title == artist.title))
+            {
+                works.Add(artwork);
+            }
+        }
+
+        return works;
     }
 }

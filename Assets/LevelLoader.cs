@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
@@ -13,6 +14,7 @@ public class LevelLoader : MonoBehaviour
     [SerializeField] private Image loadingImage;
     [SerializeField] private Image wavaImage;
     [SerializeField] private RectTransform iconImage;
+    [SerializeField] private TMP_Text loadingText;
     
     [Header("Settings")]
     [SerializeField] private float rotationSpeed = 100f;
@@ -21,6 +23,10 @@ public class LevelLoader : MonoBehaviour
     [SerializeField] [Range(0, 3)] private float transitionWaitTime = 0.5f;
     
     private bool transitionComplete = false;
+
+    private void OnEnable() => FirebaseLoader.OnStartUpEventProcessed += UpdateLoadingText;
+    private void OnDisable() => FirebaseLoader.OnStartUpEventProcessed -= UpdateLoadingText;
+    
 
     private IEnumerator Start()
     {
@@ -46,11 +52,12 @@ public class LevelLoader : MonoBehaviour
             {
                 loadingImage.transform.Rotate(Vector3.forward * (rotationSpeed * Time.deltaTime));
             }
-            else if (operation.progress >= 0.9f && transitionComplete && FirebaseLoader.Initialized)
+            // Allow scene transitions
+            else if (operation.progress >= 0.9f && transitionComplete && FirebaseLoader.Initialized && FirebaseLoader.SetupComplete)
             {
                 operation.allowSceneActivation = true;
             }
-            else if(operation.progress >= 0.9f && !transitionComplete && FirebaseLoader.Initialized)
+            else if(operation.progress >= 0.9f && !transitionComplete && FirebaseLoader.Initialized && FirebaseLoader.SetupComplete)
             {
                 loadingImage.gameObject.SetActive(false);
                 iconImage.gameObject.SetActive(true);
@@ -87,5 +94,10 @@ public class LevelLoader : MonoBehaviour
             
             yield return null;  
         }
+    }
+
+    private void UpdateLoadingText(string text)
+    {
+        loadingText.text = text;
     }
 }

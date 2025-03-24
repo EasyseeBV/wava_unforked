@@ -64,13 +64,15 @@ public class ArtworkData : FirebaseData
         
         // load all
         var allImages = new List<Sprite>();
+        bool save = false;
         foreach (var imageRef in artwork_image_references)
         {
-            var spr = await loadedImages.Get(this, imageRef);
-            allImages.Add(spr);
+            var results = await loadedImages.Get(this, imageRef);
+            allImages.Add(results.sprite);
+            if (results.requiresSave) save = true;
         }
 
-        AppCache.SaveArtworksCache();
+        if (save) AppCache.SaveArtworksCache();
         
         return allImages;
     }
@@ -78,13 +80,15 @@ public class ArtworkData : FirebaseData
     public async Task<List<Sprite>> GetImages(int count)
     {
         var allImages = new List<Sprite>();
+        bool save = false;
         for (int i = 0; i < Mathf.Clamp(artwork_image_references.Count, 0, count); i++)
         {
-            var spr = await loadedImages.Get(this, artwork_image_references[i]);
-            allImages.Add(spr);
+            var results = await loadedImages.Get(this, artwork_image_references[i]);
+            allImages.Add(results.sprite);
+            if (results.requiresSave) save = true;
         }
         
-        AppCache.SaveArtworksCache();
+        if (save) AppCache.SaveArtworksCache();
 
         return allImages;
     }

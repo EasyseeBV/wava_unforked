@@ -47,7 +47,8 @@ public class ArtworkDetailsPanel : DetailsPanel
         heartButton.onClick.AddListener(LikeArtwork);
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
         downloadButton.onClick.AddListener(DownloadArtwork);
-        if (Debug.isDebugBuild)
+        
+        if (AppSettings.DeveloperMode)
         {
             developerARTest.gameObject.SetActive(true);
             developerARTest.onClick.AddListener(() =>

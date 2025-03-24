@@ -33,14 +33,32 @@ public class ExhibitionDataHolder
                 holder.artist_ids.Add(artist.id);
             }
         }
+        
+        if (exhibition.artworks.Count < 0 && exhibition.artwork_references.Count < 0) Debug.LogError("Both required lists are empty");
+        
         holder.artwork_ids = new List<string>();
-        if (exhibition.artworks != null)
+        if (exhibition.artworks.Count > 0)
         {
             foreach (var artwork in exhibition.artworks)
             {
                 holder.artwork_ids.Add(artwork.id);
             }
         }
+        else if (exhibition.artwork_references.Count > 0)
+        {
+            foreach (var artwork in exhibition.artwork_references)
+            {
+                holder.artwork_ids.Add(artwork.Id);
+            }
+        }
+        else if (exhibition.artwork_ids.Count > 0)
+        {
+            foreach (var id in exhibition.artwork_ids)
+            {
+                holder.artwork_ids.Add(id);
+            }
+        }
+        
         holder.year = exhibition.year;
         holder.location = exhibition.location;
         holder.exhibition_image_references = new List<string>(exhibition.exhibition_image_references);
@@ -56,6 +74,8 @@ public class ExhibitionDataHolder
     public static ExhibitionData FromHolder(ExhibitionDataHolder holder)
     {
         ExhibitionData exhibition = new ExhibitionData();
+        Debug.Log("--------------------");
+        Debug.Log("Loading in exhibition: " + holder.title);
         exhibition.title = holder.title;
         exhibition.description = holder.description;
         exhibition.artists = new List<ArtistData>();
@@ -67,13 +87,16 @@ public class ExhibitionDataHolder
             }
         }
         exhibition.artworks = new List<ArtworkData>();
+        exhibition.artwork_ids = new List<string>(holder.artwork_ids);
         if (holder.artwork_ids != null)
         {
-            foreach (var artworkData in holder.artwork_ids.SelectMany(artworkStr => FirebaseLoader.Artworks.Where(artworkData => artworkData.id == artworkStr && !exhibition.artworks.Contains(artworkData))))
+            Debug.Log($"getting {holder.artwork_ids.Count} id's from holder ({holder.title})");
+            foreach (var artworkId in holder.artwork_ids)
             {
-                exhibition.artworks.Add(artworkData);
+                exhibition.artworks.Add(FirebaseLoader.GetArtworkByID(artworkId));    
             }
         }
+        Debug.Log("resulted in artwork count: " + exhibition.artworks.Count);
         exhibition.year = holder.year;
         exhibition.location = holder.location;
         exhibition.exhibition_image_references = new List<string>(holder.exhibition_image_references);

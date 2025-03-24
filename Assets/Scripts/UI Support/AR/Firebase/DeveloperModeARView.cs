@@ -63,7 +63,7 @@ public class DeveloperModeARView : MonoBehaviour
     {
         content.SetActive(false);
 
-        if (!Debug.isDebugBuild)
+        if (!AppSettings.DeveloperMode)
         {
             enableDeveloperWindowButton.gameObject.SetActive(false);
             return;

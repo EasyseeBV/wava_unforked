@@ -131,7 +131,7 @@ public class ArTapper : MonoBehaviour
         else if (hasContent && !allContentLoaded)
         {
             Vector3 _pos = PlacedObject.transform.position;
-            _pos.z += DistanceWhenActivated;
+            //_pos.z += DistanceWhenActivated;
             loadingPlane.SetActive(true);
             loadingPlane.transform.position = _pos;
             
@@ -145,7 +145,7 @@ public class ArTapper : MonoBehaviour
         }
             
         Vector3 pos = PlacedObject.transform.position;
-        pos.z += DistanceWhenActivated;
+        //pos.z += DistanceWhenActivated;
         PlacedObject.transform.position = pos;
         StopAR();
     }
@@ -234,7 +234,7 @@ public class ArTapper : MonoBehaviour
         LoadTopFinder(PlacedObject);
         
         Vector3 pos = PlacedObject.transform.position;
-        pos.z += DistanceWhenActivated;
+        //pos.z += DistanceWhenActivated;
         PlacedObject.transform.position = pos;
         StopAR();
     }

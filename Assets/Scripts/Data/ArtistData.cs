@@ -25,11 +25,12 @@ public class ArtistData : FirebaseData
     {
         if (loadedIcon.Count() <= 0)
         {
-            var spr = await loadedIcon.Get(this, icon);
-            AppCache.SaveArtistsCache();
-            return spr;
+            var results = await loadedIcon.Get(this, icon);
+            if (results.requiresSave) AppCache.SaveArtistsCache();
+            return results.sprite;
         }
         
-        return await loadedIcon.Get(this, icon);
+        var result = await loadedIcon.Get(this, icon);
+        return result.sprite;
     }
 }

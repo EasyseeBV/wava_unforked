@@ -7,6 +7,7 @@ using Michsky.MUIP;
 using TMPro;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -69,7 +70,7 @@ public class ArtworkUIManager : MonoBehaviour
     public TextMeshProUGUI Description;
     public TextMeshProUGUI Header;
 
-    [Header("Gallery Naviagtion")]
+    [Header("Gallery Navigation")]
     [SerializeField] private Transform currentNavigationArea;
     [SerializeField] private TMP_Text artworkNavigationLabel;
     [SerializeField] private TMP_Text exhibitionsNavigationLabel;
@@ -85,9 +86,16 @@ public class ArtworkUIManager : MonoBehaviour
     private MenuNavigation currentMenuNavigation = MenuNavigation.Artworks;
     public static event Action OnNewDocumentAdded;
 
+    private string currentSceneName = string.Empty;
+
     private void Awake()
     {
         if (!Instance) Instance = this;
+    }
+
+    private void OnEnable()
+    {
+        currentSceneName = SceneManager.GetActiveScene().name;
     }
 
     // Start is called before the first frame update
@@ -116,6 +124,10 @@ public class ArtworkUIManager : MonoBehaviour
             OpenDetailedInformation(SelectedArtist);
             SelectedArtist = null;
         }
+        else
+        {
+            InitArtworks();
+        }
 
         if (PlayerPrefs.HasKey("DetailedInfoHelpBar"))
         {
@@ -123,7 +135,8 @@ public class ArtworkUIManager : MonoBehaviour
         }
     }
 
-    public void ClearStage() {
+    public void ClearStage() 
+    {
         foreach (Transform child in defaultLayoutArea.transform) {
             Destroy(child.gameObject);
         }
@@ -139,12 +152,12 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitArtworks() 
     {
+        Debug.Log("init artworks");
         ClearStage();
         ShowDefaultLayoutArea(true);
-
-        FetchNewArtworks();
-        
         ChangeMenuNavigation(MenuNavigation.Artworks);
+        FetchNewArtworks();
+        ApplySorting();
     }
 
     private async Task FetchNewArtworks()
@@ -160,6 +173,9 @@ public class ArtworkUIManager : MonoBehaviour
         
         foreach (ArtworkData artwork in sortedArtworks)
         {
+            // guard clause to avoid populating in the incorrect menu or scene
+            if (currentMenuNavigation != MenuNavigation.Artworks || currentSceneName != SceneManager.GetActiveScene().name) return;
+            
             await artwork.GetAllImages();
             ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
             shower.Init(artwork);
@@ -171,10 +187,9 @@ public class ArtworkUIManager : MonoBehaviour
     {
         ClearStage();
         ShowDefaultLayoutArea(true);
-
-        FetchNewExhibitions();
-        
         ChangeMenuNavigation(MenuNavigation.Exhibitions);
+        FetchNewExhibitions();
+        ApplySorting();
     }
     
     private async Task FetchNewExhibitions()
@@ -193,7 +208,8 @@ public class ArtworkUIManager : MonoBehaviour
 
         foreach (ExhibitionData exhibition in sortedExhibitions)
         {
-            Debug.Log("adding exhibition: " + exhibition.title);
+            // guard clause to avoid populating in the incorrect menu or scene
+            if (currentMenuNavigation != MenuNavigation.Exhibitions || currentSceneName != SceneManager.GetActiveScene().name) return;
             ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
             card.Init(exhibition);
         }
@@ -203,10 +219,9 @@ public class ArtworkUIManager : MonoBehaviour
     {
         ClearStage();
         ShowDefaultLayoutArea(false);
-
-        FetchNewArtists();
-        
         ChangeMenuNavigation(MenuNavigation.Artists);
+        ApplySorting();
+        FetchNewArtists();
         LayoutRebuilder.ForceRebuildLayoutImmediate(artistsLayoutArea);
     }
     
@@ -220,49 +235,61 @@ public class ArtworkUIManager : MonoBehaviour
         var sortedArtists = FirebaseLoader.Artists.OrderByDescending(artwork => artwork.creation_time);
         foreach (var artist in sortedArtists)
         {
+            // guard clause to avoid populating in the incorrect menu or scene
+            if (currentMenuNavigation != MenuNavigation.Artists || currentSceneName != SceneManager.GetActiveScene().name) return;
             ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
             container.Assign(artist);
         }
     }
 
-    public async Task AddNewDocument()
+    public async void AddNewDocument()
     {
-        switch (currentMenuNavigation)
+        try
         {
-            case MenuNavigation.Artworks:
-                if (FirebaseLoader.ArtworkCollectionFull)
-                {
-                    Debug.Log("collection full");
-                    return;
-                }
+            switch (currentMenuNavigation)
+            {
+                case MenuNavigation.Artworks:
+                    if (FirebaseLoader.ArtworkCollectionFull)
+                    {
+                        return;
+                    }
+                    
+                    var artworkDoc = await FirebaseLoader.FetchDocuments<ArtworkData>(1);
+
+                    if (artworkDoc.Count < 0) return;
+                    if (artworkDoc[0] == null) return;
                 
-                var artworkDoc = await FirebaseLoader.FetchDocuments<ArtworkData>(1);
-                ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
-                shower.Init(artworkDoc[0]);
-                CachedGalleryDisplays.Add(shower);
-                break;
+                    ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
+                    shower.Init(artworkDoc[0]);
+                    CachedGalleryDisplays.Add(shower);
+                    break;
             
-            case MenuNavigation.Exhibitions:
-                if (FirebaseLoader.ExhibitionCollectionFull) return;
+                case MenuNavigation.Exhibitions:
+                    if (FirebaseLoader.ExhibitionCollectionFull) return;
                 
-                var exhibitionDoc = await FirebaseLoader.FetchDocuments<ExhibitionData>(1);
-                ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
-                card.Init(exhibitionDoc[0]);
-                break;
+                    var exhibitionDoc = await FirebaseLoader.FetchDocuments<ExhibitionData>(1);
+                    ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
+                    card.Init(exhibitionDoc[0]);
+                    break;
             
-            case MenuNavigation.Artists:
-                if (FirebaseLoader.ArtistCollectionFull) return;
+                case MenuNavigation.Artists:
+                    if (FirebaseLoader.ArtistCollectionFull) return;
                 
-                var artistDoc = await FirebaseLoader.FetchDocuments<ArtistData>(1);
-                ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
-                container.Assign(artistDoc[0]);
-                break;
+                    var artistDoc = await FirebaseLoader.FetchDocuments<ArtistData>(1);
+                    ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
+                    container.Assign(artistDoc[0]);
+                    break;
             
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         
-        OnNewDocumentAdded?.Invoke();
+            OnNewDocumentAdded?.Invoke();
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("Failed to add new documents: " + e);
+        }
     }
     
     private void ShowDefaultLayoutArea(bool state)
@@ -287,15 +314,13 @@ public class ArtworkUIManager : MonoBehaviour
             MenuNavigation.Artists => new Vector3(114.3f, -18f, 0),
             _ => throw new ArgumentOutOfRangeException(nameof(navigation), navigation, null)
         };
-        
-        ApplySorting();
     }
 
     public void ApplySorting()
     {
+        return;
         CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedArtwork.creation_date_time).ToList();
 
-        return;
         switch (CurrentFilter)
         {
             case GalleryFilter.Filter.NewestToOldest:
@@ -328,10 +353,7 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void OpenDetailedInfoFromStaticAR() 
     {
-        Debug.LogError("DISABLED OPENING INFO");
-        //if (ArTapper.ARPointToPlace != null)
-            //arStaticDetails.Open(ArTapper.ARPointToPlace);
-
+        if (ArTapper.ArtworkToPlace != null) arStaticDetails.Open(ArTapper.ArtworkToPlace);
         SetBarInActive();
     }
 
@@ -342,30 +364,41 @@ public class ArtworkUIManager : MonoBehaviour
             InformationHelpBar.SetActive(false);
     }
 
-    public void OpenDetailedInformation(ArtworkData artwork) 
+    public void OpenDetailedInformation<T>(T data) where T : FirebaseData
     {
-        artworkDetailsArea?.SetActive(true);
+        // Disable all detail areas initially
+        artworkDetailsArea?.SetActive(false);
         exhibitionDetailsArea?.SetActive(false);
         artistDetailsArea?.SetActive(false);
-        artworkDetailsPanel?.Fill(artwork);
-        if (Title) Title.text = artwork.title;
-        if (Description) Description.text = artwork.description;
-        if (Header) Header.text = artwork.title;
+
+        if (data is ArtworkData artwork)
+        {
+            artworkDetailsArea?.SetActive(true);
+            exhibitionDetailsArea?.SetActive(false);
+            artistDetailsArea?.SetActive(false);
+            artworkDetailsPanel?.Fill(artwork);
+            if (Title != null) Title.text = artwork.title;
+            if (Description != null) Description.text = artwork.description;
+            if (Header != null) Header.text = artwork.title;
+        }
+        else if (data is ExhibitionData exhibition)
+        {
+            exhibitionDetailsArea?.SetActive(true);
+            artworkDetailsArea?.SetActive(false);
+            artistDetailsArea?.SetActive(false);
+            exhibitionDetailsPanel.Fill(exhibition);
+        }
+        else if (data is ArtistData artist)
+        {
+            artistDetailsArea?.SetActive(true);
+            exhibitionDetailsArea?.SetActive(false);
+            artworkDetailsArea?.SetActive(false);
+            artistDetailsPanel.Fill(artist);
+        }
+        else
+        {
+            throw new ArgumentException($"Unsupported data type: {typeof(T).Name}", nameof(data));
+        }
     }
 
-    public void OpenDetailedInformation(ExhibitionData exhibition)
-    {
-        exhibitionDetailsArea.SetActive(true);
-        artworkDetailsArea.SetActive(false);
-        artistDetailsArea.SetActive(false);
-        exhibitionDetailsPanel.Fill(exhibition);
-    }
-    
-    public void OpenDetailedInformation(ArtistData artist)
-    {
-        artistDetailsArea.SetActive(true);
-        exhibitionDetailsArea.SetActive(false);
-        artworkDetailsArea.SetActive(false);
-        artistDetailsPanel.Fill(artist);
-    }
 }

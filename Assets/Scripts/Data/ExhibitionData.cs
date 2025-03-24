@@ -29,6 +29,8 @@ public class ExhibitionData : FirebaseData
     [FirestoreProperty] public Timestamp update_time { get; set; }
     public DateTime creation_date_time, update_date_time;
     
+    public List<string> artwork_ids { get; set; } = new List<string>();
+    
     private DataList loadedImages = new DataList();
     
     public async Task<List<Sprite>> GetAllImages()
@@ -41,13 +43,15 @@ public class ExhibitionData : FirebaseData
         
         // load all
         var allImages = new List<Sprite>();
+        bool save = false;
         foreach (var imageRef in exhibition_image_references)
         {
-            var spr = await loadedImages.Get(this, imageRef);
-            allImages.Add(spr);
+            var results = await loadedImages.Get(this, imageRef);
+            allImages.Add(results.sprite);
+            if (results.requiresSave) save = true;
         }
 
-        AppCache.SaveExhibitionsCache();
+        if (save) AppCache.SaveExhibitionsCache();
         
         return allImages;
     }
@@ -55,13 +59,16 @@ public class ExhibitionData : FirebaseData
     public async Task<List<Sprite>> GetImages(int count)
     {
         var allImages = new List<Sprite>();
+
+        bool save = false;
         for (int i = 0; i < Mathf.Clamp(exhibition_image_references.Count, 0, count); i++)
         {
-            var spr = await loadedImages.Get(this, exhibition_image_references[i]);
-            allImages.Add(spr);
+            var results = await loadedImages.Get(this, exhibition_image_references[i]);
+            allImages.Add(results.sprite);
+            if (results.requiresSave) save = true;
         }
         
-        AppCache.SaveExhibitionsCache();
+        if (save) AppCache.SaveExhibitionsCache();
 
         return allImages;
     }

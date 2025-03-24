@@ -37,7 +37,22 @@ public class ArtistContainer : MonoBehaviour
 
     private int GetArtistWorkCount()
     {
-        return FirebaseLoader.Artworks == null ? 0 : FirebaseLoader.Artworks.Count(artwork => artwork.artists.Contains(artist));
+        int works = 0;
+        foreach (var artwork in FirebaseLoader.Artworks)
+        {
+            if (artwork.artists.Contains(artist))
+            {
+                works++;
+                continue;
+            }
+
+            if (artwork.artists.Any(artistData => artistData.id == artist.id || artistData.title == artist.title))
+            {
+                works++;
+            }
+        }
+
+        return works;
     }
 
     private void OpenArtistPage()

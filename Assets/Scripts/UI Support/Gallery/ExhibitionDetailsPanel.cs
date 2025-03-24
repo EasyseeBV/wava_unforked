@@ -77,12 +77,10 @@ public class ExhibitionDetailsPanel : DetailsPanel
             Destroy(child.gameObject);
         }
 
-        Debug.Log("switching menu too " + menu);
         switch(menu)
         {
             case MenuNavigation.Artworks:
                 var artworks = await GetArtworks();
-                Debug.Log("got artworks: " + artworks.Count);
                 for (int i = 0; i < artworks.Count; i++)
                 {
                     ArtworkShower artwork = Instantiate(artworkShowerPrefab, layoutArea);
@@ -91,7 +89,6 @@ public class ExhibitionDetailsPanel : DetailsPanel
                 break;
             case MenuNavigation.Artists:
                 var artists = await GetArtists();
-                Debug.Log("got artist: " + artists.Count);
                 for (int i = 0; i < artists.Count; i++)
                 {
                     ArtistContainer container = Instantiate(artistContainer, layoutArea);
@@ -196,11 +193,18 @@ public class ExhibitionDetailsPanel : DetailsPanel
                 await FirebaseLoader.FillExhibitionArtworkData(exhibition);
             }
 
-            foreach (var artist in from artwork in exhibition.artworks from artist in artwork.artists where !artistsInArtworks.Contains(artist) select artist)
+            foreach (var artwork in exhibition.artworks)
             {
-                artistsInArtworks.Add(artist);
+                foreach (var artist in artwork.artists)
+                {
+                   if(!artistsInArtworks.Any(artistStored => artist.id == artistStored.id || artist.title == artistStored.title))
+                   {
+                       artistsInArtworks.Add(artist);
+                   }
+                }
             }
 
+            Debug.Log("Artist count: " + artistsInArtworks.Count);
             return artistsInArtworks;
         }
         catch (Exception e)
@@ -220,6 +224,7 @@ public class ExhibitionDetailsPanel : DetailsPanel
                 await FirebaseLoader.FillExhibitionArtworkData(exhibition);
             }
 
+            Debug.Log("Artwork count: " + exhibition.artworks.Count);
             return exhibition.artworks;
         }
         catch (Exception e)

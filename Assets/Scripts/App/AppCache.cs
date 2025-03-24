@@ -158,10 +158,11 @@ public static class AppCache
 
     public static async Task SaveExhibitionsCache()
     {
+        Debug.Log("Trying to save exhibition cache");
         try
         {
             await EnsureDirectoryExists(exhibitionDataCachePath);
-            List<ExhibitionDataHolder> holders = FirebaseLoader.Exhibitions.Select(exhibition => ExhibitionDataHolder.FromExhibitionData(exhibition)).ToList();
+            List<ExhibitionDataHolder> holders = FirebaseLoader.Exhibitions.Select(ExhibitionDataHolder.FromExhibitionData).ToList();
             ExhibitionDataHolderListWrapper wrapper = new ExhibitionDataHolderListWrapper { exhibitions = holders };
             string json = JsonUtility.ToJson(wrapper, true);
             await File.WriteAllTextAsync(exhibitionDataCachePath, json);

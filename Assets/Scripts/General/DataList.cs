@@ -11,7 +11,7 @@ public class DataList
     private Dictionary<string, Sprite> data = new Dictionary<string, Sprite>();
     private FirebaseData cachedFirebaseData;
     
-    public async Task<Sprite> Get(FirebaseData firebaseData, string key)
+    public async Task<(Sprite sprite, bool requiresSave)> Get(FirebaseData firebaseData, string key)
     {
         cachedFirebaseData = firebaseData;
         
@@ -20,20 +20,24 @@ public class DataList
     
         if (data.TryGetValue(fileName, out var sprite))
         {
-            return sprite;
+            return (sprite, false);
         }
 
         // Construct the local file path.
         string localPath = Path.Combine(AppCache.MediaFolder, fileName);
+        
+        bool requiresSave = false;
     
         // Check if the file is already cached locally. Otherwise, download it.
         if (!File.Exists(localPath))
         {
-            localPath = await FirebaseLoader.DownloadMedia(key);
+            var results = await FirebaseLoader.DownloadMedia(key);
+            localPath = results.localPath;
+            requiresSave = results.downloaded;
             if (string.IsNullOrEmpty(localPath) || !File.Exists(localPath))
             {
                 Debug.LogError($"Failed to obtain a valid file for key: {key}");
-                return null;
+                return (null, false);
             }
 
             if (!firebaseData.cached.Contains(localPath))
@@ -52,7 +56,7 @@ public class DataList
             if (!texture.LoadImage(imageData))
             {
                 Debug.LogError($"Failed to load image data from file: {localPath}");
-                return null;
+                return (null, false);
             }
         
             // Create a Sprite from the texture.
@@ -61,15 +65,13 @@ public class DataList
                 new Vector2(0.5f, 0.5f));
             // Cache the sprite.
             data.TryAdd(fileName, sprite);
-            return sprite;
+            return (sprite, requiresSave);
         }
         catch (Exception e)
         {
             Debug.LogError($"Error loading sprite from file {localPath}: {e.Message}");
-            return null;
+            return (null, false);
         }
-
-        return null;
     }
 
     public int Count() => data.Count;

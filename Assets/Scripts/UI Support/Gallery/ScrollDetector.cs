@@ -16,32 +16,23 @@ public class ScrollDetector : MonoBehaviour
 
     private void OnEnable()
     {
-        ArtworkUIManager.OnNewDocumentAdded += Unpause;
+        scrollRect.onValueChanged.AddListener(OnScrollChanged);
     }
 
     private void OnDisable()
     {
-        ArtworkUIManager.OnNewDocumentAdded -= Unpause;
+        scrollRect.onValueChanged.RemoveListener(OnScrollChanged);
     }
 
-    private void Update()
+    private void OnScrollChanged(Vector2 scrollPos)
     {
-        if (scrollRect == null || paused)
-            return;
-
         // For vertical scrolling, use verticalNormalizedPosition
         float currentScroll = scrollRect.verticalNormalizedPosition;
         float adjustedThreshold = 1f - scrollThreshold;
-        
+
         if (currentScroll <= adjustedThreshold)
         {
-            paused = true;
             ArtworkUIManager.Instance.AddNewDocument();
         }
-    }
-
-    private void Unpause()
-    {
-        paused = false;
     }
 }
