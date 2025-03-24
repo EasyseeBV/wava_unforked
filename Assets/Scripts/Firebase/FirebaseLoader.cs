@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -48,7 +49,7 @@ public class FirebaseLoader : MonoBehaviour
     
     private const int MAX_NOT_IN = 10;
     
-    // Start Up
+    // Start up
     public static event Action<string> OnStartUpEventProcessed;
     
     public static bool SetupComplete { get; private set; } = false;
@@ -94,6 +95,7 @@ public class FirebaseLoader : MonoBehaviour
 
                     await GetCollectionCountsAsync();
                     await AppCache.LoadLocalCaches();
+                    await CheckForCacheUpdates();
                     
                     Initialized = true;
                     OnFirestoreInitialized?.Invoke();
@@ -202,6 +204,66 @@ public class FirebaseLoader : MonoBehaviour
         OnStartUpEventProcessed?.Invoke(string.Empty);
 
         SetupComplete = true;
+    }
+
+    private async Task CheckForCacheUpdates()
+    {
+        // untested code
+        return;
+        
+        // Retrieve the last fetch time from PlayerPrefs.
+        // If it doesn't exist, default to the current time.
+        string lastFetchTimeStr = PlayerPrefs.GetString("lastFetchTime", DateTime.UtcNow.ToString("o"));
+        
+        // Convert the stored string back to a DateTime.
+        if (!DateTime.TryParse(lastFetchTimeStr, out DateTime lastFetchTime))
+        {
+            lastFetchTime = DateTime.UtcNow;
+        }
+        
+        // Convert the DateTime to a Firestore Timestamp.
+        Timestamp lastFetchTimestamp = Timestamp.FromDateTime(lastFetchTime);
+
+        // Create queries for each collection where 'update_time' is greater than the last fetch timestamp.
+        Query artworksQuery = _firestore.Collection("artworks").WhereGreaterThan("update_time", lastFetchTimestamp);
+        Query exhibitionsQuery = _firestore.Collection("exhibitions").WhereGreaterThan("update_time", lastFetchTimestamp);
+        Query artistsQuery = _firestore.Collection("artists").WhereGreaterThan("update_time", lastFetchTimestamp);
+
+        try
+        {
+            // Process artworks
+            QuerySnapshot artworksSnapshot = await artworksQuery.GetSnapshotAsync();
+            foreach (DocumentSnapshot doc in artworksSnapshot.Documents)
+            {
+                Debug.Log("Artwork updated: " + doc.Id);
+                // Update artwork
+            }
+
+            // Process exhibitions
+            QuerySnapshot exhibitionsSnapshot = await exhibitionsQuery.GetSnapshotAsync();
+            foreach (DocumentSnapshot doc in exhibitionsSnapshot.Documents)
+            {
+                Debug.Log("Exhibition updated: " + doc.Id);
+                // Update exhibition
+            }
+
+            // Process artists
+            QuerySnapshot artistsSnapshot = await artistsQuery.GetSnapshotAsync();
+            foreach (DocumentSnapshot doc in artistsSnapshot.Documents)
+            {
+                Debug.Log("Artist updated: " + doc.Id);
+                // Update artist
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Error fetching updates: " + ex.Message);
+        }
+        
+        // Finally, update the last fetch time to the current time (in ISO8601 format).
+        string newFetchTime = DateTime.UtcNow.ToString("o");
+        PlayerPrefs.SetString("lastFetchTime", newFetchTime);
+        PlayerPrefs.Save();
     }
     
 
