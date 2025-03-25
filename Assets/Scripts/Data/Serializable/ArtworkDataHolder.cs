@@ -15,7 +15,6 @@ public class ArtworkDataHolder
     public double latitude;
     public double longitude;
     public float max_distance;
-    public bool place_right;
     public string creation_time; // stored as ISO string
     public string update_time;   // stored as ISO string
     // Removed media_content string property
@@ -44,7 +43,6 @@ public class ArtworkDataHolder
         holder.latitude = artwork.latitude;
         holder.longitude = artwork.longitude;
         holder.max_distance = artwork.max_distance;
-        holder.place_right = artwork.place_right;
         holder.creation_time = artwork.creation_date_time.ToString("o");
         holder.update_time = artwork.update_date_time.ToString("o");
         holder.cache = new List<string>(artwork.cached);
@@ -83,7 +81,6 @@ public class ArtworkDataHolder
         artwork.latitude = holder.latitude;
         artwork.longitude = holder.longitude;
         artwork.max_distance = holder.max_distance;
-        artwork.place_right = holder.place_right;
         artwork.creation_date_time = DateTime.Parse(holder.creation_time);
         artwork.update_date_time = DateTime.Parse(holder.update_time);
         artwork.cached = new List<string>(holder.cache);

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 
 
 namespace Messy.Definitions
@@ -24,7 +23,7 @@ namespace Messy.Definitions
         public Sprite ARMapBackgroundImage;
         public List<Sprite> ArtworkImages;
 
-        public AssetReferenceGameObject ARObjectReference;
+        //public AssetReferenceGameObject ARObjectReference;
         public string AlternateScene;
         public bool PlayARObjectDirectly;
         public bool IsAudio;

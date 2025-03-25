@@ -74,8 +74,6 @@ public class ExhibitionDataHolder
     public static ExhibitionData FromHolder(ExhibitionDataHolder holder)
     {
         ExhibitionData exhibition = new ExhibitionData();
-        Debug.Log("--------------------");
-        Debug.Log("Loading in exhibition: " + holder.title);
         exhibition.title = holder.title;
         exhibition.description = holder.description;
         exhibition.artists = new List<ArtistData>();
@@ -90,13 +88,11 @@ public class ExhibitionDataHolder
         exhibition.artwork_ids = new List<string>(holder.artwork_ids);
         if (holder.artwork_ids != null)
         {
-            Debug.Log($"getting {holder.artwork_ids.Count} id's from holder ({holder.title})");
             foreach (var artworkId in holder.artwork_ids)
             {
                 exhibition.artworks.Add(FirebaseLoader.GetArtworkByID(artworkId));    
             }
         }
-        Debug.Log("resulted in artwork count: " + exhibition.artworks.Count);
         exhibition.year = holder.year;
         exhibition.location = holder.location;
         exhibition.exhibition_image_references = new List<string>(holder.exhibition_image_references);

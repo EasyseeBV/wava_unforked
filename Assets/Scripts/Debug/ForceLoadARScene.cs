@@ -19,7 +19,6 @@ public class ForceLoadARScene : MonoBehaviour
     public void StartAR(ArtworkData point)
     {
         ArTapper.ArtworkToPlace = point;
-        ArTapper.PlaceDirectly = point.place_right;
         ArTapper.DistanceWhenActivated = 1f;
 
         SceneManager.LoadSceneAsync("AR");

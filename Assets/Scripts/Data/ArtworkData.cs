@@ -27,8 +27,6 @@ public class ArtworkData : FirebaseData
     [FirestoreProperty] public double latitude { get; set; }
     [FirestoreProperty] public double longitude { get; set; }
     [FirestoreProperty] public float max_distance { get; set; }
-
-    [FirestoreProperty] public bool place_right { get; set; }
     
     // Read Only Data
     [FirestoreProperty] public Timestamp creation_time { get; set; }

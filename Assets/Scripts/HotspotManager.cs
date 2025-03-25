@@ -54,10 +54,7 @@ public class HotspotManager : MonoBehaviour
     public void Init(ArtworkData point) 
     {
         artwork = point;
-        if (artwork.place_right)
-            RightTitle.text = artwork.title;
-        else
-            LeftTitle.text = artwork.title;
+        LeftTitle.text = artwork.title;
 
         //EnableInfo(true);
         if (ConnectedExhibition != null)
@@ -122,10 +119,7 @@ public class HotspotManager : MonoBehaviour
 
     public void OnChangeGpsPosition(float distance) {
         _distance = distance;
-        if (artwork.place_right)
-            RightDistance.text = string.Format("{0}km", distance.ToString("F1"));
-        else
-            LeftDistance.text = string.Format("{0}km", distance.ToString("F1"));
+        LeftDistance.text = string.Format("{0}km", distance.ToString("F1"));
 
         if (CanShow && !IsClose()) {
             CanShow = false;

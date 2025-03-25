@@ -10,7 +10,6 @@ using Unity.XR.CoreUtils;
 using UnityEngine.EventSystems;
 using UnityEngine.Networking;
 using UnityEngine.Rendering;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.Serialization;
 using UnityEngine.Video;
 using UnityEngine.Events;

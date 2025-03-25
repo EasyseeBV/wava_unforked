@@ -208,54 +208,167 @@ public class FirebaseLoader : MonoBehaviour
 
     private async Task CheckForCacheUpdates()
     {
-        // Retrieve the last fetch time from PlayerPrefs.
-        // If it doesn't exist, default to the current time.
+        Debug.Log("Checking for cache updates...");
+        
         string lastFetchTimeStr = PlayerPrefs.GetString("lastFetchTime", DateTime.UtcNow.ToString("o"));
         
-        // Convert the stored string back to a DateTime.
         if (!DateTime.TryParse(lastFetchTimeStr, out DateTime lastFetchTime))
         {
             lastFetchTime = DateTime.UtcNow;
         }
         
-        // Convert the DateTime to a Firestore Timestamp.
         Timestamp lastFetchTimestamp = Timestamp.FromDateTime(lastFetchTime);
 
-        // Create queries for each collection where 'update_time' is greater than the last fetch timestamp.
         Query artworksQuery = _firestore.Collection("artworks").WhereGreaterThan("update_time", lastFetchTimestamp);
         Query exhibitionsQuery = _firestore.Collection("exhibitions").WhereGreaterThan("update_time", lastFetchTimestamp);
         Query artistsQuery = _firestore.Collection("artists").WhereGreaterThan("update_time", lastFetchTimestamp);
 
+        int updated = 0;
+        
         try
         {
-            // Process artworks
-            QuerySnapshot artworksSnapshot = await artworksQuery.GetSnapshotAsync();
-            foreach (DocumentSnapshot doc in artworksSnapshot.Documents)
-            {
-                Debug.Log("Artwork scheduled for update: " + doc.Id);
-                // Update artwork
-            }
-
-            // Process exhibitions
-            QuerySnapshot exhibitionsSnapshot = await exhibitionsQuery.GetSnapshotAsync();
-            foreach (DocumentSnapshot doc in exhibitionsSnapshot.Documents)
-            {
-                Debug.Log("Exhibition scheduled for update: " + doc.Id);
-                // Update exhibition
-            }
-
             // Process artists
+            OnStartUpEventProcessed?.Invoke("Updating artist cache...");
             QuerySnapshot artistsSnapshot = await artistsQuery.GetSnapshotAsync();
             foreach (DocumentSnapshot doc in artistsSnapshot.Documents)
             {
+                updated++;
                 Debug.Log("Artist scheduled for update: " + doc.Id);
-                // Update artist
+                
+                if (ArtistsMap.TryGetValue(doc.Id, out var artistStored))
+                {
+                    // Update existing entry
+                    ArtistData artist = doc.ConvertTo<ArtistData>();
+                    artistStored.title = artist.title;
+                    artistStored.description = artist.description;
+                    artistStored.location = artist.location;
+                    artistStored.link = artist.link;
+                    artistStored.icon = artist.icon;
+                    
+                    artistStored.creation_time = artist.creation_time;
+                    artistStored.update_time = artist.update_time;
+                    
+                    artistStored.creation_date_time = artist.creation_time.ToDateTime();
+                    artistStored.update_date_time = artist.update_time.ToDateTime();
+                    
+                    await AppCache.SaveArtistsCache();
+                }
+                else
+                {
+                    await ReadArtistDocument(doc);
+                    await AppCache.SaveArtistsCache();
+                }
+            }
+            
+            // Process artworks
+            OnStartUpEventProcessed?.Invoke("Updating artwork cache...");
+            QuerySnapshot artworksSnapshot = await artworksQuery.GetSnapshotAsync();
+            foreach (DocumentSnapshot doc in artworksSnapshot.Documents)
+            {
+                updated++;
+                Debug.Log("Artwork scheduled for update: " + doc.Id);
+
+                if (ArtworksMap.TryGetValue(doc.Id, out var artworkStored))
+                {
+                    // Update existing entry
+                    ArtworkData artwork = doc.ConvertTo<ArtworkData>();
+                    artworkStored.title = artwork.title;
+                    artworkStored.description = artwork.description;
+                    if (artworkStored.artist_references.Count > 0) artworkStored.artist_references = new List<DocumentReference>(artwork.artist_references);
+                    artworkStored.artists.Clear();
+                    foreach (var documentReference in artwork.artist_references)
+                    {
+                        artworkStored.artists.Add(await ReadArtistDocumentReference(documentReference));
+                    }
+                    artworkStored.year = artwork.year;
+                    artworkStored.location = artwork.location;
+                    artworkStored.published = artwork.published;
+                    
+                    artworkStored.artwork_image_references = new List<string>(artwork.artwork_image_references);
+                    
+                    artworkStored.latitude = artwork.latitude;
+                    artworkStored.longitude = artwork.longitude;
+                    artworkStored.max_distance = artwork.max_distance;
+                    artworkStored.creation_time = artwork.creation_time;
+                    artworkStored.update_time = artwork.update_time;
+                    
+                    artworkStored.creation_date_time = artwork.creation_time.ToDateTime();
+                    artworkStored.update_date_time = artwork.update_time.ToDateTime();
+
+                    artworkStored.content_list = new List<MediaContentData>(artwork.content_list);
+                    
+                    artworkStored.preset = artwork.preset;
+                    artworkStored.alt_scene = artwork.alt_scene;
+                    
+                    await AppCache.SaveArtworksCache();
+                }
+                else
+                {
+                    await ReadArtworkDocument(doc);
+                    await AppCache.SaveArtworksCache();
+                }
+            }
+
+            // Process exhibitions
+            OnStartUpEventProcessed?.Invoke("Updating exhibition cache...");
+            QuerySnapshot exhibitionsSnapshot = await exhibitionsQuery.GetSnapshotAsync();
+            foreach (DocumentSnapshot doc in exhibitionsSnapshot.Documents)
+            {
+                updated++;
+                Debug.Log("Exhibition scheduled for update: " + doc.Id);
+                
+                if (ExhibitionsMap.TryGetValue(doc.Id, out var exhibitionStored))
+                {
+                    // Update existing entry
+                    ExhibitionData exhibition = doc.ConvertTo<ExhibitionData>();
+                    exhibitionStored.title = exhibition.title;
+                    exhibitionStored.description = exhibition.description;
+                    
+                    if (exhibitionStored.artist_references.Count > 0) exhibitionStored.artist_references = new List<DocumentReference>(exhibition.artist_references);
+                    exhibitionStored.artists.Clear();
+                    foreach (var documentReference in exhibition.artist_references)
+                    {
+                        exhibitionStored.artists.Add(await ReadArtistDocumentReference(documentReference));
+                    }
+                    
+                    exhibitionStored.artwork_ids.Clear();
+                    foreach (var documentReference in exhibition.artwork_references)
+                    {
+                        exhibitionStored.artwork_ids.Add(documentReference.Id);
+                        exhibitionStored.artworks.Add(await ReadArtworkDocument(await documentReference.GetSnapshotAsync()));
+                    }
+                    
+                    exhibitionStored.year = exhibition.year;
+                    exhibitionStored.location = exhibition.location;
+                    exhibitionStored.published = exhibition.published;
+                    exhibitionStored.color = exhibition.color;
+                    exhibitionStored.exhibition_image_references = new List<string>(exhibition.exhibition_image_references);
+                    
+                    exhibitionStored.publish_date = exhibition.publish_date;
+                    exhibitionStored.creation_time = exhibition.creation_time;
+                    exhibitionStored.update_time = exhibition.update_time;
+                    
+                    exhibitionStored.creation_date_time = exhibition.creation_time.ToDateTime();
+                    exhibitionStored.update_date_time = exhibition.update_time.ToDateTime();
+                    
+                    await AppCache.SaveExhibitionsCache();
+                }
+                else
+                {
+                    await ReadExhibitionDocument(doc);
+                    await AppCache.SaveExhibitionsCache();
+                }
+
             }
         }
         catch (Exception ex)
         {
             Debug.LogError("Error fetching updates: " + ex.Message);
         }
+        
+        
+        if (updated > 0) Debug.Log($"Updated [{updated}] local cached data");
+        else Debug.Log("Local cache was already up to date");
         
         // Finally, update the last fetch time to the current time (in ISO8601 format).
         string newFetchTime = DateTime.UtcNow.ToString("o");
