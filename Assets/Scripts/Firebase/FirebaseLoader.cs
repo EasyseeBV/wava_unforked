@@ -208,9 +208,6 @@ public class FirebaseLoader : MonoBehaviour
 
     private async Task CheckForCacheUpdates()
     {
-        // untested code
-        return;
-        
         // Retrieve the last fetch time from PlayerPrefs.
         // If it doesn't exist, default to the current time.
         string lastFetchTimeStr = PlayerPrefs.GetString("lastFetchTime", DateTime.UtcNow.ToString("o"));
@@ -235,7 +232,7 @@ public class FirebaseLoader : MonoBehaviour
             QuerySnapshot artworksSnapshot = await artworksQuery.GetSnapshotAsync();
             foreach (DocumentSnapshot doc in artworksSnapshot.Documents)
             {
-                Debug.Log("Artwork updated: " + doc.Id);
+                Debug.Log("Artwork scheduled for update: " + doc.Id);
                 // Update artwork
             }
 
@@ -243,7 +240,7 @@ public class FirebaseLoader : MonoBehaviour
             QuerySnapshot exhibitionsSnapshot = await exhibitionsQuery.GetSnapshotAsync();
             foreach (DocumentSnapshot doc in exhibitionsSnapshot.Documents)
             {
-                Debug.Log("Exhibition updated: " + doc.Id);
+                Debug.Log("Exhibition scheduled for update: " + doc.Id);
                 // Update exhibition
             }
 
@@ -251,7 +248,7 @@ public class FirebaseLoader : MonoBehaviour
             QuerySnapshot artistsSnapshot = await artistsQuery.GetSnapshotAsync();
             foreach (DocumentSnapshot doc in artistsSnapshot.Documents)
             {
-                Debug.Log("Artist updated: " + doc.Id);
+                Debug.Log("Artist scheduled for update: " + doc.Id);
                 // Update artist
             }
         }

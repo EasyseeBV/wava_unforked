@@ -24,6 +24,8 @@ public class ExhibitionData : FirebaseData
     
     [FirestoreProperty] public List<string> exhibition_image_references { get; set; } = new List<string>();
     
+    [FirestoreProperty] public Timestamp publish_date { get; set; }
+    
     // Read Only Data
     [FirestoreProperty] public Timestamp creation_time { get; set; }
     [FirestoreProperty] public Timestamp update_time { get; set; }
