@@ -309,7 +309,7 @@ public class ArTapper : MonoBehaviour
             var extension = Path.GetExtension(fileName);
             containsVideo = false;
             
-            if (extension is ".mp4" or ".mvk") // video formats
+            if (extension is ".mp4" or ".mvk" or ".mov") // video formats
             {
                 Debug.Log($"content [{ArtworkToPlace.title}] contained a media piece");
                 Debug.LogWarning("Content positioning, scale and rotation still needs to be adjusted");

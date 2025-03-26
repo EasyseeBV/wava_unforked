@@ -7,6 +7,7 @@ using Firebase.Extensions;
 using Firebase.Firestore;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Vector3 = UnityEngine.Vector3;
@@ -49,6 +50,13 @@ public class DeveloperModeARView : MonoBehaviour
     [SerializeField] private TMP_InputField xInputField;
     [SerializeField] private TMP_InputField yInputField;
     [SerializeField] private TMP_InputField zInputField;
+
+    [Header("Load Artworks")]
+    [SerializeField] private Button showArtworkButton;
+    [SerializeField] private Button hideArtworkButton;
+    [SerializeField] private GameObject artworkContent;
+    [SerializeField] private Transform artworkLayoutArea;
+    [SerializeField] private DeveloperLoadArtworkButton loadArtworkButtonPrefab;
     
     private DeveloperButton cachedRecentlyUsedButton = null;
     private ARTransformView currentView;
@@ -63,7 +71,7 @@ public class DeveloperModeARView : MonoBehaviour
     {
         content.SetActive(false);
 
-        if (!AppSettings.DeveloperMode)
+        if (!AppSettings.DeveloperMode || ArTapper.ArtworkToPlace == null)
         {
             enableDeveloperWindowButton.gameObject.SetActive(false);
             return;
@@ -76,7 +84,7 @@ public class DeveloperModeARView : MonoBehaviour
             devButton.AddOnClickListener(DeveloperButtonClicked);
         }
         
-        enableDeveloperWindowButton.onClick.AddListener(() => EnableDeveloperWindow(true));
+        enableDeveloperWindowButton.onClick.AddListener(() => EnableDeveloperWindow(!content.activeInHierarchy));
         contentViewButton.onClick.AddListener(() =>
         {
             contentViewContent.SetActive(!contentViewContent.activeInHierarchy);
@@ -106,7 +114,21 @@ public class DeveloperModeARView : MonoBehaviour
         xInputField.onEndEdit.AddListener(value => WriteData(float.Parse(value), ARAxis.X));
         yInputField.onEndEdit.AddListener(value => WriteData(float.Parse(value), ARAxis.Y));
         zInputField.onEndEdit.AddListener(value => WriteData(float.Parse(value), ARAxis.Z));
-
+        
+        showArtworkButton.onClick.AddListener(() => artworkContent.SetActive(!artworkContent.activeInHierarchy));
+        hideArtworkButton.onClick.AddListener(() => artworkContent.SetActive(false));
+        
+        foreach (var artwork in FirebaseLoader.Artworks)
+        {
+            var artworkButton = Instantiate(loadArtworkButtonPrefab, artworkLayoutArea);
+            artworkButton.gameObject.SetActive(true);
+            artworkButton.Populate(artwork.title, () =>
+            {
+                ArTapper.ArtworkToPlace = artwork;
+                SceneManager.LoadSceneAsync("AR");
+            });
+        }
+        
         developerSaveButton.SubscribeSaveClick(OnSave);
     }
 
@@ -121,7 +143,7 @@ public class DeveloperModeARView : MonoBehaviour
         editedTransformDatas.Clear();
 
         if (!state) return;
-
+        
         foreach (var data in ArTapper.ArtworkToPlace.content_list.Select(mediaContentData => mediaContentData.transforms).Select(originalData => new TransformsData()
                  {
                      position_offset = new PositionOffset()
@@ -146,6 +168,7 @@ public class DeveloperModeARView : MonoBehaviour
         {
             editedTransformDatas.Add(data);
         }
+        
     }
 
     private void DeveloperButtonClicked(ARTransformView view, DeveloperButton devButton)
@@ -239,7 +262,7 @@ public class DeveloperModeARView : MonoBehaviour
                 throw new ArgumentOutOfRangeException();
         }
         
-        if(obj) obj.transform.rotation = Quaternion.Euler(editedTransformDatas[viewNumber].rotation.x_rotation, editedTransformDatas[viewNumber].rotation.y_rotation,editedTransformDatas[viewNumber].rotation.z_rotation);
+        if(obj) obj.transform.rotation = Quaternion.Euler(editedTransformDatas[viewNumber].rotation.x_rotation, editedTransformDatas[viewNumber].rotation.y_rotation, editedTransformDatas[viewNumber].rotation.z_rotation);
     }
 
     private void OnSave()
@@ -251,6 +274,7 @@ public class DeveloperModeARView : MonoBehaviour
 
         for (int i = 0; i < ArTapper.ArtworkToPlace.content_list.Count; i++)
         {
+            Debug.Log($"Rotations: x{editedTransformDatas[i].rotation.x_rotation} y{editedTransformDatas[i].rotation.y_rotation} z{editedTransformDatas[i].rotation.z_rotation}");
             MediaContentData mediaContentData = new MediaContentData()
             {
                 media_content = ArTapper.ArtworkToPlace.content_list[i].media_content,
@@ -259,8 +283,8 @@ public class DeveloperModeARView : MonoBehaviour
                     position_offset = new PositionOffset()
                     {
                         x_offset = editedTransformDatas[i].position_offset.x_offset,
-                        y_offset = editedTransformDatas[i].position_offset.x_offset,
-                        z_offset = editedTransformDatas[i].position_offset.x_offset,
+                        y_offset = editedTransformDatas[i].position_offset.y_offset,
+                        z_offset = editedTransformDatas[i].position_offset.z_offset,
                     },
                     scale = new Scale()
                     {
@@ -282,7 +306,8 @@ public class DeveloperModeARView : MonoBehaviour
 
         Dictionary<string, object> updates = new Dictionary<string, object>()
         {
-            { "content_list", newContentList}
+            { "content_list", newContentList },
+            { "update_time", Timestamp.FromDateTime(DateTime.Now) }
         };
         
         documentReference.UpdateAsync(updates).ContinueWithOnMainThread(task =>
