@@ -59,7 +59,6 @@ public class HotspotManager : MonoBehaviour
         //EnableInfo(true);
         if (ConnectedExhibition != null)
         {
-            Debug.Log("setting a color: " + ConnectedExhibition.color.ToLower());
             Color parsedColor = Color.white; // default color
             switch (ConnectedExhibition.color.ToLower())
             {

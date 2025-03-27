@@ -572,13 +572,13 @@ public class FirebaseLoader : MonoBehaviour
     
     public static async Task LoadRemainingArtists()
     {
-        Debug.Log("Trying to load all artists");
-
         if (ArtistCollectionFull)
         {
-            Debug.Log("... but all artists were already loaded");
+            Debug.Log("Trying to load all artists... but all artists were already loaded");
             return;
         }
+        
+        Debug.Log("Trying to load all artists");
 
         try
         {
@@ -657,15 +657,15 @@ public class FirebaseLoader : MonoBehaviour
     
     public static async Task LoadRemainingArtworks(Action onComplete)
     {
-        Debug.Log("Trying to load all artworks");
-
         if (ArtworkCollectionFull)
         {
-            Debug.Log("... but all artworks were already loaded");
+            Debug.Log("Trying to load all artworks... but all artworks were already loaded");
             onComplete?.Invoke();
             return;
         }
-
+        
+        Debug.Log("Trying to load all artworks");
+        
         try
         {
             CollectionReference artworksRef = _firestore.Collection("artworks");
@@ -744,13 +744,13 @@ public class FirebaseLoader : MonoBehaviour
 
     public static async Task LoadRemainingExhibitions(bool save = true)
     {
-        Debug.Log("Trying to load remaining exhibitions...");
-        
         if (ExhibitionCollectionFull)
         {
-            Debug.Log("... but all exhibitions were already loaded");
+            Debug.Log("Trying to load remaining exhibitions... but all exhibitions were already loaded");
             return;
         }
+        
+        Debug.Log("Trying to load remaining exhibitions...");
 
         try
         {
