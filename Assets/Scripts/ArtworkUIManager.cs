@@ -152,7 +152,6 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitArtworks() 
     {
-        Debug.Log("init artworks");
         ClearStage();
         ShowDefaultLayoutArea(true);
         ChangeMenuNavigation(MenuNavigation.Artworks);
@@ -182,7 +181,6 @@ public class ArtworkUIManager : MonoBehaviour
             ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
             shower.Init(artwork);
             CachedGalleryDisplays.Add(shower);
-            Debug.Log($"Added an Artwork [{artwork.title}] to {currentMenuNavigation.ToString()}");
         }
     }
 
