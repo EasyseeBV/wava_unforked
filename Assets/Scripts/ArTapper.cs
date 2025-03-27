@@ -15,6 +15,8 @@ using UnityEngine.Video;
 using UnityEngine.Events;
 using System.Linq;
 using Messy.Definitions;
+using TriLibCore.Extensions;
+using TriLibCore.General;
 using UnityEngine.XR.ARSubsystems;
 
 public class ArTapper : MonoBehaviour
@@ -288,9 +290,9 @@ public class ArTapper : MonoBehaviour
         }
     }
     
-    private void LoadContent()
+    private async void LoadContent()
     {
-        if (ArtworkToPlace?.content_list == null || ArtworkToPlace.content_list.Count == 0)
+        if ((ArtworkToPlace?.content_list == null || ArtworkToPlace.content_list.Count == 0) && string.IsNullOrEmpty(ArtworkToPlace?.preset))
         {
             Debug.LogWarning("Artwork to place is missing or there is no content available.");
             return;
@@ -308,6 +310,26 @@ public class ArTapper : MonoBehaviour
             string fileName = Path.GetFileName(decodedPath);
             var extension = Path.GetExtension(fileName);
             containsVideo = false;
+            bool storedLocal = false;
+
+            string localPath = content.media_content;
+            string local = Path.Combine(AppCache.ContentFolder, fileName);
+            if (!File.Exists(local))
+            {
+                var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content);
+                localPath = results.localPath;
+                if (!string.IsNullOrEmpty(localPath) && File.Exists(localPath))
+                {
+                    Debug.Log("Content was downloaded and stored locally");
+                    storedLocal = true;
+                }
+            }
+            else if (File.Exists(local))
+            {
+                localPath = local;
+                storedLocal = true;
+                Debug.Log("Content was found locally");
+            }
             
             if (extension is ".mp4" or ".mvk" or ".mov") // video formats
             {
@@ -315,7 +337,7 @@ public class ArTapper : MonoBehaviour
                 Debug.LogWarning("Content positioning, scale and rotation still needs to be adjusted");
                 
                 containsVideo = true;
-                arObject.Add(content, player =>
+                arObject.Add(content, localPath, player =>
                 {
                     Debug.Log("Video prepared");
                     contentLoadedCount++;
@@ -325,51 +347,89 @@ public class ArTapper : MonoBehaviour
             else if (extension is ".mp3")
             {
                 Debug.Log($"content [{ArtworkToPlace.title}] contained an audio piece");
-                StartCoroutine(DownloadAudioClip(content.media_content));
+                StartCoroutine(DownloadAudioClip(localPath));
             }
             else if (extension is ".fbx" or ".obj" or ".gltf" or ".gltf2") // model format
             {
-                var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
-                
-                Debug.Log("attempting to download: " + content.media_content);
-                
-                var webRequest = AssetDownloader.CreateWebRequest(content.media_content);
+                if (storedLocal)
+                {
+                    var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, false);
+                    assetLoaderOptions.AnimationType = AnimationType.Legacy;
 
-                var i1 = i;
-                AssetDownloader.LoadModelFromUri(
-                    webRequest,
-                    onLoad: OnLoad,
-                    onMaterialsLoad: c => { OnMaterialsLoad(c, content, i1); },
-                    onProgress: OnProgress,
-                    onError: OnError,
-                    wrapperGameObject: null,
-                    assetLoaderOptions: assetLoaderOptions,
-                    fileExtension: extension
-                );
+                    Debug.Log("attempting to load local model file: " + fileName);
+
+                    // Load the model from the local file path instead of downloading it.
+                    var i1 = i;
+                    AssetLoader.LoadModelFromFile(
+                        path: localPath,
+                        onLoad: OnLoad,
+                        onMaterialsLoad: c => { OnMaterialsLoad(c, content, i1); },
+                        onProgress: OnProgress,
+                        onError: OnError,
+                        wrapperGameObject: null,
+                        assetLoaderOptions: assetLoaderOptions
+                    );
+                }
+                else
+                {
+                    var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
+                    assetLoaderOptions.AnimationType = AnimationType.Legacy;
+                    
+                    Debug.Log("attempting to download model: " + fileName);
+                    
+                    var webRequest = AssetDownloader.CreateWebRequest(content.media_content);
+
+                    var i1 = i;
+                    AssetDownloader.LoadModelFromUri(
+                        webRequest,
+                        onLoad: OnLoad,
+                        onMaterialsLoad: c => { OnMaterialsLoad(c, content, i1); },
+                        onProgress: OnProgress,
+                        onError: OnError,
+                        wrapperGameObject: null,
+                        assetLoaderOptions: assetLoaderOptions,
+                        fileExtension: extension
+                    );
+                }
             }
             else if (extension is ".png" or ".jpg" or ".jpeg")
             {
                 Debug.Log($"content [{ArtworkToPlace.title}] contained an image piece");
-                StartCoroutine(DownloadImageAsSprite(content.media_content, content, i));
-            }
-            else if (!string.IsNullOrEmpty(ArtworkToPlace.preset) && ArtworkToPlace.preset != "None")
-            {
-                if (ArtworkToPlace.preset == "Bird Animation")
-                {
-                    var birdObj = Instantiate(bird);
-                    arObject.Add(birdObj);
-                }
-                else if (ArtworkToPlace.preset == "Coin Clicker")
-                {
-                    var coinObj = Instantiate(coin);
-                    arObject.Add(coinObj);
-                }
+                StartCoroutine(DownloadImageAsSprite(localPath, content, i));
             }
             else
             {
                 Debug.LogError($"Could not load any media from the file format: {extension}");
                 contentTotalCount--;
             }
+        }
+        
+        if (!string.IsNullOrEmpty(ArtworkToPlace.preset) && ArtworkToPlace.preset != "None")
+        {
+            Debug.Log("Loading a preset: " + ArtworkToPlace.preset);
+                
+            switch (ArtworkToPlace.preset)
+            {
+                case "Bird Animation":
+                {
+                    var birdObj = Instantiate(bird, Vector3.zero, Quaternion.identity);
+                    arObject.Add(birdObj);
+                    contentDict.TryAdd(contentDict.Count, birdObj);
+                    contentLoadedCount++;
+                    break;
+                }
+                case "Coin Clicker":
+                {
+                    var coinObj = Instantiate(coin, Vector3.zero, Quaternion.identity);
+                    arObject.Add(coinObj);
+                    contentDict.TryAdd(contentDict.Count, coinObj);
+                    contentLoadedCount++;
+                    break;
+                }
+            }
+                
+            if (contentLoadedCount >= contentTotalCount)
+                allContentLoaded = true;
         }
     }
     

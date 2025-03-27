@@ -31,7 +31,7 @@ public class DataList
         // Check if the file is already cached locally. Otherwise, download it.
         if (!File.Exists(localPath))
         {
-            var results = await FirebaseLoader.DownloadMedia(key);
+            var results = await FirebaseLoader.DownloadMedia(AppCache.MediaFolder, key);
             localPath = results.localPath;
             requiresSave = results.downloaded;
             if (string.IsNullOrEmpty(localPath) || !File.Exists(localPath))

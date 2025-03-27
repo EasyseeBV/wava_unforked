@@ -1179,7 +1179,7 @@ public class FirebaseLoader : MonoBehaviour
 
     #region Downloading Media
 
-    public static async Task<(string localPath, bool downloaded)> DownloadMedia(string path)
+    public static async Task<(string localPath, bool downloaded)> DownloadMedia(string storagePath, string path)
     {
         if (string.IsNullOrEmpty(path))
         {
@@ -1190,9 +1190,9 @@ public class FirebaseLoader : MonoBehaviour
         try
         {
             // Ensure the media folder exists
-            if (!Directory.Exists(AppCache.MediaFolder))
+            if (!Directory.Exists(storagePath))
             {
-                Directory.CreateDirectory(AppCache.MediaFolder);
+                Directory.CreateDirectory(storagePath);
             }
 
             // Determine file name from the URL
@@ -1205,7 +1205,7 @@ public class FirebaseLoader : MonoBehaviour
                 fileName = Guid.NewGuid().ToString() + ".png";
             }
 
-            string localPath = Path.Combine(AppCache.MediaFolder, fileName);
+            string localPath = Path.Combine(storagePath, fileName);
 
             // Optionally check if the file already exists
             if (File.Exists(localPath))
@@ -1230,6 +1230,8 @@ public class FirebaseLoader : MonoBehaviour
 
         return (string.Empty, false);
     }
+    
+    
 
     #endregion
 }

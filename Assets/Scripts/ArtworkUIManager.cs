@@ -175,11 +175,14 @@ public class ArtworkUIManager : MonoBehaviour
         {
             // guard clause to avoid populating in the incorrect menu or scene
             if (currentMenuNavigation != MenuNavigation.Artworks || currentSceneName != SceneManager.GetActiveScene().name) return;
-            
             await artwork.GetAllImages();
+            // double guard
+            if (currentMenuNavigation != MenuNavigation.Artworks || currentSceneName != SceneManager.GetActiveScene().name) return;
+            
             ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
             shower.Init(artwork);
             CachedGalleryDisplays.Add(shower);
+            Debug.Log($"Added an Artwork [{artwork.title}] to {currentMenuNavigation.ToString()}");
         }
     }
 

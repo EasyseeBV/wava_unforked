@@ -82,17 +82,19 @@ public class ARObject : MonoBehaviour
     public void Add(GameObject obj)
     {
         showPreset = true;
-        presetObject = obj;
+        obj.transform.SetParent(placementParent, false);
         obj.SetActive(false);
+        Debug.Log("Added obj", obj);
+        presetObject = obj;
     }
 
     // Adding Video
-    public void Add(MediaContentData mediaContentData, Action<VideoPlayer> onComplete)
+    public void Add(MediaContentData mediaContentData, string url, Action<VideoPlayer> onComplete)
     {
         Debug.Log("Adding and preparing video...");
         var player = Instantiate(videoPlayer, videoPlacementArea);
         videoPlayers.Add(player);
-        player.url = mediaContentData.media_content;
+        player.url = url;
         player.Prepare();
         
         // Apply position offset
@@ -176,13 +178,13 @@ public class ARObject : MonoBehaviour
 
     public void Show()
     {
+        content.SetActive(true);
+        
         if (showPreset)
         {
+            Debug.Log("showing preset: " + presetObject.name, presetObject);
             presetObject.SetActive(true);
-            return;
         }
-        
-        content.SetActive(true);
         
         foreach (var vp in videoPlayers)
         {
