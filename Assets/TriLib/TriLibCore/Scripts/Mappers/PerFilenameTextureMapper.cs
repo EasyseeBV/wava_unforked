@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using TriLibCore.Utils;
+using UnityEngine;
 
 namespace TriLibCore.Mappers
 {
@@ -8,6 +9,7 @@ namespace TriLibCore.Mappers
     /// whose name matches the filename of the source model. The search is performed in the directory
     /// where the model file is located.
     /// </summary>
+    [CreateAssetMenu(menuName = "TriLib/Mappers/Texture/Per Filename Texture Mapper")]
     public class PerFilenameTextureMapper : TextureMapper
     {
         /// <summary>
@@ -37,7 +39,7 @@ namespace TriLibCore.Mappers
             var directory = FileUtils.GetFileDirectory(textureLoadingContext.Context.Filename);
             if (Directory.Exists(directory))
             {
-                var modelShortFilename = FileUtils.GetShortFilename(textureLoadingContext.Context.Filename).ToLowerInvariant();
+                var modelShortFilename = FileUtils.GetShortFilename(textureLoadingContext.Context.Filename).Trim().ToLowerInvariant();
                 var files = Directory.GetFiles(directory);
                 foreach (var file in files)
                 {
@@ -46,7 +48,7 @@ namespace TriLibCore.Mappers
                         continue;
                     }
 
-                    var shortFilename = FileUtils.GetShortFilename(file).ToLowerInvariant();
+                    var shortFilename = FileUtils.GetShortFilename(file).Trim().ToLowerInvariant();
                     if (modelShortFilename == shortFilename)
                     {
                         textureLoadingContext.Stream = File.OpenRead(file);

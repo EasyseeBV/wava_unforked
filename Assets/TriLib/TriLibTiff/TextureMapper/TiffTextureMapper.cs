@@ -1,6 +1,7 @@
 using System;
 using TriLibCore.Mappers;
 using TriLibCore.Textures;
+using UnityEngine;
 
 namespace TriLibCore.Tiff
 {
@@ -10,6 +11,8 @@ namespace TriLibCore.Tiff
     /// <remarks>
     /// Changelog: 10/22/2024 - Implemented ReadRGBAImageOriented which is guaranteed to load the correct data in any TIFF configuration.
     /// </remarks>
+
+    [CreateAssetMenu(menuName = "TriLib/Mappers/Texture/Tiff Texture Mapper")]
     public class TiffTextureMapper : TextureMapper
     {
         /// <summary>

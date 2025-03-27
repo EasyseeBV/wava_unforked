@@ -13,6 +13,8 @@ namespace TriLibCore.Mappers
     /// to find one whose short filename matches the given <paramref name="originalFilename"/>.
     /// If a match is found, the file’s stream is returned, along with its full name as the final path.
     /// </summary>
+
+    [CreateAssetMenu(menuName = "TriLib/Mappers/External Data/File Picker External Data Mapper")]
     public class FilePickerExternalDataMapper : ExternalDataMapper
     {
         /// <inheritdoc />
@@ -23,7 +25,7 @@ namespace TriLibCore.Mappers
                 var itemsWithStream = CustomDataHelper.GetCustomData<IList<ItemWithStream>>(assetLoaderContext.CustomData);
                 if (itemsWithStream != null)
                 {
-                    var shortFileName = FileUtils.GetShortFilename(originalFilename).ToLowerInvariant();
+                    var shortFileName = FileUtils.GetShortFilename(originalFilename).Trim().ToLowerInvariant();
                     foreach (var itemWithStream in itemsWithStream)
                     {
                         if (!itemWithStream.HasData)
@@ -31,7 +33,7 @@ namespace TriLibCore.Mappers
                             continue;
                         }
 
-                        var checkingFileShortName = FileUtils.GetShortFilename(itemWithStream.Name).ToLowerInvariant();
+                        var checkingFileShortName = FileUtils.GetShortFilename(itemWithStream.Name).Trim().ToLowerInvariant();
                         if (shortFileName == checkingFileShortName)
                         {
                             finalPath = itemWithStream.Name;

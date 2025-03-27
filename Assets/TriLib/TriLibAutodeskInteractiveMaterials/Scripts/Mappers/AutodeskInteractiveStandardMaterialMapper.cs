@@ -73,5 +73,10 @@ namespace TriLibCore.Mappers
             }
             yield break;
         }
+
+        public override string GetGlossinessOrRoughnessName(MaterialMapperContext materialMapperContext)
+        {
+            return "_Glossiness";
+        }
     }
 }

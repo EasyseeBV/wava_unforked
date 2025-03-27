@@ -2,6 +2,7 @@
 using System.IO;
 using ICSharpCode.SharpZipLib.Zip;
 using TriLibCore.Utils;
+using UnityEngine;
 
 namespace TriLibCore.Mappers
 {
@@ -11,6 +12,7 @@ namespace TriLibCore.Mappers
     /// for an entry whose short filename matches the specified <paramref name="originalFilename"/>.
     /// If a match is found, it opens a stream for that Zip entry.
     /// </summary>
+    [CreateAssetMenu(menuName = "TriLib/Mappers/External Data/Zip File External Data Mapper")]
     public class ZipFileExternalDataMapper : ExternalDataMapper
     {
         /// <inheritdoc />
@@ -19,7 +21,8 @@ namespace TriLibCore.Mappers
             var zipLoadCustomContextData = CustomDataHelper.GetCustomData<ZipLoadCustomContextData>(assetLoaderContext.CustomData);
             if (zipLoadCustomContextData == null)
             {
-                throw new Exception("Missing custom context data.");
+                finalPath = null;
+                return null;
             }
 
             var zipFile = zipLoadCustomContextData.ZipFile;
@@ -28,14 +31,14 @@ namespace TriLibCore.Mappers
                 throw new Exception("Zip file instance is null.");
             }
 
-            var shortFileName = FileUtils.GetShortFilename(originalFilename).ToLowerInvariant();
+            var shortFileName = FileUtils.GetShortFilename(originalFilename).Trim().ToLowerInvariant();
             foreach (ZipEntry zipEntry in zipFile)
             {
                 if (!zipEntry.IsFile)
                 {
                     continue;
                 }
-                var checkingFileShortName = FileUtils.GetShortFilename(zipEntry.Name).ToLowerInvariant();
+                var checkingFileShortName = FileUtils.GetShortFilename(zipEntry.Name).Trim().ToLowerInvariant();
                 if (shortFileName == checkingFileShortName)
                 {
                     finalPath = zipFile.Name;

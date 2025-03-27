@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using static UnityEngine.Networking.UnityWebRequest;
 namespace TriLibCore.SFB
 {
     /// <summary>
@@ -211,6 +213,45 @@ namespace TriLibCore.SFB
         }
 #endif
             _platformWrapper.SaveFilePanelAsync(title, directory, defaultName, extensions, cb);
+        }
+
+        internal static ItemWithStream BuildItemFromSingleFilename(IList<string> filenames)
+        {
+            if (filenames?.Count > 0)
+            {
+                return new ItemWithStream()
+                {
+                    Name = filenames[0]
+                };
+            }
+            return null;
+        }
+
+        internal static IList<ItemWithStream> BuildItemsFromFilenames(IList<string> filenames)
+        {
+            if (filenames?.Count > 0)
+            {
+                var results = new ItemWithStream[filenames.Count];
+                for (var i = 0; i < filenames.Count; i++)
+                {
+                    results[i] = new ItemWithStream()
+                    {
+                        Name = filenames[i]
+                    };
+                }
+                return results;
+            }
+            return null;
+        }
+
+        internal static IList<ItemWithStream> BuildItemsFromFolderContents(string filename)
+        {
+            if (Directory.Exists(filename))
+            {
+                var directoryFilenames = Directory.GetFiles(filename);
+                return BuildItemsFromFilenames(directoryFilenames);
+            }
+            return null;
         }
     }
 }

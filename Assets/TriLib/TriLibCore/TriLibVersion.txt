@@ -1,3 +1,20 @@
+2.4.4
+Changelog:
+-Fixed a glTF2 negative scale issue.
+-Fixed glTF2 material mapper roughness issues.
+-Fixed a texture scaling/offset issue.
+-Fixed a mismatched PDB file.
+-Fixed an FBX pivot issue.
+-Fixed an AssetLoaderOptions editor issue.
+-Miscellaneous fixes.
+
+2.4.3
+Changelog:
+-Fixed bugs in ZipFileExternalDataMapper and ZipFileTextureMapper that caused errors when they were not meant to be used.
+-Fixed a bug in ThreadUtils when "startImmediately" was set to false.
+-Fixed the AssetLoaderFilePicker.LoadModelFromDirectory method on Windows, Linux, Editor, and UWP platforms.
+-Various fixes to the DAE reader.
+
 2.4.2
 Changelog:
 -Profiler removal hotfix.

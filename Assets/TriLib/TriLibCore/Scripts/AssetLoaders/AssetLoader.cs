@@ -1387,7 +1387,7 @@ namespace TriLibCore
                     // Invoke custom error callback if provided
                     if (assetLoaderContext.OnError != null)
                     {
-                        Dispatcher.InvokeAsync(assetLoaderContext.OnError, error);
+                        Dispatcher.InvokeAsync(assetLoaderContext.OnError, error, assetLoaderContext.Async);
                     }
                 }
             }
@@ -1395,7 +1395,7 @@ namespace TriLibCore
             {
                 // If the context is missing or invalid, rethrow in a generic way
                 var contextualizedError = new ContextualizedError<object>(exception, null);
-                Dispatcher.InvokeAsync(Rethrow, contextualizedError);
+                Rethrow(contextualizedError);
             }
         }
 

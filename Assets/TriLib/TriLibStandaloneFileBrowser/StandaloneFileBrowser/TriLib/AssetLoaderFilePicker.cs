@@ -77,13 +77,13 @@ namespace TriLibCore
         /// </remarks>
         public void LoadModelFromFilePickerAsync(
             string title,
-            Action<AssetLoaderContext> onLoad,
-            Action<AssetLoaderContext> onMaterialsLoad,
-            Action<AssetLoaderContext, float> onProgress,
-            Action<bool> onBeginLoad,
-            Action<IContextualizedError> onError,
-            GameObject wrapperGameObject,
-            AssetLoaderOptions assetLoaderOptions,
+            Action<AssetLoaderContext> onLoad = null,
+            Action<AssetLoaderContext> onMaterialsLoad = null,
+            Action<AssetLoaderContext, float> onProgress = null,
+            Action<bool> onBeginLoad = null,
+            Action<IContextualizedError> onError = null,
+            GameObject wrapperGameObject = null,
+            AssetLoaderOptions assetLoaderOptions = null,
             bool haltTask = false
         )
         {
@@ -151,13 +151,13 @@ namespace TriLibCore
         /// </remarks>
         public void LoadModelFromDirectoryPickerAsync(
             string title,
-            Action<AssetLoaderContext> onLoad,
-            Action<AssetLoaderContext> onMaterialsLoad,
-            Action<AssetLoaderContext, float> onProgress,
-            Action<bool> onBeginLoad,
-            Action<IContextualizedError> onError,
-            GameObject wrapperGameObject,
-            AssetLoaderOptions assetLoaderOptions,
+            Action<AssetLoaderContext> onLoad = null,
+            Action<AssetLoaderContext> onMaterialsLoad = null,
+            Action<AssetLoaderContext, float> onProgress = null,
+            Action<bool> onBeginLoad = null,
+            Action<IContextualizedError> onError = null,
+            GameObject wrapperGameObject = null,
+            AssetLoaderOptions assetLoaderOptions = null,
             bool haltTask = false
         )
         {

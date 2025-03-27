@@ -15,6 +15,7 @@ namespace TriLibCore.Mappers
     /// short filename matches the filename specified in the TriLib <see cref="ITexture"/>. If a match is found, 
     /// it opens the corresponding data stream.
     /// </summary>
+    [CreateAssetMenu(menuName = "TriLib/Mappers/Texture/File Picker Texture Mapper")]
     public class FilePickerTextureMapper : TextureMapper
     {
         /// <inheritdoc />
@@ -27,14 +28,14 @@ namespace TriLibCore.Mappers
             var itemsWithStream = CustomDataHelper.GetCustomData<IList<ItemWithStream>>(textureLoadingContext.Context.CustomData);
             if (itemsWithStream != null)
             {
-                var shortFileName = FileUtils.GetShortFilename(textureLoadingContext.Texture.Filename).ToLowerInvariant();
+                var shortFileName = FileUtils.GetShortFilename(textureLoadingContext.Texture.Filename).Trim().ToLowerInvariant();
                 foreach (var itemWithStream in itemsWithStream)
                 {
                     if (!itemWithStream.HasData)
                     {
                         continue;
                     }
-                    var checkingFileShortName = FileUtils.GetShortFilename(itemWithStream.Name).ToLowerInvariant();
+                    var checkingFileShortName = FileUtils.GetShortFilename(itemWithStream.Name).Trim().ToLowerInvariant();
                     if (shortFileName == checkingFileShortName)
                     {
                         textureLoadingContext.Stream = itemWithStream.OpenStream();

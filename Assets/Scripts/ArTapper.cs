@@ -353,8 +353,12 @@ public class ArTapper : MonoBehaviour
             {
                 if (storedLocal)
                 {
-                    var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, false);
+                    var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
                     assetLoaderOptions.AnimationType = AnimationType.Legacy;
+                    /*assetLoaderOptions.GetCompatibleTextureFormat = true;
+                    assetLoaderOptions.EnforceAlphaChannelTextures = true;
+                    assetLoaderOptions.UseUnityNativeTextureLoader = true;
+                    assetLoaderOptions.UseUnityNativeNormalCalculator = true;*/
 
                     Debug.Log("attempting to load local model file: " + fileName);
 

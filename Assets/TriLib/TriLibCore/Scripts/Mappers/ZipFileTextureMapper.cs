@@ -14,6 +14,7 @@ namespace TriLibCore.Mappers
     /// comparing their names to the texture's filename. If a matching file is found, its stream is opened
     /// and assigned to the texture loading context.
     /// </summary>
+    [CreateAssetMenu(menuName = "TriLib/Mappers/Texture/Zip File Texture Mapper")]
     public class ZipFileTextureMapper : TextureMapper
     {
         /// <inheritdoc />
@@ -22,7 +23,7 @@ namespace TriLibCore.Mappers
             var zipLoadCustomContextData = CustomDataHelper.GetCustomData<ZipLoadCustomContextData>(textureLoadingContext.Context.CustomData);
             if (zipLoadCustomContextData == null)
             {
-                throw new Exception("Missing custom context data.");
+                return;
             }
             var zipFile = zipLoadCustomContextData.ZipFile;
             if (zipFile == null)
@@ -38,9 +39,9 @@ namespace TriLibCore.Mappers
                 return;
             }
             // Get the file name (without extension) from the zip entry used for the model
-            var modelFilenameWithoutExtension = FileUtils.GetFilenameWithoutExtension(zipLoadCustomContextData.ZipEntry.Name).ToLowerInvariant();
+            var modelFilenameWithoutExtension = FileUtils.GetFilenameWithoutExtension(zipLoadCustomContextData.ZipEntry.Name).Trim().ToLowerInvariant();
             // Get the short filename for the texture
-            var textureShortName = FileUtils.GetShortFilename(textureLoadingContext.Texture.Filename).ToLowerInvariant();
+            var textureShortName = FileUtils.GetShortFilename(textureLoadingContext.Texture.Filename).Trim().ToLowerInvariant();
 
             foreach (ZipEntry zipEntry in zipFile)
             {
@@ -48,8 +49,8 @@ namespace TriLibCore.Mappers
                 {
                     continue;
                 }
-                var checkingFileShortName = FileUtils.GetShortFilename(zipEntry.Name).ToLowerInvariant();
-                var checkingFilenameWithoutExtension = FileUtils.GetFilenameWithoutExtension(zipEntry.Name).ToLowerInvariant();
+                var checkingFileShortName = FileUtils.GetShortFilename(zipEntry.Name).Trim().ToLowerInvariant();
+                var checkingFilenameWithoutExtension = FileUtils.GetFilenameWithoutExtension(zipEntry.Name).Trim().ToLowerInvariant();
                 if ((TextureUtils.IsValidTextureFileType(checkingFileShortName) &&
                      textureLoadingContext.TextureType == TextureType.Diffuse &&
                      modelFilenameWithoutExtension == checkingFilenameWithoutExtension)

@@ -64,8 +64,6 @@ namespace TriLibCore.Editor
                         new GUIContent("Sort Hierarchy by Name", "Turn on this field to sort the Model hierarchy by name."));
                     EditorGUILayout.PropertyField(serializedObject.FindProperty("AddAssetUnloader"),
                         new GUIContent("Add Asset Unloader", "Turn on this field to add the Asset Unloader Component to the loaded Game Object."));
-                    EditorGUILayout.PropertyField(serializedObject.FindProperty("ShowLoadingWarnings"),
-                        new GUIContent("Show Loading Warnings", "Turn on this field to display Model loading warnings in the Console."));
                     EditorGUILayout.PropertyField(serializedObject.FindProperty("CloseStreamAutomatically"),
                         new GUIContent("Close Stream Automatically", "Turn on this field to close the Model loading Stream automatically."));
                     EditorGUILayout.PropertyField(serializedObject.FindProperty("DestroyOnError"),
