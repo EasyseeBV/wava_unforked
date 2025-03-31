@@ -19,8 +19,14 @@ public class GalleryCard : MonoBehaviour
     [SerializeField] private TMP_Text artistLabel;
     [SerializeField] private TMP_Text yearLabel;
     [SerializeField] private Button button;
+    [SerializeField] private LoadingCircle loadingCircle;
 
     public ExhibitionData sourceExhibition {get; private set;}
+
+    private void Awake()
+    {
+        loadingCircle?.BeginLoading();
+    }
 
     private void Start()
     {
@@ -47,6 +53,8 @@ public class GalleryCard : MonoBehaviour
                 artworkImage.sprite = images[0];
             }
             else artworkImage.sprite = null;
+            
+            loadingCircle?.StopLoading();
             
             artworkLabel.text = point.title;
             artistLabel.text = point.artists.Count > 0 ? point.artists[0].title : null;

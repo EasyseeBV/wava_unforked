@@ -24,10 +24,14 @@ public class ExhibitionCard : MonoBehaviour
     [SerializeField] private TextMeshProUGUI yearLocationLabel;
     [Space]
     [SerializeField] private Button interactionButton;
+    [Space]
+    [SerializeField] private LoadingCircle loadingCircle;
 
     protected virtual void Awake()
     {
         if(interactionButton) interactionButton.onClick.AddListener(OpenExhibitionPage);
+        
+        loadingCircle.BeginLoading();
     }
 
     public async void Init(ExhibitionData point)
@@ -81,6 +85,8 @@ public class ExhibitionCard : MonoBehaviour
                 multCoverImageObject.SetActive(false);
                 singleImage.sprite = null;
             }
+
+            loadingCircle.StopLoading();
 
             titleLabel.text = point.title;
             yearLocationLabel.text = point.year + " · " + point.location;

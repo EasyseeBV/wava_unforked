@@ -43,6 +43,7 @@ public class ArtworkUIManager : MonoBehaviour
     public TextMeshProUGUI ExhibitionTitle;
     [Space]
     public GameObject InformationHelpBar;
+    [SerializeField] private LoadingCircle loadingCircle;
 
     [Header("Artwork Details")] 
     [SerializeField] private ArtworkDetailsPanel artworkDetailsPanel;
@@ -91,6 +92,8 @@ public class ArtworkUIManager : MonoBehaviour
     private void Awake()
     {
         if (!Instance) Instance = this;
+        
+        loadingCircle?.BeginLoading();
     }
 
     private void OnEnable()
@@ -180,6 +183,7 @@ public class ArtworkUIManager : MonoBehaviour
             
             ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
             shower.Init(artwork);
+            if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
             CachedGalleryDisplays.Add(shower);
         }
     }
@@ -213,6 +217,7 @@ public class ArtworkUIManager : MonoBehaviour
             if (currentMenuNavigation != MenuNavigation.Exhibitions || currentSceneName != SceneManager.GetActiveScene().name) return;
             ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
             card.Init(exhibition);
+            if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
         }
     }
     
@@ -240,6 +245,7 @@ public class ArtworkUIManager : MonoBehaviour
             if (currentMenuNavigation != MenuNavigation.Artists || currentSceneName != SceneManager.GetActiveScene().name) return;
             ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
             container.Assign(artist);
+            if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
         }
     }
 
@@ -368,37 +374,31 @@ public class ArtworkUIManager : MonoBehaviour
     public void OpenDetailedInformation<T>(T data) where T : FirebaseData
     {
         // Disable all detail areas initially
-        artworkDetailsArea?.SetActive(false);
-        exhibitionDetailsArea?.SetActive(false);
-        artistDetailsArea?.SetActive(false);
-
-        if (data is ArtworkData artwork)
+        artworkDetailsArea?.SetActive(typeof(T) == typeof(ArtworkData));
+        exhibitionDetailsArea?.SetActive(typeof(T) == typeof(ExhibitionData));
+        artistDetailsArea?.SetActive(typeof(T) == typeof(ArtistData));
+        
+        loadingCircle?.gameObject.SetActive(true);
+        loadingCircle?.BeginLoading();
+        
+        switch (data)
         {
-            artworkDetailsArea?.SetActive(true);
-            exhibitionDetailsArea?.SetActive(false);
-            artistDetailsArea?.SetActive(false);
-            artworkDetailsPanel?.Fill(artwork);
-            if (Title != null) Title.text = artwork.title;
-            if (Description != null) Description.text = artwork.description;
-            if (Header != null) Header.text = artwork.title;
-        }
-        else if (data is ExhibitionData exhibition)
-        {
-            exhibitionDetailsArea?.SetActive(true);
-            artworkDetailsArea?.SetActive(false);
-            artistDetailsArea?.SetActive(false);
-            exhibitionDetailsPanel.Fill(exhibition);
-        }
-        else if (data is ArtistData artist)
-        {
-            artistDetailsArea?.SetActive(true);
-            exhibitionDetailsArea?.SetActive(false);
-            artworkDetailsArea?.SetActive(false);
-            artistDetailsPanel.Fill(artist);
-        }
-        else
-        {
-            throw new ArgumentException($"Unsupported data type: {typeof(T).Name}", nameof(data));
+            case ArtworkData artwork:
+            {
+                artworkDetailsPanel?.Fill(artwork);
+                if (Title != null) Title.text = artwork.title;
+                if (Description != null) Description.text = artwork.description;
+                if (Header != null) Header.text = artwork.title;
+                break;
+            }
+            case ExhibitionData exhibition:
+                exhibitionDetailsPanel.Fill(exhibition);
+                break;
+            case ArtistData artist:
+                artistDetailsPanel.Fill(artist);
+                break;
+            default:
+                throw new ArgumentException($"Unsupported data type: {typeof(T).Name}", nameof(data));
         }
     }
 

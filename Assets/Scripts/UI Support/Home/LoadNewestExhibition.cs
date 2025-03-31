@@ -12,12 +12,18 @@ using Random = UnityEngine.Random;
 public class LoadNewestExhibition : MonoBehaviour
 {
     [SerializeField] private ExhibitionCard exhibitionCard;
+    [SerializeField] private LoadingCircle loadingCircle;
     
     private bool loaded = false;
 
     private void OnEnable() => FirebaseLoader.OnFirestoreInitialized += async () => await QueryMostRecent();
 
     private void OnDisable() => FirebaseLoader.OnFirestoreInitialized -= async () => await QueryMostRecent();
+
+    private void Awake()
+    {
+        loadingCircle.BeginLoading();
+    }
 
     private async void Start()
     {
@@ -28,7 +34,11 @@ public class LoadNewestExhibition : MonoBehaviour
 
     private async Task QueryMostRecent()
     {
-        if (loaded) return;
+        if (loaded)
+        {
+            if (loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
+            return;
+        }
         
         try
         {
@@ -44,6 +54,8 @@ public class LoadNewestExhibition : MonoBehaviour
                 exhibition = await FirebaseLoader.FetchSingleDocument<ExhibitionData>("exhibitions", "creation_time", 1);
                 await FirebaseLoader.LoadRemainingExhibitions();
             }
+            
+            loadingCircle.StopLoading();
             
             if (exhibition != null)
             {

@@ -404,6 +404,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7337289852155787410}
+  - {fileID: 4230974417244451257}
   - {fileID: 5326008633362295270}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -477,14 +478,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45f82239bb6110242830a547eeeda1b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arPoint: {fileID: 0}
   loadAssignedARPoint: 0
   artworkImage: {fileID: 3343038753724086078}
   artworkLabel: {fileID: 5615610203313983664}
   artistLabel: {fileID: 4633104676429966464}
   yearLabel: {fileID: 855155502282951345}
   button: {fileID: 6670618485413970313}
-  sourceExhibition: {fileID: 0}
+  loadingCircle: {fileID: 8931733225725498205}
 --- !u!1 &4388643282636173235
 GameObject:
   m_ObjectHideFlags: 0
@@ -1226,3 +1226,139 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1001 &1374315399299870542
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8835532387105897580}
+    m_Modifications:
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -155
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6040045012916736123, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+        type: 3}
+      propertyPath: m_Name
+      value: Loading Circle
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8c3aced6fa28e7e42b318b6dce62ca9f, type: 3}
+--- !u!224 &4230974417244451257 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3001082095046024951, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1374315399299870542}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8931733225725498205 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7557436655564635155, guid: 8c3aced6fa28e7e42b318b6dce62ca9f,
+    type: 3}
+  m_PrefabInstance: {fileID: 1374315399299870542}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00d2e251d23048d4f97bc858b1eb7b62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
