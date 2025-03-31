@@ -43,7 +43,6 @@ public class ARObject : MonoBehaviour
         obj.transform.localRotation = Quaternion.Euler(contentData.transforms.rotation.x_rotation, contentData.transforms.rotation.y_rotation, contentData.transforms.rotation.z_rotation);
     
         // Apply scale
-        Debug.Log($"x{contentData.transforms.scale.x_scale}, y{contentData.transforms.scale.y_scale}, z{contentData.transforms.scale.z_scale}");
         Vector3 newScale = new Vector3(
             contentData.transforms.scale.x_scale,
             contentData.transforms.scale.y_scale,

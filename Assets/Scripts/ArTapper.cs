@@ -74,12 +74,10 @@ public class ArTapper : MonoBehaviour
     public Dictionary<int, GameObject> contentDict = new Dictionary<int, GameObject>();
     
     private void Start()
-    {   
+    {
         arObject = Instantiate(arObjectPrefab);
         StartAR();
         LoadContent();
-
-        Debug.Log("d: " + DistanceWhenActivated);
     }
     
     private void Update()
@@ -136,7 +134,6 @@ public class ArTapper : MonoBehaviour
             loadingPlane.SetActive(true);
             loadingPlane.transform.position = _pos;
             
-            StartCoroutine(WaitForLoad());
             StartCoroutine(WaitForLoad());
         }
         else if(!hasContent)
@@ -290,6 +287,7 @@ public class ArTapper : MonoBehaviour
         }
     }
     
+    private AssetLoaderOptions _assetLoaderOptions;
     private async void LoadContent()
     {
         if ((ArtworkToPlace?.content_list == null || ArtworkToPlace.content_list.Count == 0) && string.IsNullOrEmpty(ArtworkToPlace?.preset))
@@ -312,72 +310,76 @@ public class ArTapper : MonoBehaviour
             containsVideo = false;
             bool storedLocal = false;
 
-            string localPath = content.media_content;
-            string local = Path.Combine(AppCache.ContentFolder, fileName);
-            if (!File.Exists(local))
+            string path = content.media_content; // default the path to the firestore uri of the content
+            string localPath = Path.Combine(AppCache.ContentFolder, fileName);
+            
+            // if the file does not exist locally, download it
+            if (!File.Exists(localPath))
             {
                 var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content);
-                localPath = results.localPath;
-                if (!string.IsNullOrEmpty(localPath) && File.Exists(localPath))
+                path = results.localPath;
+                if (!string.IsNullOrEmpty(path) && File.Exists(path))
                 {
                     Debug.Log("Content was downloaded and stored locally");
                     storedLocal = true;
                 }
             }
-            else if (File.Exists(local))
+            else if (File.Exists(localPath)) // if the file does exist, set the path to that location
             {
-                localPath = local;
+                path = localPath;
                 storedLocal = true;
                 Debug.Log("Content was found locally");
             }
             
-            if (extension is ".mp4" or ".mvk" or ".mov") // video formats
+            switch (extension)
             {
-                Debug.Log($"content [{ArtworkToPlace.title}] contained a media piece");
-                Debug.LogWarning("Content positioning, scale and rotation still needs to be adjusted");
+                case ".mp4" or ".mvk" or ".mov": // video
+                    Debug.Log($"content [{ArtworkToPlace.title}] contained a media piece");
+                    Debug.LogWarning("Content positioning, scale and rotation still needs to be adjusted");
                 
-                containsVideo = true;
-                arObject.Add(content, localPath, player =>
+                    containsVideo = true;
+                    arObject.Add(content, path, player =>
+                    {
+                        Debug.Log("Video prepared");
+                        contentLoadedCount++;
+                        if (contentLoadedCount >= contentTotalCount) allContentLoaded = true;
+                    });
+                    break;
+                
+                case ".mp3": // audio
+                    Debug.Log($"content [{ArtworkToPlace.title}] contained an audio piece");
+                    StartCoroutine(DownloadAudioClip(path));
+                    break;
+                
+                case ".fbx" or ".obj" or ".gltf" or ".gltf2" when storedLocal: // stored local model
                 {
-                    Debug.Log("Video prepared");
-                    contentLoadedCount++;
-                    if (contentLoadedCount >= contentTotalCount) allContentLoaded = true;
-                });
-            }
-            else if (extension is ".mp3")
-            {
-                Debug.Log($"content [{ArtworkToPlace.title}] contained an audio piece");
-                StartCoroutine(DownloadAudioClip(localPath));
-            }
-            else if (extension is ".fbx" or ".obj" or ".gltf" or ".gltf2") // model format
-            {
-                if (storedLocal)
-                {
-                    var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
-                    assetLoaderOptions.AnimationType = AnimationType.Legacy;
-                    /*assetLoaderOptions.GetCompatibleTextureFormat = true;
-                    assetLoaderOptions.EnforceAlphaChannelTextures = true;
-                    assetLoaderOptions.UseUnityNativeTextureLoader = true;
-                    assetLoaderOptions.UseUnityNativeNormalCalculator = true;*/
+                    if (_assetLoaderOptions == null)
+                    {
+                        _assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
+                    }
 
                     Debug.Log("attempting to load local model file: " + fileName);
 
                     // Load the model from the local file path instead of downloading it.
                     var i1 = i;
                     AssetLoader.LoadModelFromFile(
-                        path: localPath,
+                        path: path,
                         onLoad: OnLoad,
                         onMaterialsLoad: c => { OnMaterialsLoad(c, content, i1); },
                         onProgress: OnProgress,
                         onError: OnError,
                         wrapperGameObject: null,
-                        assetLoaderOptions: assetLoaderOptions
+                        assetLoaderOptions: _assetLoaderOptions
                     );
+                    break;
                 }
-                else
+                
+                case ".fbx" or ".obj" or ".gltf" or ".gltf2": // url model
                 {
-                    var assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
-                    assetLoaderOptions.AnimationType = AnimationType.Legacy;
+                    if (_assetLoaderOptions == null)
+                    {
+                        _assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
+                    }
                     
                     Debug.Log("attempting to download model: " + fileName);
                     
@@ -391,20 +393,21 @@ public class ArTapper : MonoBehaviour
                         onProgress: OnProgress,
                         onError: OnError,
                         wrapperGameObject: null,
-                        assetLoaderOptions: assetLoaderOptions,
+                        assetLoaderOptions: _assetLoaderOptions,
                         fileExtension: extension
                     );
+                    break;
                 }
-            }
-            else if (extension is ".png" or ".jpg" or ".jpeg")
-            {
-                Debug.Log($"content [{ArtworkToPlace.title}] contained an image piece");
-                StartCoroutine(DownloadImageAsSprite(localPath, content, i));
-            }
-            else
-            {
-                Debug.LogError($"Could not load any media from the file format: {extension}");
-                contentTotalCount--;
+                
+                case ".png" or ".jpg" or ".jpeg": // image
+                    Debug.Log($"content [{ArtworkToPlace.title}] contained an image piece");
+                    StartCoroutine(DownloadImageAsSprite(path, content, i));
+                    break;
+                
+                default:
+                    Debug.LogError($"Could not load any media from the file format: {extension}");
+                    contentTotalCount--;
+                    break;
             }
         }
         

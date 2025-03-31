@@ -31,7 +31,7 @@ namespace TriLibCore.Samples
             get
             {
 #if UNITY_EDITOR
-                return $"{Application.dataPath}/TriLib/TriLibSamples/LoadModelFromFile/Models/TriLibSampleModel.obj";
+                return $"{Application.persistentDataPath}/content/37z8p_FWS_STELE_3D_Modell_OBJ.fbx";
 #else
                 return "Models/TriLibSampleModel.obj";
 #endif

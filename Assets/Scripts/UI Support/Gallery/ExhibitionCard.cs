@@ -31,7 +31,7 @@ public class ExhibitionCard : MonoBehaviour
     {
         if(interactionButton) interactionButton.onClick.AddListener(OpenExhibitionPage);
         
-        loadingCircle.BeginLoading();
+        loadingCircle?.BeginLoading();
     }
 
     public async void Init(ExhibitionData point)
@@ -86,7 +86,7 @@ public class ExhibitionCard : MonoBehaviour
                 singleImage.sprite = null;
             }
 
-            loadingCircle.StopLoading();
+            loadingCircle?.StopLoading();
 
             titleLabel.text = point.title;
             yearLocationLabel.text = point.year + " · " + point.location;
