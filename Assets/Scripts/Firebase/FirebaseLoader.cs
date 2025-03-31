@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Firebase;
 using Firebase.Firestore;
+using Firebase.Messaging;
 using UnityEngine;
 using UnityEngine.Networking;
 using Action = System.Action;
@@ -72,6 +73,24 @@ public class FirebaseLoader : MonoBehaviour
         InitializeFirebase();
     }
 
+    private void OnEnable()
+    {
+        if (Initialized)
+        {
+            Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
+            Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (Initialized)
+        {
+            Firebase.Messaging.FirebaseMessaging.TokenReceived -= OnTokenReceived;
+            Firebase.Messaging.FirebaseMessaging.MessageReceived -= OnMessageReceived;
+        }
+    }
+
     /// <summary>
     /// Initializes Firebase and Firestore.
     /// </summary>
@@ -96,6 +115,9 @@ public class FirebaseLoader : MonoBehaviour
                     await GetCollectionCountsAsync();
                     await AppCache.LoadLocalCaches();
                     await CheckForCacheUpdates();
+
+                    Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
+                    Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
                     
                     Initialized = true;
                     OnFirestoreInitialized?.Invoke();
@@ -120,6 +142,16 @@ public class FirebaseLoader : MonoBehaviour
                 await Task.Delay(TimeSpan.FromSeconds(5));
             }
         }
+    }
+
+    private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+    {
+        Debug.Log("Message from: " + e.Message);
+    }
+
+    private void OnTokenReceived(object sender, TokenReceivedEventArgs e)
+    {
+        Debug.Log("Token received: " + e.Token);
     }
 
     private async void ProcessSetup()
