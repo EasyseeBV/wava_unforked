@@ -28,11 +28,11 @@ public class ArtistContainer : MonoBehaviour
         
         this.artist = artist;
 
-        profilePicture.sprite = await artist.GetIcon();
         artistNameLabel.text = artist.title;
         int works = GetArtistWorkCount();
         artworkCountLabel.text = works == 1 ? "1 Artwork" : $"{GetArtistWorkCount()} Artworks";
         artistPageButton.onClick.AddListener(OpenArtistPage);
+        profilePicture.sprite = await artist.GetIcon();
     }
 
     private int GetArtistWorkCount()
