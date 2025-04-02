@@ -39,10 +39,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 24da5a8c023264c168e5cc41af82bba3, type: 3}
   ArtWorks:
   - {fileID: 11400000, guid: cd5edd64e329afd4bb1f62e2a5d78ff2, type: 2}
-  - {fileID: 11400000, guid: adb1023f0d3333946a83b4698d7ba02d, type: 2}
-  - {fileID: 11400000, guid: b60e9a764e9c6a94c8e74c2c877dd0e5, type: 2}
   - {fileID: 11400000, guid: 864db4e1c16b2c14f83107f6f9c2a9b5, type: 2}
-  - {fileID: 11400000, guid: 9c422617b7b6a5e44ae0c6640ef3690c, type: 2}
   - {fileID: 11400000, guid: edfc3dba1f8f98d4a9b6e3aee0bdfd1d, type: 2}
   ARMapIcon: {fileID: 0}
   Liked: 0

@@ -1,0 +1,34 @@
+{
+    "name": "TouchIA",
+    "maps": [
+        {
+            "name": "control",
+            "id": "c27a8a5f-e627-45ed-9a06-f695bc8c7ed3",
+            "actions": [
+                {
+                    "name": "touch",
+                    "type": "Button",
+                    "id": "8220172d-a586-46be-8069-afbc7972fe92",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "dcc99bdb-1ee2-49c3-8be4-8018504bc1a4",
+                    "path": "<Pointer>/press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "touch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

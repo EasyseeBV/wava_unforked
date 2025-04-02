@@ -17,22 +17,18 @@ using System.Linq;
 using Messy.Definitions;
 using TriLibCore.Extensions;
 using TriLibCore.General;
+using TriLibCore.Mappers;
+using TriLibCore.URP.Mappers;
 using UnityEngine.XR.ARSubsystems;
+using UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets;
 
 public class ArTapper : MonoBehaviour
 {
-    public ARAnchorManager anchorManager;
-    public ARAnchor anchor;
-    
     public static ArtworkData ArtworkToPlace;
-
-    public GameObject placementIndicator;
-    public GameObject AnimationIndicator;
+    
     public static bool PlaceDirectly = false;
     public static float DistanceWhenActivated;
 
-    public GameObject PlacedObject;
-    //private AssetReferenceGameObject assetReferenceGameObject;
     bool searching;
 
     [Header("References")]
@@ -41,6 +37,7 @@ public class ArTapper : MonoBehaviour
     public ARRaycastManager arRaycast;
     [SerializeField] private ARNamebar arNamebar;
     [SerializeField] private ARInfoPage arInfoPage;
+    [SerializeField] private StatusText statusText;
 
     [Header("Firebase Preloaded elements")]
     [SerializeField] private ARObject arObjectPrefab;
@@ -50,18 +47,20 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private Transform outOfScreenLoadLocation;
     [SerializeField] private TMP_Text eventLabel;
     [SerializeField] private GameObject loadingPlane;
+    [SerializeField] private ObjectSpawner objectSpawner;
 
     [Header("Presets")] // cleaned up in a future phase
     [SerializeField] private GameObject coin;
     [SerializeField] private GameObject bird;
 
-    private ARObject arObject;
+    public ARObject arObject { get; private set; }
     
     private Pose placementPose;
     private ARRaycastHit foundHit;
 
     private bool placementPoseIsValid = false;
 
+    // Content
     private bool videoPlayerReady = false;
     private bool hasContent = false;
     private bool containsVideo = false;
@@ -70,144 +69,77 @@ public class ArTapper : MonoBehaviour
     
     private int contentTotalCount, contentLoadedCount = 0;
     private bool allContentLoaded = false;
-
+    private AssetLoaderOptions _assetLoaderOptions;
     public Dictionary<int, GameObject> contentDict = new Dictionary<int, GameObject>();
+
+    #region Unity Lifecycle
     
-    private void Start()
+    private void OnEnable()
+    {
+        objectSpawner.objectSpawned += OnTouch;
+    }
+
+    private void OnDisable()
+    {
+        objectSpawner.objectSpawned -= OnTouch;
+    }
+    
+    private void Awake()
     {
         arObject = Instantiate(arObjectPrefab);
-        StartAR();
+        objectSpawner.arObject = arObject.gameObject;
+        if (statusText == null) statusText = FindObjectOfType<StatusText>();
+        statusText.SetText("");
+    }
+
+    private void Start()
+    {
+        //StartAR();
         LoadContent();
     }
     
+#if UNITY_EDITOR
     private void Update()
     {
-        if (searching && PlaceDirectly)
-        {
-            HandlePlacementSearching();
-        }
-
-        if (searching)
-        {
-            UpdatePlacementPose();
-
-#if UNITY_EDITOR
-            if (Input.GetKeyDown(KeyCode.P) && placementPoseIsValid) {
-                StopAR();
-                PlaceObject();
-            }
-                
-#endif
-            if (placementPoseIsValid && Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-            {
-                if (!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) 
-                {
-                    StopAR();
-                    PlaceObject();
-                }
-            }
-        }
-
         if (testContent)
         {
             testContent = false;
-            //OnArtworkReady();
-            StopAR();
-            PlaceObject();
+            TryPlaceObject();
         }
     }
-
-    private void HandlePlacementSearching()
+#endif
+    
+    #endregion
+    
+    // When you select a placement for the AR content
+    private void OnTouch(GameObject obj)
     {
-        placementIndicator.SetActive(false);
-        AnimationIndicator.SetActive(false);
-        UIInfoController.Instance.SetText("", 3);
-            
-        if (hasContent && allContentLoaded)
-        {
-            OnArtworkReady();
-        }
-        else if (hasContent && !allContentLoaded)
-        {
-            Vector3 _pos = PlacedObject.transform.position;
-            //_pos.z += DistanceWhenActivated;
-            loadingPlane.SetActive(true);
-            loadingPlane.transform.position = _pos;
-            
-            StartCoroutine(WaitForLoad());
-        }
-        else if(!hasContent)
-        {
-            Debug.Log("no content found...");
-            PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
-        }
-            
-        Vector3 pos = PlacedObject.transform.position;
-        //pos.z += DistanceWhenActivated;
-        PlacedObject.transform.position = pos;
-        StopAR();
+        Debug.Log("OnTouch");
+        TryPlaceObject();
     }
 
+    // If the placement was triggered, but the content hasn't been loaded in yet
     private IEnumerator WaitForLoad()
     {
         yield return new WaitUntil(() => allContentLoaded);
         loadingPlane.gameObject.SetActive(false);
         OnArtworkReady();
     }
-
-    public void StartAR()
-    {   
-        AnimationIndicator.SetActive(true);   
-        placementIndicator.SetActive(false);
-        searching = true;
-        UIInfoController.Instance.SetScanText(
-            "AR-Camera is scanning the area. Please <u>scan the floor in front of you.</u> <color=black>Learn more...</color>",
-            "AR-Camera is scanning the area. Please scan the floor in front of you using your phone’s camera. The artwork will appear automatically once the scan is completed. <color=black>Show less...</color>");
-    }
-
-    public void StopAR()
+    
+    private void TryPlaceObject()
     {
-        AnimationIndicator.SetActive(false);
-        placementIndicator.SetActive(false);
-        UIInfoController.Instance.RemoveAllText();
-        searching = false;
-    }
-
-    private void PlaceObject()
-    {
-#if !UNITY_EDITOR
-        //Create an AR Anchor
-        if(anchor==null) anchor = anchorManager.AttachAnchor((ARPlane)foundHit.trackable, foundHit.pose);
-#endif
-        
-        if (PlacedObject == null)
+        if (hasContent && allContentLoaded)
         {
-            if (hasContent && allContentLoaded)
-            {
-                OnArtworkReady();
-            }
-            else if (hasContent && !allContentLoaded)
-            {
-                StartCoroutine(WaitForLoad());
-            }
-            else if(!hasContent)
-            {
-                Debug.Log("no content found...");
-                PlacedObject = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
-                LoadTopFinder(PlacedObject);
-            }
+            OnArtworkReady();
         }
-        else
+        else if (hasContent && !allContentLoaded)
         {
-            PlacedObject.SetActive(true);
-
-            PlacedObject.transform.position = placementPose.position;
-            PlacedObject.transform.rotation = placementPose.rotation;
+            StartCoroutine(WaitForLoad());
         }
-
-        UIInfoController.Instance.StartCameraTutorial();
-        //Track object based on anchor
-        //PlacedObject.transform.parent = anchor.transform;
+        else if(!hasContent)
+        {
+            Debug.Log("no content found...");
+        }
         
         arNamebar.SetNamebarLabel(ArtworkToPlace.title);
         arInfoPage.CanOpen = true;
@@ -215,79 +147,17 @@ public class ArTapper : MonoBehaviour
         UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
     }
 
+    // Artwork is ready - show the artwork
     private void OnArtworkReady()
     {
+        Debug.Log("Showing Artwork");
         loadingPlane.SetActive(false);
-        
+        arObject.gameObject.SetActive(true);
         arObject.Show();
-        
-        PlacedObject = arObject.gameObject;
-        PlacedObject.SetActive(true);
-        PlacedObject.transform.position = placementPose.position;
-        PlacedObject.transform.rotation = placementPose.rotation;
-                
-        //Track object based on anchor
-        if (anchor != null) PlacedObject.transform.parent = anchor.transform;
-        
-        LoadTopFinder(PlacedObject);
-        
-        Vector3 pos = PlacedObject.transform.position;
-        //pos.z += DistanceWhenActivated;
-        PlacedObject.transform.position = pos;
-        StopAR();
     }
 
-    private void LoadTopFinder (GameObject ARObject)
-    {
-        ModelTopFinder topFinder = GetComponent<ModelTopFinder>();
-        if (topFinder != null)
-        {
-            topFinder.prefabInstance = ARObject;
-            topFinder.FindTopmostPointOfModels();
-        }
-    }
+    #region Content Loading
 
-    private void UpdatePlacementPose() 
-    {
-#if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.Space)) placementPoseIsValid = !placementPoseIsValid;
-#else
-        var screenCenter = Camera.main.ViewportToScreenPoint(new Vector3(0.5f, 0.5f));
-        var hits = new List<ARRaycastHit>();
-        arRaycast.Raycast(screenCenter, hits, TrackableType.Planes);
-        placementPoseIsValid = hits.Count > 0;
-#endif
-        if (placementPoseIsValid) 
-        {
-            placementIndicator.SetActive(true);
-            AnimationIndicator.SetActive(false);
-            UIInfoController.Instance.arTutorialManager.ShowPlaceHint();// shows text popup to tell the player to place the object
-#if !UNITY_EDITOR
-            placementPose = hits[0].pose;
-
-            //Save the hit
-            foundHit = hits[0];
-
-            var cameraForward = Camera.current.transform.forward;
-            var cameraBearing = new Vector3(cameraForward.x, 0, cameraForward.z).normalized;
-            placementPose.rotation = Quaternion.LookRotation(cameraBearing);
-            placementIndicator.transform.SetPositionAndRotation(placementPose.position, placementPose.rotation);
-            loadingPlane.transform.localRotation = Quaternion.Euler(90f, 0f, placementPose.rotation.eulerAngles.z);
-#endif
-        } 
-        else 
-        {
-            AnimationIndicator.SetActive(true);
-            placementIndicator.SetActive(false);
-            //UIInfoController.Instance.SetText("Scan the space around you.", 0);
-            Vector3 curAngle = AnimationIndicator.transform.eulerAngles;
-            curAngle.x = 0;
-            curAngle.z = 0;
-            AnimationIndicator.transform.eulerAngles = curAngle;
-        }
-    }
-    
-    private AssetLoaderOptions _assetLoaderOptions;
     private async void LoadContent()
     {
         if ((ArtworkToPlace?.content_list == null || ArtworkToPlace.content_list.Count == 0) && string.IsNullOrEmpty(ArtworkToPlace?.preset))
@@ -316,6 +186,7 @@ public class ArTapper : MonoBehaviour
             // if the file does not exist locally, download it
             if (!File.Exists(localPath))
             {
+                statusText.SetText("Downloading...");
                 var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content);
                 path = results.localPath;
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))
@@ -331,6 +202,8 @@ public class ArTapper : MonoBehaviour
                 Debug.Log("Content was found locally");
             }
             
+            statusText.SetText("Loading...");
+            
             switch (extension)
             {
                 case ".mp4" or ".mvk" or ".mov": // video
@@ -338,11 +211,15 @@ public class ArTapper : MonoBehaviour
                     Debug.LogWarning("Content positioning, scale and rotation still needs to be adjusted");
                 
                     containsVideo = true;
-                    arObject.Add(content, path, player =>
+                    arObject.Add(content, content.media_content, player =>
                     {
                         Debug.Log("Video prepared");
                         contentLoadedCount++;
-                        if (contentLoadedCount >= contentTotalCount) allContentLoaded = true;
+                        if (contentLoadedCount >= contentTotalCount)
+                        {
+                            allContentLoaded = true;
+                            statusText.gameObject.SetActive(false);
+                        }
                     });
                     break;
                 
@@ -356,8 +233,12 @@ public class ArTapper : MonoBehaviour
                     if (_assetLoaderOptions == null)
                     {
                         _assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
+                        _assetLoaderOptions.MaterialMappers = new MaterialMapper[]
+                            {
+                                ScriptableObject.CreateInstance<UniversalRPMaterialMapper>()
+                            };
                     }
-
+                    
                     Debug.Log("attempting to load local model file: " + fileName);
 
                     // Load the model from the local file path instead of downloading it.
@@ -379,6 +260,10 @@ public class ArTapper : MonoBehaviour
                     if (_assetLoaderOptions == null)
                     {
                         _assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
+                        _assetLoaderOptions.MaterialMappers = new MaterialMapper[]
+                        {
+                            ScriptableObject.CreateInstance<UniversalRPMaterialMapper>()
+                        };
                     }
                     
                     Debug.Log("attempting to download model: " + fileName);
@@ -434,9 +319,12 @@ public class ArTapper : MonoBehaviour
                     break;
                 }
             }
-                
+
             if (contentLoadedCount >= contentTotalCount)
+            {
                 allContentLoaded = true;
+                statusText.gameObject.SetActive(false);
+            }
         }
     }
     
@@ -466,8 +354,12 @@ public class ArTapper : MonoBehaviour
         contentDict.TryAdd(index, obj);
         obj.name = "Loaded Model";
         arObject.Add(obj, mediaContentData);
-        
-        if (contentLoadedCount >= contentTotalCount) allContentLoaded = true;
+
+        if (contentLoadedCount >= contentTotalCount)
+        {
+            allContentLoaded = true;
+            statusText.gameObject.SetActive(false);
+        }
     }
     #endregion
     
@@ -492,8 +384,12 @@ public class ArTapper : MonoBehaviour
                 {
                     arObject.Show();
                 }
-                
-                if (contentLoadedCount >= contentTotalCount) allContentLoaded = true;
+
+                if (contentLoadedCount >= contentTotalCount)
+                {
+                    allContentLoaded = true;
+                    statusText.gameObject.SetActive(false);
+                }
             }
         }
     }
@@ -518,8 +414,13 @@ public class ArTapper : MonoBehaviour
                 Debug.Log("Image downloaded and sprite created.");
                 contentLoadedCount++;
                 if (contentLoadedCount >= contentTotalCount)
+                {
                     allContentLoaded = true;
+                    statusText.gameObject.SetActive(false);
+                }
             }
         }
     }
+
+    #endregion
 }

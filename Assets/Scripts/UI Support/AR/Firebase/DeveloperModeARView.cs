@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using UnityEngine.XR.ARFoundation;
 using Vector3 = UnityEngine.Vector3;
 
 public class DeveloperModeARView : MonoBehaviour
@@ -58,6 +59,10 @@ public class DeveloperModeARView : MonoBehaviour
     [SerializeField] private Transform artworkLayoutArea;
     [SerializeField] private DeveloperLoadArtworkButton loadArtworkButtonPrefab;
     
+    [Header("Occlusion Culling")]
+    [SerializeField] private Button occlusionCullingButton;
+    [SerializeField] private AROcclusionManager arOcclusionManager;
+    
     private DeveloperButton cachedRecentlyUsedButton = null;
     private ARTransformView currentView;
     private ArTapper ar;
@@ -74,10 +79,14 @@ public class DeveloperModeARView : MonoBehaviour
         if (!AppSettings.DeveloperMode || ArTapper.ArtworkToPlace == null)
         {
             enableDeveloperWindowButton.gameObject.SetActive(false);
+            occlusionCullingButton.gameObject.SetActive(false);
             return;
         }
 
+        if (arOcclusionManager == null) arOcclusionManager = FindObjectOfType<AROcclusionManager>();
         ar = FindObjectOfType<ArTapper>();
+        
+        occlusionCullingButton.onClick.AddListener(() => { arOcclusionManager.enabled = !arOcclusionManager.enabled; });
 
         foreach (var devButton in developerButtons)
         {
