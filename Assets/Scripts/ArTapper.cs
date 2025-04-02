@@ -76,20 +76,21 @@ public class ArTapper : MonoBehaviour
     
     private void OnEnable()
     {
-        objectSpawner.objectSpawned += OnTouch;
+        if (objectSpawner) objectSpawner.objectSpawned += OnTouch;
     }
 
     private void OnDisable()
     {
-        objectSpawner.objectSpawned -= OnTouch;
+        if (objectSpawner) objectSpawner.objectSpawned -= OnTouch;
     }
     
     private void Awake()
     {
-        arObject = Instantiate(arObjectPrefab);
-        objectSpawner.arObject = arObject.gameObject;
+        if (arObjectPrefab) arObject = Instantiate(arObjectPrefab);
+        if (!objectSpawner) objectSpawner = FindObjectOfType<ObjectSpawner>();
+        if (objectSpawner) objectSpawner.arObject = arObject.gameObject;
         if (statusText == null) statusText = FindObjectOfType<StatusText>();
-        statusText.SetText("");
+        statusText?.SetText("");
     }
 
     private void Start()
@@ -186,7 +187,7 @@ public class ArTapper : MonoBehaviour
             // if the file does not exist locally, download it
             if (!File.Exists(localPath))
             {
-                statusText.SetText("Downloading...");
+                statusText?.SetText("Downloading...");
                 var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content);
                 path = results.localPath;
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))
@@ -202,7 +203,7 @@ public class ArTapper : MonoBehaviour
                 Debug.Log("Content was found locally");
             }
             
-            statusText.SetText("Loading...");
+            statusText?.SetText("Loading...");
             
             switch (extension)
             {
@@ -218,7 +219,7 @@ public class ArTapper : MonoBehaviour
                         if (contentLoadedCount >= contentTotalCount)
                         {
                             allContentLoaded = true;
-                            statusText.gameObject.SetActive(false);
+                            statusText?.gameObject.SetActive(false);
                         }
                     });
                     break;
@@ -323,7 +324,7 @@ public class ArTapper : MonoBehaviour
             if (contentLoadedCount >= contentTotalCount)
             {
                 allContentLoaded = true;
-                statusText.gameObject.SetActive(false);
+                statusText?.gameObject.SetActive(false);
             }
         }
     }
@@ -358,7 +359,7 @@ public class ArTapper : MonoBehaviour
         if (contentLoadedCount >= contentTotalCount)
         {
             allContentLoaded = true;
-            statusText.gameObject.SetActive(false);
+            statusText?.gameObject.SetActive(false);
         }
     }
     #endregion
@@ -416,7 +417,7 @@ public class ArTapper : MonoBehaviour
                 if (contentLoadedCount >= contentTotalCount)
                 {
                     allContentLoaded = true;
-                    statusText.gameObject.SetActive(false);
+                    statusText?.gameObject.SetActive(false);
                 }
             }
         }
