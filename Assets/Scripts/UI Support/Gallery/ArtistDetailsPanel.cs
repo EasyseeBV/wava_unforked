@@ -49,6 +49,12 @@ public class ArtistDetailsPanel : DetailsPanel
         artworksButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artworks));
         exhibitionButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Exhibitions));
     }
+    
+    protected override void Close()
+    {
+        ArtworkUIManager.Instance.InitArtists();
+        base.Close();
+    }
 
     private void ChangeMenu(MenuNavigation menu)
     {

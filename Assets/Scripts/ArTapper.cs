@@ -453,7 +453,6 @@ public class ArTapper : MonoBehaviour
             statusText?.gameObject.SetActive(false);
         }
     }
-
     
     #endregion
     

@@ -21,6 +21,9 @@ public class DetailsPanel : MonoBehaviour
     [SerializeField] protected Image heartImage;
     [SerializeField] protected Sprite unlikedSprite;
     [SerializeField] protected Sprite likedSprite;
+
+    [Header("General")]
+    [SerializeField] private Button closeButton;
     
     protected string fullLengthDescription;
     protected bool readingMore = false;
@@ -37,6 +40,12 @@ public class DetailsPanel : MonoBehaviour
     {
         if (lateUpdateText) textNeedsUpdate = true;
         contentDescriptionButton.onClick.AddListener(ToggleReadMore);
+        closeButton.onClick.AddListener(Close);
+    }
+
+    protected virtual void Close()
+    {
+        gameObject.SetActive(false);
     }
 
     private void ToggleReadMore()

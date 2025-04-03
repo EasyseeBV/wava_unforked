@@ -60,6 +60,12 @@ public class ArtworkDetailsPanel : DetailsPanel
         }
     }
 
+    protected override void Close()
+    {
+        ArtworkUIManager.Instance.InitArtworks();
+        base.Close();
+    }
+
     public void Fill(ArtworkData artwork)
     {
         this.artwork = artwork;
@@ -123,7 +129,6 @@ public class ArtworkDetailsPanel : DetailsPanel
             Debug.Log("Failed to load all ArtworkDetailsImages: " + e);
         }
     }
-    
 
     private void Clear()
     {

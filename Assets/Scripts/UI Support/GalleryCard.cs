@@ -46,7 +46,11 @@ public class GalleryCard : MonoBehaviour
         try
         {
             artwork = point;
-
+            
+            artworkLabel.text = point.title;
+            artistLabel.text = point.artists.Count > 0 ? point.artists[0].title : null;
+            yearLabel.text = point.year.ToString();
+            
             if (point.artwork_image_references.Count > 0)
             {
                 var images = await point.GetImages(1);
@@ -55,10 +59,6 @@ public class GalleryCard : MonoBehaviour
             else artworkImage.sprite = null;
             
             loadingCircle?.StopLoading();
-            
-            artworkLabel.text = point.title;
-            artistLabel.text = point.artists.Count > 0 ? point.artists[0].title : null;
-            yearLabel.text = point.year.ToString();
         }
         catch (Exception e)
         {

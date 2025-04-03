@@ -59,6 +59,12 @@ public class ExhibitionDetailsPanel : DetailsPanel
         artistsButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artists));
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
     }
+    
+    protected override void Close()
+    {
+        ArtworkUIManager.Instance.InitExhibitions();
+        base.Close();
+    }
 
     private async void ChangeMenu(MenuNavigation menu)
     {
