@@ -52,6 +52,8 @@ public class ArTapper : MonoBehaviour
     [Header("Presets")] // cleaned up in a future phase
     [SerializeField] private GameObject coin;
     [SerializeField] private GameObject bird;
+    [SerializeField] private GameObject tree;
+    [SerializeField] private Material[] monuments;
 
     public ARObject arObject { get; private set; }
     
@@ -168,6 +170,102 @@ public class ArTapper : MonoBehaviour
         } 
 
         hasContent = true;
+        bool loadContent = true;
+        
+        if (!string.IsNullOrEmpty(ArtworkToPlace.preset) && ArtworkToPlace.preset != "None")
+        {
+            Debug.Log("Loading a preset: " + ArtworkToPlace.preset);
+                
+            switch (ArtworkToPlace.preset)
+            {
+                case "Bird Animation":
+                {
+                    var birdObj = Instantiate(bird, Vector3.zero, Quaternion.identity);
+                    arObject.Add(birdObj);
+                    contentDict.TryAdd(contentDict.Count, birdObj);
+                    contentLoadedCount++;
+                    break;
+                }
+                case "Coin Clicker":
+                {
+                    var coinObj = Instantiate(coin, Vector3.zero, Quaternion.identity);
+                    arObject.Add(coinObj);
+                    contentDict.TryAdd(contentDict.Count, coinObj);
+                    contentLoadedCount++;
+                    break;
+                }
+                case "Tree":
+                    var treeObj = Instantiate(tree, Vector3.zero, Quaternion.identity);
+                    arObject.Add(treeObj);
+                    contentDict.TryAdd(contentDict.Count, treeObj);
+                    contentLoadedCount++;
+                    break;
+                case "Monument":
+                    loadContent = false;
+                    
+                    if (ArtworkToPlace.content_list.Count > 0)
+                    {
+                        // separate out this code later
+                        var content = ArtworkToPlace.content_list[0];
+                        var uri = new Uri(content.media_content);
+                        string encodedPath = uri.AbsolutePath;
+                        string decodedPath = Uri.UnescapeDataString(encodedPath);
+                        string fileName = Path.GetFileName(decodedPath);
+                        containsVideo = false;
+                        bool storedLocal = false;
+
+                        string path = content.media_content; // default the path to the firestore uri of the content
+                        string localPath = Path.Combine(AppCache.ContentFolder, fileName);
+            
+                        // if the file does not exist locally, download it
+                        if (!File.Exists(localPath))
+                        {
+                            statusText?.SetText("Downloading...");
+                            var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content);
+                            path = results.localPath;
+                        }
+                        else if (File.Exists(localPath)) // if the file does exist, set the path to that location
+                        {
+                            path = localPath;
+                        }
+                        
+                        if (_assetLoaderOptions == null)
+                        {
+                            _assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
+                            _assetLoaderOptions.MaterialMappers = new MaterialMapper[]
+                            {
+                                ScriptableObject.CreateInstance<UniversalRPMaterialMapper>()
+                            };
+                        }
+                    
+                        Debug.Log("attempting to load local model file: " + fileName);
+
+                        // Load the model from the local file path instead of downloading it.
+                        AssetLoader.LoadModelFromFile(
+                            path: path,
+                            onLoad: OnLoad,
+                            onMaterialsLoad: c => { OnMaterialsLoad(c, content, contentDict.Count, monuments); },
+                            onProgress: OnProgress,
+                            onError: OnError,
+                            wrapperGameObject: null,
+                            assetLoaderOptions: _assetLoaderOptions
+                        );
+                        break;
+                    }
+                    
+                    // load content
+                    // on material load custom?
+                    break;
+            }
+
+            if (contentLoadedCount >= contentTotalCount)
+            {
+                allContentLoaded = true;
+                statusText?.gameObject.SetActive(false);
+            }
+        }
+
+        if (!loadContent) return;
 
         for (int i = 0; i < ArtworkToPlace.content_list.Count; i++)
         {
@@ -296,37 +394,6 @@ public class ArTapper : MonoBehaviour
                     break;
             }
         }
-        
-        if (!string.IsNullOrEmpty(ArtworkToPlace.preset) && ArtworkToPlace.preset != "None")
-        {
-            Debug.Log("Loading a preset: " + ArtworkToPlace.preset);
-                
-            switch (ArtworkToPlace.preset)
-            {
-                case "Bird Animation":
-                {
-                    var birdObj = Instantiate(bird, Vector3.zero, Quaternion.identity);
-                    arObject.Add(birdObj);
-                    contentDict.TryAdd(contentDict.Count, birdObj);
-                    contentLoadedCount++;
-                    break;
-                }
-                case "Coin Clicker":
-                {
-                    var coinObj = Instantiate(coin, Vector3.zero, Quaternion.identity);
-                    arObject.Add(coinObj);
-                    contentDict.TryAdd(contentDict.Count, coinObj);
-                    contentLoadedCount++;
-                    break;
-                }
-            }
-
-            if (contentLoadedCount >= contentTotalCount)
-            {
-                allContentLoaded = true;
-                statusText?.gameObject.SetActive(false);
-            }
-        }
     }
     
     #region Model Loading Callbacks
@@ -362,6 +429,32 @@ public class ArTapper : MonoBehaviour
             statusText?.gameObject.SetActive(false);
         }
     }
+    
+    private void OnMaterialsLoad(AssetLoaderContext assetLoaderContext, MediaContentData mediaContentData, int index, Material[] materials)
+    {
+        Debug.Log("All materials have been applied. The model is fully loaded.");
+        contentLoadedCount++;
+        var obj = assetLoaderContext.RootGameObject;
+        
+        var meshRenderers = obj.GetComponentsInChildren<MeshRenderer>();
+        if (meshRenderers is { Length: > 1 })
+        {
+            meshRenderers[0].material = materials[0];
+            meshRenderers[1].material = materials[1];
+        }
+        
+        contentDict.TryAdd(index, obj);
+        obj.name = "Loaded Model";
+        arObject.Add(obj, mediaContentData);
+
+        if (contentLoadedCount >= contentTotalCount)
+        {
+            allContentLoaded = true;
+            statusText?.gameObject.SetActive(false);
+        }
+    }
+
+    
     #endregion
     
     private IEnumerator DownloadAudioClip(string url)

@@ -55,7 +55,7 @@ public class ArtworkDetailsPanel : DetailsPanel
             {
                 ArTapper.ArtworkToPlace = artwork;
                 ArTapper.DistanceWhenActivated = 2f;
-                SceneManager.LoadSceneAsync(19);
+                SceneManager.LoadSceneAsync("ARView");
             });
         }
     }

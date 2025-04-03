@@ -155,6 +155,7 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitArtworks() 
     {
+        if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.BeginLoading();
         ClearStage();
         ShowDefaultLayoutArea(true);
         ChangeMenuNavigation(MenuNavigation.Artworks);
@@ -190,6 +191,7 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitExhibitions() 
     {
+        if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.BeginLoading();
         ClearStage();
         ShowDefaultLayoutArea(true);
         ChangeMenuNavigation(MenuNavigation.Exhibitions);
@@ -223,6 +225,7 @@ public class ArtworkUIManager : MonoBehaviour
     
     public void InitArtists()
     {
+        if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
         ClearStage();
         ShowDefaultLayoutArea(false);
         ChangeMenuNavigation(MenuNavigation.Artists);
@@ -378,8 +381,8 @@ public class ArtworkUIManager : MonoBehaviour
         exhibitionDetailsArea?.SetActive(typeof(T) == typeof(ExhibitionData));
         artistDetailsArea?.SetActive(typeof(T) == typeof(ArtistData));
         
-        loadingCircle?.gameObject.SetActive(true);
-        loadingCircle?.BeginLoading();
+        //loadingCircle?.gameObject.SetActive(true);
+        //loadingCircle?.BeginLoading();
         
         switch (data)
         {

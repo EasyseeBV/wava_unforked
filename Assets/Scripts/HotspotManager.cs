@@ -315,7 +315,7 @@ public class HotspotManager : MonoBehaviour
         if(string.IsNullOrEmpty(artwork.alt_scene))
         {
             Debug.Log( "Loading Default AR Scene");
-            SceneManager.LoadScene(19);
+            SceneManager.LoadScene("ARView");
         }
         else
         {

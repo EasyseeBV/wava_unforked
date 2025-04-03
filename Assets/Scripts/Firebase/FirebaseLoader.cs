@@ -328,6 +328,22 @@ public class FirebaseLoader : MonoBehaviour
                     artworkStored.update_date_time = artwork.update_time.ToDateTime();
 
                     artworkStored.content_list = new List<MediaContentData>(artwork.content_list);
+
+                    foreach (var content in artwork.content_list)
+                    {
+                        var uri = new Uri(content.media_content);
+                        string encodedPath = uri.AbsolutePath;
+                        string decodedPath = Uri.UnescapeDataString(encodedPath);
+                        string fileName = Path.GetFileName(decodedPath);
+                        string localPath = Path.Combine(AppCache.ContentFolder, fileName);
+            
+                        // if the file does not exist locally, download it
+                        if (File.Exists(localPath))
+                        {
+                            Debug.Log("Removing stored content: " + fileName);
+                            File.Delete(localPath);
+                        }
+                    }
                     
                     artworkStored.preset = artwork.preset;
                     artworkStored.alt_scene = artwork.alt_scene;

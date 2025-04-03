@@ -49,7 +49,7 @@ public class ShowObjectsScripts : MonoBehaviour
 		
 		ArTapper.PlaceDirectly = objectData.SpawnDirectly;
 		ArTapper.DistanceWhenActivated = Vector3.Distance(objectData.ObjectToShowOnMap.transform.position, Avatar.transform.position);
-		SceneManager.LoadScene("AR");
+		SceneManager.LoadScene("ARView");
     }
 
 	private void Update()
