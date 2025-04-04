@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DanielLochner.Assets.SimpleScrollSnap;
@@ -46,7 +47,10 @@ public class ArtworkDetailsPanel : DetailsPanel
         base.Setup();
         heartButton.onClick.AddListener(LikeArtwork);
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
-        downloadButton.onClick.AddListener(DownloadArtwork);
+        downloadButton.onClick.AddListener(() =>
+        {
+            DownloadArtwork();
+        });
         
         if (AppSettings.DeveloperMode)
         {
@@ -86,6 +90,7 @@ public class ArtworkDetailsPanel : DetailsPanel
         TruncateText();
         
         downloadedCheckmark.SetActive(false);
+        CheckArtworkDownload();
         
         showOnMapButton.onClick.RemoveAllListeners();
         showOnMapButton.onClick.AddListener(() =>
@@ -156,22 +161,71 @@ public class ArtworkDetailsPanel : DetailsPanel
         // artwork.Liked = !artwork.Liked;
         // heartImage.sprite = artwork.Liked ? likedSprite : unlikedSprite;
     }
-
-    private void DownloadArtwork()
+    
+    private void CheckArtworkDownload()
     {
-        if (artwork == null) return;
+        bool downloaded = false;
 
-        Debug.LogWarning("Download artwork is disabled temp...");
-        
-        /*if (AppCache.ArtworkDownloads.Any(artworkDownloadHolder => artworkDownloadHolder.artwork_id == artwork.id))
+        if (artwork != null && artwork.content_list.Count > 0)
         {
-            downloadedCheckmark.SetActive(false);
-            AppCache.DeleteDownloadedImagesForArtwork(artwork.id);
-            return;
+            downloaded = true;
+            foreach (var content in artwork.content_list)
+            {
+                try
+                {
+                    var uri = new Uri(content.media_content);
+                    string encodedPath = uri.AbsolutePath;
+                    string decodedPath = Uri.UnescapeDataString(encodedPath);
+                    string fileName = Path.GetFileName(decodedPath);
+                    string localPath = Path.Combine(AppCache.ContentFolder, fileName);
+            
+                    // if the file does not exist locally, download it
+                    if (!File.Exists(localPath))
+                    {
+                        downloaded = false;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("Failed to download content: " + e);
+                }
+            }   
         }
         
-        downloadedCheckmark.SetActive(true);
-        AppCache.DownloadArtworkImages(artwork);*/
+        downloadedCheckmark.SetActive(downloaded);
+    }
+
+    private async Task DownloadArtwork()
+    {
+        if (artwork == null || artwork.content_list.Count <= 0) return;
+        
+        foreach (var content in artwork.content_list)
+        {
+            try
+            {
+                var uri = new Uri(content.media_content);
+                string encodedPath = uri.AbsolutePath;
+                string decodedPath = Uri.UnescapeDataString(encodedPath);
+                string fileName = Path.GetFileName(decodedPath);
+                string localPath = Path.Combine(AppCache.ContentFolder, fileName);
+            
+                // if the file does not exist locally, download it
+                if (!File.Exists(localPath))
+                {
+                    downloadedCheckmark.SetActive(true);
+                    await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content);
+                }
+                else
+                {
+                    downloadedCheckmark.SetActive(false);
+                    File.Delete(localPath);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Failed to download content: " + e);
+            }
+        }
     }
 
     private async void GetExhibition()

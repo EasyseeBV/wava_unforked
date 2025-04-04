@@ -35,6 +35,7 @@ public class ArTapper : MonoBehaviour
     public ARSession arSession;
     public XROrigin arOrigin;
     public ARRaycastManager arRaycast;
+    [SerializeField] private ARPlaneManager arPlaneManager;
     [SerializeField] private ARNamebar arNamebar;
     [SerializeField] private ARInfoPage arInfoPage;
     [SerializeField] private StatusText statusText;
@@ -157,6 +158,12 @@ public class ArTapper : MonoBehaviour
         loadingPlane.SetActive(false);
         arObject.gameObject.SetActive(true);
         arObject.Show();
+
+        arPlaneManager.planePrefab = null;
+        foreach (var trackable in arPlaneManager.trackables)
+        {
+            trackable.gameObject.SetActive(false);
+        }
     }
 
     #region Content Loading

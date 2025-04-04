@@ -54,6 +54,8 @@ public class FirebaseLoader : MonoBehaviour
     public static event Action<string> OnStartUpEventProcessed;
     
     public static bool SetupComplete { get; private set; } = false;
+    private int connectAttempts = 0;
+    private int maxConnectAttempts = 3;
     
     // Serialized Properties
     [Header("Settings")]
@@ -115,9 +117,6 @@ public class FirebaseLoader : MonoBehaviour
                     await GetCollectionCountsAsync();
                     await AppCache.LoadLocalCaches();
                     await CheckForCacheUpdates();
-
-                    Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
-                    Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
                     
                     Initialized = true;
                     OnFirestoreInitialized?.Invoke();
@@ -137,6 +136,17 @@ public class FirebaseLoader : MonoBehaviour
 
             if (!Initialized)
             {
+                connectAttempts++;
+                if (connectAttempts > maxConnectAttempts)
+                {
+                    OnStartUpEventProcessed?.Invoke("Starting in offline mode...");
+                    await AppCache.LoadLocalCaches();
+                    SetupComplete = true;
+                    Initialized = true;
+                    OnFirestoreInitialized?.Invoke();
+                    return;
+                }
+                
                 OnStartUpEventProcessed?.Invoke("Failed to initialize database... retrying...");
                 Debug.LogWarning("Retrying Firebase initialization in 5 seconds...");
                 await Task.Delay(TimeSpan.FromSeconds(5));
