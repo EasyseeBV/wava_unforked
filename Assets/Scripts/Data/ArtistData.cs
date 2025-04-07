@@ -13,6 +13,7 @@ public class ArtistData : FirebaseData
     [FirestoreProperty] public string location { get; set; }
     [FirestoreProperty] public string link { get; set; }
     [FirestoreProperty] public string icon { get; set; }
+    [FirestoreProperty] public bool published { get; set; }
     
     // Read Only Data
     [FirestoreProperty] public Timestamp creation_time { get; set; }

@@ -9,7 +9,7 @@ public class SetDeveloperMode : MonoBehaviour
         AppSettings.DeveloperMode = setDeveloperMode;
         
 #if UNITY_EDITOR
-        AppSettings.DeveloperMode = true;
+        //AppSettings.DeveloperMode = true;
 #endif
     }
 }

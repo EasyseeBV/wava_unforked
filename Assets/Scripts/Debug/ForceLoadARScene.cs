@@ -21,6 +21,6 @@ public class ForceLoadARScene : MonoBehaviour
         ArTapper.ArtworkToPlace = point;
         ArTapper.DistanceWhenActivated = 1f;
 
-        SceneManager.LoadSceneAsync("ARView");
+        SceneManager.LoadSceneAsync(point.alt_scene == string.Empty ? "ARView" : point.alt_scene);
     }
 }

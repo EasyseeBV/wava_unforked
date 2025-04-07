@@ -9,6 +9,7 @@ public class ExhibitionData : FirebaseData
 {
     [FirestoreProperty] public string title { get; set; }
     [FirestoreProperty] public string description { get; set; }
+    [FirestoreProperty] public bool published { get; set; }
     
     [FirestoreProperty] public List<DocumentReference> artist_references { get; set; } = new List<DocumentReference>();
     public List<ArtistData> artists { get; set; } = new List<ArtistData>();
@@ -19,7 +20,6 @@ public class ExhibitionData : FirebaseData
     [FirestoreProperty] public int year { get; set; }
     [FirestoreProperty] public string location { get; set; }
     
-    [FirestoreProperty] public bool published { get; set; }
     [FirestoreProperty] public string color { get; set; }
     
     [FirestoreProperty] public List<string> exhibition_image_references { get; set; } = new List<string>();

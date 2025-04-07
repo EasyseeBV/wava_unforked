@@ -187,6 +187,7 @@ public class ArTapper : MonoBehaviour
             {
                 case "Bird Animation":
                 {
+                    contentTotalCount++;
                     var birdObj = Instantiate(bird, Vector3.zero, Quaternion.identity);
                     arObject.Add(birdObj);
                     contentDict.TryAdd(contentDict.Count, birdObj);
@@ -195,6 +196,7 @@ public class ArTapper : MonoBehaviour
                 }
                 case "Coin Clicker":
                 {
+                    contentTotalCount++;
                     var coinObj = Instantiate(coin, Vector3.zero, Quaternion.identity);
                     arObject.Add(coinObj);
                     contentDict.TryAdd(contentDict.Count, coinObj);
@@ -202,6 +204,7 @@ public class ArTapper : MonoBehaviour
                     break;
                 }
                 case "Tree":
+                    contentTotalCount++;
                     var treeObj = Instantiate(tree, Vector3.zero, Quaternion.identity);
                     arObject.Add(treeObj);
                     contentDict.TryAdd(contentDict.Count, treeObj);
@@ -212,6 +215,8 @@ public class ArTapper : MonoBehaviour
                     
                     if (ArtworkToPlace.content_list.Count > 0)
                     {
+                        contentTotalCount++;
+                        
                         // separate out this code later
                         var content = ArtworkToPlace.content_list[0];
                         var uri = new Uri(content.media_content);
@@ -314,10 +319,10 @@ public class ArTapper : MonoBehaviour
             {
                 case ".mp4" or ".mvk" or ".mov": // video
                     Debug.Log($"content [{ArtworkToPlace.title}] contained a media piece");
-                    Debug.LogWarning("Content positioning, scale and rotation still needs to be adjusted");
                 
                     containsVideo = true;
-                    arObject.Add(content, content.media_content, player =>
+                    
+                    var videoPlayer = arObject.Add(content, "file:///" + path, player =>
                     {
                         Debug.Log("Video prepared");
                         contentLoadedCount++;
@@ -327,6 +332,7 @@ public class ArTapper : MonoBehaviour
                             statusText?.gameObject.SetActive(false);
                         }
                     });
+                    contentDict.TryAdd(i, videoPlayer.gameObject);
                     break;
                 
                 case ".mp3": // audio
@@ -391,8 +397,10 @@ public class ArTapper : MonoBehaviour
                 }
                 
                 case ".png" or ".jpg" or ".jpeg": // image
+                    // Online & device loading are handled differently - so we should always try to download the image locally first - if that fails we can consider 
                     Debug.Log($"content [{ArtworkToPlace.title}] contained an image piece");
-                    StartCoroutine(DownloadImageAsSprite(path, content, i));
+                    //StartCoroutine(DownloadImageAsSprite(path, content, i));
+                    StartCoroutine(LoadSprite(path, content, i));
                     break;
                 
                 default:
@@ -502,7 +510,7 @@ public class ArTapper : MonoBehaviour
 
             if (uwr.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError($"Failed to download image: {uwr.error}");
+                Debug.LogError($"Failed to download image: {uwr.error} | provided path: {imageUrl}");
             }
             else
             {
@@ -520,6 +528,39 @@ public class ArTapper : MonoBehaviour
                 }
             }
         }
+    }
+
+    private IEnumerator LoadSprite(string filePath, MediaContentData content, int index)
+    {
+        if (!File.Exists(filePath))
+        {
+            Debug.LogError("File does not exist at path: " + filePath);
+            yield return null;
+        }
+        
+        byte[] bytes = File.ReadAllBytes(filePath);
+        
+        Texture2D texture = new Texture2D(2, 2);
+        if (!texture.LoadImage(bytes))
+        {
+            Debug.LogError("Failed to load image data from file");
+            yield return null;
+        }
+        
+        Sprite loadedSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+        
+        // AR content loading
+        var uiObj = arObject.Add(loadedSprite, content);
+        contentDict.TryAdd(index, uiObj);
+        Debug.Log("Image downloaded and sprite created.");
+        contentLoadedCount++;
+        if (contentLoadedCount >= contentTotalCount)
+        {
+            allContentLoaded = true;
+            statusText?.gameObject.SetActive(false);
+        }
+
+        yield return null;
     }
 
     #endregion

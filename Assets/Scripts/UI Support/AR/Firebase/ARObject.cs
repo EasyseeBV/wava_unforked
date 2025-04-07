@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -88,7 +89,7 @@ public class ARObject : MonoBehaviour
     }
 
     // Adding Video
-    public void Add(MediaContentData mediaContentData, string url, Action<VideoPlayer> onComplete)
+    public VideoPlayer Add(MediaContentData mediaContentData, string url, Action<VideoPlayer> onComplete)
     {
         Debug.Log("Adding and preparing video...");
         var player = Instantiate(videoPlayer, videoPlacementArea);
@@ -124,6 +125,8 @@ public class ARObject : MonoBehaviour
         };
 
         player.prepareCompleted += handler;
+
+        return player;
     }
 
     // Adding Audio

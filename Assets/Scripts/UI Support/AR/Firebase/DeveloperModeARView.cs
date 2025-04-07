@@ -134,7 +134,7 @@ public class DeveloperModeARView : MonoBehaviour
             artworkButton.Populate(artwork.title, () =>
             {
                 ArTapper.ArtworkToPlace = artwork;
-                SceneManager.LoadSceneAsync("ARView");
+                SceneManager.LoadSceneAsync(artwork.alt_scene == string.Empty ? "ARView" : artwork.alt_scene);
             });
         }
         

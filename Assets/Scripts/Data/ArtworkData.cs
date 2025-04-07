@@ -12,6 +12,7 @@ public class ArtworkData : FirebaseData
     // Main Data
     [FirestoreProperty] public string title { get; set; }
     [FirestoreProperty] public string description { get; set; }
+    [FirestoreProperty] public bool published { get; set; }
     
     [FirestoreProperty] public List<DocumentReference> artist_references { get; set; } = new List<DocumentReference>();
 
@@ -19,7 +20,6 @@ public class ArtworkData : FirebaseData
 
     [FirestoreProperty] public int year { get; set; }
     [FirestoreProperty] public string location { get; set; }
-    [FirestoreProperty] public bool published { get; set; }
     
     [FirestoreProperty] public List<string> artwork_image_references { get; set; } = new List<string>();
     

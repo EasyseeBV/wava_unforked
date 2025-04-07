@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Firebase.Firestore;
 using UnityEngine;
 
 public abstract class FirebaseData

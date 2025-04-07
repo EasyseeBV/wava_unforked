@@ -446,6 +446,16 @@ public class FirebaseLoader : MonoBehaviour
             Debug.LogWarning("Tried to add an exhibition with a document id already stored in the artwork map: " + data.title);
             return;
         }
+
+        if (!AppSettings.DeveloperMode)
+        {
+            if (!data.published)
+            {
+                ArtworkCollectionSize--;
+                Debug.LogWarning($"Removed an unpublished artwork from loading queue [{data.title}] because publishing was: {data.published}");
+                return;
+            }
+        }
         
         Artworks.Add(data);
         ArtworksMap.TryAdd(data.id, data);
@@ -459,6 +469,16 @@ public class FirebaseLoader : MonoBehaviour
             return;
         }
         
+        /*if (!AppSettings.DeveloperMode)
+        {
+            if (!data.published)
+            {
+                ArtistCollectionSize--;
+                Debug.LogWarning("Removed an unpublished artwork from loading queue: " + data.title);
+                return;
+            }
+        }*/
+        
         Artists.Add(data);
         ArtistsMap.TryAdd(data.id, data);
     }
@@ -469,6 +489,16 @@ public class FirebaseLoader : MonoBehaviour
         {
             Debug.LogWarning("Tried to add an exhibition with a document id already stored in the exhibition map: " + data.title);
             return;
+        }
+        
+        if (!AppSettings.DeveloperMode)
+        {
+            if (!data.published)
+            {
+                ExhibitionCollectionSize--;
+                Debug.LogWarning("Removed an unpublished exhibition from loading queue: " + data.title);
+                return;
+            }
         }
         
         Exhibitions.Add(data);
@@ -492,8 +522,7 @@ public class FirebaseLoader : MonoBehaviour
         //await LoadArtworkImages(exhibition);
         exhibition.creation_date_time = exhibition.creation_time.ToDateTime();
         exhibition.update_date_time = exhibition.update_time.ToDateTime();
-        ExhibitionsMap.TryAdd(document.Id, exhibition);
-        Exhibitions.Add(exhibition);
+        AddExhibitionData(exhibition);
         Debug.Log($"[Firebase] Loaded Exhibition: {exhibition.title} [{document.Id}]");
         
         return exhibition;
@@ -515,8 +544,7 @@ public class FirebaseLoader : MonoBehaviour
         {
             artwork.artists.Add(await ReadArtistDocumentReference(documentReference));
         }
-        ArtworksMap.TryAdd(document.Id, artwork);
-        Artworks.Add(artwork);
+        AddArtworkData(artwork);
         Debug.Log($"[Firebase] Loaded Artwork: {artwork.title} [{document.Id}]");
         
         return artwork;
@@ -534,8 +562,7 @@ public class FirebaseLoader : MonoBehaviour
         artist.id = document.Id;
         artist.creation_date_time = artist.creation_time.ToDateTime();
         artist.update_date_time = artist.update_time.ToDateTime();
-        ArtistsMap.TryAdd(document.Id, artist);
-        Artists.Add(artist);
+        AddArtistData(artist);
         Debug.Log($"[Firebase] Loaded artist: '{artist.title}'");
         
         return artist;
@@ -1283,7 +1310,7 @@ public class FirebaseLoader : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError($"Error downloading media: {e.Message}");
+            Debug.LogError($"Error downloading media: {e.Message} | tried saving to local path: {storagePath}");
         }
 
         return (string.Empty, false);
