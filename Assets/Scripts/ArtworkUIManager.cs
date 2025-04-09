@@ -129,7 +129,18 @@ public class ArtworkUIManager : MonoBehaviour
         }
         else
         {
-            InitArtworks();
+            if (AutoLoadDisplay.View == DisplayView.Exhibitions)
+            {
+                InitExhibitions();
+            }
+            else if (AutoLoadDisplay.View == DisplayView.Artists)
+            {
+                InitArtists();
+            }
+            else if (AutoLoadDisplay.View == DisplayView.Artworks)
+            {
+                InitArtworks();
+            }
         }
 
         if (PlayerPrefs.HasKey("DetailedInfoHelpBar"))

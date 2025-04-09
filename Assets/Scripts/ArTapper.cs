@@ -337,7 +337,7 @@ public class ArTapper : MonoBehaviour
                 
                 case ".mp3": // audio
                     Debug.Log($"content [{ArtworkToPlace.title}] contained an audio piece");
-                    StartCoroutine(DownloadAudioClip(path));
+                    StartCoroutine(LoadAudioClip(path, content, i));
                     break;
                 
                 case ".fbx" or ".obj" or ".gltf" or ".gltf2" when storedLocal: // stored local model
@@ -397,9 +397,6 @@ public class ArTapper : MonoBehaviour
                 }
                 
                 case ".png" or ".jpg" or ".jpeg": // image
-                    // Online & device loading are handled differently - so we should always try to download the image locally first - if that fails we can consider 
-                    Debug.Log($"content [{ArtworkToPlace.title}] contained an image piece");
-                    //StartCoroutine(DownloadImageAsSprite(path, content, i));
                     StartCoroutine(LoadSprite(path, content, i));
                     break;
                 
@@ -471,63 +468,56 @@ public class ArTapper : MonoBehaviour
     
     #endregion
     
-    private IEnumerator DownloadAudioClip(string url)
+    private IEnumerator LoadAudioClip(string filePath, MediaContentData content, int index)
     {
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.MPEG))
+        // Check if the file exists at the given path.
+        if (!File.Exists(filePath))
         {
-            yield return www.SendWebRequest();
-
-            if (www.result != UnityWebRequest.Result.Success)
-            {
-                contentTotalCount--;
-                Debug.LogError("Error downloading audio: " + www.error);
-            }
-            else
-            {
-                Debug.Log("AudioClip downloaded");
-                contentLoadedCount++;
-                AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
-                arObject.Add(clip);
-                if (contentTotalCount == 1)
-                {
-                    arObject.Show();
-                }
-
-                if (contentLoadedCount >= contentTotalCount)
-                {
-                    allContentLoaded = true;
-                    statusText.gameObject.SetActive(false);
-                }
-            }
+            Debug.LogError("File does not exist at path: " + filePath);
+            yield return null;
         }
-    }
     
-    private IEnumerator DownloadImageAsSprite(string imageUrl, MediaContentData content, int index)
-    {
-        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(imageUrl))
+        // Convert the file path to a URI.
+        // Note: For local files, ensure the path is correctly formatted (e.g., add "file:///" before the path).
+        string uri = "file:///" + filePath;
+    
+        // Create the request for an audio clip.
+        // Here, we use AudioType.MPEG for an .mp3 file. Adjust the AudioType if needed.
+        using (UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(uri, AudioType.MPEG))
         {
-            yield return uwr.SendWebRequest();
+            // Wait for the download to complete.
+            yield return request.SendWebRequest();
 
-            if (uwr.result != UnityWebRequest.Result.Success)
+            // Check for network or HTTP errors.
+            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
             {
-                Debug.LogError($"Failed to download image: {uwr.error} | provided path: {imageUrl}");
+                Debug.LogError("Error loading audio clip: " + request.error);
+                yield return null;
             }
-            else
+
+            // Retrieve the AudioClip from the request.
+            AudioClip audioClip = DownloadHandlerAudioClip.GetContent(request);
+            if (audioClip == null)
             {
-                Texture2D texture = DownloadHandlerTexture.GetContent(uwr);
-                // Create a sprite with the texture. The pivot is set to the center.
-                Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-                var uiObj = arObject.Add(sprite, content);
-                contentDict.TryAdd(index, uiObj);
-                Debug.Log("Image downloaded and sprite created.");
-                contentLoadedCount++;
-                if (contentLoadedCount >= contentTotalCount)
-                {
-                    allContentLoaded = true;
-                    statusText?.gameObject.SetActive(false);
-                }
+                Debug.LogError("Failed to load audio clip from file");
+                yield return null;
+            }
+
+            // Optionally: Add the audio clip to your AR content system.
+            var uiObj = arObject.Add(audioClip, content).gameObject;
+            contentDict.TryAdd(index, uiObj);
+            Debug.Log("Audio clip loaded successfully.");
+        
+            // Update counters and status similar to the image loader.
+            contentLoadedCount++;
+            if (contentLoadedCount >= contentTotalCount)
+            {
+                allContentLoaded = true;
+                statusText?.gameObject.SetActive(false);
             }
         }
+    
+        yield return null;
     }
 
     private IEnumerator LoadSprite(string filePath, MediaContentData content, int index)

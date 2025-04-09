@@ -8,11 +8,23 @@ public class AutoLoadDisplay : MonoBehaviour
     
     private void Awake()
     {
-        if(View == DisplayView.Exhibitions) artworkUIManager.InitExhibitions();
-        else if(View == DisplayView.Artists) artworkUIManager.InitArtists();
-        else artworkUIManager.InitArtworks();
+        Debug.Log("Auto-loading display");
 
-        View = DisplayView.Artworks;
+        if (View == DisplayView.Exhibitions)
+        {
+            artworkUIManager.InitExhibitions();
+        }
+        else if (View == DisplayView.Artists)
+        {
+            artworkUIManager.InitArtists();
+        }
+        else if (View == DisplayView.Artworks)
+        {
+            artworkUIManager.InitArtworks();
+        }
+
+        /*
+        View = DisplayView.Artworks;*/
     }
 }
 
