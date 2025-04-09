@@ -91,11 +91,19 @@ public class ARObject : MonoBehaviour
     // Adding Video
     public VideoPlayer Add(MediaContentData mediaContentData, string url, Action<VideoPlayer> onComplete)
     {
-        Debug.Log("Adding and preparing video...");
         var player = Instantiate(videoPlayer, videoPlacementArea);
+        var backupPlayer = player.gameObject.transform.GetChild(0).GetComponent<VideoPlayer>();
+
+        Debug.Log(backupPlayer, backupPlayer);
+        
         videoPlayers.Add(player);
+        videoPlayers.Add(backupPlayer);
+        
         player.url = url;
+        backupPlayer.url = url;
+        
         player.Prepare();
+        backupPlayer.Prepare();
         
         // Apply position offset
         Vector3 offset = new Vector3(
@@ -123,8 +131,16 @@ public class ARObject : MonoBehaviour
             player.gameObject.transform.SetParent(placementParent);
             onComplete.Invoke(vp);
         };
+        
+        VideoPlayer.EventHandler handler2 = null;
+        handler2 = (VideoPlayer vp2) =>
+        {
+            backupPlayer.prepareCompleted -= handler2;
+            onComplete.Invoke(vp2);
+        };
 
         player.prepareCompleted += handler;
+        backupPlayer.prepareCompleted += handler2;
 
         return player;
     }
@@ -264,6 +280,8 @@ public class ARObject : MonoBehaviour
         
         if (objectRenderers.Count == 0)
             return;
+        
+        shadowPlane.gameObject.SetActive(true);
         
         Bounds combinedBounds = objectRenderers[0].bounds;
         foreach (Renderer rend in objectRenderers)

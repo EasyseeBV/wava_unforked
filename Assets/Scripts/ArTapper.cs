@@ -39,7 +39,9 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private ARNamebar arNamebar;
     [SerializeField] private ARInfoPage arInfoPage;
     [SerializeField] private StatusText statusText;
-
+    [SerializeField] private Material shadowCatcherMaterial;
+    [SerializeField] private GameObject shadowCatcherPrefab;
+    
     [Header("Firebase Preloaded elements")]
     [SerializeField] private ARObject arObjectPrefab;
     [SerializeField] private bool testContent;
@@ -159,10 +161,15 @@ public class ArTapper : MonoBehaviour
         arObject.gameObject.SetActive(true);
         arObject.Show();
 
-        arPlaneManager.planePrefab = null;
+        arPlaneManager.planePrefab = shadowCatcherPrefab;
         foreach (var trackable in arPlaneManager.trackables)
         {
             trackable.gameObject.SetActive(false);
+            /*MeshRenderer meshRenderer = trackable.GetComponent<MeshRenderer>();
+            if (meshRenderer != null) meshRenderer.material = shadowCatcherMaterial;
+            
+            LineRenderer lineRenderer = trackable.GetComponent<LineRenderer>();
+            if (lineRenderer != null) lineRenderer.enabled = false;*/
         }
     }
 
