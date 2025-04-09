@@ -130,7 +130,7 @@ public class ARObject : MonoBehaviour
     }
 
     // Adding Audio
-    public void Add(AudioClip clip)
+    public AudioSource Add(AudioClip clip, MediaContentData contentData)
     {
         if (clip == null)
         {
@@ -139,7 +139,31 @@ public class ARObject : MonoBehaviour
         
         var source = Instantiate(audioSource, placementParent);
         source.clip = clip;
+        
+        var obj = source.gameObject;
+        
+        // Apply rotation (assuming the rotation value is in degrees around the Y axis)
+        obj.transform.localRotation = Quaternion.Euler(contentData.transforms.rotation.x_rotation, contentData.transforms.rotation.y_rotation, contentData.transforms.rotation.z_rotation);
+    
+        // Apply scale
+        Vector3 newScale = new Vector3(
+            contentData.transforms.scale.x_scale,
+            contentData.transforms.scale.y_scale,
+            contentData.transforms.scale.z_scale
+        );
+        obj.transform.localScale = newScale;
+        
+        // Apply position offset
+        Vector3 offset = new Vector3(
+            contentData.transforms.position_offset.x_offset,
+            contentData.transforms.position_offset.y_offset,
+            contentData.transforms.position_offset.z_offset
+        );
+        obj.transform.localPosition = offset;
+        
         audioSources.Add(source);
+
+        return source;
     }
 
     public GameObject Add(Sprite sprite, MediaContentData contentData)
