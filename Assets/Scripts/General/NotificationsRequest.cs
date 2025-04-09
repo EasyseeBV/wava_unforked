@@ -1,5 +1,6 @@
 using UnityEngine;
 #if UNITY_IOS
+using System.Collections;
 using Unity.Notifications.iOS;
 #endif
 #if UNITY_ANDROID
@@ -11,22 +12,27 @@ public class NotificationsRequest : MonoBehaviour
     private void Awake()
     {
 #if UNITY_IOS
-        RequestIOSNotificationPermission();
+        StartCoroutine(RequestIOSNotificationPermission());
 #endif
 
 #if UNITY_ANDROID
         RequestAndroidNotificationPermission();
 #endif
     }
-
+    
 #if UNITY_IOS
-    private void RequestIOSNotificationPermission()
+    private IEnumerator RequestIOSNotificationPermission()
     {
-        // Request permissions for alerts, badges, and sounds
-        iOSAuthorizationOption options = iOSAuthorizationOption.Alert | iOSAuthorizationOption.Badge | iOSAuthorizationOption.Sound;
-        iOSNotificationCenter.RequestAuthorization(options, (granted, error) =>
+        // Use the new enum and request class.
+        var options = AuthorizationOption.Alert | AuthorizationOption.Badge | AuthorizationOption.Sound;
+        using (var req = new AuthorizationRequest(options, true))
         {
-            if (granted)
+            while (!req.IsFinished)
+            {
+                yield return null;
+            }
+
+            if (req.Granted)
             {
                 Debug.Log("iOS notification permission granted");
             }
@@ -34,7 +40,7 @@ public class NotificationsRequest : MonoBehaviour
             {
                 Debug.Log("iOS notification permission denied");
             }
-        });
+        }
     }
 #endif
 
