@@ -18,7 +18,7 @@ public class ArtworkDetailsPanel : DetailsPanel
     [Header("Gallery Area")] 
     [SerializeField] private SimpleScrollSnap scrollSnapper;
     [SerializeField] private Transform galleryArea;
-    [SerializeField] private Image galleryImagePrefab;
+    [SerializeField] private GameObject galleryImagePrefab;
     [Space]
     [SerializeField] private Transform indicatorArea;
     [SerializeField] private GameObject indicatorImage;
@@ -114,8 +114,11 @@ public class ArtworkDetailsPanel : DetailsPanel
             {
                 if (spr != null)
                 {
-                    Image artworkImage = scrollSnapper.AddToBack(galleryImagePrefab.gameObject).GetComponent<Image>();
+                    Image artworkImage = scrollSnapper.AddToBack(galleryImagePrefab.gameObject).GetComponentInChildren<Image>();
                     artworkImage.sprite = spr;
+                    var aspectRatioFitter = artworkImage.GetComponent<AspectRatioFitter>();
+                    var aspectRatio = spr.rect.width / spr.rect.height;
+                    aspectRatioFitter.aspectRatio = aspectRatio;
 
                     Image indicator = Instantiate(indicatorImage, indicatorArea).GetComponentInChildren<Image>();
                     indicator.color = inactiveColor;

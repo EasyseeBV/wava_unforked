@@ -15,6 +15,7 @@ public class GalleryCard : MonoBehaviour
     
     [Header("UI References")]
     [SerializeField] private Image artworkImage;
+    [SerializeField] private RectTransform artworkParentMask;
     [SerializeField] private TMP_Text artworkLabel;
     [SerializeField] private TMP_Text artistLabel;
     [SerializeField] private TMP_Text yearLabel;
@@ -55,6 +56,7 @@ public class GalleryCard : MonoBehaviour
             {
                 var images = await point.GetImages(1);
                 artworkImage.sprite = images[0];
+                UpdateCover(); // adjusts the sizing of the image
             }
             else artworkImage.sprite = null;
             
@@ -64,6 +66,37 @@ public class GalleryCard : MonoBehaviour
         {
             Debug.Log("Failed to load ARPoint: " + e);
         }
+    }
+
+    private void UpdateCover()
+    {
+        if (artworkImage.sprite == null) return;
+        
+        artworkImage.preserveAspect = true;
+
+        // Get the RectTransform of the artwork image.
+        RectTransform imageRect = artworkImage.GetComponent<RectTransform>();
+
+        // Retrieve the original sprite dimensions.
+        float spriteWidth = artworkImage.sprite.rect.width;
+        float spriteHeight = artworkImage.sprite.rect.height;
+
+        // Get the available size from the mask's RectTransform.
+        Vector2 maskSize = artworkParentMask.rect.size;
+
+        // Compute the scale factor needed.
+        // We take the larger ratio so the image always completely covers the mask.
+        float scaleFactor = Mathf.Max(maskSize.x / spriteWidth, maskSize.y / spriteHeight);
+
+        // Calculate the new size for the image.
+        float newWidth = spriteWidth * scaleFactor;
+        float newHeight = spriteHeight * scaleFactor;
+
+        // Set the sizeDelta of the image’s RectTransform.
+        imageRect.sizeDelta = new Vector2(newWidth, newHeight);
+
+        // Ensure the image is centered.
+        imageRect.anchoredPosition = Vector2.zero;
     }
 
     private void GoToGallery()

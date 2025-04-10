@@ -16,9 +16,14 @@ public class ExhibitionCard : MonoBehaviour
     [SerializeField] private GameObject multCoverImageObject;
     [Space]
     [SerializeField] private Image singleImage;
+    [SerializeField] private RectTransform singleImageParent;
+    [Space]
     [SerializeField] private Image image0;
+    [SerializeField] private RectTransform image0Parent;
     [SerializeField] private Image image1;
+    [SerializeField] private RectTransform image1Parent;
     [SerializeField] private Image image2;
+    [SerializeField] private RectTransform image2Parent;
     [Space]
     [SerializeField] private TextMeshProUGUI titleLabel;
     [SerializeField] private TextMeshProUGUI yearLocationLabel;
@@ -45,6 +50,9 @@ public class ExhibitionCard : MonoBehaviour
         try
         {
             exhibition = point;
+            
+            titleLabel.text = point.title;
+            yearLocationLabel.text = point.year + " · " + point.location;
 
             if (point.exhibition_image_references.Count >= 3)
             {
@@ -87,9 +95,6 @@ public class ExhibitionCard : MonoBehaviour
             }
 
             loadingCircle?.StopLoading();
-
-            titleLabel.text = point.title;
-            yearLocationLabel.text = point.year + " · " + point.location;
         }
         catch(Exception e)
         {
