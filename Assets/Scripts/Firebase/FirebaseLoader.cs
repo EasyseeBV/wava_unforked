@@ -67,6 +67,8 @@ public class FirebaseLoader : MonoBehaviour
     [SerializeField] private bool downloadExhibitionImagesOnStartup = false;
     [SerializeField] private bool downloadArtistImagesOnStartup = false;
     [SerializeField] private bool downloadArtworkContentOnStartup = false;
+    [Space]
+    [SerializeField] private bool ignoreNotificationSubscription = false;
 
     #region Setup
     private void Awake()
@@ -77,7 +79,7 @@ public class FirebaseLoader : MonoBehaviour
 
     private void OnEnable()
     {
-        if (Initialized)
+        if (Initialized && !ignoreNotificationSubscription)
         {
             Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
             Firebase.Messaging.FirebaseMessaging.MessageReceived += OnMessageReceived;
@@ -86,7 +88,7 @@ public class FirebaseLoader : MonoBehaviour
 
     private void OnDisable()
     {
-        if (Initialized)
+        if (Initialized && !ignoreNotificationSubscription)
         {
             Firebase.Messaging.FirebaseMessaging.TokenReceived -= OnTokenReceived;
             Firebase.Messaging.FirebaseMessaging.MessageReceived -= OnMessageReceived;
