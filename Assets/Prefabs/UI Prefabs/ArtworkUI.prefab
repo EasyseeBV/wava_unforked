@@ -901,6 +901,7 @@ GameObject:
   - component: {fileID: 7608091485470576513}
   - component: {fileID: 7186385608315566206}
   - component: {fileID: 8719527129277819615}
+  - component: {fileID: 4037936974622416380}
   m_Layer: 5
   m_Name: ArtworkUI
   m_TagString: Untagged
@@ -988,6 +989,19 @@ MonoBehaviour:
   DetailButton: {fileID: 1920879937093777526}
   ViewButton: {fileID: 7279160554045144011}
   exhibitionTitle: {fileID: 4829697969450402040}
+--- !u!114 &4037936974622416380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5283989990751012761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShowMaskGraphic: 1
 --- !u!1 &5819228312398662056
 GameObject:
   m_ObjectHideFlags: 0
@@ -1289,6 +1303,7 @@ GameObject:
   - component: {fileID: 8098918796815539032}
   - component: {fileID: 5893231368641049918}
   - component: {fileID: 1920879937093777526}
+  - component: {fileID: 2578174164389643076}
   m_Layer: 5
   m_Name: ARPhoto
   m_TagString: Untagged
@@ -1410,6 +1425,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
+--- !u!114 &2578174164389643076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7431129572134804331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 0
+  m_AspectRatio: 1.372
 --- !u!1 &7452174032846177474
 GameObject:
   m_ObjectHideFlags: 0

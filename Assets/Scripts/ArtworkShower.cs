@@ -64,6 +64,12 @@ public class ArtworkShower : MonoBehaviour
             {
                 var images = await artwork.GetImages(1);
                 ARPhoto.sprite = images.Count > 0 ? images[0] : null;
+
+                if (ARPhoto.sprite != null)
+                {
+                    var imageAspectRatio = ARPhoto.sprite.rect.width / ARPhoto.sprite.rect.height;
+                    ARPhoto.GetComponent<AspectRatioFitter>().aspectRatio = imageAspectRatio;
+                }
             }
             else ARPhoto.sprite = null;
         }

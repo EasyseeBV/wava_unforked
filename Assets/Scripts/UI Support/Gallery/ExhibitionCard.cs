@@ -94,6 +94,30 @@ public class ExhibitionCard : MonoBehaviour
                 singleImage.sprite = null;
             }
 
+            if (image0.sprite != null && image1.sprite != null && image2.sprite != null)
+            {
+                var image0AspectRatio = image0.sprite.rect.width / image0.sprite.rect.height;
+                image0.GetComponent<AspectRatioFitter>().aspectRatio = image0AspectRatio;
+                image0.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+                image0.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+                image0.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                image0.rectTransform.anchoredPosition = Vector2.zero;
+                
+                var image1AspectRatio = image1.sprite.rect.width / image1.sprite.rect.height;
+                image1.GetComponent<AspectRatioFitter>().aspectRatio = image1AspectRatio;
+                image1.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+                image1.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+                image1.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                image1.rectTransform.anchoredPosition = Vector2.zero;
+                
+                var image2AspectRatio = image2.sprite.rect.width / image2.sprite.rect.height;
+                image2.GetComponent<AspectRatioFitter>().aspectRatio = image2AspectRatio;
+                image2.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+                image2.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+                image2.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                image2.rectTransform.anchoredPosition = Vector2.zero;
+            }
+            
             loadingCircle?.StopLoading();
         }
         catch(Exception e)
