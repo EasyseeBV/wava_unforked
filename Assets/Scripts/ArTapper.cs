@@ -56,6 +56,7 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private GameObject coin;
     [SerializeField] private GameObject bird;
     [SerializeField] private GameObject tree;
+    [SerializeField] private GameObject elevator;
     [SerializeField] private Material[] monuments;
 
     public ARObject arObject { get; private set; }
@@ -215,6 +216,13 @@ public class ArTapper : MonoBehaviour
                     var treeObj = Instantiate(tree, Vector3.zero, Quaternion.identity);
                     arObject.Add(treeObj);
                     contentDict.TryAdd(contentDict.Count, treeObj);
+                    contentLoadedCount++;
+                    break;
+                case "Elevator":
+                    contentTotalCount++;
+                    var elevatorObj = Instantiate(elevator, Vector3.zero, Quaternion.identity);
+                    arObject.Add(elevatorObj);
+                    contentDict.TryAdd(contentDict.Count, elevatorObj);
                     contentLoadedCount++;
                     break;
                 case "Monument":
@@ -426,6 +434,7 @@ public class ArTapper : MonoBehaviour
     private void OnProgress(AssetLoaderContext assetLoaderContext, float progress)
     {
         Debug.Log($"Loading Model. Progress: {progress:P}");
+        statusText?.SetText($"Downloading... {progress:P}");
     }
     
     private void OnLoad(AssetLoaderContext assetLoaderContext)

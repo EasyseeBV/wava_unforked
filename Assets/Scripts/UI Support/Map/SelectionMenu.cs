@@ -57,6 +57,7 @@ public class SelectionMenu : MonoBehaviour
     private void OnEnable()
     {
         if(OnlineMapsControlBase.instance) OnlineMapsControlBase.instance.OnMapClick += OnMapClicked;
+        ARMapPointMaker.OnHotspotsSpawned += GoToSelection;
         
 #if UNITY_EDITOR
         openButton.gameObject.SetActive(true);        
@@ -66,6 +67,16 @@ public class SelectionMenu : MonoBehaviour
     private void OnDisable()
     {
         if(OnlineMapsControlBase.instance) OnlineMapsControlBase.instance.OnMapClick -= OnMapClicked;
+        ARMapPointMaker.OnHotspotsSpawned += GoToSelection;
+    }
+
+    private void GoToSelection()
+    {
+        if (SelectedARPoint != null)
+        {
+            mapMover.Move(SelectedARPoint);
+            SelectedARPoint = null;
+        }
     }
     
     public void LoadARPointSO()
