@@ -122,6 +122,8 @@ public class ArTapper : MonoBehaviour
     private void OnTouch(GameObject obj)
     {
         Debug.Log("OnTouch");
+        arObject.gameObject.transform.localPosition = obj.transform.localPosition;
+        arObject.gameObject.transform.localRotation = obj.transform.localRotation;
         TryPlaceObject();
     }
 
@@ -162,7 +164,7 @@ public class ArTapper : MonoBehaviour
         arObject.gameObject.SetActive(true);
         arObject.Show();
 
-        arPlaneManager.planePrefab = shadowCatcherPrefab;
+        arPlaneManager.planePrefab = null;
         foreach (var trackable in arPlaneManager.trackables)
         {
             trackable.gameObject.SetActive(false);
@@ -434,7 +436,7 @@ public class ArTapper : MonoBehaviour
     private void OnProgress(AssetLoaderContext assetLoaderContext, float progress)
     {
         Debug.Log($"Loading Model. Progress: {progress:P}");
-        statusText?.SetText($"Downloading... {progress:P}");
+        statusText?.SetText($"Loading... {progress:P}");
     }
     
     private void OnLoad(AssetLoaderContext assetLoaderContext)
@@ -503,6 +505,8 @@ public class ArTapper : MonoBehaviour
         {
             // Wait for the download to complete.
             yield return request.SendWebRequest();
+            
+            ((DownloadHandlerAudioClip)request.downloadHandler).streamAudio = true;
 
             // Check for network or HTTP errors.
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
@@ -519,7 +523,7 @@ public class ArTapper : MonoBehaviour
                 yield return null;
             }
 
-            // Optionally: Add the audio clip to your AR content system.
+            // Add the audio clip to your AR content system.
             var uiObj = arObject.Add(audioClip, content).gameObject;
             contentDict.TryAdd(index, uiObj);
             Debug.Log("Audio clip loaded successfully.");

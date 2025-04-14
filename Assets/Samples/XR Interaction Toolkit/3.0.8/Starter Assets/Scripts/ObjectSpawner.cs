@@ -200,8 +200,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
             }
 
             var newObject = arObject;
-            if (m_SpawnAsChildren)
-                newObject.transform.parent = transform;
+            if (m_SpawnAsChildren) newObject.transform.parent = transform;
 
             newObject.transform.position = spawnPoint;
             EnsureFacingCamera();
@@ -209,21 +208,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
             var facePosition = m_CameraToFace.transform.position;
             var forward = facePosition - spawnPoint;
             BurstMathUtility.ProjectOnPlane(forward, spawnNormal, out var projectedForward);
-            //newObject.transform.rotation = Quaternion.LookRotation(projectedForward, spawnNormal);
-
-            if (m_ApplyRandomAngleAtSpawn)
-            {
-                var randomRotation = Random.Range(-m_SpawnAngleRange, m_SpawnAngleRange);
-                newObject.transform.Rotate(Vector3.up, randomRotation);
-            }
-
-            if (m_SpawnVisualizationPrefab != null)
-            {
-                var visualizationTrans = Instantiate(m_SpawnVisualizationPrefab).transform;
-                visualizationTrans.position = spawnPoint;
-                visualizationTrans.rotation = newObject.transform.rotation;
-            }
-
+            newObject.transform.rotation = Quaternion.LookRotation(projectedForward, spawnNormal);
+            
             spawned = true;
             objectSpawned?.Invoke(newObject);
             return true;
