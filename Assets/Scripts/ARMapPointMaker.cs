@@ -13,14 +13,18 @@ public class ARMapPointMaker : MonoBehaviour {
 
     [Header("Dependencies")]
     [SerializeField] private NoArtworkHandler noArtworkHandler; 
-    
+    [SerializeField] private SelectionMenu selectionMenu;
 
     public static event Action OnHotspotsSpawned;
+    public static ArtworkData SelectedArtwork;
 
     private bool once = false;
     private bool autoCloseOnce = false;
+    private bool loadedHotspots = false;
+    private bool startedLoading = false;
     
-    void Start() {
+    private void Start() 
+    {
         map = OnlineMaps.instance;
         control = OnlineMapsTileSetControl.instance;
         Setup();
@@ -43,7 +47,7 @@ public class ARMapPointMaker : MonoBehaviour {
         {
             await FirebaseLoader.LoadRemainingArtworks(() =>
             {
-                InstantiateHotspotsAsync();
+                if (!loadedHotspots || !startedLoading) InstantiateHotspotsAsync();
             });
         }
         catch (Exception e)
@@ -54,6 +58,10 @@ public class ARMapPointMaker : MonoBehaviour {
 
     public async Task InstantiateHotspotsAsync()
     {
+        if (loadedHotspots) return;
+
+        startedLoading = true;
+        
         await FirebaseLoader.LoadRemainingExhibitions();
         await Task.Delay(500);  // Waits for 1 second
 
@@ -86,6 +94,15 @@ public class ARMapPointMaker : MonoBehaviour {
         OnChangePosition();
         OnChangeZoom();
         OnHotspotsSpawned?.Invoke();
+
+        if (SelectedArtwork != null)
+        {
+            map.SetPosition(SelectedArtwork.longitude, SelectedArtwork.latitude);
+            selectionMenu.Open(SelectedArtwork.hotspot, SelectedArtwork.hotspot.IsClose());
+            SelectedArtwork = null;
+        }
+        
+        loadedHotspots = true;
     }
 
     bool StartedTouch;

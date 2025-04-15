@@ -2,12 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using AlmostEngine.Screenshot;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PhotosPage : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private UserPhoto userPhotoPrefab;
     [SerializeField] private Transform photosLayoutArea;
     [SerializeField] private TMP_Text infoLabel;
@@ -16,7 +18,8 @@ public class PhotosPage : MonoBehaviour
     [SerializeField] private List<RectTransform> layoutAreasToRefresh = new();
     [SerializeField] private Button refreshButton;
 
-    private const string FOLDER_PATH = "/storage/emulated/0/Pictures/WAVA/";
+    [Header("Storage Path Finder")]
+    [SerializeField] private ScreenshotManager screenshotManager;
 
     private void Awake()
     {
@@ -43,7 +46,7 @@ public class PhotosPage : MonoBehaviour
 
     IEnumerator LoadAllImages()
     {
-        string path = FOLDER_PATH;
+        string path = screenshotManager.GetExportPath();//FOLDER_PATH;
         if (!Directory.Exists(path))
         {
             Debug.LogError("Directory does not exist: " + path);

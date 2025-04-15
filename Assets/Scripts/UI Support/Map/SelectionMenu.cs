@@ -33,7 +33,6 @@ public class SelectionMenu : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private Button openButton;
     
-    public static ArtworkData SelectedARPoint = null;
     private HotspotManager cachedHotspot;
     
     private void Awake()
@@ -57,7 +56,6 @@ public class SelectionMenu : MonoBehaviour
     private void OnEnable()
     {
         if(OnlineMapsControlBase.instance) OnlineMapsControlBase.instance.OnMapClick += OnMapClicked;
-        ARMapPointMaker.OnHotspotsSpawned += GoToSelection;
         
 #if UNITY_EDITOR
         openButton.gameObject.SetActive(true);        
@@ -67,27 +65,8 @@ public class SelectionMenu : MonoBehaviour
     private void OnDisable()
     {
         if(OnlineMapsControlBase.instance) OnlineMapsControlBase.instance.OnMapClick -= OnMapClicked;
-        ARMapPointMaker.OnHotspotsSpawned += GoToSelection;
-    }
-
-    private void GoToSelection()
-    {
-        if (SelectedARPoint != null)
-        {
-            mapMover.Move(SelectedARPoint);
-            SelectedARPoint = null;
-        }
     }
     
-    public void LoadARPointSO()
-    {
-        /*if (SelectedARPoint)
-        {
-            Open(SelectedARPoint.Hotspot, false);
-            mapMover.Move(SelectedARPoint);
-            SelectedARPoint = null;
-        }*/
-    }
 
     public void Open(HotspotManager hotspot, bool inRange)
     {

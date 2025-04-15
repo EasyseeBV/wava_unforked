@@ -95,7 +95,7 @@ public class ArtworkDetailsPanel : DetailsPanel
         showOnMapButton.onClick.RemoveAllListeners();
         showOnMapButton.onClick.AddListener(() =>
         {
-            SelectionMenu.SelectedARPoint = artwork;
+            ARMapPointMaker.SelectedArtwork = artwork;
             SceneManager.LoadScene("Map");
         });
         

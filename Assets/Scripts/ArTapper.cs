@@ -122,8 +122,8 @@ public class ArTapper : MonoBehaviour
     private void OnTouch(GameObject obj)
     {
         Debug.Log("OnTouch");
-        arObject.gameObject.transform.localPosition = obj.transform.localPosition;
-        arObject.gameObject.transform.localRotation = obj.transform.localRotation;
+        arObject.gameObject.transform.position = obj.transform.position;
+        arObject.gameObject.transform.rotation = obj.transform.rotation;
         TryPlaceObject();
     }
 

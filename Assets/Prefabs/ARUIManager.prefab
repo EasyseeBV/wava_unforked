@@ -13396,6 +13396,7 @@ MonoBehaviour:
   - {fileID: 8904678811843569864}
   - {fileID: 5927806068578034224}
   refreshButton: {fileID: 0}
+  screenshotManager: {fileID: 4394027836333577610}
 --- !u!1 &7824032171671494635
 GameObject:
   m_ObjectHideFlags: 0
@@ -15461,6 +15462,16 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -51
       objectReference: {fileID: 0}
+    - target: {fileID: 1517647079149146447, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1517647079149146447, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2649582716766144087, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -15581,6 +15592,31 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4114964334341637111, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4114964334341637111, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4114964334341637111, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4712888473510408308, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4712888473510408308, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7699895344145258695, guid: 2904dbc617b364e4c9bd6fd4e3669a6c, type: 3}
     m_RemovedGameObjects: []
@@ -15672,9 +15708,13 @@ MonoBehaviour:
   singleCoverImageObject: {fileID: 4704044700878183180}
   multCoverImageObject: {fileID: 3236527714284384420}
   singleImage: {fileID: 5163083165910657562}
+  singleImageParent: {fileID: 0}
   image0: {fileID: 4470233594521822680}
+  image0Parent: {fileID: 0}
   image1: {fileID: 5896148479179977347}
+  image1Parent: {fileID: 0}
   image2: {fileID: 8325374555574972171}
+  image2Parent: {fileID: 0}
   titleLabel: {fileID: 8375255592380304104}
   yearLocationLabel: {fileID: 7428728705455083657}
   interactionButton: {fileID: 0}
