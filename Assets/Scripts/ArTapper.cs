@@ -158,6 +158,8 @@ public class ArTapper : MonoBehaviour
     {
         Debug.Log("Showing Artwork");
         loadingPlane.SetActive(false);
+        arObject.gameObject.AddComponent<ARAnchor>();
+        arPlaneManager.enabled = false;
         arObject.gameObject.SetActive(true);
         arObject.Show();
 

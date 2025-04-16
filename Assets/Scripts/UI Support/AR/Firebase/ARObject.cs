@@ -172,7 +172,7 @@ public class ARObject : MonoBehaviour
             contentData.transforms.rotation.y_rotation,
             contentData.transforms.rotation.z_rotation
         );
-        obj.transform.localRotation *= additionalRotation;
+        obj.transform.localRotation = additionalRotation;
 
         // Increment the current scale by the specified additive scale values
         Vector3 additionalScale = new Vector3(
@@ -180,7 +180,7 @@ public class ARObject : MonoBehaviour
             contentData.transforms.scale.y_scale,
             contentData.transforms.scale.z_scale
         );
-        obj.transform.localScale += additionalScale;
+        obj.transform.localScale = additionalScale;
 
         // Increment the current position by the specified position offset
         Vector3 additionalOffset = new Vector3(
@@ -188,7 +188,7 @@ public class ARObject : MonoBehaviour
             contentData.transforms.position_offset.y_offset,
             contentData.transforms.position_offset.z_offset
         );
-        obj.transform.localPosition += additionalOffset;
+        obj.transform.localPosition = additionalOffset;
     }
 
     public void Show()
