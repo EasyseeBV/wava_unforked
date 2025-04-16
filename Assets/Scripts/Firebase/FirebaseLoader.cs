@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Firebase;
 using Firebase.Firestore;
 using Firebase.Messaging;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using Action = System.Action;
@@ -1266,11 +1267,14 @@ public class FirebaseLoader : MonoBehaviour
 
     #region Downloading Media
 
-    public static async Task<(string localPath, bool downloaded)> DownloadMedia(string storagePath, string path)
+    public static async Task<(string localPath, bool downloaded)> DownloadMedia(string storagePath, string path, StatusText statusText)
     {
+        Debug.Log("Attempting to download");
+        
         if (string.IsNullOrEmpty(path))
         {
             Debug.LogWarning("Tried loading an empty string...");
+            if (statusText) statusText.SetText("Empty URL");
             return (string.Empty, false);
         }
 
@@ -1301,22 +1305,50 @@ public class FirebaseLoader : MonoBehaviour
                 return (localPath, false);
             }
 
-            // Download the media data using HttpClient
-            using HttpClient client = new HttpClient();
-            byte[] data = await client.GetByteArrayAsync(path);
-            await File.WriteAllBytesAsync(localPath, data);
+            // Create the UnityWebRequest with a DownloadHandlerFile to save the file directly.
+            using (UnityWebRequest request = UnityWebRequest.Get(path))
+            {
+                request.downloadHandler = new DownloadHandlerFile(localPath);
+                
+                // Begin the request
+                UnityWebRequestAsyncOperation operation = request.SendWebRequest();
 
-            Debug.Log("Downloaded: " + fileName);
+                // While the download is in progress, update the TMP_Text with the progress percentage.
+                while (!operation.isDone)
+                {
+                    float progressValue = request.downloadProgress; // value between 0 and 1
+                    if (statusText) statusText.SetText($"Downloading.. {(progressValue * 100f):F1}%");
 
-            return (localPath, true);
+                    Debug.Log("Downloaded: " + request.downloadProgress);
+                    
+                    // Yield control until the next frame so the UI can update.
+                    await Task.Yield();
+                }
+
+                // Check if the download completed successfully.
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    if (statusText) statusText.SetText("Download complete!");
+                    Debug.Log("Downloaded: " + fileName);
+                    return (localPath, true);
+                }
+                else
+                {
+                    Debug.LogError("Error downloading media: " + request.error);
+                    if (statusText) statusText.SetText("Download failed!");
+                    return (string.Empty, false);
+                }
+            }
         }
         catch (Exception e)
         {
             Debug.LogError($"Error downloading media: {e.Message} | tried saving to local path: {storagePath}");
+            if (statusText) statusText.SetText("Download failed (exception)!");
         }
 
         return (string.Empty, false);
     }
+
     
     
 

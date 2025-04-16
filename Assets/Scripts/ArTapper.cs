@@ -122,8 +122,7 @@ public class ArTapper : MonoBehaviour
     private void OnTouch(GameObject obj)
     {
         Debug.Log("OnTouch");
-        arObject.gameObject.transform.position = obj.transform.position;
-        arObject.gameObject.transform.rotation = obj.transform.rotation;
+        // object placement is handled from the method that invokes this callback
         TryPlaceObject();
     }
 
@@ -152,8 +151,6 @@ public class ArTapper : MonoBehaviour
         
         arNamebar.SetNamebarLabel(ArtworkToPlace.title);
         arInfoPage.CanOpen = true;
-
-        UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
     }
 
     // Artwork is ready - show the artwork
@@ -174,6 +171,8 @@ public class ArTapper : MonoBehaviour
             LineRenderer lineRenderer = trackable.GetComponent<LineRenderer>();
             if (lineRenderer != null) lineRenderer.enabled = false;*/
         }
+        
+        UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
     }
 
     #region Content Loading
@@ -250,7 +249,7 @@ public class ArTapper : MonoBehaviour
                         if (!File.Exists(localPath))
                         {
                             statusText?.SetText("Downloading...");
-                            var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content);
+                            var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content, statusText);
                             path = results.localPath;
                         }
                         else if (File.Exists(localPath)) // if the file does exist, set the path to that location
@@ -315,7 +314,7 @@ public class ArTapper : MonoBehaviour
             if (!File.Exists(localPath))
             {
                 statusText?.SetText("Downloading...");
-                var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content);
+                var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content, statusText);
                 path = results.localPath;
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))
                 {
@@ -418,6 +417,7 @@ public class ArTapper : MonoBehaviour
                     break;
                 
                 default:
+                    statusText?.SetText("<color=red>Error loading.. try restarting</color>");
                     Debug.LogError($"Could not load any media from the file format: {extension}");
                     contentTotalCount--;
                     break;

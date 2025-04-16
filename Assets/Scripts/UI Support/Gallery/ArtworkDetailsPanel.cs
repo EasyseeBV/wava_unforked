@@ -216,7 +216,7 @@ public class ArtworkDetailsPanel : DetailsPanel
                 if (!File.Exists(localPath))
                 {
                     downloadedCheckmark.SetActive(true);
-                    await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content);
+                    await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content, null);
                 }
                 else
                 {
