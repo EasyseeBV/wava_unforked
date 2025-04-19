@@ -11,6 +11,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARSubsystems;
 using Vector3 = UnityEngine.Vector3;
 
 public class DeveloperModeARView : MonoBehaviour
@@ -37,7 +38,10 @@ public class DeveloperModeARView : MonoBehaviour
     [SerializeField] private DeveloperButton[] developerButtons;
     [SerializeField] private DeveloperSaveButton developerSaveButton;
     [SerializeField] private DeveloperResetButton developerResetButton;
-
+    [Space]
+    [SerializeField] private Button settingsButton;
+    [SerializeField] private GameObject settingsPanel;
+    
     [Header("Content View")]
     [SerializeField] private DeveloperContentButton contentButtonPrefab;
     [SerializeField] private Transform contentContainer;
@@ -62,6 +66,15 @@ public class DeveloperModeARView : MonoBehaviour
     [Header("Occlusion Culling")]
     [SerializeField] private Button occlusionCullingButton;
     [SerializeField] private AROcclusionManager arOcclusionManager;
+
+    [Header("Settings")]
+    [SerializeField] private TMP_Dropdown environmentDepthDropdown;
+    [SerializeField] private TMP_Dropdown humanStencilDropdown;
+    [SerializeField] private TMP_Dropdown humanDepthDropdown;
+    [SerializeField] private TMP_Dropdown preferenceDropdown;
+    [SerializeField] private Toggle temporalSmoothingToggle;
+    [SerializeField] private Toggle showRootToggle;
+    [SerializeField] private Button toggleOffButton;
     
     private DeveloperButton cachedRecentlyUsedButton = null;
     private ARTransformView currentView;
@@ -69,6 +82,18 @@ public class DeveloperModeARView : MonoBehaviour
     
     private List<TransformsData> editedTransformDatas = new List<TransformsData>();
     private List<DeveloperContentButton> cachedContentButtons = new List<DeveloperContentButton>();
+
+    public static bool ShowRoot
+    {
+        get => showRoot;
+        set
+        {
+            showRoot = value;
+            OnShowRootToggled?.Invoke(showRoot);
+        }
+    }
+    private static bool showRoot = false;
+    public static event Action<bool> OnShowRootToggled;
 
     private int viewNumber = 0;
     
@@ -139,10 +164,38 @@ public class DeveloperModeARView : MonoBehaviour
         }
         
         developerSaveButton.SubscribeSaveClick(OnSave);
+        
+        settingsButton.onClick.AddListener(ToggleSettings);
+        toggleOffButton?.onClick.AddListener(() => settingsPanel.gameObject.SetActive(false));
+
+        if (arOcclusionManager)
+        {
+            environmentDepthDropdown.value = (int)arOcclusionManager.currentEnvironmentDepthMode;
+            humanStencilDropdown.value = (int)arOcclusionManager.currentHumanStencilMode;
+            humanDepthDropdown.value = (int)arOcclusionManager.currentHumanDepthMode;
+            preferenceDropdown.value = (int)arOcclusionManager.currentOcclusionPreferenceMode;
+            temporalSmoothingToggle.isOn = arOcclusionManager.environmentDepthTemporalSmoothingEnabled;
+            showRootToggle.isOn = ShowRoot;
+            
+            environmentDepthDropdown.onValueChanged.AddListener((value) => arOcclusionManager.requestedEnvironmentDepthMode = (EnvironmentDepthMode)value);
+            humanStencilDropdown.onValueChanged.AddListener((value) => arOcclusionManager.requestedHumanStencilMode = (HumanSegmentationStencilMode)value);
+            humanDepthDropdown.onValueChanged.AddListener((value) => arOcclusionManager.requestedHumanDepthMode = (HumanSegmentationDepthMode)value);
+            preferenceDropdown.onValueChanged.AddListener((value) => arOcclusionManager.requestedOcclusionPreferenceMode = (OcclusionPreferenceMode)value);
+            temporalSmoothingToggle.onValueChanged.AddListener((value) => arOcclusionManager.environmentDepthTemporalSmoothingRequested = value);
+            showRootToggle.onValueChanged.AddListener((value) => ShowRoot = value);
+        }
     }
 
-    private void OnEnable() => developerResetButton.OnClick += OnReset;
-    private void OnDisable() => developerResetButton.OnClick -= OnReset;
+    private void OnEnable()
+    {
+        developerResetButton.OnClick += OnReset;
+    }
+
+    private void OnDisable()
+    {
+        developerResetButton.OnClick -= OnReset;
+        
+    }
 
     private void EnableDeveloperWindow(bool state)
     {
@@ -271,7 +324,7 @@ public class DeveloperModeARView : MonoBehaviour
                 throw new ArgumentOutOfRangeException();
         }
         
-        if(obj) obj.transform.rotation = Quaternion.Euler(editedTransformDatas[viewNumber].rotation.x_rotation, editedTransformDatas[viewNumber].rotation.y_rotation, editedTransformDatas[viewNumber].rotation.z_rotation);
+        if(obj) obj.transform.localRotation = Quaternion.Euler(editedTransformDatas[viewNumber].rotation.x_rotation, editedTransformDatas[viewNumber].rotation.y_rotation, editedTransformDatas[viewNumber].rotation.z_rotation);
     }
 
     private void OnSave()
@@ -408,5 +461,12 @@ public class DeveloperModeARView : MonoBehaviour
             ARTransformView.Rotation => transformData.rotation.z_rotation.ToString(CultureInfo.InvariantCulture),
             _ => "0"
         };
+    }
+
+    private void ToggleSettings()
+    {
+        settingsPanel.gameObject.SetActive(!settingsPanel.gameObject.activeInHierarchy);
+        
+        
     }
 }

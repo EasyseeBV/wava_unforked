@@ -14,6 +14,9 @@ public class ARMapPointMaker : MonoBehaviour {
     [Header("Dependencies")]
     [SerializeField] private NoArtworkHandler noArtworkHandler; 
     [SerializeField] private SelectionMenu selectionMenu;
+    [SerializeField] private GroupMarkerHandler groupMarker;
+    [SerializeField] private LoadingCircle loadingCircle;
+    [SerializeField] private GameObject loadingPlane;
 
     public static event Action OnHotspotsSpawned;
     public static ArtworkData SelectedArtwork;
@@ -27,9 +30,21 @@ public class ARMapPointMaker : MonoBehaviour {
     {
         map = OnlineMaps.instance;
         control = OnlineMapsTileSetControl.instance;
+        loadingPlane.SetActive(true);
+        loadingCircle?.BeginLoading();
         Setup();
     }
-    
+
+    private void OnEnable()
+    {
+        GroupMarkerHandler.OnGroupsMade += WaitForZoom;
+    }
+
+    private void OnDisable()
+    {
+        GroupMarkerHandler.OnGroupsMade -= WaitForZoom;
+    }
+
     //Replaced ARPoint with ARPointSO
     public void InstantiateHotspots()
     {
@@ -93,16 +108,35 @@ public class ARMapPointMaker : MonoBehaviour {
         OnChangeGps(OnlineMapsLocationService.instance.position);
         OnChangePosition();
         OnChangeZoom();
+        loadedHotspots = true;
+        
+        loadingPlane.SetActive(false);
+        loadingCircle.StopLoading();
+        
         OnHotspotsSpawned?.Invoke();
+    }
 
+    private bool onceZoom = false;
+    private void WaitForZoom()
+    {
+        if (!loadedHotspots || onceZoom) return;
         if (SelectedArtwork != null)
         {
-            map.SetPosition(SelectedArtwork.longitude, SelectedArtwork.latitude);
-            selectionMenu.Open(SelectedArtwork.hotspot, SelectedArtwork.hotspot.IsClose());
+            onceZoom = true;
+            HotspotManager.Zoom = 18;
+            map.SetPositionAndZoom(SelectedArtwork.longitude, SelectedArtwork.latitude, 18);
+            SelectedArtwork.hotspot.ShowSelectionBorder(true);
+            //groupMarker.HideAllGroups();
+            groupMarker.ZoomGrouping(18);
+            StartCoroutine(WaitForEndOfFrameZoomFix());
             SelectedArtwork = null;
         }
-        
-        loadedHotspots = true;
+    }
+
+    private IEnumerator WaitForEndOfFrameZoomFix()
+    {
+        yield return new WaitForEndOfFrame();
+        groupMarker.ZoomGrouping(18);
     }
 
     bool StartedTouch;
@@ -172,7 +206,8 @@ public class ARMapPointMaker : MonoBehaviour {
     }
     const int minZoom = 12;
     bool anyVisible = false;
-    private void OnChangeZoom() {
+    private void OnChangeZoom() 
+    {
         anyVisible = false;
         
         //Replaced ARPoint with ARPointSO

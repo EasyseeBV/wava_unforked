@@ -289,7 +289,6 @@ public class HotspotManager : MonoBehaviour
         //markerGroup.SelectedGroup = state;
         BorderRingMesh.enabled = state;
         BorderRingMesh.material = SelectedHotspotMat;
-
         if (state)
         {
             SelectionMenu.Instance?.Open(this, inReach);

@@ -28,6 +28,10 @@ public class GroupMarkerHandler : MonoBehaviour
     
     private Transform groupMarkerTransform;
     private List<MarkerGroup> markerGroups = new();
+
+    public static event Action OnGroupsMade;
+
+    private bool groupsMade = false;
     
     private Zoom zoom;
     private float zoomTolerance
@@ -62,6 +66,7 @@ public class GroupMarkerHandler : MonoBehaviour
     
     private void Group()
     {
+        Debug.Log("Group");
         foreach (var artwork in FirebaseLoader.Artworks)
         {
             TryAddArtwork(artwork);
@@ -105,6 +110,12 @@ public class GroupMarkerHandler : MonoBehaviour
                 //arPoint.Hotspot.BorderRingMesh.enabled = false;
             }
         }
+
+        if (!groupsMade)
+        {
+            groupsMade = true;
+            OnGroupsMade?.Invoke();
+        }
     }
     
     private void TryAddArtwork(ArtworkData artwork)
@@ -142,7 +153,7 @@ public class GroupMarkerHandler : MonoBehaviour
         return R * c;
     }
     
-    private void OnChangeZoom() 
+    public void OnChangeZoom() 
     {
         foreach (var group in markerGroups.Where(group => group.artworkPoints.Count > 1))
         {
@@ -156,8 +167,8 @@ public class GroupMarkerHandler : MonoBehaviour
             ZoomGrouping(zoomLevel);
         }
     }
-
-    private void ZoomGrouping(int _zoom)
+    
+    public void ZoomGrouping(int _zoom)
     {
         // Control if a group marker should be shown or not based on zoomed in value
         foreach (var group in markerGroups)
@@ -203,5 +214,4 @@ public class GroupMarkerHandler : MonoBehaviour
         
         Group();
     }
-
 }

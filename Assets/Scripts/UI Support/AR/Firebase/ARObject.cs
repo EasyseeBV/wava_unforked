@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Video;
+using UnityEngine.XR.ARFoundation;
 
 public class ARObject : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class ARObject : MonoBehaviour
     [SerializeField] private GameObject content;
     [SerializeField] private Renderer shadowPlane;
     [SerializeField] private ARUIImage arUIImageTemplate;
+    [SerializeField] private GameObject rootObject;
 
     [Header("Templates")]
     [SerializeField] private VideoPlayer videoPlayer;
@@ -26,7 +28,24 @@ public class ARObject : MonoBehaviour
 
     private bool showPreset = false;
     private GameObject presetObject = null;
-    
+
+    private bool showing = false;
+
+    private void Awake()
+    {
+        rootObject.SetActive(false);
+    }
+
+    private void OnEnable()
+    {
+        DeveloperModeARView.OnShowRootToggled += ToggleShowRoot;
+    }
+
+    private void OnDisable()
+    {
+        DeveloperModeARView.OnShowRootToggled -= ToggleShowRoot;
+    }
+
     // Adding Models
     public void Add(GameObject obj, MediaContentData contentData)
     {
@@ -41,7 +60,6 @@ public class ARObject : MonoBehaviour
             return;
         }
     
-        ApplyOffsets(obj, contentData);
 
         if (obj.TryGetComponent<MeshRenderer>(out var mesh))
         {
@@ -58,6 +76,10 @@ public class ARObject : MonoBehaviour
             }
         }
         
+        ApplyOffsets(obj, contentData);
+        
+        obj.AddComponent<ARAnchor>();
+        
         obj.SetActive(false);
     }
 
@@ -67,6 +89,7 @@ public class ARObject : MonoBehaviour
         obj.transform.SetParent(placementParent, false);
         obj.SetActive(false);
         Debug.Log("Added obj", obj);
+        obj.AddComponent<ARAnchor>();
         presetObject = obj;
     }
 
@@ -108,6 +131,8 @@ public class ARObject : MonoBehaviour
 
         player.prepareCompleted += handler;
         backupPlayer.prepareCompleted += handler2;
+        
+        player.gameObject.AddComponent<ARAnchor>();
 
         return player;
     }
@@ -159,6 +184,7 @@ public class ARObject : MonoBehaviour
     
         ApplyOffsets(ui.gameObject, contentData);
         
+        ui.gameObject.AddComponent<ARAnchor>();
         uis.Add(ui);
 
         return ui.gameObject;
@@ -194,6 +220,11 @@ public class ARObject : MonoBehaviour
     public void Show()
     {
         content.SetActive(true);
+
+        if (AppSettings.DeveloperMode && DeveloperModeARView.ShowRoot)
+        {
+            rootObject.SetActive(DeveloperModeARView.ShowRoot);
+        }
         
         if (showPreset)
         {
@@ -237,6 +268,8 @@ public class ARObject : MonoBehaviour
         
         // Adjust the shadow plane so its top is at the bottom of the spawned objects.
         AdjustShadowPlane();
+
+        showing = true;
     }
     
     // This method computes the combined bounds of all child renderers under placementParent,
@@ -275,5 +308,13 @@ public class ARObject : MonoBehaviour
             lowestY - planeHeight / 2, 
             currentPos.z
         );
+    }
+
+    private void ToggleShowRoot(bool state)
+    {
+        if (AppSettings.DeveloperMode && showing)
+        {
+            rootObject.gameObject.SetActive(state);
+        }
     }
 }

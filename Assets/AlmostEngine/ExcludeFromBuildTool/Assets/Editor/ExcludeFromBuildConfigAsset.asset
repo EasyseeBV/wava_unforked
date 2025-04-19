@@ -17,4 +17,4 @@ MonoBehaviour:
   m_FoldersToExclude:
   - Assets\AlmostEngine/Dependencies/UnityNativeShare
   m_ExcludedObjectPaths: []
-  m_ExclusionProcessStarted: 0
+  m_ExclusionProcessStarted: 1
