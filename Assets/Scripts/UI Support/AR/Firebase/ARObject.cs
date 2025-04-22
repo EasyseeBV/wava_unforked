@@ -97,9 +97,9 @@ public class ARObject : MonoBehaviour
     public VideoPlayer Add(MediaContentData mediaContentData, string url, Action<VideoPlayer> onComplete)
     {
         var player = Instantiate(videoPlayer, videoPlacementArea);
+        //player.gameObject.AddComponent<ARAnchor>();
         var backupPlayer = player.gameObject.transform.GetChild(0).GetComponent<VideoPlayer>();
-
-        Debug.Log(backupPlayer, backupPlayer);
+        player.gameObject.transform.SetParent(placementParent);
         
         videoPlayers.Add(player);
         videoPlayers.Add(backupPlayer);
@@ -110,15 +110,12 @@ public class ARObject : MonoBehaviour
         player.Prepare();
         backupPlayer.Prepare();
         
-        
         ApplyOffsets(player.gameObject, mediaContentData);
-        //ApplyOffsets(backupPlayer.gameObject, mediaContentData);
         
         VideoPlayer.EventHandler handler = null;
         handler = (VideoPlayer vp) =>
         {
             player.prepareCompleted -= handler;
-            player.gameObject.transform.SetParent(placementParent);
             onComplete.Invoke(vp);
         };
         
@@ -131,8 +128,6 @@ public class ARObject : MonoBehaviour
 
         player.prepareCompleted += handler;
         backupPlayer.prepareCompleted += handler2;
-        
-        player.gameObject.AddComponent<ARAnchor>();
 
         return player;
     }

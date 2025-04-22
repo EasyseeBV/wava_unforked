@@ -48,12 +48,7 @@ public class ARMapPointMaker : MonoBehaviour {
     //Replaced ARPoint with ARPointSO
     public void InstantiateHotspots()
     {
-        return;
-        FirebaseLoader.LoadRemainingArtworks(() =>
-        {
-            //StartCoroutine(IEInstatiateHotspot());
-            InstantiateHotspotsAsync();
-        });
+        
     }
 
     private async void Setup()
@@ -75,45 +70,55 @@ public class ARMapPointMaker : MonoBehaviour {
     {
         if (loadedHotspots) return;
 
-        startedLoading = true;
-        
-        await FirebaseLoader.LoadRemainingExhibitions();
-        await Task.Delay(500);  // Waits for 1 second
-
-        foreach (var artwork in FirebaseLoader.Artworks)
+        try
         {
-            try
+            startedLoading = true;
+
+            await FirebaseLoader.LoadRemainingExhibitions();
+            await Task.Delay(500); // Waits for 1 second
+
+            foreach (var artwork in FirebaseLoader.Artworks)
             {
-                artwork.marker = control.marker3DManager.Create(artwork.longitude, artwork.latitude, ZoomedInMapObject);
-                artwork.marker.instance.name = artwork.title;
-                artwork.hotspot = artwork.marker.instance.GetComponent<HotspotManager>();
-                artwork.marker.sizeType = OnlineMapsMarker3D.SizeType.realWorld;
-                artwork.marker.instance.layer = LayerMask.NameToLayer("Hotspot");
-                artwork.marker.borderTransform = artwork.hotspot.BorderRingMesh.gameObject.transform;
-                artwork.hotspot.Navigation = GetComponent<NavigationMaker>();
-                artwork.hotspot.ConnectedExhibition = await FirebaseLoader.FindRelatedExhibition(artwork.id);
-                artwork.hotspot.Init(artwork);
-                artwork.hotspot.MinZoom = minZoom;
+                try
+                {
+                    artwork.marker =
+                        control.marker3DManager.Create(artwork.longitude, artwork.latitude, ZoomedInMapObject);
+                    artwork.marker.instance.name = artwork.title;
+                    artwork.hotspot = artwork.marker.instance.GetComponent<HotspotManager>();
+                    artwork.marker.sizeType = OnlineMapsMarker3D.SizeType.realWorld;
+                    artwork.marker.instance.layer = LayerMask.NameToLayer("Hotspot");
+                    artwork.marker.borderTransform = artwork.hotspot.BorderRingMesh.gameObject.transform;
+                    artwork.hotspot.Navigation = GetComponent<NavigationMaker>();
+                    artwork.hotspot.ConnectedExhibition = await FirebaseLoader.FindRelatedExhibition(artwork.id);
+                    artwork.hotspot.Init(artwork);
+                    artwork.hotspot.MinZoom = minZoom;
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Failed to load artwork [{artwork.title}] into map: " + e);
+                }
             }
-            catch (Exception e)
-            {
-                Debug.Log($"Failed to load artwork [{artwork.title}] into map: " + e);
-            }
-        }   
-    
-        // Additional event subscriptions and method calls
-        map.OnChangeZoom += OnChangeZoom;
-        map.OnChangePosition += OnChangePosition;
-        OnlineMapsLocationService.instance.OnLocationChanged += OnChangeGps;
-        OnChangeGps(OnlineMapsLocationService.instance.position);
-        OnChangePosition();
-        OnChangeZoom();
-        loadedHotspots = true;
-        
-        loadingPlane.SetActive(false);
-        loadingCircle.StopLoading();
-        
-        OnHotspotsSpawned?.Invoke();
+
+            // Additional event subscriptions and method calls
+            map.OnChangeZoom += OnChangeZoom;
+            map.OnChangePosition += OnChangePosition;
+            OnlineMapsLocationService.instance.OnLocationChanged += OnChangeGps;
+            OnChangeGps(OnlineMapsLocationService.instance.position);
+            OnChangePosition();
+            OnChangeZoom();
+
+            loadingPlane.SetActive(false);
+            loadingCircle.StopLoading();
+
+            loadedHotspots = true;
+            OnHotspotsSpawned?.Invoke();
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to initialize hotspots: " + e);
+            loadingPlane.SetActive(false);
+            loadingCircle.StopLoading();
+        }
     }
 
     private bool onceZoom = false;

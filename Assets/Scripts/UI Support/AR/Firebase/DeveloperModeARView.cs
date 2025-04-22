@@ -41,6 +41,8 @@ public class DeveloperModeARView : MonoBehaviour
     [Space]
     [SerializeField] private Button settingsButton;
     [SerializeField] private GameObject settingsPanel;
+    [SerializeField] private Button autoFixPivotButton;
+
     
     [Header("Content View")]
     [SerializeField] private DeveloperContentButton contentButtonPrefab;
@@ -55,7 +57,6 @@ public class DeveloperModeARView : MonoBehaviour
     [SerializeField] private TMP_InputField xInputField;
     [SerializeField] private TMP_InputField yInputField;
     [SerializeField] private TMP_InputField zInputField;
-
     [Header("Load Artworks")]
     [SerializeField] private Button showArtworkButton;
     [SerializeField] private Button hideArtworkButton;
@@ -184,6 +185,8 @@ public class DeveloperModeARView : MonoBehaviour
             temporalSmoothingToggle.onValueChanged.AddListener((value) => arOcclusionManager.environmentDepthTemporalSmoothingRequested = value);
             showRootToggle.onValueChanged.AddListener((value) => ShowRoot = value);
         }
+        
+        autoFixPivotButton.onClick.AddListener(FixPivot);
     }
 
     private void OnEnable()
@@ -468,5 +471,21 @@ public class DeveloperModeARView : MonoBehaviour
         settingsPanel.gameObject.SetActive(!settingsPanel.gameObject.activeInHierarchy);
         
         
+    }
+
+    private void FixPivot()
+    {
+        ar.contentDict.TryGetValue(viewNumber, out var obj);
+
+        if (obj)
+        {
+            PivotFixer.FixPivotByPosition(obj);
+            
+            editedTransformDatas[viewNumber].position_offset.x_offset = obj.transform.localPosition.x;
+            editedTransformDatas[viewNumber].position_offset.y_offset = obj.transform.localPosition.y;
+            editedTransformDatas[viewNumber].position_offset.z_offset = obj.transform.localPosition.z;
+            
+            UpdateInputFields();
+        }
     }
 }
