@@ -78,7 +78,7 @@ public class ARObject : MonoBehaviour
         
         ApplyOffsets(obj, contentData);
         
-        obj.AddComponent<ARAnchor>();
+        //obj.AddComponent<ARAnchor>();
         
         obj.SetActive(false);
     }
@@ -89,7 +89,7 @@ public class ARObject : MonoBehaviour
         obj.transform.SetParent(placementParent, false);
         obj.SetActive(false);
         Debug.Log("Added obj", obj);
-        obj.AddComponent<ARAnchor>();
+        //obj.AddComponent<ARAnchor>();
         presetObject = obj;
     }
 
