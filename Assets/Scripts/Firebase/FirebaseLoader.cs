@@ -1318,8 +1318,6 @@ public class FirebaseLoader : MonoBehaviour
                 {
                     float progressValue = request.downloadProgress; // value between 0 and 1
                     if (statusText) statusText.SetText($"Downloading.. {(progressValue * 100f):F1}%");
-
-                    Debug.Log("Downloaded: " + request.downloadProgress);
                     
                     // Yield control until the next frame so the UI can update.
                     await Task.Yield();

@@ -13,9 +13,17 @@ public class AROcclusionSetter : MonoBehaviour
         occlusionManager = FindObjectOfType<AROcclusionManager>();
     }
     
-    void Start()
+    private IEnumerator Start()
     {
-        // Enable human depth if supported
+        // wait until subsystem descriptor is available
+        yield return new WaitUntil(() => occlusionManager.descriptor != null);
+
+        ConfigureOcclusion();
+    }
+
+    private void ConfigureOcclusion()
+    {
+        // Depth
         if (occlusionManager.descriptor.humanSegmentationDepthImageSupported == Supported.Supported)
         {
             occlusionManager.requestedHumanDepthMode = HumanSegmentationDepthMode.Fastest;
@@ -27,8 +35,8 @@ public class AROcclusionSetter : MonoBehaviour
             Debug.Log("Human depth segmentation not supported.");
         }
 
-        // Enable human stencil if supported
-        if (occlusionManager.descriptor.humanSegmentationDepthImageSupported == Supported.Unsupported)
+        // Stencil
+        if (occlusionManager.descriptor.humanSegmentationStencilImageSupported == Supported.Supported)
         {
             occlusionManager.requestedHumanStencilMode = HumanSegmentationStencilMode.Fastest;
             Debug.Log("Enabled human stencil segmentation.");

@@ -439,6 +439,8 @@ public class DeveloperModeARView : MonoBehaviour
 
     private void UpdateInputFields()
     {
+        Debug.Log($"viewNumber: " + viewNumber);
+        Debug.Log("editedTransformDatas.Count: " + editedTransformDatas.Count);
         var transformData = editedTransformDatas[viewNumber];
         
         xInputField.text = currentView switch

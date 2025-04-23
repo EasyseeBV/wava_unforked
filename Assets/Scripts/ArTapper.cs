@@ -223,7 +223,7 @@ public class ArTapper : MonoBehaviour
                     break;
                 case "Elevator":
                     contentTotalCount++;
-                    var elevatorObj = Instantiate(elevator, Vector3.zero, Quaternion.identity);
+                    var elevatorObj = Instantiate(elevator);
                     arObject.Add(elevatorObj);
                     contentDict.TryAdd(contentDict.Count, elevatorObj);
                     contentLoadedCount++;
