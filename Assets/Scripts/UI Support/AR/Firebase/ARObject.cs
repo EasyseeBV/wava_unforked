@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using TriLibCore.Extensions;
 using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.XR.ARFoundation;
@@ -247,6 +248,25 @@ public class ARObject : MonoBehaviour
                 if (meshInChildren)
                 {
                     meshInChildren.enabled = true;
+                }
+            }
+
+            var modelAnimation = GetComponentInChildren<Animation>();
+
+            if (modelAnimation)
+            {
+                var clips = modelAnimation.GetAllAnimationClips();
+
+                foreach (var clip in clips)
+                {
+                    clip.wrapMode = WrapMode.Loop;
+                    modelAnimation.AddClip(clip, clip.name);
+                }
+
+                if (clips.Count > 0)
+                {
+                    modelAnimation.clip = clips[0];
+                    modelAnimation.Play(clips[0].name);
                 }
             }
         }

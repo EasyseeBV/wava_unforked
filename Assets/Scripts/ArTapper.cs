@@ -367,6 +367,8 @@ public class ArTapper : MonoBehaviour
                             {
                                 ScriptableObject.CreateInstance<UniversalRPMaterialMapper>()
                             };
+                        _assetLoaderOptions.AnimationType = AnimationType.Legacy;
+                        _assetLoaderOptions.AutomaticallyPlayLegacyAnimations = true;
                     }
                     
                     Debug.Log("attempting to load local model file: " + fileName);
