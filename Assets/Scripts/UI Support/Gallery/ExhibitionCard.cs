@@ -43,6 +43,7 @@ public class ExhibitionCard : MonoBehaviour
     {
         if (point == null)
         {
+            Debug.Log("Provided exhibiton data was empty");
             gameObject.SetActive(false);
             return;
         }
@@ -122,7 +123,7 @@ public class ExhibitionCard : MonoBehaviour
         }
         catch(Exception e)
         {
-            Debug.Log("Failed to fill ExhibitionCard: " + e);
+            Debug.LogError("Failed to fill ExhibitionCard: " + e);
         }
     }
 

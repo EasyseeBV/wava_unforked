@@ -84,15 +84,16 @@ public class PhotosPage : MonoBehaviour
 
         int count = 0;
 
-        foreach (var sprite in sprites)
+        Debug.Log($"spr: {sprites.Count} | files {files.Length}");
+
+        for (int i = 0; i < sprites.Count; i++)
         {
-            count++;
             UserPhoto photo = Instantiate(userPhotoPrefab, photosLayoutArea);
-            photo.Init(sprite);
+            photo.Init(sprites[i], files[i]);
             LayoutRebuilder.ForceRebuildLayoutImmediate(photosLayoutArea as RectTransform); // Force immediate rebuild
         }
 
-        if(count <= 0) refreshButton?.gameObject.SetActive(true);
+        if(sprites.Count <= 0) refreshButton?.gameObject.SetActive(true);
         StartCoroutine(LateRebuild());
     }
 

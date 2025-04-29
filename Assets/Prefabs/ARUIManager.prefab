@@ -23022,6 +23022,14 @@ PrefabInstance:
       propertyPath: m_Config.m_Overlays.Array.data[0].m_Canvas
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 11400050, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
+      propertyPath: m_GameViewResizingWaitingTime
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400050, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
+      propertyPath: m_GameViewResizingWaitingFrames
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -23061,22 +23069,22 @@ PrefabInstance:
     - target: {fileID: 540729284332173380, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 540729284332173380, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 540729284332173380, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 120
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 540729284332173380, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -51
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1517647079149146447, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
         type: 3}
@@ -23091,22 +23099,22 @@ PrefabInstance:
     - target: {fileID: 2649582716766144087, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2649582716766144087, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2649582716766144087, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 120
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2649582716766144087, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -27
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2970791808724649116, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
         type: 3}
@@ -23261,6 +23269,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 6437195178608885650}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3948553348700634959 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8041624298465263837, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
+    type: 3}
+  m_PrefabInstance: {fileID: 6437195178608885650}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00d2e251d23048d4f97bc858b1eb7b62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4470233594521822680 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7448099660078209610, guid: 2904dbc617b364e4c9bd6fd4e3669a6c,
@@ -23334,7 +23354,7 @@ MonoBehaviour:
   titleLabel: {fileID: 8375255592380304104}
   yearLocationLabel: {fileID: 7428728705455083657}
   interactionButton: {fileID: 0}
-  loadingCircle: {fileID: 0}
+  loadingCircle: {fileID: 3948553348700634959}
   selectionButton: {fileID: 2183980488646344747}
   exitConfirmation: {fileID: 4285710899014836441}
   exitButton: {fileID: 3625174919414726625}

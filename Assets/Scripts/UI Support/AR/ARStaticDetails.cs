@@ -56,10 +56,27 @@ public class ARStaticDetails : MonoBehaviour
 
         if (artwork.hotspot?.ConnectedExhibition == null)
         {
-            exhibitionCard.gameObject.SetActive(false);
-            return;
+            Debug.LogWarning("ConnectedExhibition was missing... trying to refind it...");
+            WaitForExhibition();
         }
-        exhibitionCard.Init(artwork.hotspot?.ConnectedExhibition);
+        else
+        {
+            exhibitionCard.Init(artwork.hotspot?.ConnectedExhibition);
+        }
+    }
+
+    private async void WaitForExhibition()
+    {
+        if (artwork.hotspot == null)
+        {
+            var exhibition = await FirebaseLoader.FindRelatedExhibition(artwork.id);
+            exhibitionCard.Init(exhibition);
+        }
+        else
+        {
+            artwork.hotspot.ConnectedExhibition = await FirebaseLoader.FindRelatedExhibition(artwork.id);
+            exhibitionCard.Init(artwork.hotspot.ConnectedExhibition);
+        }
     }
     
     private void TruncateText()

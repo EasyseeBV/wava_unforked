@@ -10,16 +10,18 @@ public class UserPhoto : MonoBehaviour
     [SerializeField] private Image photoImage;
     [SerializeField] private Button photoButton;
 
-    private Sprite cachedSprite;
+    public Sprite CachedSprite { get; private set; }
+    public string Path { get; private set; }
 
     private void Awake()
     {
         photoButton.onClick.AddListener(Open);
     }
 
-    public void Init(Sprite sprite)
+    public void Init(Sprite sprite, string path)
     {
-        cachedSprite = sprite;
+        Path = path;
+        CachedSprite = sprite;
         photoImage.sprite = sprite;
     }
 
@@ -28,6 +30,6 @@ public class UserPhoto : MonoBehaviour
         if (ProfileUIManager.Instance == null) return;
         
         ProfileUIManager.Instance.photoDetails.gameObject.SetActive(true);
-        ProfileUIManager.Instance.photoDetails.Open(cachedSprite);
+        ProfileUIManager.Instance.photoDetails.Open(this);
     }
 }

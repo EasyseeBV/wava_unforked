@@ -66,7 +66,6 @@ public class GroupMarkerHandler : MonoBehaviour
     
     private void Group()
     {
-        Debug.Log("Group");
         foreach (var artwork in FirebaseLoader.Artworks)
         {
             TryAddArtwork(artwork);

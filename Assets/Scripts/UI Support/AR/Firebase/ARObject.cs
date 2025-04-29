@@ -31,6 +31,7 @@ public class ARObject : MonoBehaviour
     private GameObject presetObject = null;
 
     private bool showing = false;
+    private ARAnchor anchor;
 
     private void Awake()
     {
@@ -79,7 +80,7 @@ public class ARObject : MonoBehaviour
         
         ApplyOffsets(obj, contentData);
         
-        //obj.AddComponent<ARAnchor>();
+        if (anchor) anchor.enabled = false;
         
         obj.SetActive(false);
     }
@@ -152,6 +153,7 @@ public class ARObject : MonoBehaviour
         audioCanvas.gameObject.SetActive(true);
         audioCanvas.transform.SetParent(placementParent, true);
         
+        
         if (Camera.main)
         {
             // Get the camera's position and maintain the audioCanvas's Y position.
@@ -167,6 +169,7 @@ public class ARObject : MonoBehaviour
         return source;
     }
 
+    // Adding UI
     public GameObject Add(Sprite sprite, MediaContentData contentData)
     {
         var ui = Instantiate(arUIImageTemplate, placementParent);
@@ -180,7 +183,6 @@ public class ARObject : MonoBehaviour
     
         ApplyOffsets(ui.gameObject, contentData);
         
-        ui.gameObject.AddComponent<ARAnchor>();
         uis.Add(ui);
 
         return ui.gameObject;
@@ -224,12 +226,14 @@ public class ARObject : MonoBehaviour
         
         if (showPreset)
         {
+            if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
             Debug.Log("showing preset: " + presetObject.name, presetObject);
             presetObject.SetActive(true);
         }
         
         foreach (var vp in videoPlayers)
         {
+            if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
             vp.gameObject.GetComponent<MeshRenderer>().enabled = true;
             vp.Play();
         }
@@ -269,15 +273,19 @@ public class ARObject : MonoBehaviour
                     modelAnimation.Play(clips[0].name);
                 }
             }
+            
+            obj.AddComponent<ARAnchor>();
         }
 
         foreach (var source in audioSources)
         {
+            if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
             source.Play();
         }
 
         foreach (var ui in uis)
         {
+            if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
             ui.Show();
         }
         
