@@ -38,9 +38,7 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private ARPlaneManager arPlaneManager;
     [SerializeField] private ARNamebar arNamebar;
     [SerializeField] private ARInfoPage arInfoPage;
-    [SerializeField] private StatusText statusText;
-    [SerializeField] private Material shadowCatcherMaterial;
-    [SerializeField] private GameObject shadowCatcherPrefab;
+    [SerializeField] private ARDownloadBar downloadBar;
     
     [Header("Firebase Preloaded elements")]
     [SerializeField] private ARObject arObjectPrefab;
@@ -95,8 +93,7 @@ public class ArTapper : MonoBehaviour
         if (arObjectPrefab) arObject = Instantiate(arObjectPrefab);
         if (!objectSpawner) objectSpawner = FindObjectOfType<ObjectSpawner>();
         if (objectSpawner) objectSpawner.arObject = arObject.gameObject;
-        if (statusText == null) statusText = FindObjectOfType<StatusText>();
-        statusText?.SetText("");
+        if (downloadBar == null) downloadBar = FindObjectOfType<ARDownloadBar>();
     }
 
     private void Start()
@@ -185,12 +182,26 @@ public class ArTapper : MonoBehaviour
         {
             Debug.LogWarning("Artwork to place is missing or there is no content available.");
             return;
-        } 
+        }
 
         hasContent = true;
         bool loadContent = true;
-        
+        bool hasPreset = false;
+
+        // estimate total size of all content to be loaded for the donwload bar
+        int totalContentEstimate = 0;
         if (!string.IsNullOrEmpty(ArtworkToPlace.preset) && ArtworkToPlace.preset != "None")
+        {
+            hasPreset = true;
+            downloadBar.hasPresets = true;
+        }
+        if (ArtworkToPlace.content_list != null && ArtworkToPlace.content_list.Count > 0)
+            totalContentEstimate += ArtworkToPlace.content_list.Count;
+        if (totalContentEstimate > 0) downloadBar.gameObject.SetActive(true);
+        downloadBar.SetSize(totalContentEstimate);
+        
+        // load preset content
+        if (hasPreset)
         {
             Debug.Log("Loading a preset: " + ArtworkToPlace.preset);
                 
@@ -250,8 +261,7 @@ public class ArTapper : MonoBehaviour
                         // if the file does not exist locally, download it
                         if (!File.Exists(localPath))
                         {
-                            statusText?.SetText("Downloading...");
-                            var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content, statusText);
+                            var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content, downloadBar, 0);
                             path = results.localPath;
                         }
                         else if (File.Exists(localPath)) // if the file does exist, set the path to that location
@@ -275,7 +285,7 @@ public class ArTapper : MonoBehaviour
                             path: path,
                             onLoad: OnLoad,
                             onMaterialsLoad: c => { OnMaterialsLoad(c, content, contentDict.Count, monuments); },
-                            onProgress: OnProgress,
+                            onProgress: (c, progress) => { OnProgress(c, progress, 0); },
                             onError: OnError,
                             wrapperGameObject: null,
                             assetLoaderOptions: _assetLoaderOptions
@@ -291,7 +301,7 @@ public class ArTapper : MonoBehaviour
             if (contentLoadedCount >= contentTotalCount)
             {
                 allContentLoaded = true;
-                statusText?.gameObject.SetActive(false);
+                downloadBar?.gameObject.SetActive(false);
             }
         }
 
@@ -315,8 +325,7 @@ public class ArTapper : MonoBehaviour
             // if the file does not exist locally, download it
             if (!File.Exists(localPath))
             {
-                statusText?.SetText("Downloading...");
-                var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content, statusText);
+                var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content, downloadBar, i);
                 path = results.localPath;
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))
                 {
@@ -331,8 +340,6 @@ public class ArTapper : MonoBehaviour
                 Debug.Log("Content was found locally");
             }
             
-            statusText?.SetText("Loading...");
-            
             switch (extension)
             {
                 case ".mp4" or ".mvk" or ".mov": // video
@@ -343,11 +350,12 @@ public class ArTapper : MonoBehaviour
                     var videoPlayer = arObject.Add(content, "file:///" + path, player =>
                     {
                         Debug.Log("Video prepared");
+                        player.gameObject.AddComponent<ARAnchor>();
                         contentLoadedCount++;
                         if (contentLoadedCount >= contentTotalCount)
                         {
                             allContentLoaded = true;
-                            statusText?.gameObject.SetActive(false);
+                            downloadBar?.gameObject.SetActive(false);
                         }
                     });
                     contentDict.TryAdd(i, videoPlayer.gameObject);
@@ -379,7 +387,7 @@ public class ArTapper : MonoBehaviour
                         path: path,
                         onLoad: OnLoad,
                         onMaterialsLoad: c => { OnMaterialsLoad(c, content, i1); },
-                        onProgress: OnProgress,
+                        onProgress: (c, progress) => { OnProgress(c, progress, i1); },
                         onError: OnError,
                         wrapperGameObject: null,
                         assetLoaderOptions: _assetLoaderOptions
@@ -407,7 +415,7 @@ public class ArTapper : MonoBehaviour
                         webRequest,
                         onLoad: OnLoad,
                         onMaterialsLoad: c => { OnMaterialsLoad(c, content, i1); },
-                        onProgress: OnProgress,
+                        onProgress: (c, progress) => { OnProgress(c, progress, i1); },
                         onError: OnError,
                         wrapperGameObject: null,
                         assetLoaderOptions: _assetLoaderOptions,
@@ -421,7 +429,8 @@ public class ArTapper : MonoBehaviour
                     break;
                 
                 default:
-                    statusText?.SetText("<color=red>Error loading.. try restarting</color>");
+                    downloadBar.FailedLoad();
+                    // reattempt download here
                     Debug.LogError($"Could not load any media from the file format: {extension}");
                     contentTotalCount--;
                     break;
@@ -437,10 +446,10 @@ public class ArTapper : MonoBehaviour
         if (contentLoadedCount >= contentTotalCount) allContentLoaded = true;
     }
     
-    private void OnProgress(AssetLoaderContext assetLoaderContext, float progress)
+    private void OnProgress(AssetLoaderContext assetLoaderContext, float progress, int index)
     {
         Debug.Log($"Loading Model. Progress: {progress:P}");
-        statusText?.SetText($"Loading... {progress:P}");
+        downloadBar.UpdateProgress(index, ((progress * 100) / 2) + 50);
     }
     
     private void OnLoad(AssetLoaderContext assetLoaderContext)
@@ -460,7 +469,7 @@ public class ArTapper : MonoBehaviour
         if (contentLoadedCount >= contentTotalCount)
         {
             allContentLoaded = true;
-            statusText?.gameObject.SetActive(false);
+            downloadBar?.gameObject.SetActive(false);
         }
     }
     
@@ -484,65 +493,70 @@ public class ArTapper : MonoBehaviour
         if (contentLoadedCount >= contentTotalCount)
         {
             allContentLoaded = true;
-            statusText?.gameObject.SetActive(false);
+            downloadBar?.gameObject.SetActive(false);
         }
     }
     
     #endregion
-    
+
     private IEnumerator LoadAudioClip(string filePath, MediaContentData content, int index)
     {
-        // Check if the file exists at the given path.
         if (!File.Exists(filePath))
         {
             Debug.LogError("File does not exist at path: " + filePath);
-            yield return null;
+            yield break;
         }
-    
-        // Convert the file path to a URI.
-        // Note: For local files, ensure the path is correctly formatted (e.g., add "file:///" before the path).
+
         string uri = "file:///" + filePath;
-    
-        // Create the request for an audio clip.
-        // Here, we use AudioType.MPEG for an .mp3 file. Adjust the AudioType if needed.
+
         using (UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(uri, AudioType.MPEG))
         {
-            // Wait for the download to complete.
-            yield return request.SendWebRequest();
-            
-            ((DownloadHandlerAudioClip)request.downloadHandler).streamAudio = true;
+            // Enable streaming before sending
+            var dh = (DownloadHandlerAudioClip)request.downloadHandler;
+            dh.streamAudio = true;
 
-            // Check for network or HTTP errors.
-            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+            // Kick off the request
+            UnityWebRequestAsyncOperation operation = request.SendWebRequest();
+        
+            // Update your progress bar until it's done
+            while (!operation.isDone)
             {
-                Debug.LogError("Error loading audio clip: " + request.error);
+                // request.downloadProgress goes 0 → 1
+                downloadBar.UpdateProgress(index, (request.downloadProgress * 100) / 2 + 50);
                 yield return null;
             }
 
-            // Retrieve the AudioClip from the request.
-            AudioClip audioClip = DownloadHandlerAudioClip.GetContent(request);
+            // Did we hit an error?
+            if (request.result == UnityWebRequest.Result.ConnectionError ||
+                request.result == UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.LogError("Error loading audio clip: " + request.error);
+                yield break;
+            }
+
+            // Grab the clip
+            AudioClip audioClip = dh.audioClip;
             if (audioClip == null)
             {
                 Debug.LogError("Failed to load audio clip from file");
-                yield return null;
+                yield break;
             }
 
-            // Add the audio clip to your AR content system.
+            // Hook it into your AR system
             var uiObj = arObject.Add(audioClip, content).gameObject;
             contentDict.TryAdd(index, uiObj);
             Debug.Log("Audio clip loaded successfully.");
-        
-            // Update counters and status similar to the image loader.
+
+            // Track overall progress
             contentLoadedCount++;
             if (contentLoadedCount >= contentTotalCount)
             {
                 allContentLoaded = true;
-                statusText?.gameObject.SetActive(false);
+                downloadBar?.gameObject.SetActive(false);
             }
         }
-    
-        yield return null;
     }
+
 
     private IEnumerator LoadSprite(string filePath, MediaContentData content, int index)
     {
@@ -558,6 +572,7 @@ public class ArTapper : MonoBehaviour
         if (!texture.LoadImage(bytes))
         {
             Debug.LogError("Failed to load image data from file");
+            downloadBar.FailedDownload();
             yield return null;
         }
         
@@ -567,11 +582,12 @@ public class ArTapper : MonoBehaviour
         var uiObj = arObject.Add(loadedSprite, content);
         contentDict.TryAdd(index, uiObj);
         Debug.Log("Image downloaded and sprite created.");
+        downloadBar.UpdateProgress(index, 100);
         contentLoadedCount++;
         if (contentLoadedCount >= contentTotalCount)
         {
             allContentLoaded = true;
-            statusText?.gameObject.SetActive(false);
+            downloadBar?.gameObject.SetActive(false);
         }
 
         yield return null;

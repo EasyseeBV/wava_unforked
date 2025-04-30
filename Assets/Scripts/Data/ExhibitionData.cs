@@ -23,13 +23,13 @@ public class ExhibitionData : FirebaseData
     [FirestoreProperty] public string color { get; set; }
     
     [FirestoreProperty] public List<string> exhibition_image_references { get; set; } = new List<string>();
-    
-    [FirestoreProperty] public Timestamp publish_date { get; set; }
+
+    //[FirestoreProperty] public Timestamp publish_date { get; set; } = new Timestamp();
     
     // Read Only Data
-    [FirestoreProperty] public Timestamp creation_time { get; set; }
-    [FirestoreProperty] public Timestamp update_time { get; set; }
-    public DateTime creation_date_time, update_date_time;
+    [FirestoreProperty] public Timestamp creation_time { get; set; } = new Timestamp();
+    [FirestoreProperty] public Timestamp update_time { get; set; } = new Timestamp();
+    public DateTime creation_date_time = new DateTime(), update_date_time = new DateTime(); 
     
     public List<string> artwork_ids { get; set; } = new List<string>();
     

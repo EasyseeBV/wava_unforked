@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Messy.Definitions;
 using TMPro;
 using UnityEngine;
@@ -11,6 +13,7 @@ public class ArtistContainer : MonoBehaviour
 {
     [Header("References")] 
     [SerializeField] private Image profilePicture;
+    [SerializeField] private RectTransform profilePictureParent;
     [SerializeField] private TextMeshProUGUI artistNameLabel;
     [SerializeField] private TextMeshProUGUI artworkCountLabel;
     [SerializeField] private Button artistPageButton;
@@ -32,7 +35,48 @@ public class ArtistContainer : MonoBehaviour
         int works = GetArtistWorkCount();
         artworkCountLabel.text = works == 1 ? "1 Artwork" : $"{GetArtistWorkCount()} Artworks";
         artistPageButton.onClick.AddListener(OpenArtistPage);
-        profilePicture.sprite = await artist.GetIcon();
+        await SetImage();
+    }
+    
+    private async Task SetImage()
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(artist.icon))
+            {
+                var image = await artist.GetIcon();
+                profilePicture.sprite = image;
+
+                if (profilePicture.sprite != null)
+                {
+                    /*var spriteSize = profilePicture.sprite.rect.size;
+                    var maskSize = profilePictureParent.rect.size;
+                    
+                    float spriteW = profilePicture.sprite.rect.width / profilePicture.sprite.pixelsPerUnit;
+                    float spriteH = profilePicture.sprite.rect.height / profilePicture.sprite.pixelsPerUnit;
+
+                    float maskW = profilePictureParent.rect.width;
+                    float maskH = profilePictureParent.rect.height;
+                    
+                    float scaleX = maskW / spriteW;
+                    float scaleY = maskH / spriteH;
+                    
+                    float scaleUniform = Mathf.Max(scaleX, scaleY);
+                    
+                    profilePicture.rectTransform.localScale = new Vector3(scaleUniform, scaleUniform, 1f);*/
+                    
+                    var imageAspectRatio = profilePicture.sprite.rect.width / profilePicture.sprite.rect.height;
+                    //profilePicture.transform.localScale = new Vector3(imageAspectRatio, imageAspectRatio, imageAspectRatio);
+                    profilePicture.GetComponent<AspectRatioFitter>().aspectRatio = imageAspectRatio;
+                }
+            }
+            else profilePicture.sprite = null;
+        }
+        catch (Exception e)
+        {
+            profilePicture.sprite = null;
+            Debug.Log("Failed to set ArtistContainer icon image: " + e);
+        }
     }
 
     private int GetArtistWorkCount()

@@ -233,7 +233,7 @@ public class ARObject : MonoBehaviour
         
         foreach (var vp in videoPlayers)
         {
-            if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
+            //if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
             vp.gameObject.GetComponent<MeshRenderer>().enabled = true;
             vp.Play();
         }

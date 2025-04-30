@@ -95,7 +95,7 @@ Material:
     - _Mode: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _PlaneAlpha: 0.001
+    - _PlaneAlpha: 0.0001
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ShadowAlpha: 0.9
