@@ -39,6 +39,8 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private ARNamebar arNamebar;
     [SerializeField] private ARInfoPage arInfoPage;
     [SerializeField] private ARDownloadBar downloadBar;
+    [SerializeField] private NoConnectionMapHandler noConnectionMapHandler;
+    [SerializeField] private GameObject uiTutorialContainer;
     
     [Header("Firebase Preloaded elements")]
     [SerializeField] private ARObject arObjectPrefab;
@@ -261,6 +263,13 @@ public class ArTapper : MonoBehaviour
                         // if the file does not exist locally, download it
                         if (!File.Exists(localPath))
                         {
+                            if (FirebaseLoader.OfflineMode)
+                            {
+                                noConnectionMapHandler.Display();
+                                uiTutorialContainer.gameObject.SetActive(false);
+                                return;
+                            }
+                            
                             var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content, downloadBar, 0);
                             path = results.localPath;
                         }
@@ -325,6 +334,14 @@ public class ArTapper : MonoBehaviour
             // if the file does not exist locally, download it
             if (!File.Exists(localPath))
             {
+                // failed to download handling needs to be done here
+                if (FirebaseLoader.OfflineMode)
+                {
+                    noConnectionMapHandler.Display();
+                    uiTutorialContainer.gameObject.SetActive(false);
+                    return;
+                }
+                
                 var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content, downloadBar, i);
                 path = results.localPath;
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))

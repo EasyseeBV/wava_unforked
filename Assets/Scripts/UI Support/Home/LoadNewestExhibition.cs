@@ -22,7 +22,7 @@ public class LoadNewestExhibition : MonoBehaviour
 
     private void Awake()
     {
-        loadingCircle.BeginLoading();
+        loadingCircle?.BeginLoading();
     }
 
     private async void Start()
@@ -36,7 +36,7 @@ public class LoadNewestExhibition : MonoBehaviour
     {
         if (loaded)
         {
-            if (loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
+            if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle?.StopLoading();
             return;
         }
         
@@ -55,7 +55,7 @@ public class LoadNewestExhibition : MonoBehaviour
                 await FirebaseLoader.LoadRemainingExhibitions();
             }
             
-            loadingCircle.StopLoading();
+            loadingCircle?.StopLoading();
             
             if (exhibition != null)
             {

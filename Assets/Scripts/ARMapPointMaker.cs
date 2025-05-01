@@ -17,7 +17,8 @@ public class ARMapPointMaker : MonoBehaviour {
     [SerializeField] private GroupMarkerHandler groupMarker;
     [SerializeField] private LoadingCircle loadingCircle;
     [SerializeField] private GameObject loadingPlane;
-
+    [SerializeField] private NoConnectionMapHandler noConnectionMapHandler;
+    
     public static event Action OnHotspotsSpawned;
     public static ArtworkData SelectedArtwork;
 
@@ -109,8 +110,9 @@ public class ARMapPointMaker : MonoBehaviour {
 
             loadingPlane.SetActive(false);
             loadingCircle.StopLoading();
-
+            
             loadedHotspots = true;
+            noConnectionMapHandler.Display();
             OnHotspotsSpawned?.Invoke();
         }
         catch (Exception e)
@@ -118,6 +120,7 @@ public class ARMapPointMaker : MonoBehaviour {
             Debug.LogError("Failed to initialize hotspots: " + e);
             loadingPlane.SetActive(false);
             loadingCircle.StopLoading();
+            noConnectionMapHandler.ForceDisplay();
         }
     }
 
@@ -177,7 +180,7 @@ public class ARMapPointMaker : MonoBehaviour {
     {
         if (!NavigationMaker.IsNavigating)
         {
-            if (!anyVisible && !once)
+            if (!anyVisible && !once && FirebaseLoader.Artworks.Count > 0)
             {
                 once = true;
                 autoCloseOnce = true;

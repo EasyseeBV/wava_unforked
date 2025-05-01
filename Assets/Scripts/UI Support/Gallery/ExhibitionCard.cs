@@ -87,6 +87,11 @@ public class ExhibitionCard : MonoBehaviour
                 multCoverImageObject.SetActive(false);
                 var images = await point.GetImages(1);
                 singleImage.sprite = images.Count >= 0 ? images[0] : null;
+                if (singleImage.sprite != null)
+                {
+                    var image0AspectRatio = singleImage.sprite.rect.width / singleImage.sprite.rect.height;
+                    singleImage.GetComponent<AspectRatioFitter>().aspectRatio = image0AspectRatio;
+                }
             }
             else
             {

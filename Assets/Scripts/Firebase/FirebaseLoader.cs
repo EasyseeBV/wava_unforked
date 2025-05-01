@@ -12,6 +12,8 @@ using Firebase.Messaging;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Action = System.Action;
 
 public class FirebaseLoader : MonoBehaviour
@@ -72,6 +74,9 @@ public class FirebaseLoader : MonoBehaviour
     [SerializeField] private bool downloadArtworkContentOnStartup = false;
     [Space]
     [SerializeField] private bool ignoreNotificationSubscription = false;
+    [Space]
+    [SerializeField] private bool startInOfflineMode = false;
+        
 
     #region Setup
     private void Awake()
@@ -105,39 +110,43 @@ public class FirebaseLoader : MonoBehaviour
     {
         while (!Initialized)
         {
-            try
+            if (!startInOfflineMode)
             {
-                OnStartUpEventProcessed?.Invoke("Trying to initialize Database...");
-                DependencyStatus dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
-                if (dependencyStatus == DependencyStatus.Available)
+                try
                 {
-                    _firestore = FirebaseFirestore.DefaultInstance;
-                    Debug.Log("Firebase initialized successfully.");
-
-                    if (_firestore.Settings == null)
+                    OnStartUpEventProcessed?.Invoke("Trying to initialize Database...");
+                    DependencyStatus dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
+                    if (dependencyStatus == DependencyStatus.Available)
                     {
-                        Debug.LogWarning("Firestore settings are empty");
+                        _firestore = FirebaseFirestore.DefaultInstance;
+                        Debug.Log("Firebase initialized successfully.");
+
+                        if (_firestore.Settings == null)
+                        {
+                            Debug.LogWarning("Firestore settings are empty");
+                        }
+
+                        await GetCollectionCountsAsync();
+                        await AppCache.LoadLocalCaches();
+                        await CheckForCacheUpdates();
+
+                        OfflineMode = false;
+                        Initialized = true;
+                        OnFirestoreInitialized?.Invoke();
+                        OnStartUpEventProcessed?.Invoke("Firebase initialized.");
+                        ProcessSetup();
+                        break; // Exit loop upon successful initialization.
                     }
-
-                    await GetCollectionCountsAsync();
-                    await AppCache.LoadLocalCaches();
-                    await CheckForCacheUpdates();
-
-                    OfflineMode = false;
-                    Initialized = true;
-                    OnFirestoreInitialized?.Invoke();
-                    OnStartUpEventProcessed?.Invoke("Firebase initialized.");
-                    ProcessSetup();
-                    break; // Exit loop upon successful initialization.
+                    else
+                    {
+                        Debug.LogError($"Could not resolve all Firebase dependencies: {dependencyStatus}");
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    Debug.LogError($"Could not resolve all Firebase dependencies: {dependencyStatus}");
+                    Debug.LogError($"Firebase initialization failed: {e.Message}\n{e.StackTrace}");
                 }
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"Firebase initialization failed: {e.Message}\n{e.StackTrace}");
+                
             }
 
             if (!Initialized)
@@ -171,7 +180,7 @@ public class FirebaseLoader : MonoBehaviour
         Debug.Log("Token received: " + e.Token);
     }
 
-    private async void ProcessSetup()
+    private async Task ProcessSetup(bool reload = false)
     {
         if (loadArtistsOnStartup)
         {
@@ -440,7 +449,65 @@ public class FirebaseLoader : MonoBehaviour
         PlayerPrefs.SetString("lastFetchTime", newFetchTime);
         PlayerPrefs.Save();
     }
-    
+
+    public async void AttemptToReconnect(Slider slider)
+    {
+        if (!OfflineMode) return;
+
+        slider.maxValue = 100;
+
+        Debug.Log("Trying to reconnect to servers");
+        Initialized = false;
+
+        while (!Initialized)
+        {
+            if (!startInOfflineMode)
+            {
+                try
+                {
+                    slider.value = 50;
+                    DependencyStatus dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
+                    if (dependencyStatus == DependencyStatus.Available)
+                    {
+                        _firestore = FirebaseFirestore.DefaultInstance;
+                        Debug.Log("Firebase initialized successfully.");
+
+                        if (_firestore.Settings == null)
+                        {
+                            Debug.LogWarning("Firestore settings are empty");
+                        }
+
+                        await GetCollectionCountsAsync();
+                        await AppCache.LoadLocalCaches();
+                        await CheckForCacheUpdates();
+
+                        slider.value = 100;
+                        
+                        OfflineMode = false;
+                        Initialized = true;
+                        await ProcessSetup(true);
+                        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                        break; // Exit loop upon successful initialization.
+                    }
+                    else
+                    {
+                        Debug.LogError($"Could not resolve all Firebase dependencies: {dependencyStatus}");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Firebase initialization failed: {e.Message}\n{e.StackTrace}");
+                }
+
+            }
+        }
+
+        if (!Initialized)
+        {
+            slider.value = 100;
+            OfflineMode = true;
+        }
+    }
 
     #endregion
     
@@ -632,6 +699,8 @@ public class FirebaseLoader : MonoBehaviour
     
     private async Task GetCollectionCountsAsync()
     {
+        if (ArtworkCollectionSize != -1 && ExhibitionCollectionSize != -1 && ArtistCollectionSize != -1) return; // already found the sizes
+        
         try
         {
             var counts = await Task.WhenAll(
