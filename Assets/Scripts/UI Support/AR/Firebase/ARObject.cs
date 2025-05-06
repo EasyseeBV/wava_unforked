@@ -215,7 +215,7 @@ public class ARObject : MonoBehaviour
         obj.transform.localPosition = additionalOffset;
     }
 
-    public void Show()
+    public void Show(bool hideShadow)
     {
         content.SetActive(true);
 

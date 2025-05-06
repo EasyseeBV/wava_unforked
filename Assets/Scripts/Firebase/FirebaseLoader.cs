@@ -73,6 +73,8 @@ public class FirebaseLoader : MonoBehaviour
     [SerializeField] private bool downloadArtistImagesOnStartup = false;
     [SerializeField] private bool downloadArtworkContentOnStartup = false;
     [Space]
+    [SerializeField] private bool downloadHomeScreenContent = false;
+    [Space]
     [SerializeField] private bool ignoreNotificationSubscription = false;
     [Space]
     [SerializeField] private bool startInOfflineMode = false;
@@ -218,6 +220,23 @@ public class FirebaseLoader : MonoBehaviour
             await AppCache.SaveExhibitionsCache();
         }
 
+        if (downloadHomeScreenContent)
+        {
+            OnStartUpEventProcessed?.Invoke($"Downloading new exhibitions...");
+            var newestExhibition = Exhibitions.OrderByDescending(e => e.creation_date_time).FirstOrDefault();
+            await newestExhibition?.GetAllImages()!;
+
+            OnStartUpEventProcessed?.Invoke($"Downloading new artworks...");
+            var newestArtworks = Artworks.OrderByDescending(a => a.creation_date_time).Take(2).ToList();
+            foreach (var artwork in newestArtworks)
+            {
+                await artwork.GetAllImages();
+            }
+            
+            
+            Debug.Log("<color=red>Done downloading.</color>");
+        }
+
         if (downloadArtworkImagesOnStartup)
         {
             int curr = 0;
@@ -261,6 +280,7 @@ public class FirebaseLoader : MonoBehaviour
         
         OnStartUpEventProcessed?.Invoke(string.Empty);
 
+        Debug.Log("<color=red>Setup compl.</color>");
         SetupComplete = true;
     }
 
@@ -1429,8 +1449,6 @@ public class FirebaseLoader : MonoBehaviour
 
         return (string.Empty, false);
     }
-
-    
     
 
     #endregion

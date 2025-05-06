@@ -77,6 +77,7 @@ public class ArTapper : MonoBehaviour
     private bool allContentLoaded = false;
     private AssetLoaderOptions _assetLoaderOptions;
     public Dictionary<int, GameObject> contentDict = new Dictionary<int, GameObject>();
+    private static bool HideShadow = false;
 
     #region Unity Lifecycle
     
@@ -96,6 +97,7 @@ public class ArTapper : MonoBehaviour
         if (!objectSpawner) objectSpawner = FindObjectOfType<ObjectSpawner>();
         if (objectSpawner) objectSpawner.arObject = arObject.gameObject;
         if (downloadBar == null) downloadBar = FindObjectOfType<ARDownloadBar>();
+        HideShadow = false;
     }
 
     private void Start()
@@ -160,7 +162,7 @@ public class ArTapper : MonoBehaviour
         //arObject.gameObject.AddComponent<ARAnchor>();
         //arPlaneManager.enabled = false;
         arObject.gameObject.SetActive(true);
-        arObject.Show();
+        arObject.Show(HideShadow);
 
         arPlaneManager.planePrefab = null;
         foreach (var trackable in arPlaneManager.trackables)
@@ -233,6 +235,7 @@ public class ArTapper : MonoBehaviour
                     arObject.Add(treeObj);
                     contentDict.TryAdd(contentDict.Count, treeObj);
                     contentLoadedCount++;
+                    HideShadow = true;
                     break;
                 case "Elevator":
                     contentTotalCount++;
