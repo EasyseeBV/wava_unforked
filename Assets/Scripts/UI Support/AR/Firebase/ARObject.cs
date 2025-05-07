@@ -226,7 +226,7 @@ public class ARObject : MonoBehaviour
         
         if (showPreset)
         {
-            if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
+            //if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
             Debug.Log("showing preset: " + presetObject.name, presetObject);
             presetObject.SetActive(true);
         }
@@ -274,18 +274,18 @@ public class ARObject : MonoBehaviour
                 }
             }
             
-            obj.AddComponent<ARAnchor>();
+            //obj.AddComponent<ARAnchor>();
         }
 
         foreach (var source in audioSources)
         {
-            if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
+            //if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
             source.Play();
         }
 
         foreach (var ui in uis)
         {
-            if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
+            //if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
             ui.Show();
         }
         
@@ -293,6 +293,7 @@ public class ARObject : MonoBehaviour
         AdjustShadowPlane();
 
         showing = true;
+        gameObject.AddComponent<ARAnchor>();
     }
     
     // This method computes the combined bounds of all child renderers under placementParent,

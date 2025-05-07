@@ -370,7 +370,7 @@ public class ArTapper : MonoBehaviour
                     var videoPlayer = arObject.Add(content, "file:///" + path, player =>
                     {
                         Debug.Log("Video prepared");
-                        player.gameObject.AddComponent<ARAnchor>();
+                        //player.gameObject.AddComponent<ARAnchor>();
                         contentLoadedCount++;
                         if (contentLoadedCount >= contentTotalCount)
                         {
