@@ -41,6 +41,7 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private ARDownloadBar downloadBar;
     [SerializeField] private NoConnectionMapHandler noConnectionMapHandler;
     [SerializeField] private GameObject uiTutorialContainer;
+    [SerializeField] private ARAnchorManager arAnchorManager;
     
     [Header("Firebase Preloaded elements")]
     [SerializeField] private ARObject arObjectPrefab;
@@ -51,6 +52,7 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private TMP_Text eventLabel;
     [SerializeField] private GameObject loadingPlane;
     [SerializeField] private ObjectSpawner objectSpawner;
+    [SerializeField] private ARInteractorSpawnTrigger interactorSpawnTrigger;
 
     [Header("Presets")] // cleaned up in a future phase
     [SerializeField] private GameObject coin;
@@ -94,8 +96,19 @@ public class ArTapper : MonoBehaviour
     private void Awake()
     {
         if (arObjectPrefab) arObject = Instantiate(arObjectPrefab);
+        
         if (!objectSpawner) objectSpawner = FindObjectOfType<ObjectSpawner>();
         if (objectSpawner) objectSpawner.arObject = arObject.gameObject;
+        
+        /*if (!interactorSpawnTrigger) interactorSpawnTrigger = FindObjectOfType<ARInteractorSpawnTrigger>();
+        if (interactorSpawnTrigger)
+        {
+            foreach (var content in ArtworkToPlace.content_list)
+            {
+                interactorSpawnTrigger.contentOffset += new Vector3(content.transforms.position_offset.x_offset, content.transforms.position_offset.y_offset, content.transforms.position_offset.z_offset);
+            }
+        }*/
+            
         if (downloadBar == null) downloadBar = FindObjectOfType<ARDownloadBar>();
         HideShadow = false;
     }
@@ -242,6 +255,8 @@ public class ArTapper : MonoBehaviour
                     var elevatorObj = Instantiate(elevator);
                     arObject.Add(elevatorObj);
                     contentDict.TryAdd(contentDict.Count, elevatorObj);
+                    elevatorObj.transform.localPosition = new Vector3(elevatorObj.transform.localPosition.x + 1.15f, elevatorObj.transform.localPosition.y, elevatorObj.transform.localPosition.z + 0.15f);
+                    elevatorObj.transform.localRotation *= Quaternion.Euler(0f, 130f, 0f);
                     contentLoadedCount++;
                     break;
                 case "Monument":
@@ -269,7 +284,7 @@ public class ArTapper : MonoBehaviour
                             if (FirebaseLoader.OfflineMode)
                             {
                                 noConnectionMapHandler.Display();
-                                uiTutorialContainer.gameObject.SetActive(false);
+                                //uiTutorialContainer.gameObject.SetActive(false);
                                 return;
                             }
                             
@@ -322,6 +337,13 @@ public class ArTapper : MonoBehaviour
         for (int i = 0; i < ArtworkToPlace.content_list.Count; i++)
         {
             var content = ArtworkToPlace.content_list[i];
+
+            if (string.IsNullOrEmpty(content.media_content))
+            {
+                Debug.LogWarning($"Content is missing from index [{i}] on artwork [{ArtworkToPlace.title}]. Skipping.");
+                continue;
+            }
+            
             contentTotalCount++;
             var uri = new Uri(content.media_content);
             string encodedPath = uri.AbsolutePath;
@@ -341,7 +363,7 @@ public class ArTapper : MonoBehaviour
                 if (FirebaseLoader.OfflineMode)
                 {
                     noConnectionMapHandler.Display();
-                    uiTutorialContainer.gameObject.SetActive(false);
+                    //uiTutorialContainer.gameObject.SetActive(false);
                     return;
                 }
                 

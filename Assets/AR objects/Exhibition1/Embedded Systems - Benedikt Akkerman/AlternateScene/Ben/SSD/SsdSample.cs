@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using TensorFlowLite;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,6 +27,12 @@ public class SsdSample : MonoBehaviour
     private string[] labels;
 
     private bool working = false;
+
+    private void Awake()
+    {
+        var dummy = new TextureResizer().material;
+    }
+
     private void Start()
     {
         ssd = new SSD(options);
@@ -51,27 +58,23 @@ public class SsdSample : MonoBehaviour
         ssd?.Dispose();
     }
 
-    private async void Invoke(Texture texture)
+    private void Invoke(Texture texture)
     {
         if (working) return;
-        //detecting += 1;
         working = true;
-        //if(detecting > 5){
-        //Debug.Log("Detecting");
-        //ssd.Invoke(texture);
-        //    detecting = 0;
-        //}else{
-        // Debug.Log("Detection Skipped");
-        //}
-        await Work(texture);
-        working = false;
 
+        // Run on main thread—no Task.Run
+        ssd.Invoke(texture);
+
+        // Process results immediately
         SSD.Result[] results = ssd.GetResults();
         Vector2 size = (frameContainer.transform as RectTransform).rect.size;
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < results.Length; i++)
         {
             SetFrame(frames[i], results[i], size);
         }
+
+        working = false;
     }
 
     private Task Work(Texture texture)

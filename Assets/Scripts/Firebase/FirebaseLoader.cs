@@ -58,7 +58,7 @@ public class FirebaseLoader : MonoBehaviour
     
     public static bool SetupComplete { get; private set; } = false;
     private int connectAttempts = 0;
-    private int maxConnectAttempts = 3;
+    private int maxConnectAttempts = 2;
 
     public static bool OfflineMode { get; private set; } = false;
     
@@ -167,7 +167,7 @@ public class FirebaseLoader : MonoBehaviour
                 
                 OnStartUpEventProcessed?.Invoke("Failed to initialize database... retrying...");
                 Debug.LogWarning("Retrying Firebase initialization in 5 seconds...");
-                await Task.Delay(TimeSpan.FromSeconds(5));
+                await Task.Delay(TimeSpan.FromSeconds(1));
             }
         }
     }

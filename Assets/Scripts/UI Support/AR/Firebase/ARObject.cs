@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TriLibCore.Extensions;
 using UnityEngine;
 using UnityEngine.Video;
@@ -16,6 +17,7 @@ public class ARObject : MonoBehaviour
     [SerializeField] private Renderer shadowPlane;
     [SerializeField] private ARUIImage arUIImageTemplate;
     [SerializeField] private GameObject rootObject;
+    [SerializeField] private GameObject occlusionPlane;
 
     [Header("Templates")]
     [SerializeField] private VideoPlayer videoPlayer;
@@ -91,7 +93,6 @@ public class ARObject : MonoBehaviour
         obj.transform.SetParent(placementParent, false);
         obj.SetActive(false);
         Debug.Log("Added obj", obj);
-        //obj.AddComponent<ARAnchor>();
         presetObject = obj;
     }
 
@@ -99,9 +100,10 @@ public class ARObject : MonoBehaviour
     public VideoPlayer Add(MediaContentData mediaContentData, string url, Action<VideoPlayer> onComplete)
     {
         var player = Instantiate(videoPlayer, videoPlacementArea);
-        //player.gameObject.AddComponent<ARAnchor>();
+        player.gameObject.SetActive(true);
         var backupPlayer = player.gameObject.transform.GetChild(0).GetComponent<VideoPlayer>();
-        player.gameObject.transform.SetParent(placementParent);
+        
+        ApplyOffsets(player.gameObject, mediaContentData);
         
         videoPlayers.Add(player);
         videoPlayers.Add(backupPlayer);
@@ -112,24 +114,14 @@ public class ARObject : MonoBehaviour
         player.Prepare();
         backupPlayer.Prepare();
         
-        ApplyOffsets(player.gameObject, mediaContentData);
-        
         VideoPlayer.EventHandler handler = null;
         handler = (VideoPlayer vp) =>
         {
-            player.prepareCompleted -= handler;
+            vp.prepareCompleted -= handler;
             onComplete.Invoke(vp);
-        };
-        
-        VideoPlayer.EventHandler handler2 = null;
-        handler2 = (VideoPlayer vp2) =>
-        {
-            backupPlayer.prepareCompleted -= handler2;
-            onComplete.Invoke(vp2);
         };
 
         player.prepareCompleted += handler;
-        backupPlayer.prepareCompleted += handler2;
 
         return player;
     }
@@ -152,7 +144,6 @@ public class ARObject : MonoBehaviour
         var audioCanvas = Instantiate(audioImageCanvas, obj.transform.position, Quaternion.identity);
         audioCanvas.gameObject.SetActive(true);
         audioCanvas.transform.SetParent(placementParent, true);
-        
         
         if (Camera.main)
         {
@@ -219,23 +210,30 @@ public class ARObject : MonoBehaviour
     {
         content.SetActive(true);
 
+        bool videosPrepared = true;
+
         if (AppSettings.DeveloperMode && DeveloperModeARView.ShowRoot)
         {
             rootObject.SetActive(DeveloperModeARView.ShowRoot);
+            rootObject.AddComponent<ARAnchor>();
         }
         
         if (showPreset)
         {
-            //if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
             Debug.Log("showing preset: " + presetObject.name, presetObject);
             presetObject.SetActive(true);
+            presetObject.AddComponent<ARAnchor>();
         }
         
         foreach (var vp in videoPlayers)
         {
-            //if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
-            vp.gameObject.GetComponent<MeshRenderer>().enabled = true;
-            vp.Play();
+            if (vp.isPrepared)
+            {
+                vp.gameObject.GetComponent<MeshRenderer>().enabled = true;
+                vp.Play();
+                vp.gameObject.AddComponent<ARAnchor>();
+            }
+            else videosPrepared = false;
         }
 
         foreach (var obj in models)
@@ -274,26 +272,48 @@ public class ARObject : MonoBehaviour
                 }
             }
             
-            //obj.AddComponent<ARAnchor>();
+            obj.AddComponent<ARAnchor>();
         }
 
         foreach (var source in audioSources)
         {
-            //if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
             source.Play();
+            source.gameObject.AddComponent<ARAnchor>();
         }
 
         foreach (var ui in uis)
         {
-            //if (!anchor) anchor = gameObject.AddComponent<ARAnchor>();
             ui.Show();
+            ui.gameObject.AddComponent<ARAnchor>();
         }
         
         // Adjust the shadow plane so its top is at the bottom of the spawned objects.
-        AdjustShadowPlane();
+        //AdjustShadowPlane();
 
+        if (videosPrepared) CompleteShow();
+        else StartCoroutine(WaitForVideos());
+    }
+    
+    private IEnumerator WaitForVideos()
+    {
+        yield return new WaitUntil(() => videoPlayers.All(vp => vp.isPrepared));
+
+        foreach (var vp in videoPlayers)
+        {
+            if (!vp.GetComponent<ARAnchor>())
+            {
+                vp.gameObject.AddComponent<ARAnchor>();
+            }
+        }
+        CompleteShow();
+    }
+
+    private void CompleteShow()
+    {
+        shadowPlane.gameObject.SetActive(true);
+        //gameObject.AddComponent<ARAnchor>();
         showing = true;
-        gameObject.AddComponent<ARAnchor>();
+        occlusionPlane.SetActive(true);
     }
     
     // This method computes the combined bounds of all child renderers under placementParent,
