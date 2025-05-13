@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class ARDownloadBar : MonoBehaviour
 {
     [Header("References")]
+    [SerializeField] private GameObject content;
     [SerializeField] private Slider slider;
     [SerializeField] private TMP_Text statusLabel;
 
@@ -17,7 +18,13 @@ public class ARDownloadBar : MonoBehaviour
     private void Awake()
     {
         statusLabel.text = "";
+        content.gameObject.SetActive(false);
         gameObject.SetActive(false);
+    }
+
+    public void Show()
+    {
+        content.gameObject.SetActive(true);
     }
 
     public void SetSize(int size)

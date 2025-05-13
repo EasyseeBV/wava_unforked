@@ -34,6 +34,7 @@ public class ARObject : MonoBehaviour
 
     private bool showing = false;
     private ARAnchor anchor;
+    private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
     private void Awake()
     {
@@ -101,23 +102,20 @@ public class ARObject : MonoBehaviour
     {
         var player = Instantiate(videoPlayer, videoPlacementArea);
         player.gameObject.SetActive(true);
-        var backupPlayer = player.gameObject.transform.GetChild(0).GetComponent<VideoPlayer>();
         
         ApplyOffsets(player.gameObject, mediaContentData);
         
         videoPlayers.Add(player);
-        videoPlayers.Add(backupPlayer);
         
         player.url = url;
-        backupPlayer.url = url;
-        
         player.Prepare();
-        backupPlayer.Prepare();
         
         VideoPlayer.EventHandler handler = null;
         handler = (VideoPlayer vp) =>
         {
             vp.prepareCompleted -= handler;
+            //vp.renderMode = VideoRenderMode.RenderTexture;
+            //vp.gameObject.GetComponent<MeshRenderer>().material.SetTexture(MainTex, vp.targetTexture);
             onComplete.Invoke(vp);
         };
 

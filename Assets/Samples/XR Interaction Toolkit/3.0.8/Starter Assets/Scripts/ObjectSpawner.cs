@@ -179,6 +179,9 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
         }
         
         #endregion
+
+        [Header("Custom Fields")]
+        [SerializeField] private GameObject samplePrefab;
         
         private bool spawned = false;
         public GameObject arObject { get; set; }
@@ -214,6 +217,15 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
             objectSpawned?.Invoke(newObject);
             return true;
         }
-    }
 
+        public void SampleSpawnObject(Vector3 point, Vector3 normal)
+        {
+            var newObject = Instantiate(samplePrefab, point, Quaternion.identity);
+            EnsureFacingCamera();
+            var facePosition = m_CameraToFace.transform.position;
+            var forward = facePosition - point;
+            BurstMathUtility.ProjectOnPlane(forward, point, out var projectedForward);
+            newObject.transform.rotation = Quaternion.LookRotation(projectedForward, normal);
+        }
+    }
 }

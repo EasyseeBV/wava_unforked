@@ -1,4 +1,6 @@
 ﻿#if AR_FOUNDATION_PRESENT
+using System;
+using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -13,8 +15,6 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
     /// </summary>
     public class ARInteractorSpawnTrigger : MonoBehaviour
     {
-
-        public bool test;
         /// <summary>
         /// The type of trigger to use to spawn an object.
         /// </summary>
@@ -101,6 +101,28 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
         [SerializeField]
         [Tooltip("When enabled, spawn will not be triggered if an object is currently selected.")]
         bool m_BlockSpawnWhenInteractorHasSelection = true;
+        
+        /*
+         ---------------- CUSTOM PROPERTIES ------------------
+         */
+        
+        [SerializeField]
+        [Tooltip("How much to push the object along the world Z axis.")]
+        float m_ZOffset = -2f;
+        
+        [SerializeField]
+        [Tooltip("Reference to the ARRaycastManager, used for checking the offset point.")]
+        ARRaycastManager m_RaycastManager;
+        
+        // cache list to avoid alloc every frame
+        static readonly List<ARRaycastHit> s_OffsetHits = new List<ARRaycastHit>();
+        public List<Vector2> ContentOffsets { get; set; }= new List<Vector2>();
+        
+        public event Action<int> placementFailed;
+        
+        /*
+         ---------------- END CUSTOM PROPERTIES ------------------
+         */
 
         /// <summary>
         /// When enabled, spawn will not be triggered if an object is currently selected.
@@ -154,11 +176,6 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
         /// </summary>
         void Update()
         {
-            if (test)
-            {
-                test = false;
-                m_ObjectSpawner.TrySpawnObject(Vector3.zero, Vector3.zero);
-            }
             // Wait a frame after the Spawn Object input is triggered to actually cast against AR planes and spawn
             // in order to ensure the touchscreen gestures have finished processing to allow the ray pose driver
             // to update the pose based on the touch position of the gestures.
@@ -166,17 +183,51 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
             {
                 m_AttemptSpawn = false;
 
-                // Don't spawn the object if the tap was over screen space UI.
-                var isPointerOverUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(-1);
-                if (!isPointerOverUI && m_ARInteractor.TryGetCurrentARRaycastHit(out var arRaycastHit))
+                // ignore UI taps
+                if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(-1))
+                    return;
+
+                // first do the normal AR‐plane hit test
+                if (m_ARInteractor.TryGetCurrentARRaycastHit(out var arHit)
+                    && arHit.trackable is ARPlane arPlane
+                    && (!m_RequireHorizontalUpSurface || arPlane.alignment == PlaneAlignment.HorizontalUp))
                 {
-                    if (!(arRaycastHit.trackable is ARPlane arPlane))
-                        return;
+                    Vector3 basePos = arHit.pose.position;
 
-                    if (m_RequireHorizontalUpSurface && arPlane.alignment != PlaneAlignment.HorizontalUp)
-                        return;
+                    bool canPlace = true;
+                    float neededMeters = 0f;
+                    
+                    // now for each offset in your list
+                    foreach (var offset in ContentOffsets)
+                    {
+                        // flip the sign of X and Z
+                        var flipped = -offset;
 
-                    m_ObjectSpawner.TrySpawnObject(arRaycastHit.pose.position, arPlane.normal);
+                        // build the world‐space spawn position
+                        var spawnPos = basePos + new Vector3(flipped.x, 0f, flipped.y);
+
+                        // raycast downward a tiny bit to make sure the scan covered it
+                        var rayOrig = spawnPos + Vector3.up * 0.1f;
+                        var ray    = new Ray(rayOrig, Vector3.down);
+                        s_OffsetHits.Clear();
+
+                        if (!m_RaycastManager.Raycast(ray, s_OffsetHits, TrackableType.PlaneWithinPolygon))
+                        {
+                            canPlace = false;
+                            neededMeters += Mathf.Abs(offset.x) + Mathf.Abs(offset.y);
+                        }
+                    }
+
+                    if (!canPlace)
+                    {
+                        int scanSize = Mathf.CeilToInt(neededMeters);
+                        Debug.Log($"Failed to place object, recommended area size is {scanSize}x{scanSize}m");
+                        placementFailed?.Invoke(scanSize);
+                        return;
+                    }
+                    
+                    // If can place
+                    m_ObjectSpawner.TrySpawnObject(basePos, arPlane.normal);
                 }
 
                 return;

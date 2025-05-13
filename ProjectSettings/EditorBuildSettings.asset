@@ -86,6 +86,9 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Samples/AR Sample/Scenes/SampleSceneAR_default.unity
     guid: 02ba73485b593394c810fc7a712980f4
+  - enabled: 1
+    path: Assets/AR objects/Exhibition1/Embedded Systems - Benedikt Akkerman/AlternateScene/Ben/BenDeviceCheck.unity
+    guid: fd737c9dded662846b32dadee3e212ea
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: f8ce26fe3bc69499b9be4b2378e97a94,
       type: 2}

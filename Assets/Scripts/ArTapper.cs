@@ -47,7 +47,7 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private ARObject arObjectPrefab;
     [SerializeField] private bool testContent;
 
-    [Header("Debugging")]
+    [Header("Dependencies")]
     [SerializeField] private Transform outOfScreenLoadLocation;
     [SerializeField] private TMP_Text eventLabel;
     [SerializeField] private GameObject loadingPlane;
@@ -100,14 +100,14 @@ public class ArTapper : MonoBehaviour
         if (!objectSpawner) objectSpawner = FindObjectOfType<ObjectSpawner>();
         if (objectSpawner) objectSpawner.arObject = arObject.gameObject;
         
-        /*if (!interactorSpawnTrigger) interactorSpawnTrigger = FindObjectOfType<ARInteractorSpawnTrigger>();
+        if (!interactorSpawnTrigger) interactorSpawnTrigger = FindObjectOfType<ARInteractorSpawnTrigger>();
         if (interactorSpawnTrigger)
         {
             foreach (var content in ArtworkToPlace.content_list)
             {
-                interactorSpawnTrigger.contentOffset += new Vector3(content.transforms.position_offset.x_offset, content.transforms.position_offset.y_offset, content.transforms.position_offset.z_offset);
+                interactorSpawnTrigger.ContentOffsets.Add(new Vector2(content.transforms.position_offset.x_offset, content.transforms.position_offset.z_offset));
             }
-        }*/
+        }
             
         if (downloadBar == null) downloadBar = FindObjectOfType<ARDownloadBar>();
         HideShadow = false;
@@ -119,16 +119,17 @@ public class ArTapper : MonoBehaviour
         LoadContent();
     }
     
-#if UNITY_EDITOR
     private void Update()
     {
+#if UNITY_EDITOR
         if (testContent)
         {
             testContent = false;
             TryPlaceObject();
         }
-    }
 #endif
+        
+    }
     
     #endregion
     
@@ -193,6 +194,17 @@ public class ArTapper : MonoBehaviour
 
     #region Content Loading
 
+    private IEnumerator ShowLoadingBar()
+    {
+        yield return new WaitForSeconds(2f);
+
+        if (allContentLoaded || !hasContent) yield return null;
+        else
+        {
+            downloadBar.Show();
+        }
+    }
+
     private async void LoadContent()
     {
         if ((ArtworkToPlace?.content_list == null || ArtworkToPlace.content_list.Count == 0) && string.IsNullOrEmpty(ArtworkToPlace?.preset))
@@ -200,6 +212,8 @@ public class ArTapper : MonoBehaviour
             Debug.LogWarning("Artwork to place is missing or there is no content available.");
             return;
         }
+
+        StartCoroutine(ShowLoadingBar());
 
         hasContent = true;
         bool loadContent = true;
