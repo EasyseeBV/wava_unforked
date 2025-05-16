@@ -1,3 +1,4 @@
+using System;
 using AlmostEngine.Screenshot;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,18 +32,35 @@ public class CameraModeManager : MonoBehaviour
                 if (screenRecorder.IsRecording())
                 {
                     screenRecorder.StopRecording((success, error) => {
-                        screenRecorder.SaveRecording();
-                        button.color = Color.white;
-                        ObjectToTurnOff.ForEach(o => o.SetActive(true));
-                        ObjectToTurnOn.ForEach(o => o.SetActive(false));
+                        if (success)
+                        {
+                            screenRecorder.SaveRecording();
+                            button.color = Color.white;
+                            ObjectToTurnOff.ForEach(o => o.SetActive(true));
+                            ObjectToTurnOn.ForEach(o => o.SetActive(false));
+                        }
+                        else
+                        {
+                            Debug.LogError("Error while saving video: " + error);
+                            button.color = Color.white;
+                            ObjectToTurnOff.ForEach(o => o.SetActive(true));
+                            ObjectToTurnOn.ForEach(o => o.SetActive(false));
+                        }
                     });
                 }
                 else
                 {
-                    screenRecorder.StartRecording();
-                    button.color = recordingColor;
-                    ObjectToTurnOff.ForEach(o => o.SetActive(false));
-                    ObjectToTurnOn.ForEach(o => o.SetActive(true));
+                    try
+                    {
+                        screenRecorder.StartRecording();
+                        button.color = recordingColor;
+                        ObjectToTurnOff.ForEach(o => o.SetActive(false));
+                        ObjectToTurnOn.ForEach(o => o.SetActive(true));
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.Log("Failed to start recording: " + e);
+                    }
                 }
                 break;
             default:
@@ -60,7 +78,7 @@ public class CameraModeManager : MonoBehaviour
         mode = CameraMode.Video;
         if (videoInitialized) return;
         screenRecorder.CreateVideoRecorder();
-        screenRecorder.PrepareRecording();
+       // screenRecorder.PrepareRecording();
         videoInitialized = true;
     }
 

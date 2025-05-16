@@ -160,11 +160,16 @@ namespace VoxelBusters.ScreenRecorderKit.Demo
             });
         }
 
+        public void StopRecording()
+        {
+            StopRecording(null);
+        }
+        
         public void StopRecording(CompletionCallback callback)
         {
             m_recorder.StopRecording((success, error) =>
             {
-                callback(success, error);
+                callback?.Invoke(success, error);
                 if (success)
                 {
                     SetStatus("Stopped recording");
