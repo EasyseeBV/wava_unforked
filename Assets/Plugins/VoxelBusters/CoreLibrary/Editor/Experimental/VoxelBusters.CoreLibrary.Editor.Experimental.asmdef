@@ -1,6 +1,8 @@
 {
     "name": "VoxelBusters.CoreLibrary.Editor.Experimental",
-    "references": [],
+    "references": [
+        "VoxelBusters.CoreLibrary.Parser"
+    ],
     "includePlatforms": [
         "Editor"
     ],

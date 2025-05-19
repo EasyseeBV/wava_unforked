@@ -3,11 +3,12 @@ using System.Collections.Generic;
 
 namespace VoxelBusters.CoreLibrary.NativePlugins
 {
-    internal static class NativeInstanceMap
+    public static class NativeInstanceMap
     {
         #region Static fields
 
-        private static Dictionary<IntPtr, object> instanceMap;
+        [ClearOnReload]
+        private static Dictionary<IntPtr, object> s_instanceMap;
 
         #endregion
 
@@ -15,8 +16,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         static NativeInstanceMap()
         {
-            // set properties
-            instanceMap = new Dictionary<IntPtr, object>(capacity: 4);
+            Initialize();
         }
 
         #endregion
@@ -25,20 +25,30 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         public static void AddInstance(IntPtr nativePtr, object owner)
         {
-            instanceMap.Add(nativePtr, owner);
+            s_instanceMap.Add(nativePtr, owner);
         }
 
-        public static void RemoveInstance(IntPtr nativePtr)
+        public static bool RemoveInstance(IntPtr nativePtr)
         {
-            instanceMap.Remove(nativePtr);
+            return s_instanceMap.Remove(nativePtr);
         }
 
         public static T GetOwner<T>(IntPtr nativePtr) where T : class
         {
-            object owner;
-            instanceMap.TryGetValue(nativePtr, out owner);
+            s_instanceMap.TryGetValue(nativePtr, out object owner);
 
             return owner as T;
+        }
+
+        #endregion
+
+        #region Private static methods
+
+        [ExecuteOnReload]
+        private static void Initialize()
+        {
+            // Set properties
+            s_instanceMap   = new Dictionary<IntPtr, object>(capacity: 4);
         }
 
         #endregion

@@ -14,7 +14,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.Android
 
         public static NativeActivity GetActivity()
         {
-            if(s_nativeContext == null)
+            if(s_nativeActivity == null)
             {
                 s_nativeActivity = new NativeActivity(GetUnityActivity());
             }

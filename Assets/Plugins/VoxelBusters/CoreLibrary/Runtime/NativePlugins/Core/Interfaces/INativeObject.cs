@@ -8,10 +8,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
     {
         #region Properties
 
-        NativeObjectRef NativeObjectRef
-        {
-            get;
-        }
+        NativeObjectRef NativeObjectRef { get; }
 
         #endregion
 

@@ -8,10 +8,6 @@ namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore
 {
     public abstract class NativeVideoRecorderInterfaceBase : INativeVideoRecorderInterface
     {
-        #region Fields
-
-        #endregion
-
         #region IDispose implementation
 
         public virtual void Dispose()

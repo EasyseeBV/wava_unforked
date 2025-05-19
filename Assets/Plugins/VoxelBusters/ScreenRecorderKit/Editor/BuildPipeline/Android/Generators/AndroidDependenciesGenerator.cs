@@ -21,7 +21,7 @@ namespace VoxelBusters.ScreenRecorderKit.Editor.Build.Android
 		/// </summary>
 		private		const	string kDependencyName 		        = "ScreenRecorderKitDependencies.xml";
 
-        private		const	string kAndroidXLibsVersionString	= "1.3.0+";
+        private		const	string kAndroidXLibsVersionString	= "1.8.0+";
 
 		#endregion
 

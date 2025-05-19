@@ -5,21 +5,17 @@ using System.Runtime.InteropServices;
 namespace VoxelBusters.CoreLibrary.NativePlugins
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal struct NativeArray
+    public struct NativeArray
     {
         #region Properties
 
-        public IntPtr Pointer
-        {
-            get;
-            set;
-        }
+        public IntPtr Pointer { get; set; }
 
-        public int Length
-        {
-            get;
-            set;
-        }
+        public int Length { get; set; }
+
+        #endregion
+
+        #region Public methods
 
         public T[] GetStructArray<T>() where T : struct
         {
@@ -41,10 +37,9 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
             return structArray;
         }
 
-
         public string[] GetStringArray()
         {
-            //Marshal ptr to array
+            // Marshal ptr to array
             return MarshalUtility.CreateStringArray(Pointer, Length);
         }
 

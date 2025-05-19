@@ -18,3 +18,8 @@
 
 [assembly: InternalsVisibleTo("VoxelBusters.EasyMLKit")]
 [assembly: InternalsVisibleTo("VoxelBusters.EasyMLKit.Editor")]
+
+[assembly: InternalsVisibleTo("VoxelBusters.PermissionsKit")]
+[assembly: InternalsVisibleTo("VoxelBusters.PermissionsKit.Editor")]
+[assembly: InternalsVisibleTo("VoxelBusters.PermissionsKit.iOSModule")]
+[assembly: InternalsVisibleTo("VoxelBusters.PermissionsKit.AndroidModule")]

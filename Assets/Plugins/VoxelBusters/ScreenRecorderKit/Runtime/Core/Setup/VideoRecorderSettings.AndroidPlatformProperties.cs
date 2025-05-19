@@ -13,27 +13,17 @@ namespace VoxelBusters.ScreenRecorderKit
 		{
             #region Fields
 
-            [FormerlySerializedAs("m_videoMaxQuality")]
-            [SerializeField]
-            [Tooltip("Set the resolution at which you want to record. Setting higher resolution will have larger final video sizes.")]
+            [SerializeField, FormerlySerializedAs("m_videoMaxQuality"), Tooltip("Set the resolution at which you want to record. Setting higher resolution will have larger final video sizes.")]
             private     VideoRecorderQuality    m_videoQuality              = VideoRecorderQuality.QUALITY_720P;
-
-            [SerializeField]
-            [Tooltip("Enabling custom bitrates lets you set recommended bitrates compared to default values which give very big file sizes")]
+            [SerializeField, Tooltip("Enabling custom bitrates lets you set recommended bitrates compared to default values which give very big file sizes")]
             private     CustomBitRateSetting    m_customVideoBitrate        = null;
-
-            [FormerlySerializedAs("m_allowExternalStoragePermission")]
-            [SerializeField]
-            [Tooltip("Enable this if you want to use SavePreview feature. This adds external storage permission to the manifest. Default is true.")]
+            [SerializeField, FormerlySerializedAs("m_allowExternalStoragePermission"), Tooltip("Enable this if you want to use SavePreview feature. This adds external storage permission to the manifest. Default is true.")]
             private     bool                    m_usesSavePreview           = true;
 
-            [SerializeField]
             [Header("Advanced Settings")]
-            [Tooltip("Enabling this will allow VideoRecorder to pause/resume audio sources to reduce load while starting/stopping recording. It is recommended to keep this setting on.")]
+            [SerializeField, Tooltip("Enabling this will allow VideoRecorder to pause/resume audio sources to reduce load while starting/stopping recording. It is recommended to keep this setting on.")]
             private     bool                    m_allowControllingAudio     = true;
-
-            [SerializeField]
-            [Tooltip("This captures app audio better when enabled")]
+            [SerializeField, Tooltip("This captures app audio better when enabled")]
             private     bool                    m_prioritiseAppAudioWhenUsingMicrophone = false;
 
             #endregion

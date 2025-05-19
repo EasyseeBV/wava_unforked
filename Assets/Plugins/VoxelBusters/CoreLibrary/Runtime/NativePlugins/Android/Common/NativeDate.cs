@@ -30,6 +30,14 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.Android
             DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             return dateTime.AddSeconds(epoch);
         }
+
+        public DateTime? GetDateTimeOptional(DateTime? defaultValue = null)
+        {
+            if(IsNull())
+                return defaultValue;
+
+            return GetDateTime();
+        }
     }
 }
 #endif

@@ -11,10 +11,10 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
         #region Fields
 
         [SerializeField]
-        private         double              m_latitude;
-
+        private     double              m_latitude;
+        
         [SerializeField]
-        private         double              m_longitude;
+        private     double              m_longitude;
 
         #endregion
 
@@ -25,14 +25,8 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
         /// </summary>
         public double Latitude
         {
-            get
-            {
-                return m_latitude;
-            }
-            set
-            {
-                m_latitude  = value;
-            }
+            get => m_latitude;
+            set => m_latitude = value;
         }
 
         /// <summary>
@@ -40,14 +34,8 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
         /// </summary>
         public double Longitude
         {
-            get
-            {
-                return m_longitude;
-            }
-            set
-            {
-                m_longitude = value;
-            }
+            get => m_longitude;
+            set => m_longitude = value;
         }
 
         #endregion

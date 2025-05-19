@@ -8,7 +8,7 @@ namespace VoxelBusters.CoreLibrary
     {
         #region Static fields
 
-        private     static  readonly    ObjectPool<List<T>>     s_listPool      = new ObjectPool<List<T>>(createFunc: OnCreateItem, actionOnGet: null, actionOnAdd: OnReleaseItem);
+        private static ObjectPool<List<T>> s_listObjectPool;
 
         #endregion
 
@@ -16,12 +16,30 @@ namespace VoxelBusters.CoreLibrary
 
         public static List<T> Get()
         {
-            return s_listPool.Get();
+            EnsureInitialized();
+
+            return s_listObjectPool.Get();
         }
 
         public static void Release(List<T> obj)
         {
-            s_listPool.Add(obj);
+            EnsureInitialized();
+
+            s_listObjectPool.Add(obj);
+        }
+
+        #endregion
+
+        #region Private static methods
+
+        private static void EnsureInitialized()
+        {
+            if (s_listObjectPool != null) return;
+
+            s_listObjectPool    = new ObjectPool<List<T>>(
+                createFunc: OnCreateItem,
+                actionOnGet: null,
+                actionOnAdd: OnReleaseItem);
         }
 
         private static List<T> OnCreateItem()

@@ -26,9 +26,9 @@ namespace VoxelBusters.CoreLibrary
         public RuntimePlatformConstantSet(string ios = null, string tvos = null, string android = null)
         {
             // set properties
-            m_ios       = ios;
-            m_tvos      = tvos;
-            m_android   = android;
+            m_ios       = ios?.Trim();
+            m_tvos      = tvos?.Trim();
+            m_android   = android?.Trim();
         }
 
         #endregion
@@ -37,13 +37,19 @@ namespace VoxelBusters.CoreLibrary
 
         public string GetConstantForActivePlatform(string defaultValue = null)
         {
+            var     platform    = ApplicationServices.GetActivePlatform();
+            return GetConstantForPlatform(platform, defaultValue);
+        }
+
+        public string GetConstantForActiveOrSimulationPlatform(string defaultValue = null)//Why this is not used?
+        {
             var     platform    = ApplicationServices.GetActiveOrSimulationPlatform();
             return GetConstantForPlatform(platform, defaultValue);
         }
 
         public string GetConstantForPlatform(RuntimePlatform platform, string defaultValue = null)
         {
-            string  targetValue = null;
+            string  targetValue;
             switch (platform)
             {
                 case RuntimePlatform.IPhonePlayer:
@@ -59,7 +65,8 @@ namespace VoxelBusters.CoreLibrary
                     break;
 
                 default:
-                    throw VBException.SwitchCaseNotImplemented(platform);
+                    targetValue = defaultValue;
+                    break;
             }
 
             return string.IsNullOrEmpty(targetValue) ? defaultValue : targetValue;

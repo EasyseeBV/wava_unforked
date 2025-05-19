@@ -18,7 +18,7 @@ namespace VoxelBusters.CoreLibrary.Parser
 	{
 		#region Methods
 		
-		public static string ToJSON(object obj)
+		public static string ToJson(object obj)
 		{
 			JsonWriter  writer  = new JsonWriter();
 			return writer.Serialise(obj);
@@ -29,13 +29,13 @@ namespace VoxelBusters.CoreLibrary.Parser
 			return jsonStr.Equals(JsonConstants.kNull);
 		}
 
-		public static object FromJSON (string jsonStr)
+		public static object FromJson(string jsonStr)
 		{
 			JsonReader  reader  = new JsonReader(jsonStr);
 			return reader.Deserialise();
 		}
 		
-		public static object FromJSON (string jsonStr, ref int errorIndex)
+		public static object FromJson(string jsonStr, ref int errorIndex)
 		{
             JsonReader  reader  = new JsonReader(jsonStr);
 			return reader.Deserialise(ref errorIndex);

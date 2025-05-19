@@ -14,7 +14,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         [SerializeField]
         private     string                      m_description;
-
+        
         [SerializeField]
         private     RuntimePlatformConstantSet  m_descriptionOverrides;
 
@@ -44,7 +44,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
             string  targetValue     = m_descriptionOverrides.GetConstantForPlatform(platform, m_description);
             if (targetValue == null)
             {
-                DebugLogger.LogError("Permission is not defined!");
+                DebugLogger.LogError(CoreLibraryDomain.NativePlugins, "Permission is not defined.");
                 return null;
             }
             else

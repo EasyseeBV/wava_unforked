@@ -12,10 +12,10 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         [SerializeField]
         private     string      m_ios;
-
+        
         [SerializeField]
         private     string      m_tvos;
-
+        
         [SerializeField]
         private     string      m_android;
 

@@ -24,14 +24,8 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.UnityUI
 
         public int DisplayOrder
         {
-            get
-            {
-                return m_displayOrder;
-            }
-            set
-            {
-                m_displayOrder = value;
-            }
+            get => m_displayOrder;
+            set => m_displayOrder = value;
         }
 
         #endregion

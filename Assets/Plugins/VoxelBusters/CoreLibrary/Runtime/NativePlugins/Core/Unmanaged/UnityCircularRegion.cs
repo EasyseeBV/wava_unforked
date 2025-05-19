@@ -7,33 +7,17 @@ using UnityEngine;
 namespace VoxelBusters.CoreLibrary.NativePlugins
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal struct UnityCircularRegion
+    public struct UnityCircularRegion
     {
         #region Properties
 
-        public double Latitude
-        {
-            get;
-            set;
-        }
+        public double Latitude { get; set; }
 
-        public double Longitude
-        {
-            get;
-            set;
-        }
+        public double Longitude { get; set; }
 
-        public float Radius
-        {
-            get;
-            set;
-        }
+        public float Radius { get; set; }
 
-        public IntPtr RegionIdPtr
-        {
-            get;
-            set;
-        }
+        public IntPtr RegionIdPtr { get; set; }
 
         #endregion
 

@@ -7,6 +7,11 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.DemoKit
 {
 	public class ConsoleRect : MonoBehaviour 
 	{
+		#region Constants
+		private const int MAX_LENGTH = 10000;
+
+		#endregion
+
 		#region Properties
 
 		[SerializeField]
@@ -30,9 +35,9 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.DemoKit
 
 		public void Log(string message, bool append)
 		{
-			if (append)
+			if (append && m_text.text.Length < MAX_LENGTH)
 			{
-                m_text.text    = m_text.text + "\n" + message;
+                m_text.text    = m_text.text + "\n---------------\n" + message;
 			}
 			else
 			{

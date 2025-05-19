@@ -11,7 +11,7 @@ public class CameraModeManager : MonoBehaviour
     [SerializeField] private ScreenRecorderDemo screenRecorder;
     [SerializeField] private ScreenshotManager screenshotManager;
 
-    [SerializeField] private CameraMode mode;
+    [SerializeField] private CameraMode mode = CameraMode.Photo;
 
     [SerializeField] private Image button;
     [SerializeField] private Color recordingColor;
@@ -29,23 +29,14 @@ public class CameraModeManager : MonoBehaviour
                 Handheld.Vibrate();
                 break;
             case CameraMode.Video:
-                if (screenRecorder.IsRecording())
+                if (screenRecorder.CheckIsRecording())
                 {
-                    screenRecorder.StopRecording((success, error) => {
-                        if (success)
-                        {
-                            screenRecorder.SaveRecording();
-                            button.color = Color.white;
-                            ObjectToTurnOff.ForEach(o => o.SetActive(true));
-                            ObjectToTurnOn.ForEach(o => o.SetActive(false));
-                        }
-                        else
-                        {
-                            Debug.LogError("Error while saving video: " + error);
-                            button.color = Color.white;
-                            ObjectToTurnOff.ForEach(o => o.SetActive(true));
-                            ObjectToTurnOn.ForEach(o => o.SetActive(false));
-                        }
+                    screenRecorder.StopRecording(() => {
+                        screenRecorder.SaveRecording();
+                        button.color = Color.white;
+                        ObjectToTurnOff.ForEach(o => o.SetActive(true));
+                        ObjectToTurnOn.ForEach(o => o.SetActive(false));
+
                     });
                 }
                 else
@@ -53,9 +44,9 @@ public class CameraModeManager : MonoBehaviour
                     try
                     {
                         screenRecorder.StartRecording();
-                        button.color = recordingColor;
-                        ObjectToTurnOff.ForEach(o => o.SetActive(false));
-                        ObjectToTurnOn.ForEach(o => o.SetActive(true));
+                        if (button) button.color = recordingColor;
+                        ObjectToTurnOff?.ForEach(o => o.SetActive(false));
+                        ObjectToTurnOn?.ForEach(o => o.SetActive(true));
                     }
                     catch (Exception e)
                     {
@@ -78,7 +69,7 @@ public class CameraModeManager : MonoBehaviour
         mode = CameraMode.Video;
         if (videoInitialized) return;
         screenRecorder.CreateVideoRecorder();
-       // screenRecorder.PrepareRecording();
+        screenRecorder.PrepareRecording();
         videoInitialized = true;
     }
 

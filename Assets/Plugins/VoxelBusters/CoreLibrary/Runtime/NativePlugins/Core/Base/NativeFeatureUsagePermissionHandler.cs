@@ -8,11 +8,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
     {
         #region Staic properties
 
-        public static INativeFeatureUsagePermissionHandler Default
-        {
-            get;
-            set;
-        }
+        public static INativeFeatureUsagePermissionHandler Default { get; set; }
 
         #endregion
     }

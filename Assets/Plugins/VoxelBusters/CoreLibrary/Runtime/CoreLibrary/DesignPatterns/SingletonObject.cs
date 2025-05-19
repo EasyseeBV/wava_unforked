@@ -10,24 +10,16 @@ namespace VoxelBusters.CoreLibrary
     {
         #region Static fields
 
+        [ClearOnReload]
         private     static      T       s_sharedInstance    = null;
 
         #endregion
 
         #region Static properties
 
-        public static T Instance
-        {
-            get
-            {
-                if (s_sharedInstance == null)
-                {
-                    s_sharedInstance    = CreateInstance();
-                }
-
-                return s_sharedInstance;
-            }
-        }
+        public static T Instance => ObjectHelper.CreateInstanceIfNull(
+            ref s_sharedInstance,
+            CreateInstance);
 
         #endregion
 

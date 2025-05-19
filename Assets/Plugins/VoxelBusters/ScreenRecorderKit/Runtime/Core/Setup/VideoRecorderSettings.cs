@@ -13,10 +13,8 @@ namespace VoxelBusters.ScreenRecorderKit
 
         [SerializeField]
         private     bool                        m_usesMicrophone;
-
         [SerializeField]
         private     IosPlatformProperties       m_iosProperties;
-
         [SerializeField]
         private     AndroidPlatformProperties   m_androidProperties;
 

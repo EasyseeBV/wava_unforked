@@ -4,7 +4,10 @@
     "version": "1.0.7",
     "unity": "2018.3",
     "description": "Core Library is a foundation library that provides useful datatypes, design patterns and utility methods.",
-    "keywords": [ "voxelbusters", "unity", "core-library"],
+    "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "2.0.0"
+    },
+    "keywords": [ "voxelbusters", "unity", "core-library" ],
     "license": "MIT",
     "author": {
         "name": "Voxel Busters",

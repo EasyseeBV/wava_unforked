@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEngine;
 using VoxelBusters.CoreLibrary;
 
@@ -110,8 +111,8 @@ namespace VoxelBusters.CoreLibrary.Editor
                 AssetDatabase.StartAssetEditing();
 
                 foreach (var targetGroup in s_supportedTargetGroups)
-                {
-                    var     existingDefines = PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup).Split(';');
+                {                    
+                    var     existingDefines = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup)).Split(';');
                     var     updatedDefines  = new List<string>(existingDefines);
                     bool    isModified      = false;
                     if (s_addDefinesCollection.TryGetValue(targetGroup, out List<string> addDefines))
@@ -132,7 +133,7 @@ namespace VoxelBusters.CoreLibrary.Editor
                     // set values if there are modifications
                     if (isModified)
                     {
-                        PlayerSettings.SetScriptingDefineSymbolsForGroup(targetGroup, string.Join(";", updatedDefines.ToArray()));
+                        PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.FromBuildTargetGroup(targetGroup), string.Join(";", updatedDefines.ToArray()));
                     }
                 }
             }

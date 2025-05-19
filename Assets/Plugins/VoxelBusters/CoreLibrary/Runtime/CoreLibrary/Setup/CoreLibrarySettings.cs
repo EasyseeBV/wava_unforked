@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary> 
+/// A common library for all Voxel Busters's plugins.
+/// </summary>
 namespace VoxelBusters.CoreLibrary
 {
     public class CoreLibrarySettings
@@ -14,21 +17,16 @@ namespace VoxelBusters.CoreLibrary
 
         #region Static properties
 
-        internal static UnityPackageDefinition Package
-        {
-            get
+        internal static UnityPackageDefinition Package => ObjectHelper.CreateInstanceIfNull(
+            ref s_package,
+            () =>
             {
-                if (s_package == null)
-                {
-                    s_package   = new UnityPackageDefinition(
-                        name: "com.voxelbusters.corelibrary",
-                        displayName: "Core Library",
-                        version: "1.0.0",
-                        defaultInstallPath: $"Assets/Plugins/VoxelBusters/CoreLibrary");
-                }
-                return s_package;
-            }
-        }
+                return new UnityPackageDefinition(
+                    name: "com.voxelbusters.corelibrary",
+                    displayName: "Core Library",
+                    version: "1.0.0",
+                    defaultInstallPath: $"Assets/Plugins/VoxelBusters/CoreLibrary");
+            });
 
         public static string Name => Package.Name;
 

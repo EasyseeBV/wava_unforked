@@ -13,7 +13,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         [SerializeField]
         private     NativePlatform          m_platform      = NativePlatform.Unknown;
-
+        
         [SerializeField]
         private     string                  m_value         = string.Empty;
 
@@ -27,10 +27,8 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
         /// <value>The enum value indicates the platform to which string value belongs.</value>
         public NativePlatform Platform
         {
-            get
-            {
-                return m_platform;
-            }
+            get => m_platform;
+            private set => m_platform = value;
         }
 
         /// <summary>
@@ -39,10 +37,8 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
         /// <value>The string value.</value>
         public string Value
         {
-            get
-            {
-                return m_value;
-            }
+            get => m_value;
+            private set => m_value = value;
         }
 
         #endregion

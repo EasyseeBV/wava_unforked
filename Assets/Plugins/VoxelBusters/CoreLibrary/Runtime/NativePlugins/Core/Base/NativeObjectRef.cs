@@ -13,11 +13,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         #region Properties
 
-        public IntPtr Pointer 
-        { 
-            get; 
-            private set; 
-        }
+        public IntPtr Pointer { get; private set; }
 
         #endregion
 
@@ -76,7 +72,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
         {
             if (!m_disposed)
             {
-                DebugLogger.Log("Disposing native object.");
+                DebugLogger.Log(CoreLibraryDomain.NativePlugins, "Disposing native object.");
                 if (disposing)
                 {
                     // dispose managed state (managed objects).

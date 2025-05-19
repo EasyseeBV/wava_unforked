@@ -39,11 +39,6 @@ namespace VoxelBusters.ScreenRecorderKit
             return new Error(domain, code, description);
         }
 
-        internal static Error RecorderIsBusy(string errorDomain)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion
     }
 }

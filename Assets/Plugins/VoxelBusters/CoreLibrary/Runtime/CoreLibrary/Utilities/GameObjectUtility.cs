@@ -58,9 +58,42 @@ namespace VoxelBusters.CoreLibrary
             return containerGO;
         }
 
-        public static T CreateGameObjectWithComponent<T>(string name) where T : Component
+        public static GameObject CreateGameObject(string name, System.Action<GameObject> onBeforeActive = null)
         {
-            return new GameObject(name).AddComponent<T>();
+            var     gameObject      = new GameObject(name);
+            try
+            {
+                if (onBeforeActive != null)
+                {
+                    gameObject.SetActive(false);
+                    onBeforeActive(gameObject);
+                }
+            }
+            finally
+            {
+                if (!gameObject.activeSelf)
+                {
+                    gameObject.SetActive(true);
+                }
+            }
+            return gameObject;
+        }
+
+        public static T CreateGameObjectWithComponent<T>(string name, System.Action<T> onBeforeAwake = null) where T : Component
+        {
+            var     gameObject      = new GameObject(name);
+            T       component       = default;
+            try
+            {
+                gameObject.SetActive(false);
+                component   = gameObject.AddComponent<T>();
+                onBeforeAwake?.Invoke(component);
+            }
+            finally
+            {
+                gameObject.SetActive(true);
+            }
+            return component;
         }
 
         public static void SetActive(this GameObject[] gameObjects, bool value)

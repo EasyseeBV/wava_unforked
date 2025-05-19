@@ -22,28 +22,51 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.Android
             if (m_nativeObject == null)
                 return default(T);
 
-            AndroidJavaObject androidJavaObject = Call<AndroidJavaObject>("get", index);
-            var instance = (T)Activator.CreateInstance(typeof(T), new object[] { androidJavaObject });
-            return instance;
+            T instance;
+            if(IsStringOrPrimitive(typeof(T)))
+            {
+                instance = Call<T>("get", index);
+            }
+            else
+            {
+                AndroidJavaObject androidJavaObject = Call<AndroidJavaObject>("get", index);
+                instance = (T)Activator.CreateInstance(typeof(T), new object[] { androidJavaObject });
+            }
+            
+            return instance;        
         }
 
         public T[] GetArray()
         {
-            if (m_nativeObject == null)
+            if (NativeObject == null)
                 return default(T[]);
 
-            if (typeof(T) == typeof(byte))
+            List<T> list = new List<T>();
+            int size = Size();
+            for (int i = 0; i < size; i++)
             {
-                sbyte[] sbyteArray = AndroidJNIHelper.ConvertFromJNIArray<sbyte[]>(NativeObject.GetRawObject());
-                int length = sbyteArray.Length;
-                byte[] bytes = new byte[length];
-                Buffer.BlockCopy(sbyteArray, 0, bytes, 0, length);
-                return bytes as T[];
+                T each = Get(i);
+                list.Add(each);
             }
-            else
+
+            return list.ToArray();
+        }
+
+        private static bool IsStringOrPrimitive(Type type)
+        {
+            // Check if the type is string
+            if (type == typeof(string))
             {
-                return AndroidJNIHelper.ConvertFromJNIArray<T[]>(NativeObject.GetRawObject());
+                return true;
             }
+
+            // Check if the type is a primitive type
+            if (type.IsPrimitive)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

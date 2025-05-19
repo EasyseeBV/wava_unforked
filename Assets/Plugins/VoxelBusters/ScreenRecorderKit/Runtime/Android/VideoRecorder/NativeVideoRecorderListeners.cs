@@ -25,7 +25,7 @@ namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore.Android
     interface ISaveRecordingListener
     {
         void OnSaveSuccess(string path);
-        void OnSaveFailure(string errorCode, string errorDescription);
+        void OnSaveFailed(string errorCode, string errorDescription);
     }
 
     internal interface IRecordingAvailabilityListener
@@ -90,7 +90,7 @@ namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore.Android
             onSuccessCallback?.Invoke(path);
         }
 
-        public void OnSaveFailure(string code, string description)
+        public void OnSaveFailed(string code, string description)
         {
             onFailureCallback?.Invoke(new Error(VideoRecorder.ErrorDomain, NativeUtility.GetErrorCode(code), description));
         }

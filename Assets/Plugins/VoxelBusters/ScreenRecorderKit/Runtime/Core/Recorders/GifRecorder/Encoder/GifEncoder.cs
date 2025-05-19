@@ -35,6 +35,8 @@ namespace VoxelBusters.ScreenRecorderKit.GifRecorderCore
 		protected bool m_IsSizeSet = false;           // If false, get size from first frame
 		protected int m_SampleInterval = 10;          // Default sample interval for quantizer
 
+		protected bool m_flipTexture = false;
+
 		/// <summary>
 		/// Default constructor. Repeat will be set to -1 and Quality to 10.
 		/// </summary>
@@ -50,12 +52,13 @@ namespace VoxelBusters.ScreenRecorderKit.GifRecorderCore
 		/// the maximum 256 colors allowed by the GIF specification). Lower values (minimum = 1)
 		/// produce better colors, but slow processing significantly. Higher values will speed
 		/// up the quantization pass at the cost of lower image quality (maximum = 100).</param>
-		public GifEncoder(int repeat, int quality)
+		public GifEncoder(int repeat, int quality, bool flipTexture = false)
 		{
 			if (repeat >= 0)
 				m_Repeat = repeat;
 
 			m_SampleInterval = (int)Mathf.Clamp(quality, 1, 100);
+			m_flipTexture = flipTexture;
 		}
 
 		/// <summary>
@@ -211,8 +214,11 @@ namespace VoxelBusters.ScreenRecorderKit.GifRecorderCore
 			Color32[] p = m_CurrentFrame.Data;
 			int count = 0;
 
-			// Texture data is layered down-top, so flip it
-			for (int th = m_CurrentFrame.Height - 1; th >= 0; th--)
+			int startRow = m_flipTexture ? 0 : m_CurrentFrame.Height - 1;
+			int endRow = m_flipTexture ? m_CurrentFrame.Height : -1;
+			int rowStep = m_flipTexture ? 1 : -1;
+
+			for (int th = startRow; th != endRow; th += rowStep)
 			{
 				for (int tw = 0; tw < m_CurrentFrame.Width; tw++)
 				{

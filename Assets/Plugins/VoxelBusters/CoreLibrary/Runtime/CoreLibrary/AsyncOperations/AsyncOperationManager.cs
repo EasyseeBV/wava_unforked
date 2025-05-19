@@ -4,78 +4,68 @@ using UnityEngine;
 
 namespace VoxelBusters.CoreLibrary
 {
-    internal class AsyncOperationManager : PrivateSingletonBehaviour<AsyncOperationManager>
+    internal static class AsyncOperationManager
     {
-        #region Static fields
+        #region Properties
 
-        private     static  List<IAsyncOperationUpdateHandler>  s_activeObjects     = new List<IAsyncOperationUpdateHandler>();
+        [ClearOnReload]
+        private     static  List<IAsyncOperationUpdateHandler>  s_targets;
 
-        private     static  List<IAsyncOperationUpdateHandler>  s_completedObjects  = new List<IAsyncOperationUpdateHandler>();
-        
         #endregion
 
         #region Static methods
 
-        public static void ScheduleUpdate(IAsyncOperationUpdateHandler updateHandler)
+        public static void ScheduleUpdate(IAsyncOperationUpdateHandler target)
         {
-            Assert.IsArgNotNull(updateHandler, nameof(updateHandler));
+            Assert.IsArgNotNull(target, nameof(target));
 
-            CreateObjectIfRequired();
+            EnsureInitialised();
 
-            // add object to scheduler
-            s_activeObjects.Add(updateHandler);
+            s_targets.Add(target);
         }
 
-        public static void UnscheduleUpdate(IAsyncOperationUpdateHandler updateHandler)
+        public static void UnscheduleUpdate(IAsyncOperationUpdateHandler target)
         {
-            Assert.IsArgNotNull(updateHandler, nameof(updateHandler));
+            Assert.IsArgNotNull(target, nameof(target));
 
-            // add object to remove list
-            s_completedObjects.Add(updateHandler);
-        }
+            EnsureInitialised();
 
-        private static void CreateObjectIfRequired()
-        {
-            // create object if required
-            if (!IsSingletonActive)
-            {
-                GetSingleton();
-            }
+            s_targets.Remove(target);
         }
 
         #endregion
 
         #region Unity methods
 
-        private void Update()
+        private static void Update()
         {
-            RemoveCompletedObjects();
-            TickActiveObjects();
+            UpdateTargets();
         }
 
         #endregion
 
         #region Private methods
 
-        private void RemoveCompletedObjects()
+        private static void EnsureInitialised()
         {
-            // remove completed objects
-            for (int iter = 0; iter < s_completedObjects.Count; iter++)
-            {
-                var     updateHandler   = s_completedObjects[iter];
-                s_activeObjects.Remove(updateHandler);
-            }
+            if (s_targets != null) return;
 
-            s_completedObjects.Clear();
+            // Set properties
+            s_targets           = new List<IAsyncOperationUpdateHandler>(8);
+
+            // Register for callbacks
+            Scheduler.Update   += Update;
         }
 
-        private void TickActiveObjects()
+        private static void UpdateTargets()
         {
-            // call update function for active operations
-            for (int iter = 0; iter < s_activeObjects.Count; iter++)
+            for (int iter = 0; iter < s_targets.Count; iter++)
             {
-                var     updateHandler   = s_activeObjects[iter];
-                updateHandler.Update();
+                var     target  = s_targets[iter];
+                if (target != null)
+                {
+                    target.Update();
+                }
             }
         }
          

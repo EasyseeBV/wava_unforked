@@ -9,6 +9,7 @@ namespace VoxelBusters.ScreenRecorderKit
     public interface IScreenRecorder
     {
         #region Methods
+
         /// <summary>
         /// Check if recording is allowed or not.
         /// </summary>
@@ -77,7 +78,6 @@ namespace VoxelBusters.ScreenRecorderKit
         /// <param name="callback">Callback to get triggered once save action is complete. This returns a result where you can fetch path.</param>
         void SaveRecording(string fileName, CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null);
 
-
         /// <summary>
         /// Set a callback to get triggered when a recording result is available. This will be GifTexture in-case of gif recording or video file path in-case of video recording.
         /// </summary>
@@ -93,10 +93,10 @@ namespace VoxelBusters.ScreenRecorderKit
         /// <summary>
         /// Share an active recording which just got recorded.
         /// </summary>
-        /// <param name="text">Share text used for sharing.</param>
-        /// <param name="subject">Subject text that needs to be used as subject.</param>
+        /// <param name="title">Title/Subject to be used for sharing.</param>
+        /// <param name="message">Text that needs to be used as message body.</param>
         /// <param name="callback">Callback that gets triggered once share action is complete.</param>
-        void ShareRecording(string text = null, string subject = null, CompletionCallback callback = null);
+        void ShareRecording(string title = null, string message = null, CompletionCallback callback = null);
 
         /// <summary>
         /// Flush any resources created for recording.

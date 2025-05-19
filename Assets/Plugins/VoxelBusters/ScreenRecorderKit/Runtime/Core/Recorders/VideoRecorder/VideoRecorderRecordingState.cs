@@ -11,7 +11,6 @@ namespace VoxelBusters.ScreenRecorderKit
         /// </summary>
         Started = 0,
 
-
         /// <summary>
         /// State when recording pauses
         /// </summary>

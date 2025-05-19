@@ -19,6 +19,9 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.UnityUI
         [SerializeField]
         private     Button[]            m_buttons   = null;
 
+        [SerializeField]
+        private     InputField[]        m_inputFields = null;
+
         #endregion
 
         #region Unity methods
@@ -42,13 +45,44 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.UnityUI
                     var     actionInfo  = GetActionButtonAtIndex(iter);
                     button.gameObject.SetActive(true);
                     button.GetComponentInChildren<Text>().text = actionInfo.Title;
-                    button.onClick.AddListener(() => SendCompletionResult(buttonIndex));
+                    button.onClick.AddListener(() => SendCompletionResult(buttonIndex, GetCurrentInputValues()));
                 }
                 else
                 {
                     button.gameObject.SetActive(false);
                 }
             }
+            
+            int     textFieldCount     = GetInputFieldCount();
+            for (int iter = 0; iter < m_inputFields.Length; iter++)
+            {
+                // update button info
+                var     textField       = m_inputFields[iter];
+                if (iter < textFieldCount)
+                {
+                    textField.gameObject.SetActive(true);
+                    ((Text)textField.placeholder).text = GetInputFieldPlaceholderTextAtIndex(iter); 
+                }
+                else
+                {
+                    textField.gameObject.SetActive(false);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Private methods
+
+        private string[] GetCurrentInputValues()
+        {
+            int     inputFieldCount = GetInputFieldCount();
+            string[]    inputValues = new string[inputFieldCount];
+            for (int iter = 0; iter < inputFieldCount; iter++)
+            {
+                inputValues[iter]   = m_inputFields[iter].text;
+            }
+            return inputValues;
         }
 
         #endregion

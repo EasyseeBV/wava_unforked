@@ -58,7 +58,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         protected void OnDestroy()
         { 
-            DebugLogger.Log("Destroying native feature behaviour: " + name);
+            DebugLogger.Log(CoreLibraryDomain.NativePlugins, $"Destroying native feature behaviour: {name}.");
             DestroyInternal();
         }
 

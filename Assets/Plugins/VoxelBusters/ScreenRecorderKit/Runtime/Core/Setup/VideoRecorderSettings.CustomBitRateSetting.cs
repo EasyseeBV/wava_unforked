@@ -13,9 +13,7 @@ namespace VoxelBusters.ScreenRecorderKit
 
             [SerializeField]
             private     bool    m_allowCustomBitrates   = false;
-
-            [SerializeField]
-            [Range(0.0f, 1.0f)]
+            [SerializeField, Range(0.0f, 1.0f)]
             private     float   m_bitrateFactor         = 0.5f;
 
             #endregion

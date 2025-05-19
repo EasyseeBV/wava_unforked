@@ -31,12 +31,12 @@ namespace VoxelBusters.CoreLibrary.Helpers
 
         public string ToJson(object obj)
         {
-            return JsonUtility.ToJSON(obj);
+            return JsonUtility.ToJson(obj);
         }
 
         public object FromJson(string jsonString)
         {
-            return JsonUtility.FromJSON(jsonString);
+            return JsonUtility.FromJson(jsonString);
         }
 
         #endregion

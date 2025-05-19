@@ -65,6 +65,7 @@ struct NPArray
 };
 typedef struct NPArray NPArray;
 
+// For multi dimentional array
 struct NPArrayProxy
 {
     NPIntPtr* ptr;
@@ -72,13 +73,21 @@ struct NPArrayProxy
 };
 typedef struct NPArrayProxy NPArrayProxy;
 
+// If allocation is continous use this.
+struct NPArrayWrapper
+{
+    NPIntPtr ptr;
+    int length;    
+};
+typedef struct NPArrayWrapper NPArrayWrapper;
+
+
 struct NPError
 {
     int code;
     NPIntPtr description;
 };
 typedef struct NPError NPError;
-
 
 struct NPSize
 {

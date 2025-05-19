@@ -11,48 +11,93 @@ namespace VoxelBusters.ScreenRecorderKit.Editor
 	[CustomEditor(typeof(ScreenRecorderKitSettings))]
 	public class ScreenRecorderKitSettingsInspector : SettingsObjectInspector
 	{
+        #region Fields
+
+        private     EditorSectionInfo           m_videoRecorderSection;
+
+        private     EditorSectionInfo           m_gifRecorderSection;
+
+        private     ButtonMeta[]                m_resourceButtons;
+
+        #endregion
+
         #region Base class methods
+
+        protected override void OnEnable()
+        {
+            base.OnEnable();
+
+            m_videoRecorderSection  = new EditorSectionInfo(displayName: "Video Recorder Settings",
+                                                            property: serializedObject.FindProperty("m_videoRecorderSettings"),
+                                                            drawStyle: EditorSectionDrawStyle.Expand);
+            m_gifRecorderSection    = new EditorSectionInfo(displayName: "GIF Recorder Settings",
+                                                            property: serializedObject.FindProperty("m_gifRecorderSettings"),
+                                                            drawStyle: EditorSectionDrawStyle.Expand);
+            m_resourceButtons       = new ButtonMeta[]
+            {
+                new ButtonMeta(label: "Documentation",  onClick: ScreenRecorderKitEditorUtility.OpenDocumentationPage),
+                new ButtonMeta(label: "Tutorials",      onClick: ScreenRecorderKitEditorUtility.OpenTutorialsPage),
+                new ButtonMeta(label: "Support",        onClick: ScreenRecorderKitEditorUtility.OpenSupportPage),
+                new ButtonMeta(label: "Write Review",	onClick: ScreenRecorderKitEditorUtility.OpenProductPage),
+                new ButtonMeta(label: "Subscribe",	    onClick: ScreenRecorderKitEditorUtility.OpenSubscribePage),
+            };
+        }
 
         protected override UnityPackageDefinition GetOwner()
         {
             return ScreenRecorderKitSettings.Package;
         }
 
-		protected override InspectorDrawStyle GetDrawStyle()
+        protected override string[] GetTabNames()
         {
-            return InspectorDrawStyle.Group;
-        }
-
-        protected override ButtonInfo[] GetTopBarButtons()
-        {
-            return new ButtonInfo[]
+            return new string[]
             {
-                new ButtonInfo(label: "Tutorials",      onClick: ScreenRecorderKitEditorUtility.OpenTutorialsPage),
-                new ButtonInfo(label: "Documentation",  onClick: ScreenRecorderKitEditorUtility.OpenDocumentationPage),
-                new ButtonInfo(label: "Discord",        onClick: ScreenRecorderKitEditorUtility.OpenSupportPage),
-                new ButtonInfo(label: "Write Review",	onClick: ScreenRecorderKitEditorUtility.OpenReviewPage),
-                new ButtonInfo(label: "Subscribe",		onClick: ScreenRecorderKitEditorUtility.OpenSubscribePage),
+                DefaultTabs.kGeneral,
+                DefaultTabs.kMisc,
             };
         }
 
-        protected override PropertyGroupInfo[] GetPropertyGroups()
+        protected override EditorSectionInfo[] GetSectionsForTab(string tab)
         {
-            return new PropertyGroupInfo[]
-                {
-                    new PropertyGroupInfo(reference: serializedObject.FindProperty("m_videoRecorderSettings"), displayName: "Video Recorder Settings"),
-                    new PropertyGroupInfo(reference: serializedObject.FindProperty("m_gifRecorderSettings"), displayName: "GIF Recorder Settings"),
-                };
+            return null;
         }
 
-        protected override void DrawFooter()
+        protected override bool DrawTabView(string tab)
         {
-            base.DrawFooter();
-#if ENABLE_VOXELBUSTERS_SCREEN_RECORDER_KIT_UPM_SUPPORT
-            GUILayout.Space(5f);
-            ShowMigrateToUpmOption();
-#endif
+            switch (tab)
+            {
+                case DefaultTabs.kGeneral:
+                    DrawGeneralTabView();
+                    return true;
+
+                case DefaultTabs.kMisc:
+                    DrawMiscTabView();
+                    return true;
+
+                default:
+                    return false;
+            }
         }
 
-#endregion
-	}
+        #endregion
+
+        #region Private methods
+
+        private void DrawGeneralTabView()
+        {
+            LayoutBuilder.DrawSection(m_videoRecorderSection,
+                                      showDetails: true,
+                                      selectable: false);
+            LayoutBuilder.DrawSection(m_gifRecorderSection,
+                                      showDetails: true,
+                                      selectable: false);
+        }
+
+        private void DrawMiscTabView()
+        {
+            DrawButtonList(m_resourceButtons);
+        }
+
+        #endregion
+    }
 }

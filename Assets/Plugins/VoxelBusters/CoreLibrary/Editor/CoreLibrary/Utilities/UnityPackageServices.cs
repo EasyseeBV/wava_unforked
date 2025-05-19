@@ -10,7 +10,14 @@ namespace VoxelBusters.CoreLibrary.Editor
     {
         #region Constants
 
-        private     static  readonly    string[]        s_staticFolders     = { "Essentials", "Examples", "Extras", "Plugins" };
+        private     static  readonly    string[]        s_staticFolders     =
+            {
+                "Essentials",
+                "Examples",
+                "Extras",
+                "Plugins",
+                "Scripts"
+            };
 
         #endregion
 

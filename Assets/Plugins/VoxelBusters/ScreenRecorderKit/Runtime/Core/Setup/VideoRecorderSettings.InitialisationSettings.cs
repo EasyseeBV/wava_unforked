@@ -11,7 +11,6 @@ namespace VoxelBusters.ScreenRecorderKit
 
             [SerializeField]
             private     bool    m_requestScreenRecordPermissionOnInitialise = false;
-
             [SerializeField]
             private     bool    m_requestMicrophonePermissionOnInitialise   = false;
 

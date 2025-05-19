@@ -25,7 +25,7 @@ namespace VoxelBusters.CoreLibrary.Editor
                 var interfaceType   = ((InterfaceFieldAttribute)attribute).InterfaceType;
                 if (reference && !interfaceType.IsAssignableFrom(reference.GetType()))
                 {
-                    DebugLogger.LogError("Object does not implement " + interfaceType);
+                    DebugLogger.LogError(CoreLibraryDomain.Default, $"Object does not implement interface of type: {interfaceType}.");
                     property.objectReferenceValue   = null;
                 }
             }

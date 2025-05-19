@@ -11,7 +11,7 @@
 @implementation UIViewController (Presentation)
 
 - (void)presentViewControllerInPopoverStyleIfRequired:(UIViewController*)viewControllerToPresent
-                                         withDelegate:(id<UIPopoverPresentationControllerDelegate>)delegate
+                                         withDelegate:(id<NPUIPopoverPresentationControllerDelegate>)delegate
                                          fromPosition:(CGPoint)position
                                              animated:(BOOL)flag
                                            completion:(void (^)())completion
@@ -25,17 +25,17 @@
 }
 
 - (void)presentViewControllerInPopoverStyleIfRequired:(UIViewController*)viewControllerToPresent
-                                         withDelegate:(id<UIPopoverPresentationControllerDelegate>)delegate
+                                         withDelegate:(id<NPUIPopoverPresentationControllerDelegate>)delegate
                                          fromPosition:(CGPoint)position
                              permittedArrowDirections:(UIPopoverArrowDirection)direction
                                              animated:(BOOL)flag
                                           completion:(void (^)())completion
 {
+#if !TARGET_OS_TV
     // change presentation style to popover for iPad device
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
     {
         viewControllerToPresent.modalPresentationStyle                  = UIModalPresentationPopover;
-    
         UIPopoverPresentationController* popoverPresentationController  = viewControllerToPresent.popoverPresentationController;
         popoverPresentationController.delegate                          = delegate;
         popoverPresentationController.sourceView                        = self.view;
@@ -43,14 +43,17 @@
         popoverPresentationController.permittedArrowDirections          = direction;
     }
     else
+#endif
     {
         [viewControllerToPresent setPresentationSettings];
     }
     
+#if !TARGET_OS_TV
     if(![viewControllerToPresent isKindOfClass:[UIAlertController class]])
     {
         viewControllerToPresent.presentationController.delegate = delegate;
     }
+#endif
     
     // present specified object
     [self presentViewController:viewControllerToPresent animated:flag completion:completion];

@@ -11,12 +11,12 @@ namespace VoxelBusters.CoreLibrary
 
         private     readonly    Stack<T>            m_stack;
 
-        private     readonly    System.Func<T>  m_createFunc;
-
+        private     readonly    System.Func<T>      m_createFunc;
+        
         private     readonly    Callback<T>         m_actionOnGet;
-
+        
         private     readonly    Callback<T>         m_actionOnAdd;
-
+        
         private     readonly    Callback<T>         m_actionOnRelease;
 
         #endregion

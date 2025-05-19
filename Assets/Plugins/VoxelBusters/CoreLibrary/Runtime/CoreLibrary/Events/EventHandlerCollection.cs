@@ -100,7 +100,7 @@ namespace VoxelBusters.CoreLibrary
                 }
                 catch (Exception exception)
                 {
-                    DebugLogger.LogException(exception);
+                    DebugLogger.LogException(CoreLibraryDomain.Default, exception);
                 }
             }
         }

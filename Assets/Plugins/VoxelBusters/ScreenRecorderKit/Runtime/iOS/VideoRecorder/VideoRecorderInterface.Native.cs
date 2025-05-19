@@ -51,7 +51,7 @@ namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore.iOS
         internal static extern void ScreenRecorderKit_VideoRecorder_OpenRecording(IntPtr owner, IntPtr listener, NativeActionCompleteListener.ActionCompleteOnSuccessNativeCallback onSuccessCallback, NativeActionCompleteListener.ActionCompleteOnFailureNativeCallback onFailureCallback);
 
         [DllImport("__Internal")]
-        internal static extern void ScreenRecorderKit_VideoRecorder_ShareRecording(IntPtr owner, IntPtr listener, NativeActionCompleteListener.ActionCompleteOnSuccessNativeCallback onSuccessCallback, NativeActionCompleteListener.ActionCompleteOnFailureNativeCallback onFailureCallback);
+        internal static extern void ScreenRecorderKit_VideoRecorder_ShareRecording(IntPtr owner, string title, string message, IntPtr listener, NativeActionCompleteListener.ActionCompleteOnSuccessNativeCallback onSuccessCallback, NativeActionCompleteListener.ActionCompleteOnFailureNativeCallback onFailureCallback);
 
         [DllImport("__Internal")]
         internal static extern void ScreenRecorderKit_VideoRecorder_SaveRecording(IntPtr owner, string fileName, IntPtr listener, NativeSaveRecordingListener.SaveRecordingOnSuccessNativeCallback onSuccessCallback, NativeSaveRecordingListener.SaveRecordingOnFailureNativeCallback onFailureCallback);

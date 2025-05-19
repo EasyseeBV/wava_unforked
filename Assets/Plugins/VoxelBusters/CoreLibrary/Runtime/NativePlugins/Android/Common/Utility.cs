@@ -14,12 +14,16 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.Android
             if (from == null)
                 return null;
 
-            int length = from.Length;
-            sbyte[] to = new sbyte[length];
-            Buffer.BlockCopy(from, 0, to, 0, length);
-            return to;
+            return (sbyte[])(Array)from;
         }
-        
+
+        public static byte[] ToBytes(this sbyte[] from)
+        {
+            if (from == null)
+                return null;
+
+            return (byte[])(Array)from;
+        }
 
         public static Color GetColor(this AndroidJavaObject nativeObject)
         {

@@ -6,28 +6,24 @@ using UnityEngine;
 namespace VoxelBusters.CoreLibrary.NativePlugins
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal struct NativeSize
+    public struct NativeSize
     {
         #region Properties
 
-        public float Width
-        {
-            get;
-            set;
-        }
+        public float Width { get; set; }
 
-        public float Height
-        {
-            get;
-            set;
-        }
+        public float Height { get; set; }
 
         #endregion
+
+        #region Constructors
 
         public NativeSize(float width, float height)
         {
             Width = width;
             Height = height;
         }
+
+        #endregion
     }
 }

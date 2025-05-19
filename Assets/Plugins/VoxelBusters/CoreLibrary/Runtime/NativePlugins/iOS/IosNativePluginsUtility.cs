@@ -13,13 +13,13 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.iOS
 {
     public static class IosNativePluginsUtility
     {
-#region Constants
+        #region Constants
 
         private const string kZuluFormat = "yyyy-MM-dd HH:mm:ss zzz";
 
-#endregion
+        #endregion
 
-#region Native binding methods
+        #region Native binding methods
         
         [DllImport("__Internal")]
         private static extern void NPUtilityRegisterCallbacks(LoadImageNativeCallback loadImageCallback);
@@ -45,17 +45,17 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.iOS
         [DllImport("__Internal")]
         private static extern void NPUtilitySetLastTouchPosition(float posX, float posY);
 
-#endregion
+        #endregion
 
-#region Delegates
+        #region Delegates
 
         public delegate void LoadImageCallback(byte[] imageData, Error error);
 
         private delegate void LoadImageNativeCallback(IntPtr byteArrayPtr, int byteLength, IntPtr tagPtr);
 
-#endregion
+        #endregion
 
-#region Constructors
+        #region Constructors
 
         static IosNativePluginsUtility()
         {
@@ -63,19 +63,19 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.iOS
             NPUtilityRegisterCallbacks(loadImageCallback: HandleLoadImageCallbackInternal);
         }
 
-#endregion
+        #endregion
 
-#region Reference management methods
+        #region Reference management methods
 
         public static void RetainNativeObject(IntPtr nativePtr)
         {
-            DebugLogger.Log("Retaining native object pointer: " + nativePtr);
+            DebugLogger.Log(CoreLibraryDomain.NativePlugins, $"Retaining native object pointer: {nativePtr}.");
             NPUtilityRetainObject(nativePtr);
         }
 
         public static void ReleaseNativeObject(IntPtr nativePtr)
         {
-            DebugLogger.Log("Releasing native object pointer: " + nativePtr);
+            DebugLogger.Log(CoreLibraryDomain.NativePlugins, $"Releasing native object pointer: {nativePtr}.");
             NPUtilityReleaseObject(nativePtr);
         }
 
@@ -84,9 +84,9 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.iOS
             NPUtilityFreeCPointerObject(nativePtr);
         }
 
-#endregion
+        #endregion
 
-#region Image methods
+        #region Image methods
 
         public static void LoadImage(IntPtr nativePtr, LoadImageCallback callback)
         {
@@ -108,9 +108,9 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.iOS
             NPUtilityTakeScreenshot(callbackPtr);
         }
 
-#endregion
+        #endregion
 
-#region Date methods
+        #region Date methods
 
         public static DateTime ParseDateTimeStringInUTCFormat(this string value)
         {
@@ -134,9 +134,9 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.iOS
             }
         }
 
-#endregion
+        #endregion
 
-#region Misc methods
+        #region Misc methods
 
         // When you open the URL built from this string, the system launches the Settings app and displays the app’s custom settings, if it has any.
         public static void OpenApplicationSettings()
@@ -167,9 +167,9 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.iOS
 			SetLastTouchPosition(_touchPosition);
 		}
 
-#endregion
+        #endregion
 
-#region Native callback methods
+        #region Native callback methods
 
         [MonoPInvokeCallback(typeof(LoadImageNativeCallback))]
         private static void HandleLoadImageCallbackInternal(IntPtr dataArrayPtr, int dataLength, IntPtr tagPtr)
@@ -202,7 +202,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.iOS
             }
         }
 
-#endregion
+        #endregion
     }
 }
 #endif

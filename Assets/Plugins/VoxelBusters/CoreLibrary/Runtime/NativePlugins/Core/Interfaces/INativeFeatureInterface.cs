@@ -8,10 +8,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
     {
         #region Properties
 
-        bool IsAvailable
-        {
-            get;
-        }
+        bool IsAvailable { get; }
 
         #endregion
     }

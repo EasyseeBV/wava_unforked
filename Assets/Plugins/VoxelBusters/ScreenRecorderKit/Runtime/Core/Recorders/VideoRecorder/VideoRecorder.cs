@@ -7,7 +7,7 @@ using VoxelBusters.ScreenRecorderKit.VideoRecorderCore.Internal;
 
 namespace VoxelBusters.ScreenRecorderKit
 {
-    public class VideoRecorder : MonoBehaviourZ, IScreenRecorder
+    public class VideoRecorder : ScreenRecorder
     {
         #region Fields
 
@@ -19,13 +19,7 @@ namespace VoxelBusters.ScreenRecorderKit
 
         public static string ErrorDomain { get; private set; } = "VideoRecorder";
 
-        public static string Name
-        {
-            get
-            {
-                return "VideoRecorder";
-            }
-        }
+        public static string Name => "VideoRecorder";
 
         #endregion
 
@@ -69,23 +63,23 @@ namespace VoxelBusters.ScreenRecorderKit
 
         #endregion
 
-        #region IScreenRecorder implementation
+        #region ScreenRecorder implementation
 
-        public bool CanRecord()
+        public override bool CanRecord()
         {
             return NativeInterface != null && NativeInterface.CanRecord();
         }
 
-        public bool IsRecording() => NativeInterface != null && NativeInterface.IsRecording();
+        public override bool IsRecording() => NativeInterface != null && NativeInterface.IsRecording();
 
-        public bool IsPausedOrRecording() => IsRecording() || (m_state == ScreenRecorderState.Pause);
+        public override bool IsPausedOrRecording() => IsRecording() || (m_state == ScreenRecorderState.Pause);
 
-        public void PrepareRecording(CompletionCallback callback = null)
+        public override void PrepareRecording(CompletionCallback callback = null)
         {
             NativeInterface.PrepareRecording((success, error) => CallbackDispatcher.InvokeOnMainThread(callback, success, error));
         }
 
-        public void StartRecording(CompletionCallback callback = null)
+        public override void StartRecording(CompletionCallback callback = null)
         {
             if (State == ScreenRecorderState.Pause)
             {
@@ -97,18 +91,18 @@ namespace VoxelBusters.ScreenRecorderKit
             }
         }
 
-        public void PauseRecording(CompletionCallback callback)
+        public override void PauseRecording(CompletionCallback callback)
         {
             NativeInterface.PauseRecording((success, error) => CallbackDispatcher.InvokeOnMainThread(callback, success, error));
         }
 
-        public void StopRecording(CompletionCallback callback = null)
+        public override void StopRecording(CompletionCallback callback = null)
         {
             // Send native request
             NativeInterface.StopRecording((success, error) => CallbackDispatcher.InvokeOnMainThread(callback, success, error));
         }
 
-        public void StopRecording(bool flushMemory, CompletionCallback callback = null)
+        public override void StopRecording(bool flushMemory, CompletionCallback callback = null)
         {
             if(flushMemory)
             {
@@ -118,17 +112,17 @@ namespace VoxelBusters.ScreenRecorderKit
             StopRecording(callback);
         }
 
-        public void DiscardRecording(CompletionCallback callback = null)
+        public override void DiscardRecording(CompletionCallback callback = null)
         {
             NativeInterface.DiscardRecording((success, error) => CallbackDispatcher.InvokeOnMainThread(callback, success, error));
         }
 
-        public void SaveRecording(CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null)
+        public override void SaveRecording(CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null)
         {
             SaveRecording(null, callback);
         }
 
-        public void SaveRecording(string fileName, CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null)
+        public override void SaveRecording(string fileName, CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null)
         {
             // Native call
             NativeInterface.SaveRecording(
@@ -136,12 +130,22 @@ namespace VoxelBusters.ScreenRecorderKit
                 (result, error) => CallbackDispatcher.InvokeOnMainThread<ScreenRecorderSaveRecordingResult>(callback, result, error));
         }
 
-        public void SetOnRecordingAvailable(SuccessCallback<ScreenRecorderRecordingAvailableResult> callback)
+        public override void SetOnRecordingAvailable(SuccessCallback<ScreenRecorderRecordingAvailableResult> callback)
         {
             NativeInterface.SetOnRecordingAvailable((result) => callback?.Invoke(result));
         }
 
-        public void Flush()
+        public override void OpenRecording(CompletionCallback callback = null)
+        {
+            NativeInterface.OpenRecording((success, error) => CallbackDispatcher.InvokeOnMainThread(callback, success, error));
+        }
+
+        public override void ShareRecording(string title = null, string message = null, CompletionCallback callback = null)
+        {
+            NativeInterface.ShareRecording(title, message, (success, error) => CallbackDispatcher.InvokeOnMainThread(callback, success, error));
+        }
+
+        public override void Flush()
         {
             NativeInterface.Flush();
         }
@@ -155,16 +159,6 @@ namespace VoxelBusters.ScreenRecorderKit
             return NativeInterface.IsRecordingAvailable();
         }
 
-        public void OpenRecording(CompletionCallback callback = null)
-        {
-            NativeInterface.OpenRecording((success, error) => CallbackDispatcher.InvokeOnMainThread(callback, success, error));
-        }
-
-        public void ShareRecording(string text = null, string subject = null, CompletionCallback callback = null)
-        {
-            NativeInterface.ShareRecording(text, subject, (success, error) => CallbackDispatcher.InvokeOnMainThread(callback, success, error));
-        }
-
         #endregion
 
         #region Base class methods
@@ -172,19 +166,24 @@ namespace VoxelBusters.ScreenRecorderKit
         protected override void Init()
         {
             base.Init();
+
             CallbackDispatcher.Initialize();
         }
 
-        protected virtual void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
+
             if (IsPausedOrRecording())
             {
                 DiscardRecording();
             }
         }
 
-        protected virtual void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
+
             if (IsPausedOrRecording())
             {
                 DiscardRecording();
@@ -199,7 +198,6 @@ namespace VoxelBusters.ScreenRecorderKit
         {
             if (NativeInterface == null)
             {
-
                 // check whether we can create interface object
                 if (settings == null)
                 {
@@ -210,13 +208,10 @@ namespace VoxelBusters.ScreenRecorderKit
                     throw new Exception("[VideoRecorder] The requested operation could not be completed. And the reason is that the plugin is marked disabled. Please turn it ON in order to use the functionalities.");
                 }
 
-
                 // create interface object
-                var targetPackage   = RuntimeConfiguration.VideoRecorder.GetPackageForPlatform(Application.platform);
-                var     targetType  = ReflectionUtility.GetType(assemblyName: targetPackage.Assembly, typeName: targetPackage.NativeInterfaceType);
-
-                NativeInterface = NativeFeatureActivator.CreateInterface<INativeVideoRecorderInterface>(RuntimeConfiguration.VideoRecorder, settings.IsEnabled, settings, runtimeSettings);
-
+                var     targetPackage   = RuntimeConfiguration.VideoRecorder.GetPackageForPlatform(Application.platform);
+                var     targetType      = ReflectionUtility.GetType(assemblyName: targetPackage.Assembly, typeName: targetPackage.NativeInterfaceType);
+                NativeInterface         = NativeFeatureActivator.CreateInterface<INativeVideoRecorderInterface>(RuntimeConfiguration.VideoRecorder, settings.IsEnabled, settings, runtimeSettings);
                 NativeInterface.SetRecordingStateChangeListener(new NativeRecorderStateChangeListener()
                 {
                     onPrepare   = () => m_state = ScreenRecorderState.Prepare,

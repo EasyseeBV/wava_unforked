@@ -35,6 +35,8 @@ namespace VoxelBusters.CoreLibrary.Editor.NativePlugins.Build.Xcode
 
         public  const string   kCFBundleURLSchemes                  = "CFBundleURLSchemes";
 
+        public  const string   kNSGKFriendListUsage                 = "NSGKFriendListUsageDescription";
+
         #endregion
     }
 }

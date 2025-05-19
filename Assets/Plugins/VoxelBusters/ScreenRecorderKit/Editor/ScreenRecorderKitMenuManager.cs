@@ -23,7 +23,7 @@ namespace VoxelBusters.ScreenRecorderKit.Editor
             ScreenRecorderKitSettingsEditorUtility.OpenInProjectSettings();
         }
 
-#if ENABLE_VOXELBUSTERS_SCREEN_RECORDER_KIT_UPM_SUPPORT
+#if NATIVE_PLUGINS_SHOW_UPM_MIGRATION
         [MenuItem(kMenuItemPath + "/Migrate To UPM", priority = 2)]
         public static void MigrateToUpm()
         {

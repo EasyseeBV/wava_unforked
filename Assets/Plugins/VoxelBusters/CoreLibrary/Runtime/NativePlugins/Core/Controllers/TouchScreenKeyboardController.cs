@@ -10,6 +10,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
     {
         #region Static fields
 
+        [ClearOnReload]
         private     static      TouchScreenKeyboardController   s_sharedInstance        = null;
 
         #endregion
@@ -21,11 +22,11 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
         private     float       m_editorKeyboardHeightRatio     = 0.4f;
 #endif
 
-#endregion
+        #endregion
 
         #region Static properties
 
-        public static bool IsSupported { get { return UnityTouchScreenKeyboard.isSupported; } }
+        public static bool IsSupported => UnityTouchScreenKeyboard.isSupported;
 
         public static bool IsVisible { get; private set; }
 
@@ -33,8 +34,10 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         #region Static events
 
+        [ClearOnReload]
         public static event Callback OnKeyboardDidShow = null;
 
+        [ClearOnReload]
         public static event Callback OnKeyboardWillHide = null;
 
         #endregion

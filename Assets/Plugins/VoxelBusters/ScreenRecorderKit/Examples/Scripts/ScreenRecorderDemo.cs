@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using VoxelBusters.CoreLibrary;
@@ -12,6 +13,9 @@ namespace VoxelBusters.ScreenRecorderKit.Demo
 
         [SerializeField]
         private     Text                m_statusText    = null;
+
+        [SerializeField]
+        private     SecondsElapsedCounter   m_timer    = null;
 
         private     IScreenRecorder     m_recorder;
 
@@ -65,11 +69,15 @@ namespace VoxelBusters.ScreenRecorderKit.Demo
             SetStatus($"Can record : {canRecord}");
         }
 
-        public bool IsRecording()
+        public void IsRecording()
         {
             bool isRecording = m_recorder.IsRecording();
             SetStatus($"Is currently recording: {isRecording}");
-            return isRecording;
+        }
+
+        public bool CheckIsRecording()
+        {
+            return m_recorder.IsRecording();
         }
 
         public void IsPausedOrRecording()
@@ -84,7 +92,7 @@ namespace VoxelBusters.ScreenRecorderKit.Demo
 
         public void ShareRecording()
         {
-            m_recorder.ShareRecording(callback: (success, error) =>
+            m_recorder.ShareRecording(title: "Share Video", message: "Sharing a recorded video" ,callback: (success, error) =>
             {
                 if (success)
                 {
@@ -141,8 +149,22 @@ namespace VoxelBusters.ScreenRecorderKit.Demo
 
         public void StartRecording()
         {
-            m_recorder.StartRecording();
-            SetStatus("Started Recording");
+            if(!m_recorder.IsPausedOrRecording())
+            {
+                m_timer?.StartTimer();
+            }
+
+            m_recorder.StartRecording(callback: (success, error) =>
+            {
+                if (success)
+                {
+                    SetStatus("Started Recording");
+                }
+                else
+                {
+                    SetStatus($"Start recording failed with error [{error}]");
+                }
+            });
         }
 
         public void PauseRecording()
@@ -160,25 +182,21 @@ namespace VoxelBusters.ScreenRecorderKit.Demo
             });
         }
 
-        public void StopRecording()
-        {
-            StopRecording(null);
-        }
-        
-        public void StopRecording(CompletionCallback callback)
+        public void StopRecording(Action onComplete)
         {
             m_recorder.StopRecording((success, error) =>
             {
-                callback?.Invoke(success, error);
                 if (success)
                 {
                     SetStatus("Stopped recording");
+                    onComplete?.Invoke();
                 }
                 else
                 {
                     SetStatus($"Failed with error: {error}");
                 }
             });
+            m_timer?.StopTimer();
         }
 
         public void OpenRecording()
@@ -224,11 +242,14 @@ namespace VoxelBusters.ScreenRecorderKit.Demo
                     SetStatus($"Discard recording failed [{error}]");
                 }
             });
+            m_timer?.StopTimer();
         }
 
         public void Flush()
         {
             m_recorder.Flush();
+            SetStatus("Flushed  resources created during recording session.");
+            m_timer?.StopTimer();
         }
 
         #endregion

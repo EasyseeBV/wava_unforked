@@ -64,6 +64,21 @@ namespace VoxelBusters.CoreLibrary
             return CombinePath(pathA: package.MutableResourcesRelativePath, pathB: name);
         }
 
+        public static string GetExtrasPath(this UnityPackageDefinition package)
+        {
+            return CombinePath(pathA: package.DefaultInstallPath, pathB: "Extras");
+        }
+
+        public static string GetEssentialsPath(this UnityPackageDefinition package)
+        {
+            return CombinePath(pathA: package.DefaultInstallPath, pathB: "Essentials");
+        }
+
+        public static string GetGeneratedPath(this UnityPackageDefinition package)
+        {
+            return CombinePath(pathA: package.DefaultInstallPath, pathB: "Generated");
+        }
+
         private static bool IsSupported() => Application.isEditor;
 
         private static string CombinePath(string pathA, string pathB)

@@ -6,26 +6,18 @@ using VoxelBusters.ScreenRecorderKit.GifRecorderCore;
 
 namespace VoxelBusters.ScreenRecorderKit
 {
-    public abstract class GifRecorder : MonoBehaviourZ, IScreenRecorder
+    public abstract class GifRecorder : ScreenRecorder
     {
         #region Fields
 
         private     ObjectPool<RenderTexture>   m_renderTexturePool;
-
         private     List<RenderTexture>         m_frames;
-
         private     ScreenRecorderState         m_state;
 
         private     GifRecorderSettings         m_customSettings;
-
         private     GifRecorderSettings         m_settings;
-
         private     int                         m_width;
-
         private     int                         m_height;
-
-        private     float                       m_timePerFrame;
-
         private     float                       m_timeSinceLastFrame;
 
         private     SuccessCallback<GifRecordingAvailableResult>    m_recordingAvailableCallback;
@@ -48,13 +40,13 @@ namespace VoxelBusters.ScreenRecorderKit
         {
             get
             {
-                EnsureInitialized();
+                EnsureInitialised();
 
                 return m_settings;
             }
             set
             {
-                EnsureInitialized();
+                EnsureInitialised();
 
                 if (IsPausedOrRecording())
                 {
@@ -94,6 +86,70 @@ namespace VoxelBusters.ScreenRecorderKit
 
         #endregion
 
+        #region Static methods
+
+        public static void ShareTexture(GifTexture source, string title = null,
+            string message = null, CompletionCallback callback = null)
+        {
+            // Gaurd case
+            if (source == null)
+            {
+                callback?.Invoke(false, ScreenRecorderError.Unknown(ErrorDomain, "Source is null."));
+                return;
+            }
+            if (string.IsNullOrEmpty(source.Path))
+            {
+                callback?.Invoke(false, ScreenRecorderError.Unknown(ErrorDomain, "File not saved."));
+                return;
+            }
+
+            // Upload the file
+            var     fileData    = IOServices.ReadFileData(source.Path);
+            GiphyService.Upload(
+                new Asset(fileData, MimeType.kGIFImage, IOServices.GetFileName(source.Path)),
+                onSuccess: (remoteUrl) =>
+                {
+                    ServiceProvider.ShareGif(
+                        remoteUrl,
+                        title,
+                        message,
+                        callback);
+                },
+                onError: (error) =>
+                {
+                    callback?.Invoke(false, error);
+                });
+        }
+        
+        public static void OpenTexture(GifTexture source, CompletionCallback callback = null)
+        {
+            // Gaurd case
+            if (source == null)
+            {
+                callback?.Invoke(false, ScreenRecorderError.Unknown(ErrorDomain, "Source is null."));
+                return;
+            }
+
+            // Create renderer object
+            var     renderer    = GifTextureRenderer.CreateFullScreenRenderer(closeButtonAction: (reference) =>
+            {
+                // Send completion information
+                callback?.Invoke(true, null);
+
+                // Destroy object
+                reference.gameObject.SetActive(false);
+                DestroyImmediate(reference.transform.parent.gameObject);
+            });
+            renderer.Texture    = source;
+        }
+
+        private static string GenerateFileName()
+        {
+            return $"Gif{System.DateTime.Now.ToString("yyyyMMddHHmmssffff")}";
+        }
+
+        #endregion
+
         #region Base class methods
 
         protected override void Init()
@@ -110,16 +166,20 @@ namespace VoxelBusters.ScreenRecorderKit
             SetDirty();
         }
 
-        protected virtual void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
+
             if (IsPausedOrRecording())
             {
                 DiscardRecording();
             }
         }
 
-        protected virtual void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
+
             if (IsPausedOrRecording())
             {
                 DiscardRecording();
@@ -130,15 +190,15 @@ namespace VoxelBusters.ScreenRecorderKit
 
         #region IScreenRecorder implementation
 
-        public bool CanRecord() => CanRecord(out Error error);
+        public override bool CanRecord() => CanRecord(out Error error);
 
-        public bool IsRecording() => (State == ScreenRecorderState.Record);
+        public override bool IsRecording() => (State == ScreenRecorderState.Record);
 
-        public bool IsPausedOrRecording() => (State == ScreenRecorderState.Pause) || (State == ScreenRecorderState.Record);
+        public override bool IsPausedOrRecording() => (State == ScreenRecorderState.Pause) || (State == ScreenRecorderState.Record);
 
-        public void PrepareRecording(CompletionCallback callback = null)
+        public override void PrepareRecording(CompletionCallback callback = null)
         {
-            EnsureInitialized();
+            EnsureInitialised();
 
             // Gaurd case
             if (IsRecording())
@@ -154,15 +214,21 @@ namespace VoxelBusters.ScreenRecorderKit
                 return;
             }
 
+            if(LastPreview != null)
+            {
+                LastPreview.Cleanup();
+                LastPreview = null;
+            }
+
             // We don't have to perform any specific action wrto preparing recorder
             // So we are mimicking this behaviour
             SetStateInternal(newState: ScreenRecorderState.Prepare);
             callback?.Invoke(success: true, error: null);
         }
 
-        public void StartRecording(CompletionCallback callback = null)
+        public override void StartRecording(CompletionCallback callback = null)
         {
-            EnsureInitialized();
+            EnsureInitialised();
 
             // Gaurd case
             if (!CanRecord(out Error error))
@@ -179,12 +245,12 @@ namespace VoxelBusters.ScreenRecorderKit
             callback?.Invoke(success: true, error: null);
         }
 
-        public void PauseRecording(CompletionCallback callback = null)
+        public override void PauseRecording(CompletionCallback callback = null)
         {
-            EnsureInitialized();
+            EnsureInitialised();
 
             // Gaurd case
-            if (!IsRecording())
+            if (!IsPausedOrRecording())
             {
                 callback?.Invoke(success: false, error: ScreenRecorderError.ActiveRecordingUnavailable(ErrorDomain));
                 return;
@@ -197,7 +263,7 @@ namespace VoxelBusters.ScreenRecorderKit
             callback?.Invoke(success: true, error: null);
         }
 
-        public void StopRecording(CompletionCallback callback = null)
+        public override void StopRecording(CompletionCallback callback = null)
         {
             StopRecordingInternal(
                 discard: false,
@@ -205,7 +271,7 @@ namespace VoxelBusters.ScreenRecorderKit
                 callback: callback);
         }
 
-        public void StopRecording(bool flushMemory, CompletionCallback callback = null)
+        public override void StopRecording(bool flushMemory, CompletionCallback callback = null)
         {
             StopRecordingInternal(
                 discard: false,
@@ -213,15 +279,8 @@ namespace VoxelBusters.ScreenRecorderKit
                 callback: callback);
         }
 
-        public void DiscardRecording(CompletionCallback callback = null)
+        public override void DiscardRecording(CompletionCallback callback = null)
         {
-            // Gaurd case
-            if (!IsPausedOrRecording())
-            {
-                callback?.Invoke(success: false, error: ScreenRecorderError.ActiveRecordingUnavailable(ErrorDomain));
-                return;
-            }
-
             // Perform stop action
             StopRecordingInternal(
                 discard: true,
@@ -229,12 +288,12 @@ namespace VoxelBusters.ScreenRecorderKit
                 callback: callback);
         }
 
-        public void SaveRecording(CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null)
+        public override void SaveRecording(CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null)
         {
             SaveRecording(fileName: null, callback: callback);
         }
 
-        public void SaveRecording(string fileName, CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null)
+        public override void SaveRecording(string fileName, CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null)
         {
             // Gaurd case
             if (LastPreview == null)
@@ -249,20 +308,28 @@ namespace VoxelBusters.ScreenRecorderKit
                 fileName: fileName,
                 callback: (result, error) =>
                 {
-                    LastPreview = null;
-
                     // send callback
                     callback?.Invoke(result, error);
                 });
         }
 
-        void IScreenRecorder.SetOnRecordingAvailable(SuccessCallback<ScreenRecorderRecordingAvailableResult> callback)
+        public override void SetOnRecordingAvailable(SuccessCallback<ScreenRecorderRecordingAvailableResult> callback)
         {
             // Forward call
             SetOnRecordingAvailable((result) => callback?.Invoke(result));
         }
 
-        public void Flush()
+        public override void OpenRecording(CompletionCallback callback)
+        {
+            OpenTexture(LastPreview, callback);
+        }
+
+        public override void ShareRecording(string title = null, string message = null, CompletionCallback callback = null)
+        {
+            ShareTexture(LastPreview, title, message, callback);
+        }
+
+        public override void Flush()
         {
             // Gaurd case
             if (IsPausedOrRecording())
@@ -278,6 +345,12 @@ namespace VoxelBusters.ScreenRecorderKit
                 var     item    = m_frames.PopLast();
                 DestroyTexture(item);
             }
+
+            if(LastPreview != null)
+            {
+                LastPreview.Cleanup();
+                LastPreview = null;
+            }
         }
 
         #endregion
@@ -290,11 +363,8 @@ namespace VoxelBusters.ScreenRecorderKit
             m_recordingAvailableCallback    = callback;
         }
 
-        #endregion
-
-        #region Public methods
-
-        public void SaveRecording(GifTexture texture, string fileName = null, CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null)
+        public void SaveRecording(GifTexture texture, string fileName = null,
+            CompletionCallback<ScreenRecorderSaveRecordingResult> callback = null)
         {
             // Check whether filename is provided
             if (string.IsNullOrEmpty(fileName))
@@ -308,7 +378,7 @@ namespace VoxelBusters.ScreenRecorderKit
 
             // Initiate export process
             string  savePath    = $"{saveFolder}/{fileName}.gif";
-			var     encoder     = new GifEncoder(repeat: m_settings.Repeat, quality: m_settings.Quality);
+			var     encoder     = new GifEncoder(repeat: m_settings.Repeat, quality: m_settings.Quality, SystemInfo.graphicsUVStartsAtTop);
 			encoder.SetDelay(Mathf.RoundToInt(m_settings.TimePerFrame * 1000f));
 			var     exportOp    = new GifExportOperation(
                 encoder: encoder,
@@ -351,22 +421,6 @@ namespace VoxelBusters.ScreenRecorderKit
 			exportOp.Start();
         }
 
-        public void ShareRecording(string text = null, string subject = null, CompletionCallback callback = null)
-        {
-            if (callback != null)
-            {
-                callback(false, ScreenRecorderError.FeatureUnsupported(ErrorDomain));
-            }
-        }
-
-        public void OpenRecording(CompletionCallback callback = null)
-        {
-            if (callback != null)
-            {
-                callback(false, ScreenRecorderError.FeatureUnsupported(ErrorDomain));
-            }
-        }
-
         #endregion
 
         #region Behaviour methods
@@ -387,7 +441,7 @@ namespace VoxelBusters.ScreenRecorderKit
 
         protected virtual bool IsVirtualRecorder() => false;
 
-        protected virtual float AspectRatio()
+        protected virtual float GetAspectRatio()
         {
             return ((float)Screen.width / Screen.height);
         }
@@ -408,9 +462,9 @@ namespace VoxelBusters.ScreenRecorderKit
 
             // Update ticker value
 			m_timeSinceLastFrame       += Time.unscaledDeltaTime;
-            if (m_timeSinceLastFrame >= m_timePerFrame)
+            if (m_timeSinceLastFrame >= m_settings.TimePerFrame)
 			{
-				m_timeSinceLastFrame   -= m_timePerFrame;
+				m_timeSinceLastFrame   -= m_settings.TimePerFrame;
                 canRecord               = true;
             }
         }
@@ -422,7 +476,7 @@ namespace VoxelBusters.ScreenRecorderKit
             if (!IsPausedOrRecording())
             {
                 Debug.LogError($"[GifRecorder] The requested stop operation could not be completed as there is no active recording.");
-                callback?.Invoke(success: false, error: ScreenRecorderError.ActiveRecordingUnavailable(ErrorDomain, "No active recording available"));
+                callback?.Invoke(success: false, error: ScreenRecorderError.ActiveRecordingUnavailable(ErrorDomain));
                 return;
             }
 
@@ -498,11 +552,6 @@ namespace VoxelBusters.ScreenRecorderKit
 
         private GifRecorder GetReference() => IsVirtualRecorder() ? null : this;
 
-        private string GenerateFileName()
-        {
-            return $"Gif{System.DateTime.Now.ToString("yyyyMMddHHmmssffff")}";
-        }
-
         private void SendPreviewStateChangeResult(GifRecorderPreviewStateChangeResult result, Error error = null)
         {
             CallbackDispatcher.InvokeOnMainThread(OnPreviewStateChange, result, error);
@@ -530,16 +579,25 @@ namespace VoxelBusters.ScreenRecorderKit
         private void SetDirty()
         {
             // Update settings properties
-            float   aspectRatio = AspectRatio();
+            float   aspectRatio = GetAspectRatio();
             m_settings          = m_customSettings ?? ScreenRecorderKitSettings.Instance.GifRecorderSettings;
             m_width             = m_settings.Width;
             m_height            = m_settings.AutoAspect ? Mathf.RoundToInt(m_width / aspectRatio) : m_settings.Height;
-            m_timePerFrame      = m_settings.TimePerFrame;
 
+            // Update service settings
+            var     giphySettings   = m_settings.GiphyService;
+            GiphyService.Init(
+                apiKey: Debug.isDebugBuild ? giphySettings.DebugApiKey : giphySettings.ApiKey,
+                username: giphySettings.Username);
+ 
             // Reset cache
             if (m_frames != null)
             {
                 Flush();
+                if (m_frames.Capacity < m_settings.MaxFrameCount)
+                {
+                    m_frames.Capacity   = m_settings.MaxFrameCount;
+                }
             }
         }
 
@@ -564,7 +622,7 @@ namespace VoxelBusters.ScreenRecorderKit
             if (state == ScreenRecorderState.Record)
             {
                 // hack to capture frames since, camera was set to record mode
-                m_timeSinceLastFrame    = m_timePerFrame - Time.unscaledDeltaTime;
+                m_timeSinceLastFrame    = m_settings.TimePerFrame - Time.unscaledDeltaTime;
             }
         }
 

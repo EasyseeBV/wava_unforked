@@ -69,12 +69,30 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.DemoKit
 
         protected void Log(string message, bool append = true)
         {
+            #if NATIVE_PLUGINS_DEBUG
+            Debug.Log(message);
+            #endif
             m_consoleRect.Log(message, append);
         }
 
         protected void LogMissingInstance(bool append = true)
         {
             m_consoleRect.Log(string.Format(kLogCreateInstance, GetCreateInstanceCodeSnippet()), append);
+        }
+
+        protected bool AssertPropertyIsValid(string property, string value)
+        {
+            return AssertPropertyIsValid(property, () => string.IsNullOrEmpty(value));
+        }
+
+        protected bool AssertPropertyIsValid(string property, Func<bool> condition)
+        {
+            if (condition())
+            {
+                m_consoleRect.Log($"Property \"{property}\" value is invalid.", append: true);
+                return false;
+            }
+            return true;
         }
 
         private void SetActionCallbacks()

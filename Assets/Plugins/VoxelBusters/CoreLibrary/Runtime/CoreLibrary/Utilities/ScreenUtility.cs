@@ -9,7 +9,7 @@ namespace VoxelBusters.CoreLibrary
         #region Fields
 
         private     bool                    m_captureFrame      = false;
-
+        
         private     Callback<Texture2D>     m_callback          = null;
 
         #endregion

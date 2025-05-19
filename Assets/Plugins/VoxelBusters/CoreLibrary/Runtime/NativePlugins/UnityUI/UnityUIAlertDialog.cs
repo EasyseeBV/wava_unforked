@@ -11,9 +11,11 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.UnityUI
     {
         #region Fields
 
-        private     List<AlertAction>   m_actionButtons     = new List<AlertAction>();
+        private     List<AlertAction>   m_actionButtons                 = new List<AlertAction>();
 
-        private     Callback<int>       m_callback;
+        private     List<string>        m_inputPlaceholderValues       = new List<string>();
+
+        private     Action<int, string[]>       m_callback;
 
         #endregion
 
@@ -24,10 +26,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.UnityUI
         #endregion
 
         #region Unity methods
-
-        protected virtual void Awake()
-        { }
-
+        
         protected virtual void Start()
         {
             if (!IsShowing)
@@ -52,6 +51,10 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.UnityUI
             set;
         }
 
+        public void AddTextField(string placeholderText)
+        {
+            m_inputPlaceholderValues.Add(placeholderText);
+        }
         public void AddActionButton(string title)
         {
             m_actionButtons.Add(new AlertAction(title));
@@ -78,8 +81,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.UnityUI
             gameObject.SetActive(false);
             Destroy(gameObject);
         }
-
-        public void SetCompletionCallback(Callback<int> callback)
+        public void SetCompletionCallback(Action<int, string[]> callback)
         {
             m_callback  = callback;
         }
@@ -97,10 +99,20 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.UnityUI
         {
             return m_actionButtons[index];
         }
-
-        protected void SendCompletionResult(int selectedButtonIndex)
+        
+        protected int GetInputFieldCount()
         {
-            CallbackDispatcher.InvokeOnMainThread(m_callback, selectedButtonIndex);
+            return m_inputPlaceholderValues.Count;
+        }
+        
+        protected string GetInputFieldPlaceholderTextAtIndex(int index)
+        {
+            return m_inputPlaceholderValues[index];
+        }
+
+        protected void SendCompletionResult(int selectedButtonIndex, string[] inputValues)
+        {
+            CallbackDispatcher.InvokeOnMainThread(()=> m_callback(selectedButtonIndex, inputValues));
         }
 
         #endregion

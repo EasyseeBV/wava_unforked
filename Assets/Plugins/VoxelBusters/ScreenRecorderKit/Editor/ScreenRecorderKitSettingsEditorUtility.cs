@@ -82,6 +82,20 @@ namespace VoxelBusters.ScreenRecorderKit.Editor
                 ok: "Ok");
         }
 
+        public static bool TryGetDefaultSettings(out ScreenRecorderKitSettings defaultSettings)
+        {
+            // Set default value
+            defaultSettings     = null;
+
+            // Set reference if the object exists
+            if (SettingsExists)
+            {
+                defaultSettings = DefaultSettings;
+                return true;
+            }
+            return false;
+        }
+
         public static void AddGlobalDefines()
         {
             ScriptingDefinesManager.RemoveDefine("ENABLE_VOXELBUSTERS_RECORDER_KIT");
@@ -136,8 +150,28 @@ namespace VoxelBusters.ScreenRecorderKit.Editor
 
         internal static void Rebuild()
         {
+            // Actions
+            WriteAndroidManifestFile();
+
             // Refresh Database
             AssetDatabase.Refresh();
+        }
+
+        public static void WriteAndroidManifestFile()
+        {
+            /*
+            string _manifestFolderPath = Constants.kAndroidPluginsReplayKitPath;
+
+            if (AssetDatabaseUtils.FolderExists(_manifestFolderPath))
+            {
+                ReplayKitAndroidManifestGenerator _generator = new ReplayKitAndroidManifestGenerator();
+#if UNITY_2018_4_OR_NEWER
+                _generator.SaveManifest("com.voxelbusters.replaykitplugin", _manifestFolderPath + "/AndroidManifest.xml");
+#else
+				_generator.SaveManifest("com.voxelbusters.replaykitplugin", _manifestFolderPath + "/AndroidManifest.xml");
+#endif
+            }
+            */
         }
 
         #endregion

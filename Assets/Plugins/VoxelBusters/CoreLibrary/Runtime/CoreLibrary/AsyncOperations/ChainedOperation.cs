@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace VoxelBusters.CoreLibrary
 {
-    public class ChainedOperation : AsyncOperationBase<object>
+    public class ChainedOperation : AsyncOperation<object>
     {
         #region Fields
 

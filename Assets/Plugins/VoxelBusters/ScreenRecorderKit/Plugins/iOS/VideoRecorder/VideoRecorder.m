@@ -19,9 +19,8 @@ typedef void(^CaptureHandler)(CMSampleBufferRef  _Nonnull sampleBuffer, RPSample
 CaptureHandler captureHandler;
 typedef void(^CallbackHandler)(NSError* _Nullable error);
 
-
 @interface VideoRecorder ()
-@property RecordingState recordingState;
+@property (nonatomic) RecordingState recordingState;
 @property NSString* recordingPath;
 @property (retain, nonnull) VideoRecorderSettings* settings;
 @property (retain, nonnull) id<IRecordingAvailabilityListener> availabilityListener;
@@ -51,10 +50,16 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
 @property (nonatomic, retain) UIButton* uiButton;
 
 @property (nonatomic, weak) UIWindow *cachedMainWindow;
+
+@property CMTime elapsedTimeOffset;
+@property CMTime previousVideoPts;
+@property CMTime previousAudioPts;
+@property CMTime previousMicrophonePts;
+@property BOOL detectElapsedTime;
+
 @end
 
 @implementation VideoRecorder
-
 @synthesize sessionQueue;
 -(id) initWithSettings:(VideoRecorderSettings*) settings
 {
@@ -63,6 +68,8 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
     
     _prepareListeners = [[NSMutableArray alloc] init];
     self.sessionQueue = dispatch_queue_create("Screen Recorder Kit Session Queue", DISPATCH_QUEUE_SERIAL);
+    
+    captureHandler = nil;
     
     return self;
 }
@@ -97,6 +104,34 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
     return _recordingPath != NULL;
 }
 
+- (void) setRecordingState:(RecordingState)recordingState
+{
+    if(_stateChangeListener != nil)
+    {
+        switch (recordingState) {
+            case Invalid:
+                [_stateChangeListener onInvalid];
+                break;
+            case Prepare:
+                [_stateChangeListener onPrepare];
+                break;
+            case Record:
+                [_stateChangeListener onRecord];
+                break;
+            case Pause:
+                [_stateChangeListener onPause];
+                break;
+            case Stop:
+                [_stateChangeListener onStop];
+                break;
+            default:
+                break;
+        }
+    }
+    
+    _recordingState = recordingState;
+}
+
 
 - (void)setRecordingAvailabilityListener:(nonnull id<IRecordingAvailabilityListener>)listener {
     _availabilityListener = listener;
@@ -127,11 +162,9 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
 
 - (void)startRecording:(nonnull id<IActionCompleteListener>)listener {
     
-    NSLog(@"Start recording : %ld", _recordingState);
     if(_recordingState == Invalid)
     {
         [self prepareRecording:[[ActionCompleteListenerImpl alloc] initWithCallbacks:^{
-            NSLog(@"Prepare finished in start : %ld", _recordingState);
             [self startRecordingInternal: listener];
         } withFailureCallback:^(NSError * _Nonnull error) {
             [self reportError:error forwardTo: listener];
@@ -157,7 +190,12 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
         }
     }
     
-    _recordingState = Pause;
+    [self setRecordingState:Pause];
+        
+    if(listener != NULL)
+    {
+        [listener onSuccess];
+    }
 }
 
 
@@ -171,7 +209,13 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
         }
     }
     
-    _recordingState = Record;
+    [self setRecordingState:Record];
+    _detectElapsedTime = TRUE;
+    
+    if(listener != NULL)
+    {
+        [listener onSuccess];
+    }
 }
 
 
@@ -194,27 +238,26 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
         }
         else
         {
+            [self setRecordingState:Stop];
             [listener onSuccess];
         }
         
-        [_video markAsFinished];
-        [_audio markAsFinished];
+        [self->_video markAsFinished];
+        [self->_audio markAsFinished];
         
-        if(_settings.enableMicrophone)
-            [_mic markAsFinished];
+        if(self->_settings.enableMicrophone)
+            [self->_mic markAsFinished];
         
-        if(_writer != nil && (_writer.status == AVAssetWriterStatusWriting))
+        if(self->_writer != nil && (self->_writer.status == AVAssetWriterStatusWriting))
         {
-            [_writer finishWritingWithCompletionHandler:^{
+            [self->_writer finishWritingWithCompletionHandler:^{
                 NSLog(@"Finished stopping recording!");
-                int status = (int)_writer.status;
+                int status = (int)self->_writer.status;
                 
-                NSLog(@"Recorded file size is empty! %d %@", status, _writer.error.localizedFailureReason);
-
                 if (status == AVAssetWriterStatusFailed)
                 {
-                    NSLog(@"Error : Writer status =  AVAssetWriterStatusFailed : %@ %@", _writer.error.localizedFailureReason, _writer.error.localizedRecoverySuggestion);
-                    NSError *unknownError = [NSError unknown:_writer.error.localizedFailureReason];
+                    NSLog(@"Error : Writer status =  AVAssetWriterStatusFailed : %@ %@", self->_writer.error.localizedFailureReason, self->_writer.error.localizedRecoverySuggestion);
+                    NSError *unknownError = [NSError unknown:self->_writer.error.localizedFailureReason];
                     
                     [self cleanup: unknownError];
                     if(error == NULL)
@@ -228,7 +271,7 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
                     long fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:weakRecordingPath error:nil] fileSize];
                     if(fileSize > 0)
                     {
-                        [_availabilityListener onAvailable:weakRecordingPath];
+                        [self->_availabilityListener onAvailable:weakRecordingPath];
                     }
                     else
                     {
@@ -239,7 +282,7 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
                         }
                     }
                 }
-                _videoDataStarted   = FALSE;
+                self->_videoDataStarted   = FALSE;
             }];
         }
         [self cleanup: nil];
@@ -255,7 +298,7 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
         [listener onSuccess];
     } withFailureCallback:^(NSError * _Nonnull error) {
         [self flush];
-        [listener onSuccess];
+        [listener onFailure:error];
     }]];
 }
 
@@ -295,7 +338,7 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
 }
 
 
-- (void)shareRecording:(nonnull id<IActionCompleteListener>)listener {
+- (void)shareRecording:(NSString*) title withMessage:(NSString*) message withListener:(nonnull id<IActionCompleteListener>)listener {
     NSString* path = _recordingPath;
     
     if(path == nil)
@@ -304,12 +347,15 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
         return;
     }
     
-    NSURL       *url        = [NSURL fileURLWithPath:path];
-    
-    NSArray *activityItems = [NSArray arrayWithObjects:url, nil];
+    NSURL   *url            = [NSURL fileURLWithPath:path];
+    NSArray *activityItems  = [NSArray arrayWithObjects:url, message, nil, nil];
     
     UIActivityViewController *controller = [[UIActivityViewController alloc] initWithActivityItems:activityItems applicationActivities:nil];
     
+    if(title != nil) { //gmail just copies the body and don't care about subject - This is something out of hands and issue of gmail on iOS
+        [controller setValue:title forKey:@"Subject"];
+    }
+
     __weak UIViewController *vc = GetAppController().rootViewController;
     
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -321,6 +367,7 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
                                               NSError * _Nullable activityError) {
 
             UnityPause(FALSE);
+            [listener onSuccess];
         }];
         
 
@@ -351,13 +398,13 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)),
     dispatch_get_main_queue(), ^{
         __block VideoRecorder *instance = self;
-        [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+        [PHPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelAddOnly handler:^(PHAuthorizationStatus status) {
             switch (status) {
                 case PHAuthorizationStatusAuthorized: {
-                    __block NSString* assetPath;
+                    //__block NSString* assetPath;
                     [[PHPhotoLibrary sharedPhotoLibrary] performChanges:^{
                         PHAssetChangeRequest *request = [PHAssetChangeRequest creationRequestForAssetFromVideoAtFileURL:[NSURL fileURLWithPath:path]];
-                        assetPath = [[request placeholderForCreatedAsset] localIdentifier];
+                        //assetPath = [[request placeholderForCreatedAsset] localIdentifier];
                     } completionHandler:^(BOOL success, NSError * _Nullable error) {
                         if (error) {
                             NSLog(@"Error : %@",error);
@@ -366,8 +413,9 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
                         }
                         else
                         {
-                            NSLog(@"Saved photo asset path : %@",assetPath);
-                            [listener onSuccess:path];//TODO : Not sending asset path
+                            //NSLog(@"Saved photo asset path : %@",assetPath);
+                            NSLog(@"Saved video");
+                            [listener onSuccess:path];
                         }
                     }];
                     break;
@@ -406,6 +454,8 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
 
 - (void) prepareRecordingInternal :(id<IActionCompleteListener>) listener
 {
+    [self setMainWindow];
+
     [_prepareListeners addObject:listener];
 
     if([_prepareListeners count] == 1) //Only request once
@@ -420,8 +470,10 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
         //2. Check if microphone is required. If so request for it.
         if(_settings.enableMicrophone)
         {
+            NSLog(@"Enable Microphone...");
             AVAudioSession *audioSession = [AVAudioSession sharedInstance];
             [audioSession requestRecordPermission:^(BOOL granted) {
+                NSLog(@"Enable Microphone... %d", granted ? 1 : 0 );
                 if(!granted)
                 {
                     callback([NSError microphonePermissionUnavailable]);
@@ -441,14 +493,19 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
 
 - (void) startRecordingInternal:(id<IActionCompleteListener>) listener
 {
-    [self setMainWindow];
+    _elapsedTimeOffset = CMTimeMake(0, 1);
     
         // Register for pause events
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(captureError:) name:AVCaptureSessionRuntimeErrorNotification object:nil];
-    _recordingState = Record;
+    [self setRecordingState:Record];
     
     NSLog(@"startRecordingInternal : %ld", _recordingState);
+    
+    if(listener != NULL)
+    {
+        [listener onSuccess];
+    }
 }
 
 
@@ -465,7 +522,7 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
     dispatch_async(self.sessionQueue, ^{
         
         // Add capture session if microphone is required
-        if(_settings.enableMicrophone)
+        if(self->_settings.enableMicrophone)
         {
             [self createCaptureSession];
             [self.session startRunning];
@@ -482,18 +539,16 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
         if(captureHandler == nil)
         {
             captureHandler = ^(CMSampleBufferRef  _Nonnull sampleBuffer, RPSampleBufferType bufferType, NSError * _Nullable error)
-            {
-                NSLog(@"captureHandler : %ld", _recordingState);
-                
+            {                
                 if(self.writer == nil)
                     return;
                 
-                if(_recordingState == Pause)
+                if(self->_recordingState == Pause)
                     return;
                 
-                if(!_initialisedWriter && _recordingState == Record)
+                if(!self->_initialisedWriter && self->_recordingState == Record)
                 {
-                    _initialisedWriter = TRUE;
+                    self->_initialisedWriter = TRUE;
                     dispatch_async(self.sessionQueue, ^{
                         [self.writer startWriting];
                     });
@@ -502,43 +557,77 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
                 if (error != nil)
                 {
                     NSLog(@"Sample Buffer Type : %d", (int)bufferType);
-                    NSLog(@"Writer Status : %d", (int)_writer.status);
+                    NSLog(@"Writer Status : %d", (int)self->_writer.status);
                     NSLog(@"Error  : %@", error);
                     return;
                 }
                 
+
                 if (CMSampleBufferDataIsReady(sampleBuffer))
                 {
                     if (self.writer.status != AVAssetWriterStatusWriting)
                         return;
                     
+                    CMTime _currentPts = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
                     
-                    if (_writer.status == AVAssetWriterStatusFailed)
+                    if(self->_detectElapsedTime)
                     {
-                        NSLog(@"Error : Writer status =  AVAssetWriterStatusFailed : %@ %@", _writer.error.localizedFailureReason, _writer.error.localizedRecoverySuggestion);
-                        [self cleanup:[NSError unknown: _writer.error.localizedFailureReason]];
+                        self->_elapsedTimeOffset = CMTimeAdd(self->_elapsedTimeOffset, CMTimeSubtract(_currentPts, self->_previousVideoPts));//Add previous time offset if exists
+                        self->_detectElapsedTime = FALSE;
+                        NSLog(@"Detected Elapsed Time : %lld", self->_elapsedTimeOffset.value/self->_elapsedTimeOffset.timescale);
+                    }
+                    
+                    if (self->_writer.status == AVAssetWriterStatusFailed)
+                    {
+                        NSLog(@"Error : Writer status =  AVAssetWriterStatusFailed : %@ %@", self->_writer.error.localizedFailureReason, self->_writer.error.localizedRecoverySuggestion);
+                        [self cleanup:[NSError unknown: self->_writer.error.localizedFailureReason]];
                         return;
                     }
+                    
+                    CMSampleBufferRef updatedSampleBuffer = [self getAdjustedSampleBuffer: sampleBuffer withOffset:self->_elapsedTimeOffset];
+                    
+                    _currentPts = CMSampleBufferGetPresentationTimeStamp(updatedSampleBuffer);
+                    CMTime duration = CMSampleBufferGetDuration(updatedSampleBuffer);
+
                     switch (bufferType)
                     {
                         case RPSampleBufferTypeVideo:
                             
-                            if(!_videoDataStarted && _initialisedWriter)
+                            if(!self->_videoDataStarted && self->_initialisedWriter)
                             {
-                                _videoDataStarted = TRUE;
-                                [_writer startSessionAtSourceTime:CMSampleBufferGetPresentationTimeStamp(sampleBuffer)];
+                                self->_videoDataStarted = TRUE;
+                                [self->_writer startSessionAtSourceTime:CMSampleBufferGetPresentationTimeStamp(updatedSampleBuffer)];
                             }
                             
-                            if(_video.isReadyForMoreMediaData)
+                            if(self->_video.isReadyForMoreMediaData)
                             {
-                                [_video appendSampleBuffer:sampleBuffer];
+                                _previousVideoPts = duration.value > 0 ? CMTimeAdd(_currentPts, duration) : _currentPts; //If dur is zero and we add it becomes invalid value after addition. May be duration has set timescale to zero for invalid values leading to invalid value after CMTimeAdd.
+                                NSLog(@"Video Presentation time : %lld", self->_previousVideoPts.value/self->_previousVideoPts.timescale);
+                                [self->_video appendSampleBuffer: updatedSampleBuffer];
+                                if(sampleBuffer != updatedSampleBuffer)
+                                    CFRelease(updatedSampleBuffer);
                             }
                             break;
                         case RPSampleBufferTypeAudioApp:
                             
-                            if(_audio.isReadyForMoreMediaData && _videoDataStarted)
+                            if(self->_audio.isReadyForMoreMediaData && self->_videoDataStarted)
                             {
-                                [_audio appendSampleBuffer:sampleBuffer];
+                                self->_previousAudioPts = duration.value > 0 ? CMTimeAdd(_currentPts, duration) : _currentPts;
+                                [self->_audio appendSampleBuffer:updatedSampleBuffer];
+                                if(sampleBuffer != updatedSampleBuffer)
+                                    CFRelease(updatedSampleBuffer);
+                            }
+                            break;
+                            
+                        case RPSampleBufferTypeAudioMic:
+                            
+                            if(self->_mic.isReadyForMoreMediaData && self->_videoDataStarted)
+                            {
+                                self->_previousMicrophonePts = duration.value > 0 ? CMTimeAdd(_currentPts, duration) : _currentPts;
+                                [self->_mic appendSampleBuffer:updatedSampleBuffer];
+                                
+                                if(sampleBuffer != updatedSampleBuffer)
+                                    CFRelease(updatedSampleBuffer);
                             }
                             break;
                         default:
@@ -554,7 +643,7 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
              if(error == nil)
              {
                  NSLog(@"Screen capturing successfully started!");
-                  _recordingState = ReadyForRecord;
+                 [self setRecordingState:ReadyForRecord];
                  callback(nil);
              }
              else
@@ -575,6 +664,16 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
         NSLog(@"[ReplayKit] : This plugin supports only from iOS 11 devices");
         callback([NSError apiUnavailable]);
     }
+}
+
+-(CMSampleBufferRef) getAdjustedSampleBuffer:(CMSampleBufferRef) sampleBuffer withOffset:(CMTime) offset
+{
+    /*if(offset.value > 0)
+    {
+        return [self adjustSampleBufferTimingInfo:sampleBuffer by:offset];
+    }*/
+    
+    return  sampleBuffer;
 }
 
 - (void) notifyPrepareRecordingListeners: (NSError*) error
@@ -599,7 +698,7 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
 {
     // Set this to avoid stuttering
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord
-                                     withOptions:AVAudioSessionCategoryOptionMixWithOthers | AVAudioSessionCategoryOptionDefaultToSpeaker
+                                     withOptions:/*AVAudioSessionCategoryOptionMixWithOthers | */AVAudioSessionCategoryOptionDefaultToSpeaker
                                            error:nil];
     
     self.session = [[AVCaptureSession alloc] init];
@@ -667,14 +766,14 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection {
     
-    if (self.writer.status != AVAssetWriterStatusWriting || !_videoDataStarted)
+    if (self.writer.status != AVAssetWriterStatusWriting || !_videoDataStarted || _recordingState == Pause)
     {
         return;
     }
 
     if(_initialisedWriter && _mic.isReadyForMoreMediaData)
     {
-        [_mic appendSampleBuffer:sampleBuffer];
+        [_mic appendSampleBuffer:[self getAdjustedSampleBuffer: sampleBuffer withOffset:_elapsedTimeOffset]];
     }
 }
 
@@ -788,7 +887,7 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
 
 - (void) cleanup :(NSError*) writeFailureError
 {
-    _recordingState = Invalid;
+    [self setRecordingState:Invalid];
     self.writer = NULL;
     
     if(writeFailureError != nil)
@@ -818,6 +917,7 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
 
 - (void) reportError:(NSError*) error forwardTo:(_Nullable id<IActionCompleteListener>) forwardTo
 {
+    NSLog(@"Error : %@", error);
     if(forwardTo != nil)
     {
         [forwardTo onFailure:error];
@@ -883,5 +983,30 @@ typedef void(^CallbackHandler)(NSError* _Nullable error);
     }
 }
 
+
+- (CMSampleBufferRef) adjustSampleBufferTimingInfo:(CMSampleBufferRef) sampleBuffer by:(CMTime) offset
+{
+    CFAllocatorRef allocator = kCFAllocatorDefault;
+    CMSampleTimingInfo timingInfo = kCMTimingInfoInvalid;
+    OSStatus status;
+
+    CMTime currentPts = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+    CMTime currentDts = CMSampleBufferGetDecodeTimeStamp(sampleBuffer);
+
+    timingInfo.duration = CMSampleBufferGetDuration(sampleBuffer);
+    timingInfo.presentationTimeStamp = CMTimeSubtract(currentPts, offset);
+    timingInfo.decodeTimeStamp = CMTimeSubtract(currentDts, offset);
+
+    // Create a copy of the sample buffer with updated timing information
+    CMSampleBufferRef updatedSampleBuffer;
+    status = CMSampleBufferCreateCopyWithNewTiming(allocator, sampleBuffer, 1, &timingInfo, &updatedSampleBuffer);
+
+    if (status == noErr) {
+        return updatedSampleBuffer;
+    }
+    
+    //fallback
+    return sampleBuffer;
+}
 
 @end

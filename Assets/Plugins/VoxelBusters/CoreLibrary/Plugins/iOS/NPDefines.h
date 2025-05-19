@@ -13,6 +13,12 @@
 #define NPIntPtr          void*
 #define NPString          char*
 
+#ifdef DEBUG
+    #define NPLog(fmt, ...) NSLog((fmt), ##__VA_ARGS__)
+#else
+    #define NPLog(fmt, ...) 
+#endif
+
 #define SYSTEM_VERSION_EQUAL_TO(v)                  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedSame)
 #define SYSTEM_VERSION_GREATER_THAN(v)              ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedDescending)
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)

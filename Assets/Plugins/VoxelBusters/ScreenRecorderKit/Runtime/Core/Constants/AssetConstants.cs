@@ -11,13 +11,13 @@ namespace VoxelBusters.ScreenRecorderKit
 
         public static string EditorExtrasPath => $"{ExtrasPath}/Editor";
 
-		public static string AndroidPluginPath => $"Assets/Plugins/Android";
+		public static string AndroidPluginPath => $"Assets/Plugins/VoxelBusters/ScreenRecorderKit/Plugins/Android";
 
 		public static string AndroidProjectFolderName => "com.voxelbusters.screenrecorderkit.androidlib";
 
 		public static string AndroidProjectPath => $"{AndroidPluginPath}/{AndroidProjectFolderName}";
 
-		public static string NativePluginsExporterName => "ScreenRecorderKit";
+		public static string NativePluginsVideoRecorderFeatureExporterName => "VideoRecorder";
 
 		#endregion
 	}

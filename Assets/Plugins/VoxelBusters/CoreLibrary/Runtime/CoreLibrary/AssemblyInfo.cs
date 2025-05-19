@@ -23,3 +23,7 @@ using System.Runtime.CompilerServices;
 // AdsKit
 [assembly: InternalsVisibleTo("VoxelBusters.AdsKit")]
 [assembly: InternalsVisibleTo("VoxelBusters.AdsKit.Editor")]
+
+// PermissionsKit
+[assembly: InternalsVisibleTo("VoxelBusters.PermissionsKit")]
+[assembly: InternalsVisibleTo("VoxelBusters.PermissionsKit.Editor")]

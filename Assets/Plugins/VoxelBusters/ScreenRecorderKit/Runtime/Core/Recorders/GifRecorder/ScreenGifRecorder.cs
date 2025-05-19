@@ -10,7 +10,6 @@ namespace VoxelBusters.ScreenRecorderKit
         #region Fields
 
         private     RenderTexture   m_fullScreenRenderTexture;
-
         private     IEnumerator     m_recordCoroutine; 
 
         #endregion

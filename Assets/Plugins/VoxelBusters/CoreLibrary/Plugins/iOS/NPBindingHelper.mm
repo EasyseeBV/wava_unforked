@@ -17,6 +17,8 @@
 static NSMutableDictionary* _referenceHistory   = nil;
 static CGPoint _lastTouchPosition = CGPointMake(0, 0);
 
+UIImage* NPFixOrientation(UIImage* image, BOOL isOpaque);
+
 #pragma mark - String operations
 
 char* NPCreateCStringFromNSString(NSString* nsString)
@@ -47,7 +49,7 @@ char* NPCreateCStringFromNSError(NSError* error)
 {
     if (error)
     {
-        return (char*)[[error description] UTF8String];
+        return (char*)[[error localizedDescription] UTF8String];
     }
     
     return nil;
@@ -59,6 +61,18 @@ NPError NPCreateError(int code, NSString* description)
     error.code = code;
     error.description = (void*)[description UTF8String];
     return error;
+}
+
+NPError NPCreateError(NSError* error)
+{
+    if (error)
+    {
+        return NPCreateError((int) error.code, error.localizedDescription);
+    }
+    else
+    {
+        return NPNullError();
+    }
 }
 
 NPError NPNullError()
@@ -172,6 +186,8 @@ NSString* NPExtractTokenFromNSData(id token)
 
 NPArray* NPCreateNativeArrayFromNSArray(NSArray* array)
 {
+    //It's not possible to create an empty array (with no elements) with calloc/malloc and in that place need to use null. But it beats the purpose as there can be empty arrays. So better to use NPArrayWrapper which is not a dynamic struct in those cases.
+    //Note on managed side, Length with zero is different from Length with -1. Length with zero means empty collection, where as length with -1 means no array exists.
     if (array)// && [array count] > 0
     {
         int         length      = (int)[array count];
@@ -205,14 +221,27 @@ NSData* NPEncodeImageAsData(UIImage* image, UIImageEncodeType encodeType)
     switch (encodeType)
     {
         case UIImageEncodeTypePNG:
-            return UIImagePNGRepresentation(image);
+            return UIImagePNGRepresentation(NPFixOrientation(image, false));
             
         case UIImageEncodeTypeJPEG:
-            return UIImageJPEGRepresentation(image, 1);
+            return UIImageJPEGRepresentation(NPFixOrientation(image, true), 1);
             
         default:
             return nil;
     }
+}
+
+UIImage* NPFixOrientation(UIImage* image, bool isOpaque) //This is used as unity fails to consider exif flags for jpegs and also UIImageRepresentation fails to save orientation info when saved in png format. One shot - Two birds :D
+{
+    if (image.imageOrientation == UIImageOrientationUp) return image;
+    CGSize size = image.size;
+    float scale = image.scale;
+    
+    UIGraphicsBeginImageContextWithOptions(size, isOpaque, scale);
+    [image drawInRect:(CGRect){0, 0, size}];
+    UIImage *orientedImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return orientedImage;
 }
 
 UIImage* NPCaptureScreenshotAsImage()
@@ -378,13 +407,14 @@ NSDate* NPCreateNSDateFromNSString(NSString* dateStr)
 
 CGFloat GetStatusBarHeight()
 {
+#if !TARGET_OS_TV
     UIApplication*  sharedApplication   = [UIApplication sharedApplication];
     if (![sharedApplication isStatusBarHidden])
     {
         CGRect      statusBarFrame      = [sharedApplication statusBarFrame];
         return statusBarFrame.size.height;
     }
-    
+#endif
     return 0;
 }
 

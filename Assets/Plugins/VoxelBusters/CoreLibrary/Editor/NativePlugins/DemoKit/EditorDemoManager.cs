@@ -13,10 +13,10 @@ namespace VoxelBusters.CoreLibrary.Editor.NativePlugins.DemoKit
         {
             if (EditorApplication.isPlaying)
             {
-                DemoPanel  panel   = FindObjectOfType<DemoPanel>();
+                DemoPanel  panel   = FindFirstObjectByType<DemoPanel>();
                 if (panel != null)
                 {
-                    panel.Invoke("Rebuild", 5f);
+                    panel.Invoke(nameof(DemoPanel.Rebuild), 5f);
                 }
             }
         }

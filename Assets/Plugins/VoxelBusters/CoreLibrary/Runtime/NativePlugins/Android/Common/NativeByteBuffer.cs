@@ -46,18 +46,8 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.Android
 
             if(m_cachedBytes == null)
             {
-#if UNITY_2019_1_OR_NEWER
                 sbyte[] sbyteArray = Call<sbyte[]>("array");
-                DebugLogger.Log("Successfully fetched get bytes...");
-                if (sbyteArray != null)
-                {
-                    int length = sbyteArray.Length;
-                    m_cachedBytes = new byte[length];
-                    Buffer.BlockCopy(sbyteArray, 0, m_cachedBytes, 0, length);
-                }
-#else
-                m_cachedBytes = Call<byte[]>("array");
-#endif
+                m_cachedBytes = sbyteArray.ToBytes();
             }
 
             return m_cachedBytes;

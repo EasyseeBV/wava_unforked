@@ -22,17 +22,9 @@ namespace VoxelBusters.CoreLibrary
         /// Gets a value indicating whether this <see cref="URLString"/> is valid.
         /// </summary>
         /// <value><c>true</c> if is valid; otherwise, <c>false</c>.</value>
-        public bool IsValid
-        {
-            get;
-            private set;
-        }
+        public bool IsValid { get; private set; }
 
-        public bool IsFilePath
-        {
-            get;
-            private set;
-        }
+        public bool IsFilePath { get; private set; }
 
         #endregion
 

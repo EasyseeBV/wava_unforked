@@ -8,7 +8,7 @@ namespace VoxelBusters.CoreLibrary
     {
         #region Fields
 
-        private     bool    m_isInitialized = false;
+        private     bool    m_isInitialisedInternal     = false;
 
         #endregion
 
@@ -16,21 +16,31 @@ namespace VoxelBusters.CoreLibrary
 
         private void Awake()
         {
-            EnsureInitialized();
+            EnsureInitialised();
         }
 
         protected virtual void Start()
+        { }
+
+        protected virtual void OnEnable()
+        { }
+
+        protected virtual void OnDisable()
+        { }
+
+        protected virtual void OnDestroy()
         { }
 
         #endregion
 
         #region Private methods
 
-        protected void EnsureInitialized()
+        protected void EnsureInitialised()
         {
-            if (m_isInitialized) return;
+            if (m_isInitialisedInternal) return;
 
-            m_isInitialized = true;
+            m_isInitialisedInternal = true;
+
             Init();
         }
 

@@ -14,11 +14,11 @@ namespace VoxelBusters.ScreenRecorderKit.Editor
         #region Constants
 
 		// URL
-        private     const   string      kProductUrl                     = "http://u3d.as/1nN3";
+        private     const   string      kProductUrl                     = "https://link.voxelbusters.com/screen-recorder-kit";
 
         private     const   string      kDocumentationUrl               = "https://voxelbusters.com/products/cross-platform-screen-recorder-kit/documentation";
 
-        private const   string          kSupportUrl			            = "https://discord.gg/jegTXvqPKQ";
+        private const   string          kSupportUrl			            = "https://discord.gg/voxel-busters-672868273779507223";
 
 		private		const   string      kTutorialUrl		            = "https://assetstore.screenrecorderkit.voxelbusters.com";		
 
@@ -55,11 +55,6 @@ namespace VoxelBusters.ScreenRecorderKit.Editor
         public static void OpenProductPage()
         {
             Application.OpenURL(kProductUrl);
-        }
-
-        public static void OpenReviewPage()
-        {
-            Application.OpenURL($"{kProductUrl}#reviews");
         }
 
         #endregion

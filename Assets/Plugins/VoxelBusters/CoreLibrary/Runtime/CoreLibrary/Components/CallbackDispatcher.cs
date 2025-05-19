@@ -39,13 +39,12 @@ namespace VoxelBusters.CoreLibrary
     /// </summary>
     public delegate void EventCallback<TResult>(TResult result, Error error);
 
-    public delegate void CompletionCallbackLegacy(Error error);
-
     public class CallbackDispatcher : PrivateSingletonBehaviour<CallbackDispatcher>
     {
         #region Fields
 
-        private     Queue<Action>       m_queue         = new Queue<Action>();
+        private     Queue<Action>       m_queue;
+        private readonly object queueLock = new object();
 
         #endregion
 
@@ -184,20 +183,31 @@ namespace VoxelBusters.CoreLibrary
 
         #region Unity methods
 
+        protected override void OnSingletonAwake()
+        {
+            base.OnSingletonAwake();
+
+            // Set properties
+            m_queue     = new Queue<Action>(capacity: 16);
+        }
+
         private void LateUpdate()
         {
             try
             {
-                // execute pending actions
-                while (m_queue.Count > 0)
+                lock(queueLock)
                 {
-                    var     action  = m_queue.Dequeue();
-                    action();
+                    // execute pending actions
+                    while (m_queue.Count > 0)
+                    {
+                        var     action  = m_queue.Dequeue();
+                        action();
+                    }
                 }
             }
             catch (Exception expection)
             {
-                DebugLogger.LogException(expection);
+                DebugLogger.LogException(CoreLibraryDomain.Default, expection);
             }
         }
 
@@ -207,7 +217,10 @@ namespace VoxelBusters.CoreLibrary
 
         private void AddAction(Action action)
         {
-            m_queue.Enqueue(action);
+            lock(queueLock)
+            {
+                m_queue.Enqueue(action);
+            }
         }
 
         #endregion

@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace VoxelBusters.CoreLibrary
 {
     [Serializable]
-    public class SerializableKeyValuePair<TKey, TValue>
+    public class SerializableKeyValuePair<TKey, TValue> : IEquatable<SerializableKeyValuePair<TKey, TValue>>
     {
         #region Fields
 
@@ -39,6 +40,18 @@ namespace VoxelBusters.CoreLibrary
             // set properties
             m_key       = key;
             m_value     = value;
+        }
+
+        #endregion
+
+        #region IEquatable implementation
+
+        bool IEquatable<SerializableKeyValuePair<TKey, TValue>>.Equals(SerializableKeyValuePair<TKey, TValue> other)
+        {
+            if (other == null) return false;
+
+            return EqualityComparer<TKey>.Default.Equals(Key, other.Key) &&
+                EqualityComparer<TValue>.Default.Equals(Value, other.Value);
         }
 
         #endregion

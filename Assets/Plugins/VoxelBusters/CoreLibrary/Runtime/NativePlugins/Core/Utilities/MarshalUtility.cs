@@ -5,7 +5,7 @@ using VoxelBusters.CoreLibrary;
 
 namespace VoxelBusters.CoreLibrary.NativePlugins
 {
-    internal static class MarshalUtility
+    public static class MarshalUtility
     {
         #region Marshalling methods
 
@@ -31,12 +31,12 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         public static void FreeUnmanagedStringArray(IntPtr unmanagedArrayPtr, int count)
         {
-            DebugLogger.Log("Releasing unmanaged array: " + unmanagedArrayPtr);
+            DebugLogger.Log(CoreLibraryDomain.NativePlugins, $"Releasing unmanaged array: {unmanagedArrayPtr}.");
 
             // release each strings allocated in unmanaged space
             var     unmanagedArrayHandle    = GCHandle.FromIntPtr(unmanagedArrayPtr);
             var     dataArray               = (IntPtr[])unmanagedArrayHandle.Target;
-            for (int iter = 0; iter < count; iter ++)
+            for (int iter = 0; iter < count; iter++)
             {
                 Marshal.FreeHGlobal(dataArray[iter]);
             }
@@ -65,7 +65,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
         public static IntPtr[] CreateManagedArray(IntPtr arrayPtr, int length)
         {
             // check whether array is valid
-            if (arrayPtr == IntPtr.Zero)
+            if (length == -1) //Not checking arrayPtr is zero or not - as it's possible to have an array with no elements too. If null needs to be created, length needs to be -1.
             {
                 return null;
             }
@@ -79,7 +79,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         public static string[] CreateStringArray(IntPtr arrayPtr, int length)
         {
-            if (IntPtr.Zero == arrayPtr)
+            if (length == -1) //Not checking arrayPtr is zero or not - as it's possible to have an array with no elements too. If null needs to be created, length needs to be -1.
             {
                 return null;
             }
@@ -126,7 +126,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
                 var     outputObject        = converter(inputObject);
                 if (EqualityComparer<TOutput>.Default.Equals(outputObject, default(TOutput)) && !includeNullObjects)
                 {
-                    DebugLogger.LogWarningFormat("Failed to convert object with data {0}.", inputObject);
+                    DebugLogger.LogWarning(CoreLibraryDomain.NativePlugins, $"Failed to convert object with data {inputObject}.");
                     continue;
                 }
 
@@ -161,7 +161,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
                 var     outputObject    = converter(nativePtr);
                 if (EqualityComparer<TOutput>.Default.Equals(outputObject, default(TOutput)) && !includeNullObjects)
                 {
-                    DebugLogger.LogWarningFormat("Failed to convert object with data {0}.", nativePtr);
+                    DebugLogger.LogWarning(CoreLibraryDomain.NativePlugins, $"Failed to convert object with data {nativePtr}.");
                     continue;
                 }
 

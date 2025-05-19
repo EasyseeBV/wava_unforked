@@ -10,17 +10,34 @@ namespace VoxelBusters.CoreLibrary
     {
         #region Static fields
 
-        private     static      float       s_originalTimeScale     = Time.timeScale;
+        //public static float OriginalTimeScale { get; set; }
+        private static float s_originalTimeScale;
+
+        #endregion
+
+        #region Constructors
+
+        static ApplicationServices()
+        {
+            Initialize();
+        }
 
         #endregion
 
         #region Static methods
+
+        [ExecuteOnReload]
+        private static void Initialize()
+        {
+            //OriginalTimeScale   = Time.timeScale;
+        }
 
         public static void SetApplicationPaused(bool pause)
         {
             if (pause)
             {
                 // cache original value
+                //OriginalTimeScale = Time.timeScale;
                 s_originalTimeScale = Time.timeScale;
 
                 // set new value
@@ -28,7 +45,8 @@ namespace VoxelBusters.CoreLibrary
             }
             else
             {
-                Time.timeScale      = s_originalTimeScale;
+                //Time.timeScale      = OriginalTimeScale;
+                Time.timeScale = s_originalTimeScale;
             }
         }
 
@@ -40,7 +58,7 @@ namespace VoxelBusters.CoreLibrary
         public static RuntimePlatform GetActiveOrSimulationPlatform()
         {
 #if UNITY_EDITOR
-            return GetSimulationPlatform(UnityEditor.EditorUserBuildSettings.activeBuildTarget);
+            return ConvertBuildTargetToRuntimePlatform(UnityEditor.EditorUserBuildSettings.activeBuildTarget);
 #else
             return Application.platform;
 #endif
@@ -57,7 +75,7 @@ namespace VoxelBusters.CoreLibrary
         }
 
 #if UNITY_EDITOR
-        private static RuntimePlatform GetSimulationPlatform(UnityEditor.BuildTarget buildTarget)
+        public static RuntimePlatform ConvertBuildTargetToRuntimePlatform(UnityEditor.BuildTarget buildTarget)
         {
             switch (buildTarget)
             {

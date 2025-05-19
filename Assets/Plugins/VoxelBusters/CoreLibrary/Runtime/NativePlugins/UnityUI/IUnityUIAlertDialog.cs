@@ -26,13 +26,14 @@ namespace VoxelBusters.CoreLibrary.NativePlugins.UnityUI
 
         #region Methods
 
+        void AddTextField(string placeholderText);
         void AddActionButton(string title);
 
         void Show();
 
         void Dismiss();
 
-        void SetCompletionCallback(Callback<int> callback);
+        void SetCompletionCallback(Action<int, string[]> callback);
 
         #endregion
     }

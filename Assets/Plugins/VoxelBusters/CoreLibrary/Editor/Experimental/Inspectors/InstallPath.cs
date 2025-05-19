@@ -8,16 +8,20 @@ namespace VoxelBusters.CoreLibrary.Editor.Experimental
     {
         #region Static properties
 
-        public static string EssentialKit { get; private set; } = "https://u3d.as/1szE";
+        public static string EssentialKit { get; private set; } = "https://link.voxelbusters.com/essential-kit";
 
-        public static string ScreenRecorderKit { get; private set; } = "http://u3d.as/1nN3";
+        public static string ScreenRecorderKit { get; private set; } = "https://link.voxelbusters.com/screen-recorder-kit";
 
-        public static string SocialKit { get; private set; } = "https://u3d.as/1pMn";
+        public static string SocialKit { get; private set; } = "https://link.voxelbusters.com/social-kit";
 
-        public static string MLKit { get; private set; } = "https://u3d.as/2PMe";
+        public static string MLKit { get; private set; } = "https://link.voxelbusters.com/easy-ml-kit";
 
-        public static string ReportingKit { get; private set; } = "https://u3d.as/2Q6p";
+        public static string ReportingKit { get; private set; } = "https://link.voxelbusters.com/reporting-kit";
 
+        public static string AdsKit { get; private set; } = "https://link.voxelbusters.com/ads-kit";
+        
+        public static string PermissionsKit { get; private set; } = "https://link.voxelbusters.com/permissions-kit";
+        
         #endregion
     }
 }

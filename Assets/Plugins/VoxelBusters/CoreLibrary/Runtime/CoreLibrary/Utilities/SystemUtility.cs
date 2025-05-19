@@ -44,7 +44,7 @@ namespace VoxelBusters.CoreLibrary
                 var     outputObject        = converter(inputObject);
                 if (EqualityComparer<TOutput>.Default.Equals(outputObject, default(TOutput)) && !includeNullObjects)
                 {
-                    DebugLogger.LogWarningFormat("Failed to convert object with data {0}.", inputObject);
+                    DebugLogger.LogWarning(CoreLibraryDomain.Default, $"Failed to convert object with data {inputObject}.");
                     continue;
                 }
 

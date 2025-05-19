@@ -6,75 +6,31 @@ using UnityEngine;
 namespace VoxelBusters.CoreLibrary.NativePlugins
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal struct UnityDateComponents
+    public struct UnityDateComponents
     {
         #region Properties
 
-        public Calendar Calendar
-        {
-            get;
-            set;
-        }
+        public Calendar Calendar { get; set; }
 
-        public long Year
-        {
-            get;
-            set;
-        }
+        public long Year { get; set; }
 
-        public long Month
-        {
-            get;
-            set;
-        }
+        public long Month { get; set; }
 
-        public long Day
-        {
-            get;
-            set;
-        }
+        public long Day { get; set; }
 
-        public long Hour
-        {
-            get;
-            set;
-        }
+        public long Hour { get; set; }
 
-        public long Minute
-        {
-            get;
-            set;
-        }
+        public long Minute { get; set; }
 
-        public long Second
-        {
-            get;
-            set;
-        }
+        public long Second { get; set; }
 
-        public long Nanosecond
-        {
-            get;
-            set;
-        }
+        public long Nanosecond { get; set; }
 
-        public long Weekday
-        {
-            get;
-            set;
-        }
+        public long DayOfWeek { get; set; }
 
-        public long WeekOfMonth
-        {
-            get;
-            set;
-        }
+        public long WeekOfMonth { get; set; }
 
-        public long WeekOfYear
-        {
-            get;
-            set;
-        }
+        public long WeekOfYear { get; set; }
 
         #endregion
 
@@ -92,7 +48,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
                 Minute          = dateComponents.Minute,
                 Second          = dateComponents.Second,
                 Nanosecond      = dateComponents.Nanosecond,
-                Weekday         = dateComponents.Weekday,
+                DayOfWeek       = dateComponents.DayOfWeek,
                 WeekOfMonth     = dateComponents.WeekOfMonth,
                 WeekOfYear      = dateComponents.WeekOfYear,
             };
@@ -110,7 +66,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
                 Minute          = (int)dateComponents.Minute,
                 Second          = (int)dateComponents.Second,
                 Nanosecond      = (int)dateComponents.Nanosecond,
-                Weekday         = (int)dateComponents.Weekday,
+                DayOfWeek       = (int)dateComponents.DayOfWeek,
                 WeekOfMonth     = (int)dateComponents.WeekOfMonth,
                 WeekOfYear      = (int)dateComponents.WeekOfYear,
             };

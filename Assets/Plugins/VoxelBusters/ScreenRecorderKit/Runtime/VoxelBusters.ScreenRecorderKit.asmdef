@@ -2,8 +2,7 @@
     "name": "VoxelBusters.ScreenRecorderKit",
     "references": [
         "VoxelBusters.CoreLibrary",
-        "VoxelBusters.CoreLibrary.NativePlugins",
-        "VoxelBusters.ExternalLibs.Encoders"
+        "VoxelBusters.CoreLibrary.NativePlugins"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

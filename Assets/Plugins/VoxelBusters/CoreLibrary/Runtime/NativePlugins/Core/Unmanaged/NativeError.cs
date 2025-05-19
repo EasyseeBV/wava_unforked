@@ -6,28 +6,14 @@ using UnityEngine;
 namespace VoxelBusters.CoreLibrary.NativePlugins
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal struct NativeError
+    public struct NativeError
     {
         #region Properties
 
-        public int Code
-        {
-            get;
-            set;
-        }
+        public int Code { get; set; }
 
-        public string Description
-        {
-            get;
-            set;
-        }
+        public IntPtr DescriptionPtr { get; set; }
 
         #endregion
-
-        public NativeError(int code, IntPtr description)
-        {
-            Code = code;
-            Description = MarshalUtility.ToString(description);
-        }
     }
 }

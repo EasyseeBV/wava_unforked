@@ -17,15 +17,30 @@ namespace VoxelBusters.ScreenRecorderKit
 
         #region Static properties
 
-        public static NativeFeatureRuntimeConfiguration VideoRecorder { get; private set; } = new NativeFeatureRuntimeConfiguration(
-            packages: new NativeFeatureRuntimePackage[]
-            {
-                new NativeFeatureRuntimePackage(platform: RuntimePlatform.IPhonePlayer, assembly: $"{kMainAssembly}.iOSModule",     ns: $"{kRootNamespaceVideoRecorder}.iOS",        nativeInterfaceType: "VideoRecorderInterface"),
-                new NativeFeatureRuntimePackage(platform: RuntimePlatform.tvOS,         assembly: $"{kMainAssembly}.iOSModule",     ns: $"{kRootNamespaceVideoRecorder}.iOS",        nativeInterfaceType: "VideoRecorderInterface"),
-                new NativeFeatureRuntimePackage(platform: RuntimePlatform.Android,      assembly: $"{kMainAssembly}.AndroidModule", ns: $"{kRootNamespaceVideoRecorder}.Android",    nativeInterfaceType: "VideoRecorderInterface"),
-            },
-            simulatorPackage: new NativeFeatureRuntimePackage(assembly: $"{kMainAssembly}.SimulatorModule", ns: $"{kRootNamespaceVideoRecorder}.Simulator", nativeInterfaceType: "VideoRecorderInterface"),
-            fallbackPackage: new NativeFeatureRuntimePackage(assembly: kMainAssembly, ns: kRootNamespaceVideoRecorder, nativeInterfaceType: "NullVideoRecorderInterface"));
+        public static NativeFeatureRuntimeConfiguration VideoRecorder { get; private set; }
+
+        #endregion
+
+        #region Constructors
+
+        static RuntimeConfiguration()
+        {
+            VideoRecorder   = new NativeFeatureRuntimeConfiguration(packages: new NativeFeatureRuntimePackage[]
+                                                                    {
+                                                                        NativeFeatureRuntimePackage.iOS(assembly: $"{kMainAssembly}.iOSModule",
+                                                                                                        ns: $"{kRootNamespaceVideoRecorder}.iOS",
+                                                                                                        nativeInterfaceType: "VideoRecorderInterface"),
+                                                                        NativeFeatureRuntimePackage.Android(assembly: $"{kMainAssembly}.AndroidModule",
+                                                                                                            ns: $"{kRootNamespaceVideoRecorder}.Android",
+                                                                                                            nativeInterfaceType: "VideoRecorderInterface"),
+                                                                    },
+                                                                    simulatorPackage: NativeFeatureRuntimePackage.Generic(assembly: $"{kMainAssembly}.SimulatorModule",
+                                                                                                                          ns: $"{kRootNamespaceVideoRecorder}.Simulator",
+                                                                                                                          nativeInterfaceType: "VideoRecorderInterface"),
+                                                                    fallbackPackage: NativeFeatureRuntimePackage.Generic(assembly: kMainAssembly,
+                                                                                                                         ns: kRootNamespaceVideoRecorder,
+                                                                                                                         nativeInterfaceType: "NullVideoRecorderInterface"));
+        }
 
         #endregion
     }

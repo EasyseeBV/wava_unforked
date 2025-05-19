@@ -12,7 +12,7 @@ namespace VoxelBusters.CoreLibrary
     {
         #region Fields
 
-        private     Dictionary<string, string>      m_dataCollection;
+        private     Dictionary<string, object>      m_dataCollection;
 
         private     string                          m_savePath;
 
@@ -27,7 +27,7 @@ namespace VoxelBusters.CoreLibrary
         public KeyValueDataStore(string savePath)
         {
             // set properties
-            m_dataCollection    = LoadDataFromPath(savePath) ?? new Dictionary<string, string>();
+            m_dataCollection    = LoadDataFromPath(savePath) ?? new Dictionary<string, object>();
             m_savePath          = savePath;
         }
 
@@ -43,9 +43,9 @@ namespace VoxelBusters.CoreLibrary
         /// <returns></returns>
         public bool GetBool(string key, bool defaultValue = default)
         {
-            if (m_dataCollection.TryGetValue(key, out string value))
+            if (m_dataCollection.TryGetValue(key, out object value))
             {
-                return bool.Parse(value);
+                return bool.Parse(value.ToString());
             }
             return defaultValue;
         }
@@ -58,9 +58,9 @@ namespace VoxelBusters.CoreLibrary
         /// <returns></returns>
         public long GetLong(string key, long defaultValue = default)
         {
-            if (m_dataCollection.TryGetValue(key, out string value))
+            if (m_dataCollection.TryGetValue(key, out object value))
             {
-                return long.Parse(value);
+                return long.Parse(value.ToString());
             }
             return defaultValue;
         }
@@ -73,9 +73,9 @@ namespace VoxelBusters.CoreLibrary
         /// <returns></returns>
         public double GetDouble(string key, double defaultValue = default)
         {
-            if (m_dataCollection.TryGetValue(key, out string value))
+            if (m_dataCollection.TryGetValue(key, out object value))
             {
-                return double.Parse(value);
+                return double.Parse(value.ToString());
             }
             return defaultValue;
         }
@@ -88,9 +88,9 @@ namespace VoxelBusters.CoreLibrary
         /// <returns></returns>
         public string GetString(string key, string defaultValue = default)
         {
-            if (m_dataCollection.TryGetValue(key, out string value))
+            if (m_dataCollection.TryGetValue(key, out object value))
             {
-                return value;
+                return value.ToString();
             }
             return defaultValue;
         }
@@ -103,9 +103,9 @@ namespace VoxelBusters.CoreLibrary
         /// <returns></returns>
         public byte[] GetByteArray(string key, byte[] defaultValue = default)
         {
-            if (m_dataCollection.TryGetValue(key, out string value))
+            if (m_dataCollection.TryGetValue(key, out object value))
             {
-                return System.Convert.FromBase64String(value);
+                return System.Convert.FromBase64String(value.ToString());
             }
             return defaultValue;
         }
@@ -213,12 +213,12 @@ namespace VoxelBusters.CoreLibrary
 
         #region Private methods
 
-        private Dictionary<string, string> LoadDataFromPath(string path)
+        private Dictionary<string, object> LoadDataFromPath(string path)
         {
             if (!IOServices.FileExists(path)) return null;
 
             var     jsonContent = IOServices.ReadFile(path);
-            return ExternalServiceProvider.JsonServiceProvider.FromJson(jsonContent) as Dictionary<string, string>;
+            return ExternalServiceProvider.JsonServiceProvider.FromJson(jsonContent) as Dictionary<string, object>;
         }
 
         #endregion

@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void) stopRecording:(id<IActionCompleteListener>) listener;
 -(void) discardRecording:(id<IActionCompleteListener>) listener;
 -(void) openRecording:(id<IActionCompleteListener>) listener;
--(void) shareRecording:(id<IActionCompleteListener>) listener;
+-(void) shareRecording:(NSString*) title withMessage:(NSString*) message withListener:(id<IActionCompleteListener>) listener;
 -(void) saveRecording:(id<ISaveRecordingListener>) listener;
 -(void) setRecordingAvailabilityListener:(id<IRecordingAvailabilityListener>) listener;
 -(void) setRecorderStateChangeListener:(id<IRecorderStateChangeListener>) listener;

@@ -73,8 +73,8 @@ namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore.iOS
         {
             var tagHandle = GCHandle.FromIntPtr(tag);
 
-            NativeActionCompleteListener listener = (NativeActionCompleteListener)tagHandle.Target;
-            listener.onFailureCallback(error.Code, error.Description);
+            NativeSaveRecordingListener listener = (NativeSaveRecordingListener)tagHandle.Target;
+            listener.onFailureCallback(error.Code, error.DescriptionPtr.AsString());
         }
     }
 }

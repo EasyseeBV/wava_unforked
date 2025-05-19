@@ -15,10 +15,10 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         [SerializeField]
         private         LocationCoordinate          m_center;
-
+        
         [SerializeField]
         private         float                       m_radius;
-
+        
         [SerializeField]
         private         string                      m_regionId;
 
@@ -31,14 +31,8 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
         /// </summary>
         public LocationCoordinate Center
         {
-            get
-            {
-                return m_center;
-            }
-            set
-            {
-                m_center    = value;
-            }
+            get => m_center;
+            set => m_center = value;
         }
 
         /// <summary>
@@ -46,14 +40,8 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
         /// </summary>
         public float Radius
         {
-            get
-            {
-                return m_radius;
-            }
-            set
-            {
-                m_radius    = value;
-            }
+            get => m_radius;
+            set => m_radius = value;
         }
 
         /// <summary>
@@ -61,14 +49,8 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
         /// </summary>
         public string RegionId
         {
-            get
-            {
-                return m_regionId;
-            }
-            set
-            {
-                m_regionId  = value;
-            }
+            get => m_regionId;
+            set => m_regionId = value;
         }
 
         #endregion

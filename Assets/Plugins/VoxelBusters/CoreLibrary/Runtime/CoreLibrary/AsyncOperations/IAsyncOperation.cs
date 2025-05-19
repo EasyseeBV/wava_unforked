@@ -30,6 +30,8 @@ namespace VoxelBusters.CoreLibrary
 
         #region Events
 
+        event Callback<IAsyncOperation> OnProgress;
+
         event Callback<IAsyncOperation> OnComplete;
 
         #endregion
@@ -42,5 +44,18 @@ namespace VoxelBusters.CoreLibrary
         new T Result { get; }
 
         #endregion
+
+        #region Events
+
+        new event Callback<IAsyncOperation<T>> OnProgress;
+
+        new event Callback<IAsyncOperation<T>> OnComplete;
+
+        #endregion
+    }
+
+    public interface IAsyncOperationUpdateHandler
+    {
+        void Update();
     }
 }

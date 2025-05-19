@@ -8,19 +8,21 @@ namespace VoxelBusters.CoreLibrary.Editor.NativePlugins.Build.Xcode
 {
     public static class PBXProjectExtensions
     {
+        #region Search paths
+
         public static void AddHeaderSearchPath(this PBXProject project, string targetGuid, string headerSearchPath)
         {
-            AddBuildProperty(project, targetGuid, PBXProjectBuildConfigurationKey.kHeaderSearchPaths, GetPlatformCompatiblePath(headerSearchPath));
+            AddBuildProperty(project, targetGuid, BuildConfigurationKey.kHeaderSearchPaths, GetPlatformCompatiblePath(headerSearchPath));
         }
 
         public static void AddLibrarySearchPath(this PBXProject project, string targetGuid, string librarySearchPath)
         {
-            AddBuildProperty(project, targetGuid, PBXProjectBuildConfigurationKey.kLibrarySearchPaths, GetPlatformCompatiblePath(librarySearchPath), false, false);
+            AddBuildProperty(project, targetGuid, BuildConfigurationKey.kLibrarySearchPaths, GetPlatformCompatiblePath(librarySearchPath), false, false);
         }
 
         public static void AddFrameworkSearchPath(this PBXProject project, string targetGuid, string frameworkSearchPath)
         {
-            AddBuildProperty(project, targetGuid, PBXProjectBuildConfigurationKey.kFrameworkSearchPaths, GetPlatformCompatiblePath(frameworkSearchPath), false, false);
+            AddBuildProperty(project, targetGuid, BuildConfigurationKey.kFrameworkSearchPaths, GetPlatformCompatiblePath(frameworkSearchPath), false, false);
         }
 
         private static void AddBuildProperty(PBXProject project, string targetGuid, string key, string value, bool recursive = true, bool quoted = true)
@@ -52,6 +54,34 @@ namespace VoxelBusters.CoreLibrary.Editor.NativePlugins.Build.Xcode
             path = path.Replace("\\", "/");
             return path;
         }
+
+        #endregion
+
+        #region Target methods
+
+		public static string GetMainTargetName(this PBXProject project)
+#if UNITY_2019_3_OR_NEWER
+			=> "Unity-iPhone";
+#else
+            => PBXProject.GetUnityTargetName();
+#endif
+
+
+		public static string GetMainTargetGuid(this PBXProject project)
+#if UNITY_2019_3_OR_NEWER
+			=> project.GetUnityMainTargetGuid();
+#else
+            => project.TargetGuidByName(PBXProject.GetUnityTargetName());
+#endif
+
+		public static string GetFrameworkGuid(this PBXProject project)
+#if UNITY_2019_3_OR_NEWER
+			=> project.GetUnityFrameworkTargetGuid();
+#else
+            => project.TargetGuidByName(PBXProject.GetUnityTargetName());
+#endif
+
+        #endregion
     }
 }
 #endif

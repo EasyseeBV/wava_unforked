@@ -101,7 +101,7 @@ namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore.Simulator
 
         public override void PauseRecording(CompletionCallback callback)
         {
-            if (m_state == ScreenRecorderState.Record)
+            if (!IsPausedOrRecording())
             {
                 callback?.Invoke(false, ScreenRecorderError.ActiveRecordingUnavailable(VideoRecorder.ErrorDomain));
                 return;
@@ -114,7 +114,7 @@ namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore.Simulator
 
         public override void ResumeRecording(CompletionCallback callback)
         {
-            if (m_state != ScreenRecorderState.Record || m_state != ScreenRecorderState.Pause)
+            if (!IsPausedOrRecording())
             {
                 callback?.Invoke(false, ScreenRecorderError.ActiveRecordingUnavailable(VideoRecorder.ErrorDomain));
                 return;
@@ -127,7 +127,7 @@ namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore.Simulator
 
         public override void StopRecording(CompletionCallback callback)
         {
-            if (m_state != ScreenRecorderState.Record || m_state != ScreenRecorderState.Pause)
+            if (!IsPausedOrRecording())
             {
                 callback?.Invoke(false, ScreenRecorderError.ActiveRecordingUnavailable(VideoRecorder.ErrorDomain));
             }
@@ -155,7 +155,7 @@ namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore.Simulator
 
         public override void DiscardRecording(CompletionCallback callback)
         {
-            if (m_state != ScreenRecorderState.Record || m_state != ScreenRecorderState.Pause)
+            if (!IsPausedOrRecording())
             {
                 callback?.Invoke(false, ScreenRecorderError.ActiveRecordingUnavailable(VideoRecorder.ErrorDomain));
             }
@@ -197,6 +197,12 @@ namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore.Simulator
             m_state = ScreenRecorderState.Record;
             m_stateChangeListener?.OnRecord();
             callback?.Invoke(true, null);
+        }
+
+
+        private bool IsPausedOrRecording()
+        {
+            return IsRecording() || m_state == ScreenRecorderState.Pause;
         }
 
         #endregion

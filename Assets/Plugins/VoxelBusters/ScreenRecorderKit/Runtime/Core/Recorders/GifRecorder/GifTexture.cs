@@ -72,6 +72,18 @@ namespace VoxelBusters.ScreenRecorderKit
             return Frames[index];
         }
 
+        public void Cleanup()
+        {
+            if(Frames != null)
+            {
+                foreach (var frame in Frames)
+                {
+                    Object.Destroy(frame);
+                }
+                Frames = null;
+            }
+        }
+
         internal GifFrame[] ToGifFrames() => RawFrames;
 
         #endregion
@@ -97,6 +109,7 @@ namespace VoxelBusters.ScreenRecorderKit
                     hideFlags       = HideFlags.HideAndDontSave,
                 };
                 newTexture.SetPixels32(RawFrames[iter].Data);
+                newTexture.Apply();
 
                 // Add to array
                 frameTextures[iter] = newTexture;

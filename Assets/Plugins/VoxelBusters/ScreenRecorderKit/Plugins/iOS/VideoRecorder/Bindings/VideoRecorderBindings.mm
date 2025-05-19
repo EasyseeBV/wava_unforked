@@ -7,6 +7,7 @@
 
 #import "VideoRecorder.h"
 #import "VideoRecorderBindings.h"
+#import "NPKit.h"
 
 METHOD(void*, CreateWithSettings, void* settings)
 {
@@ -72,7 +73,7 @@ METHOD(void, PauseRecording, void* owner, void* listener,  ActionCompleteListene
     ActionCompleteListenerWrapper *listenerWrapper = [[ActionCompleteListenerWrapper alloc] initWithTag:listener];
     listenerWrapper.onSuccessCallback = onSuccess;
     listenerWrapper.onFailureCallback = onFailure;
-    [recorder startRecording:listenerWrapper];
+    [recorder pauseRecording:listenerWrapper];
 }
 METHOD(void, ResumeRecording, void* owner, void* listener, ActionCompleteListenerOnSuccessCallback onSuccess, ActionCompleteListenerOnFailureCallback onFailure)
 {
@@ -106,15 +107,17 @@ METHOD(void, OpenRecording, void* owner, void* listener, ActionCompleteListenerO
     listenerWrapper.onFailureCallback = onFailure;
     [recorder openRecording:listenerWrapper];
 }
-METHOD(void, ShareRecording, void* owner, void* listener, ActionCompleteListenerOnSuccessCallback onSuccess, ActionCompleteListenerOnFailureCallback onFailure)
+METHOD(void, ShareRecording, void* owner, const char* title, const char* message, void* listener, ActionCompleteListenerOnSuccessCallback onSuccess, ActionCompleteListenerOnFailureCallback onFailure)
 {
     VideoRecorder*     recorder  = CAST_TO_OBJC(VideoRecorder, owner);
     ActionCompleteListenerWrapper *listenerWrapper = [[ActionCompleteListenerWrapper alloc] initWithTag:listener];
     listenerWrapper.onSuccessCallback = onSuccess;
     listenerWrapper.onFailureCallback = onFailure;
-    [recorder shareRecording:listenerWrapper];
+    [recorder shareRecording:NPCreateNSStringFromCString(title)
+                 withMessage:NPCreateNSStringFromCString(message)
+                withListener: listenerWrapper];
 }
-METHOD(void, SaveRecording, void* owner, void* fileName, void* listener, SaveRecordingListenerOnSuccessCallback onSuccess, SaveRecordingListenerOnFailureCallback onFailure)
+METHOD(void, SaveRecording, void* owner, const char* fileName, void* listener, SaveRecordingListenerOnSuccessCallback onSuccess, SaveRecordingListenerOnFailureCallback onFailure)
 {
     VideoRecorder*     recorder  = CAST_TO_OBJC(VideoRecorder, owner);
     SaveRecordingListenerWrapper *listenerWrapper = [[SaveRecordingListenerWrapper alloc] initWithTag:listener];

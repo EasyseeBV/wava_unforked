@@ -7,10 +7,13 @@ namespace VoxelBusters.CoreLibrary
 	{
         #region Static fields
 
+        [ClearOnReload]
         private     static          T           s_sharedInstance        = null;
 
+        [ClearOnReload(ClearOnReloadOption.Default)]
         private     static readonly object      s_objectLock            = new object();
         
+        [ClearOnReload(customValue: false)]
         private     static          bool        s_isDestroyed           = false;
 
         #endregion
@@ -26,6 +29,12 @@ namespace VoxelBusters.CoreLibrary
 
         #endregion
 
+        #region Static properties
+
+        public static bool IsSingletonActive => (s_sharedInstance != null);
+
+        #endregion
+
         #region Static methods
 
         protected static T GetSingleton()
@@ -33,7 +42,7 @@ namespace VoxelBusters.CoreLibrary
             var     objectType  = typeof(T);
             if (s_isDestroyed) 
             {
-                DebugLogger.LogWarning(string.Format("{0} instance is already destroyed.", objectType));
+                DebugLogger.LogWarning(CoreLibraryDomain.Default, $"{objectType} instance is already destroyed.");
                 return null;
             }
 
@@ -42,7 +51,7 @@ namespace VoxelBusters.CoreLibrary
                 if (s_sharedInstance == null)
                 {
                     // find all the instances that exist in the screen
-                    var     sceneInstances  = FindObjectsOfType(objectType) as T[];
+                    var     sceneInstances  = FindObjectsByType(objectType, FindObjectsSortMode.None) as T[];
                     if (sceneInstances.Length > 0)
                     {
                         // save first element and remove others
@@ -71,12 +80,11 @@ namespace VoxelBusters.CoreLibrary
             return s_sharedInstance;
         }
 
-        public static bool IsSingletonActive
+        protected static bool TryGetSingleton(out T singleton)
         {
-            get
-            {
-                return (s_sharedInstance != null);
-            }
+            singleton    = GetSingleton();
+
+            return (singleton != null);
         }
 
         #endregion

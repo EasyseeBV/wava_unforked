@@ -49,7 +49,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
                 interfaceObject         = CreateInstance(packageType.Assembly, packageType.NativeInterfaceType, args);
             }
 
-            DebugLogger.LogFormat("Created native interface of type: {0}", interfaceObject);
+            DebugLogger.Log(CoreLibraryDomain.NativePlugins, $"Created native interface of type: {interfaceObject}");
             return (TFeatureInterface)interfaceObject;
         }
 
@@ -80,31 +80,27 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         private static object CreateInstance(string assemblyName, string typeName, object[] arguments)
         {
-            Type targetType = null;
+            Type    targetType  = null;
             try
             {
-                targetType  = ReflectionUtility.GetType(assemblyName, typeName);
+                targetType      = ReflectionUtility.GetType(assemblyName, typeName);
                 if (targetType == null)
                 {
-                    targetType      = ReflectionUtility.GetTypeFromCSharpFirstPassAssembly(typeName);
-                    if (targetType == null)
-                    {
-                        targetType  = ReflectionUtility.GetTypeFromCSharpAssembly(typeName);
-                    }
+                    targetType  = ReflectionUtility.GetTypeFromAssemblyCSharp(typeName, includeFirstPass: true);
                 }
 
                 if (arguments == null)
                 {
-                    return Activator.CreateInstance(targetType);
+                    return ReflectionUtility.CreateInstance(targetType);
                 }
                 else
                 {
-                    return Activator.CreateInstance(targetType, arguments);
+                    return ReflectionUtility.CreateInstance(targetType, arguments);
                 }
             }
             catch (Exception e)
             {
-                DebugLogger.LogError(string.Format("Failed when creating instance [Assembly : {0}] [Type : {1}] [Target Type : {2}] [Error : {3}", assemblyName, typeName, targetType, e.Message));
+                DebugLogger.LogError(CoreLibraryDomain.NativePlugins, $"Failed when creating instance. Assembly: {assemblyName} Type: {typeName} TargetType: {targetType} Error: {e.InnerException?.Message ?? e.Message}");
                 return null;
             }
         }

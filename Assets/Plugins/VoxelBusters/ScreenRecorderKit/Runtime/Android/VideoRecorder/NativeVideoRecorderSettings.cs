@@ -1,4 +1,4 @@
-﻿#if UNITY_ANDROID
+#if UNITY_ANDROID
 using UnityEngine;
 
 namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore.Android

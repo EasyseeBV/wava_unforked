@@ -39,11 +39,17 @@ public class ARMapPointMaker : MonoBehaviour {
     private void OnEnable()
     {
         GroupMarkerHandler.OnGroupsMade += WaitForZoom;
+        OnlineMapsTile.OnTileError += OnTileError;
+    }
+
+    private void OnTileError(OnlineMapsTile obj)
+    {
     }
 
     private void OnDisable()
     {
         GroupMarkerHandler.OnGroupsMade -= WaitForZoom;
+        OnlineMapsTile.OnTileError -= OnTileError;
     }
 
     //Replaced ARPoint with ARPointSO

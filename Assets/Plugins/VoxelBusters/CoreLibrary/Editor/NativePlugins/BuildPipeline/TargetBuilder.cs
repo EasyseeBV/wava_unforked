@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
@@ -38,7 +39,7 @@ namespace VoxelBusters.CoreLibrary.Editor.NativePlugins.Build
         private static void BuildAndroid()
         {
             EditorUserBuildSettings.exportAsGoogleAndroidProject = true;
-			PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+			PlayerSettings.SetScriptingBackend(NamedBuildTarget.Android, ScriptingImplementation.IL2CPP);
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.ARM64;
             if (EditorUserBuildSettings.development)
             {

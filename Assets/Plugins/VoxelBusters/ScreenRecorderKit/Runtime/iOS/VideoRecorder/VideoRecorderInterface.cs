@@ -139,9 +139,9 @@ namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore.iOS
             ScreenRecorderKit_VideoRecorder_SaveRecording(m_nativeHandle, filename, listener.NativeHandle, NativeSaveRecordingListener.OnSuccessCallback, NativeSaveRecordingListener.OnFailureCallback);
         }
 
-        public override void ShareRecording(string text, string subject, CompletionCallback callback)
+        public override void ShareRecording(string title, string message, CompletionCallback callback)
         {
-            ScreenRecorderKit_VideoRecorder_ShareRecording(m_nativeHandle, GetNativeActionCompleteListener(callback).NativeHandle, NativeActionCompleteListener.OnSuccessCallback, NativeActionCompleteListener.OnFailureCallback);
+            ScreenRecorderKit_VideoRecorder_ShareRecording(m_nativeHandle, title, message, GetNativeActionCompleteListener(callback).NativeHandle, NativeActionCompleteListener.OnSuccessCallback, NativeActionCompleteListener.OnFailureCallback);
         }
 
 

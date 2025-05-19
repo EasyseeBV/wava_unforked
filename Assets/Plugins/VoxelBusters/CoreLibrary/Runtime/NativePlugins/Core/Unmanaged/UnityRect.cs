@@ -6,33 +6,17 @@ using UnityEngine;
 namespace VoxelBusters.CoreLibrary.NativePlugins
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal struct UnityRect
+    public struct UnityRect
     {
         #region Properties
 
-        public float X
-        {
-            get;
-            set;
-        }
+        public float X { get; set; }
 
-        public float Y
-        {
-            get;
-            set;
-        }
+        public float Y { get; set; }
 
-        public float Width
-        {
-            get;
-            set;
-        }
+        public float Width { get; set; }
 
-        public float Height
-        {
-            get;
-            set;
-        }
+        public float Height { get; set; }
 
         #endregion
 

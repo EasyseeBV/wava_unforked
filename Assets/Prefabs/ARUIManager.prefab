@@ -11239,6 +11239,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_statusText: {fileID: 4394027836573847978}
+  m_timer: {fileID: 0}
 --- !u!222 &4394027836573847979
 CanvasRenderer:
   m_ObjectHideFlags: 0

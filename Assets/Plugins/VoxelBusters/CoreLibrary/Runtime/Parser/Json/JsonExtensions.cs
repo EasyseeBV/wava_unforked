@@ -7,15 +7,15 @@ namespace VoxelBusters.CoreLibrary.Parser
 	{
 		#region Methods
 
-		public static string ToJSON(this IDictionary dictionary)
+		public static string ToJson(this IDictionary dictionary)
 		{
-			string  jsonStr = JsonUtility.ToJSON(dictionary);
+			string  jsonStr = JsonUtility.ToJson(dictionary);
 			return JsonUtility.IsNull(jsonStr) ? null : jsonStr;
 		}
 
-		public static string ToJSON(this IList list)
+		public static string ToJson(this IList list)
 		{
-			string  jsonStr	= JsonUtility.ToJSON(list);
+			string  jsonStr	= JsonUtility.ToJson(list);
 			return JsonUtility.IsNull(jsonStr) ? null : jsonStr;
 		}
 

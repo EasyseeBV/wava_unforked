@@ -48,7 +48,7 @@ namespace VoxelBusters.ScreenRecorderKit
             return base.CanRecord(out error);
         }
 
-        protected override float AspectRatio()
+        protected override float GetAspectRatio()
         {
             return m_camera.aspect;
         }

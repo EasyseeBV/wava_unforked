@@ -38,7 +38,7 @@ namespace VoxelBusters.ScreenRecorderKit
         /// Creates an instance of the video recorder.
         /// </summary>
         /// <param name="runtimeSettings">Runtime configurable properties.</param>
-        public static ScreenRecorderBuilder CreateVideoRecorder(VideoRecorderRuntimeSettings runtimeSettings)
+        public static ScreenRecorderBuilder CreateVideoRecorder(VideoRecorderRuntimeSettings runtimeSettings = null)
         {
             var instance = VideoRecorder.Create(
                 runtimeSettings: runtimeSettings);

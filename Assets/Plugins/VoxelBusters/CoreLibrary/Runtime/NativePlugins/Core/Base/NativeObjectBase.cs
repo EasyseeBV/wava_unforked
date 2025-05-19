@@ -10,11 +10,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
     {
         #region Properties
 
-        protected bool IsDisposed
-        {
-            get;
-            private set; 
-        }
+        protected bool IsDisposed { get; private set; }
 
         #endregion
 
@@ -36,11 +32,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
 
         #region INativeInterface implementation
 
-        public NativeObjectRef NativeObjectRef 
-        { 
-            get; 
-            protected set; 
-        }
+        public NativeObjectRef NativeObjectRef { get; protected set; }
 
         public IntPtr AddrOfNativeObject()
         {
@@ -65,7 +57,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
             }
 
 #if NATIVE_PLUGINS_DEBUG && !UNITY_ANDROID
-            DebugLogger.LogFormat("Disposing native object: {0}", this);
+            DebugLogger.Log(CoreLibraryDomain.NativePlugins, $"Disposing native object: {GetType()}.");
 #endif
 
             if (disposing)

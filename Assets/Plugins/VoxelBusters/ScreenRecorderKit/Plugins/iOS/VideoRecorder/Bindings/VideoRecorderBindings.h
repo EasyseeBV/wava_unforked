@@ -31,8 +31,8 @@ METHOD(void,    ResumeRecording,                    void* owner, void* listener,
 METHOD(void,    StopRecording,                      void* owner, void* listener, ActionCompleteListenerOnSuccessCallback onSuccess, ActionCompleteListenerOnFailureCallback onFailure);
 METHOD(void,    DiscardRecording,                   void* owner, void* listener, ActionCompleteListenerOnSuccessCallback onSuccess, ActionCompleteListenerOnFailureCallback onFailure);
 METHOD(void,    OpenRecording,                      void* owner, void* listener, ActionCompleteListenerOnSuccessCallback onSuccess, ActionCompleteListenerOnFailureCallback onFailure);
-METHOD(void,    ShareRecording,                     void* owner, void* listener, ActionCompleteListenerOnSuccessCallback onSuccess, ActionCompleteListenerOnFailureCallback onFailure);
-METHOD(void,    SaveRecording,                      void* owner, void* fileName, void* listener, SaveRecordingListenerOnSuccessCallback onSuccess, SaveRecordingListenerOnFailureCallback onFailure);
+METHOD(void,    ShareRecording,                     void* owner, const char* title, const char* message, void* listener, ActionCompleteListenerOnSuccessCallback onSuccess, ActionCompleteListenerOnFailureCallback onFailure);
+METHOD(void,    SaveRecording,                      void* owner, const char* fileName, void* listener, SaveRecordingListenerOnSuccessCallback onSuccess, SaveRecordingListenerOnFailureCallback onFailure);
 METHOD(void,    Flush,                              void* owner);
 
 

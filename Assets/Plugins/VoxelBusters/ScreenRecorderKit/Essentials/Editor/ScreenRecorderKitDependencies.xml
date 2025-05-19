@@ -4,6 +4,6 @@
 	<androidPackages>
 		<!--Dependency added for using AndroidX Libraries-->
 		<androidPackage
-			spec="androidx.core:core:1.3.0+" />
+			spec="androidx.core:core:1.8.0+" />
 	</androidPackages>
 </dependencies>

@@ -8,9 +8,9 @@ namespace VoxelBusters.CoreLibrary
     {
         #region Static methods
 
-        public static string CombinePath(string path1, string path2)
+        public static string CombinePath(params string[] paths)
         {
-            return Path.Combine(path1, path2);
+            return Path.Combine(paths);
         }
 
         public static string GetAbsolutePath(string path)
@@ -149,6 +149,23 @@ namespace VoxelBusters.CoreLibrary
             return Directory.Exists(path);
         }
 
+        public static bool IsSubDirectory(string parent, string path)
+        {
+            var parentUri = new Uri(GetUriSafePath(parent));
+            var     childUri    = new Uri(GetUriSafePath(Path.GetDirectoryName(path)));
+            return (parentUri != childUri) && parentUri.IsBaseOf(childUri);
+        }
+
+        private static string GetUriSafePath(string path)
+        {
+            if(IsDirectory(path))
+            {
+                return Path.Combine(path, $"{Path.PathSeparator}");
+            }
+
+            return path;
+        }
+
         public static string GetUniquePath(string path)
         {
             string  uniquePath      = path;
@@ -233,18 +250,24 @@ namespace VoxelBusters.CoreLibrary
 
         public static void DeleteFileOrDirectory(string path, bool throwError = false)
         {
-            var     fileInfo    = new FileInfo(path);
-            if (fileInfo.Exists)
+            if (File.Exists(path))
             {
-                if ((fileInfo.Attributes & FileAttributes.Directory) != 0)
-                {
-                    DeleteDirectory(path, true, throwError);
-                }
-                else
-                {
-                    DeleteFile(path, throwError);
-                }
+                DeleteFile(path, throwError);
             }
+            else if (Directory.Exists(path))
+            {
+                DeleteDirectory(path, true, throwError);
+            }
+        }
+
+        public static string GetFileNameWithoutExtension(string path)
+        {
+            return Path.GetFileNameWithoutExtension(path);
+        }
+
+        public static string GetExtension(string path)
+        {
+            return Path.GetExtension(path);
         }
 
         #endregion

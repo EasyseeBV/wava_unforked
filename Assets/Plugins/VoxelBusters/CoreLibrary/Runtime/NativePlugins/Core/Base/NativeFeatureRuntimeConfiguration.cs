@@ -8,23 +8,11 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
     {
         #region Properties
 
-        public NativeFeatureRuntimePackage[] Packages
-        {
-            get;
-            private set;
-        }
+        public NativeFeatureRuntimePackage[] Packages { get; private set; }
 
-        public NativeFeatureRuntimePackage SimulatorPackage
-        {
-            get;
-            private set;
-        }
+        public NativeFeatureRuntimePackage SimulatorPackage { get; private set; }
 
-        public NativeFeatureRuntimePackage FallbackPackage
-        {
-            get;
-            private set;
-        }
+        public NativeFeatureRuntimePackage FallbackPackage { get; private set; }
 
         #endregion
 
@@ -33,7 +21,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
         public NativeFeatureRuntimeConfiguration(NativeFeatureRuntimePackage[] packages, NativeFeatureRuntimePackage simulatorPackage = null,
             NativeFeatureRuntimePackage fallbackPackage = null)
         {
-            // set properties
+            // Set properties
             Packages            = packages;
             SimulatorPackage    = simulatorPackage;
             FallbackPackage     = fallbackPackage;
@@ -53,7 +41,7 @@ namespace VoxelBusters.CoreLibrary.NativePlugins
                     return SimulatorPackage;
 
                 default:
-                    return Array.Find(Packages, (item) => item.Platform == platform);
+                    return Array.Find(Packages, (item) => item.SupportsPlatform(platform));
             }
         }
 

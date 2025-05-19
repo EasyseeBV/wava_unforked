@@ -11,7 +11,6 @@ namespace VoxelBusters.ScreenRecorderKit
         #region Static fields
 
         private     static      ScreenRecorderKitSettings   s_sharedInstance;
-
         private     static      UnityPackageDefinition      s_package;
 
         #endregion
@@ -37,7 +36,7 @@ namespace VoxelBusters.ScreenRecorderKit
                     s_package   = new UnityPackageDefinition(
                         name: "com.voxelbusters.screenrecorderKit",
                         displayName: "Screen Recorder Kit",
-                        version: "2.0.0",
+                        version: "2.4.2",
                         defaultInstallPath: $"Assets/Plugins/VoxelBusters/ScreenRecorderKit",
                         dependencies: CoreLibrarySettings.Package);
                 }
@@ -93,7 +92,6 @@ namespace VoxelBusters.ScreenRecorderKit
 
         private static ScreenRecorderKitSettings GetSharedInstanceInternal(bool throwError = true)
         {
-
             if (null == s_sharedInstance)
             {
                 // check whether we are accessing in edit or play mode

@@ -6,33 +6,17 @@ using UnityEngine;
 namespace VoxelBusters.CoreLibrary.NativePlugins
 {
     [StructLayout(LayoutKind.Sequential)]
-    internal struct UnityColor
+    public struct UnityColor
     {
         #region Properties
 
-        public float Red
-        {
-            get;
-            set;
-        }
+        public float Red { get; set; }
 
-        public float Green
-        {
-            get;
-            set;
-        }
+        public float Green { get; set; }
 
-        public float Blue
-        {
-            get;
-            set;
-        }
+        public float Blue { get; set; }
 
-        public float Alpha
-        {
-            get;
-            set;
-        }
+        public float Alpha { get; set; }
 
         #endregion
 

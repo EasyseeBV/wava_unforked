@@ -17,7 +17,7 @@ namespace VoxelBusters.CoreLibrary.Editor.NativePlugins
 
         #region Static
 
-        private     static  Database    s_database          = null;
+        private     static  Database    s_database;
 
         #endregion
 
@@ -79,10 +79,7 @@ namespace VoxelBusters.CoreLibrary.Editor.NativePlugins
 
         private static void InitIfRequired()
         {
-            if (s_database != null)
-            {
-                return;
-            }
+            if (s_database != null) return;
 
             // check whether serialized data exists
             s_database  = IOServices.FileExists(kSimulatorDataFilePath)
