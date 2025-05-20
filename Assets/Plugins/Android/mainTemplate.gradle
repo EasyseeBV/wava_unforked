@@ -4,6 +4,7 @@ apply plugin: 'com.android.library'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 // Android Resolver Dependencies Start
+    implementation 'androidx.appcompat:appcompat:1.1.0' // Packages/com.unitynative.sharing/Editor/UnityNativeSharingDependencies.xml:7
     implementation 'androidx.core:core:1.8.0+' // Assets/Plugins/VoxelBusters/ScreenRecorderKit/Essentials/Editor/ScreenRecorderKitDependencies.xml:6
     implementation 'com.google.android.gms:play-services-base:18.5.0' // Assets/Firebase/Editor/AppDependencies.xml:17
     implementation 'com.google.firebase:firebase-analytics:22.3.0' // Assets/Firebase/Editor/MessagingDependencies.xml:15

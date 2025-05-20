@@ -49,24 +49,7 @@ public class ArtistContainer : MonoBehaviour
 
                 if (profilePicture.sprite != null)
                 {
-                    /*var spriteSize = profilePicture.sprite.rect.size;
-                    var maskSize = profilePictureParent.rect.size;
-                    
-                    float spriteW = profilePicture.sprite.rect.width / profilePicture.sprite.pixelsPerUnit;
-                    float spriteH = profilePicture.sprite.rect.height / profilePicture.sprite.pixelsPerUnit;
-
-                    float maskW = profilePictureParent.rect.width;
-                    float maskH = profilePictureParent.rect.height;
-                    
-                    float scaleX = maskW / spriteW;
-                    float scaleY = maskH / spriteH;
-                    
-                    float scaleUniform = Mathf.Max(scaleX, scaleY);
-                    
-                    profilePicture.rectTransform.localScale = new Vector3(scaleUniform, scaleUniform, 1f);*/
-                    
                     var imageAspectRatio = profilePicture.sprite.rect.width / profilePicture.sprite.rect.height;
-                    //profilePicture.transform.localScale = new Vector3(imageAspectRatio, imageAspectRatio, imageAspectRatio);
                     profilePicture.GetComponent<AspectRatioFitter>().aspectRatio = imageAspectRatio;
                 }
             }

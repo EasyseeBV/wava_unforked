@@ -49,8 +49,13 @@ public class ProfileUIManager : MonoBehaviour
 #if UNITY_ANDROID
         if (!Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead))
         {
-            Permission.RequestUserPermission(Permission.ExternalStorageRead);
+            var callbacks = new PermissionCallbacks();
+            callbacks.PermissionDenied += PermissionCallbacks_PermissionDenied;
+            callbacks.PermissionGranted += PermissionCallbacks_PermissionGranted;
+            callbacks.PermissionDeniedAndDontAskAgain += PermissionCallbacks_PermissionDeniedAndDontAskAgain;
+            Permission.RequestUserPermission(Permission.ExternalStorageRead, callbacks);
         }
+        
 #elif UNITY_IOS
         if (!Application.HasUserAuthorization(UserAuthorization.WebCam))
         {
@@ -61,6 +66,21 @@ public class ProfileUIManager : MonoBehaviour
         photosButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Photos));
         favoritesButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Favorites));
         ChangeMenu(MenuNavigation.Photos);
+    }
+    
+    private void PermissionCallbacks_PermissionDeniedAndDontAskAgain(string permissionName)
+    {
+        Debug.Log($"{permissionName} PermissionDeniedAndDontAskAgain");
+    }
+
+    private void PermissionCallbacks_PermissionGranted(string permissionName)
+    {
+        Debug.Log($"{permissionName} PermissionCallbacks_PermissionGranted");
+    }
+
+    private void PermissionCallbacks_PermissionDenied(string permissionName)
+    {
+        Debug.Log($"{permissionName} PermissionCallbacks_PermissionDenied");
     }
     
     private void ChangeMenu(MenuNavigation menu)

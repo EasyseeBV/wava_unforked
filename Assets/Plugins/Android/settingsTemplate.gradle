@@ -21,6 +21,9 @@ dependencyResolutionManagement {
         maven {
             url (unityProjectPath + "/Assets/GeneratedLocalRepo/Firebase/m2repository") // Assets/Firebase/Editor/AppDependencies.xml:22, Assets/Firebase/Editor/FirestoreDependencies.xml:20, Assets/Firebase/Editor/MessagingDependencies.xml:24
         }
+        maven {
+            url "https://maven.google.com" // Packages/com.unitynative.sharing/Editor/UnityNativeSharingDependencies.xml:7
+        }
         mavenLocal()
 // Android Resolver Repos End
         flatDir {

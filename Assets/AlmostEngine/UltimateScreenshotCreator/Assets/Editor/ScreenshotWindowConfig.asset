@@ -14,20 +14,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Config:
     m_DestinationFolder: 3
-    m_RelativePath: Screenshots/
+    m_RelativePath: WAVA/
     m_RootedPath: 
     m_ExportToPhoneGallery: 1
+    m_ExportAsync: 1
     m_FileName: '{width}x{height}-screenshot'
     m_OverwriteFiles: 0
+    m_NumberLeftPadding: 0
     m_FileFormat: 0
     m_JPGQuality: 75
     m_ShareTitle: Share the screenshot
     m_ShareSubject: Nice screenshot
     m_ShareText: Look at this nice screenshot.
-    m_CaptureMode: 1
+    m_CaptureMode: 0
     m_MultisamplingAntiAliasing: 0
     m_ColorFormat: 0
     m_RecomputeAlphaLayer: 0
+    m_DisableHDRPFX: 1
     m_ShotMode: 0
     m_MaxBurstShotsNumber: 20
     m_MaxShotPerSeconds: 30
@@ -228,8 +231,8 @@ MonoBehaviour:
         height: 0
     m_GameViewResolution:
       m_Active: 1
-      m_Width: 365
-      m_Height: 172
+      m_Width: 1284
+      m_Height: 2778
       m_Scale: 1
       m_Orientation: 0
       m_ResolutionName: GameView
@@ -270,8 +273,8 @@ MonoBehaviour:
     m_PreviewSize: 1
     m_PreviewInGameViewWhilePlaying: 0
     m_DontDestroyOnLoad: 1
-    m_StopTimeOnCapture: 1
-    m_PlaySoundOnCapture: 1
+    m_StopTimeOnCapture: 0
+    m_PlaySoundOnCapture: 0
     m_ShotSound: {fileID: 0}
     m_CaptureHotkey:
       m_Shift: 0

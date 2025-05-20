@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.IO;
+using UnityNative.Sharing;
 
 public class ProfilePhotoDetails : MonoBehaviour
 {
@@ -52,7 +53,9 @@ public class ProfilePhotoDetails : MonoBehaviour
 
     private void Share()
     {
-        
-        ShareUtils.ShareImage(openedUserPhoto.CachedSprite.texture, Path.GetFileName(openedUserPhoto.Path), "Screenshot taken from WAVA.");
+        var share = UnityNativeSharing.Create();
+        share.ShareScreenshotAndText("WAVA", openedUserPhoto.Path);
+        //UnityNativeSharing.ShareScreenshotAndText("WAVA", Path.GetFileName(openedUserPhoto.Path), true);
+        //ShareUtils.ShareImage(openedUserPhoto.CachedSprite.texture, Path.GetFileName(openedUserPhoto.Path), "Screenshot taken from WAVA.");
     }
 }

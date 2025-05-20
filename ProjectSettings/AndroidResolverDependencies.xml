@@ -1,5 +1,6 @@
 <dependencies>
   <packages>
+    <package>androidx.appcompat:appcompat:1.1.0</package>
     <package>androidx.core:core:1.8.0+</package>
     <package>com.google.android.gms:play-services-base:18.5.0</package>
     <package>com.google.firebase:firebase-analytics:22.3.0</package>

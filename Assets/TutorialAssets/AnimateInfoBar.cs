@@ -72,7 +72,7 @@ public class AnimateInfoBar: MonoBehaviour
         }
         else 
         {
-            ObjectsToDissapear.ForEach(t => t.SetActive(false));
+            //ObjectsToDissapear.ForEach(t => t.SetActive(false));
             OriginalPos = 0;
         }
 
@@ -106,7 +106,7 @@ public class AnimateInfoBar: MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         
-        LayoutRebuilder.ForceRebuildLayoutImmediate(Rect);
+        //LayoutRebuilder.ForceRebuildLayoutImmediate(Rect);
     }
 
 }

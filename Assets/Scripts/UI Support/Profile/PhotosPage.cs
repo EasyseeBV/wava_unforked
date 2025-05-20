@@ -6,6 +6,8 @@ using System.Linq;
 using AlmostEngine.Screenshot;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Android;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class PhotosPage : MonoBehaviour
@@ -18,13 +20,62 @@ public class PhotosPage : MonoBehaviour
     [SerializeField] private ContentSizeFitter contentSizeFitter;
     [SerializeField] private List<RectTransform> layoutAreasToRefresh = new();
     [SerializeField] private Button refreshButton;
+    [SerializeField] private GameObject gallery;
 
     [Header("Storage Path Finder")]
     [SerializeField] private ScreenshotManager screenshotManager;
-
+    
+    [Header("Debugging")]
+    [SerializeField] private bool skipRefreshAllLayouts;
+    [SerializeField] private bool preload;
+    [SerializeField] private Image closeButtonImage;
+    
+    private List<UserPhoto> photos = new();
+    
     private void Awake()
     {
-        refreshButton?.onClick.AddListener(Open);
+        refreshButton?.onClick.AddListener(() =>
+        {
+            if (!Permission.HasUserAuthorizedPermission("android.permission.READ_MEDIA_IMAGES"))
+            {
+                if (!Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead))
+                {
+                    var callbacks = new PermissionCallbacks();
+                    callbacks.PermissionDenied += PermissionCallbacks_PermissionDenied;
+                    callbacks.PermissionGranted += PermissionCallbacks_PermissionGranted;
+                    callbacks.PermissionDeniedAndDontAskAgain += PermissionCallbacks_PermissionDeniedAndDontAskAgain;
+                    Permission.RequestUserPermission(Permission.ExternalStorageRead, callbacks);
+                }
+            }
+            else
+            {
+                Open();   
+            }
+        });
+
+        if (preload)
+        {
+            gallery.SetActive(true);
+            closeButtonImage.enabled = false;
+            skipRefreshAllLayouts = false;
+            Open();
+        }
+    }
+    
+    private void PermissionCallbacks_PermissionDeniedAndDontAskAgain(string permissionName)
+    {
+        Debug.Log($"{permissionName} PermissionDeniedAndDontAskAgain");
+    }
+
+    private void PermissionCallbacks_PermissionGranted(string permissionName)
+    {
+        Debug.Log($"{permissionName} PermissionCallbacks_PermissionGranted");
+        Open();
+    }
+
+    private void PermissionCallbacks_PermissionDenied(string permissionName)
+    {
+        Debug.Log($"{permissionName} PermissionCallbacks_PermissionDenied");
     }
 
     public void Open()
@@ -39,9 +90,9 @@ public class PhotosPage : MonoBehaviour
 
     public void Close()
     {
-        foreach (Transform t in photosLayoutArea)
+        foreach (var photo in photos)
         {
-            if(t.GetComponent<UserPhoto>()) t.gameObject.SetActive(false);
+            
         }
     }
 
@@ -69,6 +120,17 @@ public class PhotosPage : MonoBehaviour
         }
         
         string[] files = Directory.GetFiles(path, "*.png");
+        if (files.Length != photos.Count)
+        {
+            foreach (var photo in photos)
+            {
+                photo.gameObject.SetActive(false);
+            }
+
+            photos.Clear();
+        }
+        else yield break; // all images are already loaded
+        
         List<Sprite> sprites = new List<Sprite>();
 
         if (files.Length != AppCache.LocalGallery.Count)
@@ -92,12 +154,11 @@ public class PhotosPage : MonoBehaviour
 
         int count = 0;
 
-        Debug.Log($"spr: {sprites.Count} | files {files.Length}");
-
         for (int i = 0; i < sprites.Count; i++)
         {
             UserPhoto photo = Instantiate(userPhotoPrefab, photosLayoutArea);
             photo.Init(sprites[i], files[i]);
+            photos.Add(photo);
             LayoutRebuilder.ForceRebuildLayoutImmediate(photosLayoutArea as RectTransform); // Force immediate rebuild
         }
 
@@ -139,10 +200,22 @@ public class PhotosPage : MonoBehaviour
             yield return null; // Wait one frame
             contentSizeFitter.enabled = true;
         }
-
+        
         foreach (var l in layoutAreasToRefresh)
         {
+            if (skipRefreshAllLayouts) continue;
+            yield return new WaitForEndOfFrame();
             LayoutRebuilder.ForceRebuildLayoutImmediate(l);
+        }
+
+        yield return new WaitForEndOfFrame();
+        
+        if (preload)
+        {
+            preload = false;
+            skipRefreshAllLayouts = true;
+            closeButtonImage.enabled = true;
+            gallery.SetActive(false);
         }
     }
 }
