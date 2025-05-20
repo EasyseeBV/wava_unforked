@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.IO;
 
 public class HotspotManager : MonoBehaviour
 {   
@@ -46,6 +47,7 @@ public class HotspotManager : MonoBehaviour
     [HideInInspector] public float ZoomLevel = 16;
     public static float Zoom = 16;
     public static event Action<float> OnDistanceValidated;
+    public static event Action OnOfflineModeNoLocalInstance;
     
     private bool inReach = false;
     
@@ -303,24 +305,49 @@ public class HotspotManager : MonoBehaviour
     {
         // needs to be reenabled
         if (MapTutorialManager.TutorialActive) return;
+        if (!CanOpenARScene(artwork)) return;
         
         ArTapper.ArtworkToPlace = artwork;
         ArTapper.PlaceDirectly = false; //artwork.PlayARObjectDirectly;
         Debug.LogWarning("PlaceObjectDirectly was disabled");
         ArTapper.DistanceWhenActivated = _distance;
 
-        //SceneManager.LoadScene("AR");
-
         if(string.IsNullOrEmpty(artwork.alt_scene))
         {
-            Debug.Log( "Loading Default AR Scene");
+            Debug.Log("Loading Default AR Scene");
             SceneManager.LoadScene("ARView");
         }
         else
         {
-            Debug.Log( "Loading Alternate Scene " + artwork.alt_scene);
+            Debug.Log("Loading Alternate Scene " + artwork.alt_scene);
             SceneManager.LoadScene(artwork.alt_scene);
         }
+    }
+
+    private bool CanOpenARScene(ArtworkData artwork)
+    {
+        // If the user is online
+        if (!FirebaseLoader.OfflineMode) return true;
+        // if the artwork is a preset, without content
+        if (!string.IsNullOrEmpty(artwork.preset) && artwork.content_list.Count <= 0) return true;
+
+        foreach (var content in artwork.content_list)
+        {
+            var uri = new Uri(content.media_content);
+            string encodedPath = uri.AbsolutePath;
+            string decodedPath = Uri.UnescapeDataString(encodedPath);
+            string fileName = Path.GetFileName(decodedPath);
+            string localPath = Path.Combine(AppCache.ContentFolder, fileName);
+            
+            // if the file does not exist locally, return
+            if (!File.Exists(localPath))
+            {
+                OnOfflineModeNoLocalInstance?.Invoke();
+                return false;
+            }
+        }
+        
+        return true;
     }
 
     public ArtworkData GetHotspotArtwork()

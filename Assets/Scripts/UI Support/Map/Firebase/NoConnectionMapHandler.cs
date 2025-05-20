@@ -31,7 +31,7 @@ public class NoConnectionMapHandler : MonoBehaviour
         firebaseLoader = FindObjectOfType<FirebaseLoader>();
     }
 
-    public void Display() => CheckDisplay();
+    public void TryDisplay() => CheckDisplay();
     public void ForceDisplay() => content.SetActive(true);
 
     private void CheckDisplay()

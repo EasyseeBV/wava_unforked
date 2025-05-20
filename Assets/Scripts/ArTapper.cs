@@ -297,7 +297,7 @@ public class ArTapper : MonoBehaviour
                         {
                             if (FirebaseLoader.OfflineMode)
                             {
-                                noConnectionMapHandler.Display();
+                                noConnectionMapHandler.TryDisplay();
                                 //uiTutorialContainer.gameObject.SetActive(false);
                                 return;
                             }
@@ -376,7 +376,7 @@ public class ArTapper : MonoBehaviour
                 // failed to download handling needs to be done here
                 if (FirebaseLoader.OfflineMode)
                 {
-                    noConnectionMapHandler.Display();
+                    noConnectionMapHandler.TryDisplay();
                     //uiTutorialContainer.gameObject.SetActive(false);
                     return;
                 }

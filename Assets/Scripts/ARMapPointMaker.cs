@@ -42,14 +42,12 @@ public class ARMapPointMaker : MonoBehaviour {
         OnlineMapsTile.OnTileError += OnTileError;
     }
 
-    private void OnTileError(OnlineMapsTile obj)
-    {
-    }
 
     private void OnDisable()
     {
         GroupMarkerHandler.OnGroupsMade -= WaitForZoom;
-        OnlineMapsTile.OnTileError -= OnTileError;
+        HotspotManager.OnOfflineModeNoLocalInstance -= OnFailedToEnterAR;
+        if (!mapLoadFailed) OnlineMapsTile.OnTileError -= OnTileError;
     }
 
     //Replaced ARPoint with ARPointSO
@@ -118,7 +116,7 @@ public class ARMapPointMaker : MonoBehaviour {
             loadingCircle.StopLoading();
             
             loadedHotspots = true;
-            noConnectionMapHandler.Display();
+            noConnectionMapHandler.TryDisplay();
             OnHotspotsSpawned?.Invoke();
         }
         catch (Exception e)
@@ -128,6 +126,22 @@ public class ARMapPointMaker : MonoBehaviour {
             loadingCircle.StopLoading();
             noConnectionMapHandler.ForceDisplay();
         }
+    }
+
+    private bool mapLoadFailed = false;
+    private void OnTileError(OnlineMapsTile obj)
+    {
+        if (mapLoadFailed) return;
+        if (!FirebaseLoader.OfflineMode) return;
+        
+        mapLoadFailed = true;
+        noConnectionMapHandler.ForceDisplay();
+        OnlineMapsTile.OnTileError -= OnTileError;
+    }
+    
+    private void OnFailedToEnterAR()
+    {
+        noConnectionMapHandler.ForceDisplay();
     }
 
     private bool onceZoom = false;
