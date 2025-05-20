@@ -17,6 +17,8 @@ public static class AppCache
     public static readonly string MediaFolder = Path.Combine(Application.persistentDataPath, "media");
     public static readonly string ContentFolder = Path.Combine(Application.persistentDataPath, "content");
     
+    public static Dictionary<string, Sprite> LocalGallery { get; set; } = new Dictionary<string, Sprite>();
+    
     public static bool Loaded { get; private set; } = false;
     
     #region Loading local cache

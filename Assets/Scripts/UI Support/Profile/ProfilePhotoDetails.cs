@@ -52,6 +52,7 @@ public class ProfilePhotoDetails : MonoBehaviour
 
     private void Share()
     {
+        
         ShareUtils.ShareImage(openedUserPhoto.CachedSprite.texture, Path.GetFileName(openedUserPhoto.Path), "Screenshot taken from WAVA.");
     }
 }

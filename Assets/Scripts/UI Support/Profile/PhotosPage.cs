@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using AlmostEngine.Screenshot;
 using TMPro;
 using UnityEngine;
@@ -46,7 +47,7 @@ public class PhotosPage : MonoBehaviour
 
     IEnumerator LoadAllImages()
     {
-        string path = screenshotManager.GetExportPath();//FOLDER_PATH;
+        string path = screenshotManager.GetExportPath();
         if (!Directory.Exists(path))
         {
             Debug.LogError("Directory does not exist: " + path);
@@ -67,14 +68,21 @@ public class PhotosPage : MonoBehaviour
             infoLabel.text = "";
         }
         
-        string[] files = Directory.GetFiles(path, "*.png"); // Assuming PNG images, you can add other formats if needed.
+        string[] files = Directory.GetFiles(path, "*.png");
         List<Sprite> sprites = new List<Sprite>();
-        
-        foreach (var t in files)
-        {
-            yield return StartCoroutine(LoadImage(t, sprites));
-        }
 
+        if (files.Length != AppCache.LocalGallery.Count)
+        {
+            foreach (var t in files)
+            {
+                yield return StartCoroutine(LoadImage(t, sprites));
+            }
+        }
+        else
+        {
+            sprites = AppCache.LocalGallery.Values.ToList();
+        }
+        
         if (infoLabel != null)
         {
             infoLabel.text = "";
@@ -99,6 +107,12 @@ public class PhotosPage : MonoBehaviour
 
     IEnumerator LoadImage(string filePath, List<Sprite> sprites)
     {
+        if (AppCache.LocalGallery.ContainsKey(filePath))
+        {
+            sprites.Add(AppCache.LocalGallery[filePath]);
+            yield break;
+        }
+        
         byte[] fileData = File.ReadAllBytes(filePath);
         Texture2D texture = new Texture2D(2, 2); // Create a temporary texture
         texture.LoadImage(fileData); // Load the image data into the texture
@@ -109,6 +123,8 @@ public class PhotosPage : MonoBehaviour
         Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
         sprite.name = Path.GetFileName(filePath); // Name the sprite after the file
 
+        AppCache.LocalGallery.Add(filePath, sprite);
+        
         sprites.Add(sprite);
     }
     

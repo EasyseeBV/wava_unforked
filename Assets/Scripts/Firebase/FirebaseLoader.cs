@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using AlmostEngine.Screenshot;
 using Firebase;
 using Firebase.Firestore;
 using Firebase.Messaging;
@@ -74,12 +75,15 @@ public class FirebaseLoader : MonoBehaviour
     [SerializeField] private bool downloadArtworkContentOnStartup = false;
     [Space]
     [SerializeField] private bool downloadHomeScreenContent = false;
+    [SerializeField] private bool createLocalGallery = true;
     [Space]
     [SerializeField] private bool ignoreNotificationSubscription = false;
     [Space]
     [SerializeField] private bool startInOfflineMode = false;
-        
-
+    
+    [Header("Setup Dependencies")]
+    [SerializeField] private ScreenshotManager screenshotManager;
+    
     #region Setup
     private void Awake()
     {
@@ -220,6 +224,30 @@ public class FirebaseLoader : MonoBehaviour
             await AppCache.SaveExhibitionsCache();
         }
 
+        if (createLocalGallery && screenshotManager != null)
+        {
+            string path = screenshotManager.GetExportPath();
+            if (Directory.Exists(path))
+            {
+                string[] files = Directory.GetFiles(path, "*.png");
+                List<Sprite> sprites = new List<Sprite>();
+
+                foreach (var file in files)
+                {
+                    byte[] fileData = await File.ReadAllBytesAsync(file);
+                    Texture2D texture = new Texture2D(2, 2);
+                    texture.LoadImage(fileData);
+                    
+                    Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                    sprite.name = Path.GetFileName(file);
+
+                    AppCache.LocalGallery.Add(file, sprite);
+        
+                    sprites.Add(sprite);
+                }
+            }
+        }
+
         if (downloadHomeScreenContent)
         {
             OnStartUpEventProcessed?.Invoke($"Downloading new exhibitions...");
@@ -232,7 +260,6 @@ public class FirebaseLoader : MonoBehaviour
             {
                 await artwork.GetAllImages();
             }
-            
             
             Debug.Log("<color=red>Done downloading.</color>");
         }

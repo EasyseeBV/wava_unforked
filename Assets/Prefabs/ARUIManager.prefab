@@ -5537,8 +5537,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 194.91574, y: -52}
-  m_SizeDelta: {x: 359.83148, y: 0}
+  m_AnchoredPosition: {x: 187.57721, y: -52}
+  m_SizeDelta: {x: 359.83, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &2845553719640039379
 CanvasRenderer:
@@ -7254,7 +7254,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 179.91574, y: -30}
+  m_AnchoredPosition: {x: 179.915, y: -30}
   m_SizeDelta: {x: 343, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &6372674772452499075
@@ -11321,8 +11321,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 194.91574, y: -52}
-  m_SizeDelta: {x: 359.83148, y: 0}
+  m_AnchoredPosition: {x: 187.57721, y: -52}
+  m_SizeDelta: {x: 359.83, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &4394027836648306551
 CanvasRenderer:
@@ -14758,7 +14758,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 179.91574, y: -30}
+  m_AnchoredPosition: {x: 179.915, y: -30}
   m_SizeDelta: {x: 343, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &4721484424951356675
@@ -23317,11 +23317,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 11400050, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
       propertyPath: m_GameViewResizingWaitingTime
-      value: 0.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400050, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
       propertyPath: m_GameViewResizingWaitingFrames
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
