@@ -189,7 +189,7 @@ public class ArtworkUIManager : MonoBehaviour
         {
             // guard clause to avoid populating in the incorrect menu or scene
             if (currentMenuNavigation != MenuNavigation.Artworks || currentSceneName != SceneManager.GetActiveScene().name) return;
-            // double guard
+            // double guard - Unity issue
             if (currentMenuNavigation != MenuNavigation.Artworks || currentSceneName != SceneManager.GetActiveScene().name) return;
             
             ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();

@@ -269,8 +269,6 @@ public class ArTapper : MonoBehaviour
                     var elevatorObj = Instantiate(elevator);
                     arObject.Add(elevatorObj);
                     contentDict.TryAdd(contentDict.Count, elevatorObj);
-                    elevatorObj.transform.localPosition = new Vector3(elevatorObj.transform.localPosition.x + 1.15f, elevatorObj.transform.localPosition.y, elevatorObj.transform.localPosition.z + 0.15f);
-                    elevatorObj.transform.localRotation *= Quaternion.Euler(0f, 130f, 0f);
                     contentLoadedCount++;
                     break;
                 case "Monument":
@@ -302,8 +300,8 @@ public class ArTapper : MonoBehaviour
                                 return;
                             }
                             
-                            var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content, downloadBar, 0);
-                            path = results.localPath;
+                            var result = await DownloadManager.Instance.BackgroundDownloadMedia(AppCache.ContentFolder, content.media_content, downloadBar, 0);
+                            path = result.localPath;
                         }
                         else if (File.Exists(localPath)) // if the file does exist, set the path to that location
                         {
@@ -381,7 +379,7 @@ public class ArTapper : MonoBehaviour
                     return;
                 }
                 
-                var results = await FirebaseLoader.DownloadMedia(AppCache.ContentFolder, content.media_content, downloadBar, i);
+                var results = await DownloadManager.Instance.BackgroundDownloadMedia(AppCache.ContentFolder, content.media_content, downloadBar, i);
                 path = results.localPath;
                 if (!string.IsNullOrEmpty(path) && File.Exists(path))
                 {
@@ -406,7 +404,6 @@ public class ArTapper : MonoBehaviour
                     var videoPlayer = arObject.Add(content, "file:///" + path, player =>
                     {
                         Debug.Log("Video prepared");
-                        //player.gameObject.AddComponent<ARAnchor>();
                         contentLoadedCount++;
                         if (contentLoadedCount >= contentTotalCount)
                         {

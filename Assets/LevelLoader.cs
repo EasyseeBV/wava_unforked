@@ -48,7 +48,7 @@ public class LevelLoader : MonoBehaviour
         
         while (!operation.isDone)
         {
-            if (operation.progress < 0.9f || !FirebaseLoader.Initialized)
+            if (operation.progress < 0.9f || !FirebaseLoader.Initialized || !FirebaseLoader.SetupComplete)
             {
                 loadingImage.transform.Rotate(Vector3.forward * (rotationSpeed * Time.deltaTime));
             }

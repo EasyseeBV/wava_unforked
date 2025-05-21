@@ -63,6 +63,15 @@ public class ArtworkShower : MonoBehaviour
             if (artwork.artwork_image_references.Count > 0)
             {
                 var images = await artwork.GetImages(1);
+
+                if (images.Count <= 0)
+                {
+                    Debug.Log($"Removed artwork from display, could not get any images: OfflineMode status: [{FirebaseLoader.OfflineMode}]");
+                    ARPhoto.sprite = null;
+                    gameObject.SetActive(false);
+                    return;
+                }
+                
                 ARPhoto.sprite = images.Count > 0 ? images[0] : null;
 
                 if (ARPhoto.sprite != null)
@@ -71,12 +80,18 @@ public class ArtworkShower : MonoBehaviour
                     ARPhoto.GetComponent<AspectRatioFitter>().aspectRatio = imageAspectRatio;
                 }
             }
-            else ARPhoto.sprite = null;
+            else
+            {
+                Debug.Log($"Removed artwork from display, could not get any images: OfflineMode status: [{FirebaseLoader.OfflineMode}]");
+                ARPhoto.sprite = null;
+                gameObject.SetActive(false);
+            }
         }
         catch (Exception e)
         {
             ARPhoto.sprite = null;
-            Debug.Log("Failed to set ArtworkShower image: " + e);
+            Debug.Log($"Failed to set ArtworkShower image: {e} | OfflineMode status: [{FirebaseLoader.OfflineMode}]");
+            gameObject.SetActive(false);
         }
     }
 
