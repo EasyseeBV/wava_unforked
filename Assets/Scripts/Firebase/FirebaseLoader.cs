@@ -227,6 +227,7 @@ public class FirebaseLoader : MonoBehaviour
         if (createLocalGallery && screenshotManager != null)
         {
             string path = screenshotManager.GetExportPath();
+            OnStartUpEventProcessed?.Invoke($"Loading local storage...");
             if (Directory.Exists(path))
             {
                 string[] files = Directory.GetFiles(path, "*.png");
@@ -246,6 +247,8 @@ public class FirebaseLoader : MonoBehaviour
                     sprites.Add(sprite);
                 }
             }
+
+            ARGalleryPage.StoragePath = path;
         }
 
         if (downloadHomeScreenContent)

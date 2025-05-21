@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using AlmostEngine.Screenshot;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class ARGalleryPage : AnimateInfoBar
@@ -23,6 +25,7 @@ public class ARGalleryPage : AnimateInfoBar
 
     private float backgroundHeight = 0;
     private float galleryParentHeight = 0;
+    public static string StoragePath = string.Empty;
     
     protected override void Awake()
     {
@@ -42,9 +45,9 @@ public class ARGalleryPage : AnimateInfoBar
         base.StartRectAnimation(hide);
         if (!hide)
         {
-            if (coroutine != null) StopCoroutine(coroutine);
             content.SetActive(true);
-            coroutine = StartCoroutine(ShowPhotos());
+
+            ShowPhotos();
         }
     }
 
@@ -54,91 +57,71 @@ public class ARGalleryPage : AnimateInfoBar
         if(hidden) content.SetActive(false);
     }
 
-    private IEnumerator ShowPhotos()
+    private async void ShowPhotos()
     {
-        string path = screenshotManager.GetExportPath();
+        if (StoragePath == string.Empty) StoragePath = screenshotManager.GetExportPath();
+        var files = Directory.GetFiles(StoragePath, "*.png");
         
-        if (!Directory.Exists(path))
-        {
-            Debug.Log("Could not open gallery as the path did not exist");
-            yield break;
-        }
-        
-        // Get all files
-        string[] files = Directory.GetFiles(path, "*.png");
-        if (files.Length != photos.Count)
-        {
-            foreach (var photo in photos)
-            {
-                photo.gameObject.SetActive(false);
-            }
+        if (files.Length == photos.Count) return;
 
+        try
+        {
+            // clear out
+            foreach (var p in photos) Destroy(p.gameObject);
             photos.Clear();
-        }
-        else yield break; // all images are already loaded
-        
-        // Collect all images
-        List<Sprite> sprites = new List<Sprite>();
 
-        if (files.Length != AppCache.LocalGallery.Count)
-        {
-            foreach (var t in files)
+            // kick off all loads in parallel
+            var loadTasks = files.Select(f => LoadSpriteAsync(f)).ToArray();
+
+            // wait for them all
+            Sprite[] sprites = await Task.WhenAll(loadTasks);
+
+            // instantiate on the main thread
+            for (int i = 0; i < sprites.Length; i++)
             {
-                yield return StartCoroutine(LoadImage(t, sprites));
+                var photo = Instantiate(userPhoto, layout);
+                photo.Init(sprites[i], files[i]);
+                photo.IsARView = true;
+                photos.Add(photo);
             }
+
+            LayoutPhotos();
         }
-        else
+        catch (Exception e)
         {
-            sprites = AppCache.LocalGallery.Values.ToList();
+            content.gameObject.SetActive(false);
+            Debug.LogError($"Error loading photos: {e.Message}");
         }
-
-        for (int i = 0; i < sprites.Count; i++)
-        {
-            UserPhoto photo = Instantiate(userPhoto, layout);
-            photo.Init(sprites[i], files[i]);
-            photo.IsARView = true;
-            photos.Add(photo);
-        }
-
-        if (photos.Count > 0)
-        {
-            int rows = Mathf.CeilToInt( photos.Count / 3f );
-            float extra = (175f + 10) * rows;
-            
-            background.sizeDelta = new Vector2(
-                background.sizeDelta.x,
-                backgroundHeight + extra
-            );
-
-            galleryParent.sizeDelta = new Vector2(
-                galleryParent.sizeDelta.x,
-                galleryParentHeight + extra
-            );
-        }
-
     }
     
-    private IEnumerator LoadImage(string filePath, List<Sprite> sprites)
+    private async Task<Sprite> LoadSpriteAsync(string filePath)
     {
-        if (AppCache.LocalGallery.TryGetValue(filePath, out var value))
+        if (AppCache.LocalGallery.TryGetValue(filePath, out var spr))
         {
-            sprites.Add(value);
-            yield break;
+            return spr;
         }
         
-        byte[] fileData = File.ReadAllBytes(filePath);
-        Texture2D texture = new Texture2D(2, 2); // Create a temporary texture
-        texture.LoadImage(fileData); // Load the image data into the texture
-
-        yield return null;
-
-        // Convert texture to sprite
-        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-        sprite.name = Path.GetFileName(filePath); // Name the sprite after the file
-
-        AppCache.LocalGallery.Add(filePath, sprite);
-        
-        sprites.Add(sprite);
+        byte[] data = await File.ReadAllBytesAsync(filePath);
+        // Texture2D.LoadImage is still CPU‐bound, but usually fast enough per image
+        var tex = new Texture2D(2, 2);
+        tex.LoadImage(data);
+        var sprite = Sprite.Create(
+            tex,
+            new Rect(0, 0, tex.width, tex.height),
+            new Vector2(0.5f, 0.5f)
+        );
+        sprite.name = Path.GetFileName(filePath);
+        AppCache.LocalGallery[filePath] = sprite;
+        return sprite;
     }
 
+    private void LayoutPhotos()
+    {
+        int rows = Mathf.CeilToInt( photos.Count / 3f );
+        float extra = (175f + 10) * rows;
+        background.sizeDelta = new Vector2(background.sizeDelta.x,
+            backgroundHeight + extra);
+        galleryParent.sizeDelta = new Vector2(galleryParent.sizeDelta.x,
+            galleryParentHeight + extra);
+    }
 }
