@@ -169,7 +169,7 @@ public class OnlineMapsMarker3D : OnlineMapsMarkerBase
         {
             if (_visible == value) return;
             _visible = value;
-            instance.SetActive(value);
+            if (!isGroupMarker) instance.SetActive(value);
             
             switch (isGroupMarker)
             {
