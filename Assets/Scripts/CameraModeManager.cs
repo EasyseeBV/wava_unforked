@@ -10,6 +10,7 @@ public class CameraModeManager : MonoBehaviour
 {
     [SerializeField] private ScreenRecorderDemo screenRecorder;
     [SerializeField] private ScreenshotManager screenshotManager;
+    [SerializeField] private ScreenshotAR screenshotAR;
 
     [SerializeField] private CameraMode mode = CameraMode.Photo;
 
@@ -25,8 +26,9 @@ public class CameraModeManager : MonoBehaviour
         switch (mode)
         {
             case CameraMode.Photo:
-                screenshotManager.Capture();
                 Handheld.Vibrate();
+                screenshotAR.Capture();
+                //screenshotManager.Capture();
                 break;
             case CameraMode.Video:
                 if (screenRecorder.CheckIsRecording())

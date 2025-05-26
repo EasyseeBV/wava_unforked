@@ -39,6 +39,7 @@ public class ARMapPointMaker : MonoBehaviour {
     private void OnEnable()
     {
         GroupMarkerHandler.OnGroupsMade += WaitForZoom;
+        HotspotManager.OnOfflineModeNoLocalInstance += OnFailedToEnterAR;
         OnlineMapsTile.OnTileError += OnTileError;
     }
 

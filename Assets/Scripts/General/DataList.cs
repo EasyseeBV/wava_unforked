@@ -17,64 +17,61 @@ public class DataList
         
         Uri uri = new Uri(key);
         string fileName = Path.GetFileName(uri.LocalPath);
+    
+        if (data.TryGetValue(fileName, out var sprite))
+        {
+            return (sprite, false);
+        }
+
+        // Construct the local file path.
         string localPath = Path.Combine(AppCache.MediaFolder, fileName);
         
-        if (File.Exists(localPath))
+        bool requiresSave = false;
+    
+        // Check if the file is already cached locally. Otherwise, download it.
+        if (!File.Exists(localPath))
         {
-            try
+            var results = await FirebaseLoader.DownloadImage(AppCache.MediaFolder, key, null);
+            localPath = results.localPath;
+            requiresSave = results.downloaded;
+            if (string.IsNullOrEmpty(localPath) || !File.Exists(localPath))
             {
-                byte[] existingData = File.ReadAllBytes(localPath);
-                var tmpTex = new Texture2D(2, 2);
-                if (!tmpTex.LoadImage(existingData))
-                {
-                    Debug.LogWarning("Cached image corrupted; re-downloading");
-                    File.Delete(localPath);
-                    // fall through to download
-                }
-                else
-                {
-                    // it's good—create sprite and return
-                    var goodSprite = Sprite.Create(
-                        tmpTex,
-                        new Rect(0,0,tmpTex.width, tmpTex.height),
-                        new Vector2(0.5f,0.5f));
-                    return (goodSprite, false);
-                }
+                Debug.LogError($"Failed to obtain a valid file for key: {key}");
+                return (null, false);
             }
-            catch
+
+            if (!firebaseData.cached.Contains(localPath))
             {
-                File.Delete(localPath);
+                firebaseData.cached.Add(localPath);
             }
         }
     
-        // Download afresh
-        var (downloadedPath, didDownload) =
-            await DownloadManager.Instance.BackgroundDownloadImage(
-                AppCache.MediaFolder,
-                key,
-                null);
-
-        if (string.IsNullOrEmpty(downloadedPath))
+        try
         {
-            Debug.LogError($"Failed to download image at {key}");
+            // Read the file bytes.
+            byte[] imageData = await File.ReadAllBytesAsync(localPath);
+        
+            // Create a texture and load image data.
+            Texture2D texture = new Texture2D(2, 2); // size will be replaced by loaded image dimensions
+            if (!texture.LoadImage(imageData))
+            {
+                Debug.LogError($"Failed to load image data from file: {localPath}");
+                return (null, false);
+            }
+        
+            // Create a Sprite from the texture.
+            sprite = Sprite.Create(texture,
+                new Rect(0, 0, texture.width, texture.height),
+                new Vector2(0.5f, 0.5f));
+            // Cache the sprite.
+            data.TryAdd(fileName, sprite);
+            return (sprite, requiresSave);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Error loading sprite from file {localPath}: {e.Message}");
             return (null, false);
         }
-
-        // record caching
-        if (!firebaseData.cached.Contains(downloadedPath))
-            firebaseData.cached.Add(downloadedPath);
-
-        // load final sprite
-        byte[] imageData = await File.ReadAllBytesAsync(downloadedPath);
-        var texture = new Texture2D(2, 2);
-        texture.LoadImage(imageData);
-        var sprite = Sprite.Create(
-            texture,
-            new Rect(0, 0, texture.width, texture.height),
-            new Vector2(0.5f, 0.5f));
-
-        data.TryAdd(fileName, sprite);
-        return (sprite, didDownload);
     }
 
     public int Count() => data.Count;

@@ -305,7 +305,10 @@ public class HotspotManager : MonoBehaviour
     {
         // needs to be reenabled
         if (MapTutorialManager.TutorialActive) return;
-        if (!CanOpenARScene(artwork)) return;
+        if (!CanOpenARScene(artwork))
+        {
+            return;
+        }
         
         ArTapper.ArtworkToPlace = artwork;
         ArTapper.PlaceDirectly = false; //artwork.PlayARObjectDirectly;

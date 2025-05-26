@@ -102,7 +102,6 @@ public class ARGalleryPage : AnimateInfoBar
         }
         
         byte[] data = await File.ReadAllBytesAsync(filePath);
-        // Texture2D.LoadImage is still CPU‐bound, but usually fast enough per image
         var tex = new Texture2D(2, 2);
         tex.LoadImage(data);
         var sprite = Sprite.Create(

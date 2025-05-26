@@ -23,12 +23,6 @@ public class DownloadManager : MonoBehaviour
 
     public async Task<(string localPath, bool downloaded)> BackgroundDownloadMedia(string storagePath, string path, ARDownloadBar downloadBar, int index = 0)
     {
-        return await FirebaseLoader.DownloadContent(storagePath, path, downloadBar, index);
-    }
-
-    public async Task<(string localPath, bool downloaded)> BackgroundDownloadImage(string storagePath, string path,
-        ARDownloadBar downloadBar, int index = 0)
-    {
-        return await FirebaseLoader.DownloadImage(storagePath, path, downloadBar, index);
+        return await FirebaseLoader.DownloadMedia(storagePath, path, downloadBar, index);
     }
 }

@@ -1391,68 +1391,93 @@ public class FirebaseLoader : MonoBehaviour
 
     #region Downloading Media
 
-    public static async Task<(string localPath, bool downloaded)> DownloadContent(string storagePath, string path, ARDownloadBar downloadBar, int index = 0)
+    public static async Task<(string localPath, bool downloaded)> DownloadMedia(string storagePath, string path, ARDownloadBar downloadBar, int index = 0)
     {
-        if (string.IsNullOrEmpty(storagePath))
+        Debug.Log("Attempting to download");
+        
+        if (string.IsNullOrEmpty(path))
         {
-            Debug.LogWarning("Tried loading an empty URL");
-            downloadBar?.FailedDownload();
+            Debug.LogWarning("Tried loading an empty string...");
+            if (downloadBar) downloadBar.FailedDownload();
             return (string.Empty, false);
         }
 
-        // ensure folder exists
-        Directory.CreateDirectory(storagePath);
-
-        // figure out filename
-        Uri uri = new Uri(storagePath);
-        string fileName = Path.GetFileName(uri.LocalPath);
-        if (string.IsNullOrEmpty(fileName) || !fileName.Contains("."))
-            fileName = Guid.NewGuid().ToString() + ".dat";
-
-        string localPath = Path.Combine(storagePath, fileName);
-        string tmpPath   = localPath + ".tmp";
-
-        // if already exists, caller will validate
-        if (File.Exists(localPath))
-            return (localPath, false);
-
         try
         {
-            using (var req = UnityWebRequest.Get(storagePath))
+            // Ensure the media folder exists
+            if (!Directory.Exists(storagePath))
             {
-                req.downloadHandler = new DownloadHandlerFile(tmpPath);
-                var op = req.SendWebRequest();
+                Directory.CreateDirectory(storagePath);
+            }
 
-                while (!op.isDone)
+            // Determine file name from the URL
+            Uri uri = new Uri(path);
+            string fileName = Path.GetFileName(uri.LocalPath);
+
+            // If we didn't get a valid file name, default to a GUID-based name with a .png extension.
+            if (string.IsNullOrEmpty(fileName) || !fileName.Contains("."))
+            {
+                fileName = Guid.NewGuid().ToString() + ".png";
+            }
+
+            string localPath = Path.Combine(storagePath, fileName);
+
+            // Optionally check if the file already exists
+            if (File.Exists(localPath))
+            {
+                Debug.Log($"File already exists at {localPath}");
+                return (localPath, false);
+            }
+
+            // Create the UnityWebRequest with a DownloadHandlerFile to save the file directly.
+            using (UnityWebRequest request = UnityWebRequest.Get(path))
+            {
+                request.downloadHandler = new DownloadHandlerFile(localPath);
+                
+                // Begin the request
+                UnityWebRequestAsyncOperation operation = request.SendWebRequest();
+
+                // While the download is in progress, update the TMP_Text with the progress percentage.
+                while (!operation.isDone)
                 {
-                    downloadBar?.UpdateProgress(index, (req.downloadProgress * 100f) / 2f);
+                    float progressValue = request.downloadProgress; // value between 0 and 1
+                    if (downloadBar)
+                    {
+                        downloadBar.UpdateProgress(index, (progressValue * 100f) / 2);
+                    }
+                    
+                    // Yield control until the next frame so the UI can update.
                     await Task.Yield();
                 }
 
-                if (req.result != UnityWebRequest.Result.Success)
+                // Check if the download completed successfully.
+                if (request.result == UnityWebRequest.Result.Success)
                 {
-                    Debug.LogError($"Download failed: {req.error}");
-                    downloadBar?.FailedDownload();
-                    if (File.Exists(tmpPath)) File.Delete(tmpPath);
+                    if (downloadBar)
+                    {
+                        downloadBar.UpdateProgress(index, 50);
+                    }
+                    Debug.Log("Downloaded: " + fileName);
+                    return (localPath, true);
+                }
+                else
+                {
+                    Debug.LogError("Error downloading media: " + request.error);
+                    if (downloadBar)
+                    {
+                        downloadBar.FailedDownload();
+                    }
                     return (string.Empty, false);
                 }
-
-                // move into place
-                if (File.Exists(localPath)) File.Delete(localPath);
-                File.Move(tmpPath, localPath);
-
-                downloadBar?.UpdateProgress(index, 50);
-                Debug.Log($"Downloaded: {fileName}");
-                return (localPath, true);
             }
         }
         catch (Exception e)
         {
-            Debug.LogError($"Error downloading media: {e}");
-            downloadBar?.FailedDownload();
-            if (File.Exists(tmpPath)) File.Delete(tmpPath);
-            return (string.Empty, false);
+            Debug.LogError($"Error downloading media: {e.Message} | tried saving to local path: {storagePath}");
+            if (downloadBar) downloadBar.FailedDownload();
         }
+
+        return (string.Empty, false);
     }
     
     /// <summary>

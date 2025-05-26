@@ -79,6 +79,10 @@ public class ArtworkShower : MonoBehaviour
                     var imageAspectRatio = ARPhoto.sprite.rect.width / ARPhoto.sprite.rect.height;
                     ARPhoto.GetComponent<AspectRatioFitter>().aspectRatio = imageAspectRatio;
                 }
+                else
+                {
+                    Debug.Log($"Removed artwork [{artwork.title}] from gallery as it's image failed to load");
+                }
             }
             else
             {
