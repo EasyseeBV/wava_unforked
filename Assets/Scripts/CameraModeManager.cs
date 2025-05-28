@@ -27,8 +27,8 @@ public class CameraModeManager : MonoBehaviour
         {
             case CameraMode.Photo:
                 Handheld.Vibrate();
-                screenshotAR.Capture();
-                //screenshotManager.Capture();
+                //screenshotAR.Capture();
+                screenshotManager.Capture();
                 break;
             case CameraMode.Video:
                 if (screenRecorder.CheckIsRecording())

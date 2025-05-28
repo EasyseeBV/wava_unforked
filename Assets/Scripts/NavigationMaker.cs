@@ -17,7 +17,6 @@ public class NavigationMaker : MonoBehaviour
     private OnlineMapsDrawingLine route;
     public static bool IsNavigating;
 
-
     private void OnEnable() {
         IsNavigating = false;
         

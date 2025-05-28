@@ -32,7 +32,8 @@ public class ScrollDetector : MonoBehaviour
 
         if (currentScroll <= adjustedThreshold)
         {
-            ArtworkUIManager.Instance.AddNewDocument();
+            //Debug.Log("Add new document");
+            //ArtworkUIManager.Instance.AddNewDocument();
         }
     }
 }

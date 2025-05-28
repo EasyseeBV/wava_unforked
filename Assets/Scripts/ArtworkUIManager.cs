@@ -36,7 +36,14 @@ public class ArtworkUIManager : MonoBehaviour
     [Header("Layout Groups")] 
     [SerializeField] private ScrollRect visualAreaScrollRect;
     [SerializeField] private RectTransform defaultLayoutArea; 
-    [SerializeField] private RectTransform artistsLayoutArea; 
+    [SerializeField] private RectTransform artistsLayoutArea;
+
+    [Header("Scroll Rect Info")]
+    [SerializeField] private Canvas parentCanvas;
+    [SerializeField] private RectTransform viewport;
+    [SerializeField] private RectTransform content;
+    
+    private float preloadMargin = 100f; 
     
     [Space]
     public GameObject BackArrow;
@@ -79,39 +86,30 @@ public class ArtworkUIManager : MonoBehaviour
     [Space]
     [SerializeField] private Color navigationActive = Color.black;
     [SerializeField] private Color navigationInactive = Color.grey;
-    
-    [FormerlySerializedAs("cachedGalleryDisplays")]
-    [HideInInspector] public List<ArtworkShower> CachedGalleryDisplays = new ();
+
     [HideInInspector] public GalleryFilter.Filter CurrentFilter = GalleryFilter.Filter.RecentlyAdded;
+
+    private List<ArtworkShower> loadedArtworks = new();
+    private List<ExhibitionCard> loadedExhibitions = new();
+    private List<ArtistContainer> loadedArtists = new();
     
     private MenuNavigation currentMenuNavigation = MenuNavigation.Artworks;
-    public static event Action OnNewDocumentAdded;
 
-    private string currentSceneName = string.Empty;
+    private bool canTryLoadInvisible = false;
+    
 
     private void Awake()
     {
         if (!Instance) Instance = this;
+
+        if (parentCanvas == null) parentCanvas = GetComponentInParent<Canvas>();
         
         loadingCircle?.BeginLoading();
+        visualAreaScrollRect?.onValueChanged.AddListener(_ => TryLoadVisible());
     }
-
-    private void OnEnable()
+    
+    private void Start()
     {
-        currentSceneName = SceneManager.GetActiveScene().name;
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        /*if (HasSelectionMenu) {
-            if (SelectedArtworks) {
-                InitArtworks();
-            } else {
-                InitExhibitions();
-            }
-        }*/
-
         if (SelectedExhibition != null)
         {
             OpenDetailedInformation(SelectedExhibition);
@@ -140,6 +138,11 @@ public class ArtworkUIManager : MonoBehaviour
             else if (AutoLoadDisplay.View == DisplayView.Artworks)
             {
                 InitArtworks();
+                
+                for (int i = 0; i < Mathf.Min(minArtworkCount, loadedArtworks.Count); i++)
+                {
+                    loadedArtworks[i].SetImage();
+                }
             }
         }
 
@@ -149,86 +152,89 @@ public class ArtworkUIManager : MonoBehaviour
         }
     }
 
-    public void ClearStage() 
+    private void ReplaceStage<T>() where T : FirebaseData
     {
-        foreach (Transform child in defaultLayoutArea.transform) {
-            Destroy(child.gameObject);
+        visualAreaScrollRect.verticalNormalizedPosition = 1f;
+        canTryLoadInvisible = false;
+            
+        foreach (var artwork in loadedArtworks)
+        {
+            artwork.gameObject.SetActive(typeof(T) == typeof(ArtworkData));
         }
         
-        foreach (Transform child in artistsLayoutArea.transform) {
-            Destroy(child.gameObject);
+        foreach (var exhibition in loadedExhibitions)
+        {
+            exhibition.gameObject.SetActive(typeof(T) == typeof(ExhibitionData));
+        }
+        
+        foreach (var artist in loadedArtists)
+        {
+            artist.gameObject.SetActive(typeof(T) == typeof(ArtistData));
         }
         
         BackArrow.SetActive(false);
         ExhibitionTitle.text = "Exhibitions";
-        CachedGalleryDisplays.Clear();
+    }
+
+    private IEnumerator WaitForCanvases()
+    {
+        yield return new WaitForEndOfFrame();
+        canTryLoadInvisible = true;
     }
 
     public void InitArtworks() 
     {
-        if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.BeginLoading();
-        ClearStage();
+        if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
+        
+        ReplaceStage<ArtworkData>();
         ShowDefaultLayoutArea(true);
-        ChangeMenuNavigation(MenuNavigation.Artworks);
+        ChangeMenuNavigationUI(MenuNavigation.Artworks);
         FetchNewArtworks();
         ApplySorting();
+        StartCoroutine(WaitForCanvases());
     }
 
-    private async Task FetchNewArtworks()
+    private void FetchNewArtworks()
     {
-        if (!FirebaseLoader.ArtworkCollectionFull && FirebaseLoader.Artworks.Count < minArtworkCount)
-        {
-            await FirebaseLoader.FetchDocuments<ArtworkData>(Mathf.Abs(minArtworkCount - FirebaseLoader.Artworks.Count));
-        }
-        
         // Flatten all ArtWorks, filter those with images, and sort by creationDateTime descending
         var sortedArtworks = FirebaseLoader.Artworks
             .OrderByDescending(artwork => artwork.creation_date_time);
         
         foreach (ArtworkData artwork in sortedArtworks)
         {
-            // guard clause to avoid populating in the incorrect menu or scene
-            if (currentMenuNavigation != MenuNavigation.Artworks || currentSceneName != SceneManager.GetActiveScene().name) return;
-            // double guard - Unity issue
-            if (currentMenuNavigation != MenuNavigation.Artworks || currentSceneName != SceneManager.GetActiveScene().name) return;
+            if (loadedArtworks.Any(artworkShower => artworkShower.cachedArtwork == artwork)) continue;
             
             ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
-            shower.Init(artwork);
+            shower.Init(artwork, false);
+            loadedArtworks.Add(shower);
             if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
-            CachedGalleryDisplays.Add(shower);
         }
     }
 
     public void InitExhibitions() 
     {
         if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.BeginLoading();
-        ClearStage();
+        ReplaceStage<ExhibitionData>();
         ShowDefaultLayoutArea(true);
-        ChangeMenuNavigation(MenuNavigation.Exhibitions);
+        ChangeMenuNavigationUI(MenuNavigation.Exhibitions);
         FetchNewExhibitions();
         ApplySorting();
+        StartCoroutine(WaitForCanvases());
     }
     
-    private async Task FetchNewExhibitions()
+    private void FetchNewExhibitions()
     {
-        if (!FirebaseLoader.ExhibitionCollectionFull && FirebaseLoader.ExhibitionCollectionSize < minExhibitionCount)
-        {
-            await FirebaseLoader.LoadRemainingExhibitions();
-        }
-        else if (!FirebaseLoader.ExhibitionCollectionFull && FirebaseLoader.Exhibitions.Count < minExhibitionCount)
-        {
-            await FirebaseLoader.FetchDocuments<ExhibitionData>(Mathf.Abs(minExhibitionCount - FirebaseLoader.Exhibitions.Count));
-        }
-        
         // Sort Exhibitions by creation_time descending
-        var sortedExhibitions = FirebaseLoader.Exhibitions.OrderByDescending(exhibition => exhibition.creation_date_time);
+        var sortedExhibitions = FirebaseLoader.Exhibitions.
+            OrderByDescending(exhibition => exhibition.creation_date_time);
 
         foreach (ExhibitionData exhibition in sortedExhibitions)
         {
-            // guard clause to avoid populating in the incorrect menu or scene
-            if (currentMenuNavigation != MenuNavigation.Exhibitions || currentSceneName != SceneManager.GetActiveScene().name) return;
+            if (loadedExhibitions.Any(exhibitionCard => exhibitionCard.exhibition == exhibition)) continue;
+            
             ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
             card.Init(exhibition);
+            loadedExhibitions.Add(card);
             if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
         }
     }
@@ -236,79 +242,28 @@ public class ArtworkUIManager : MonoBehaviour
     public void InitArtists()
     {
         if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
-        ClearStage();
+        ReplaceStage<ArtistData>();
         ShowDefaultLayoutArea(false);
-        ChangeMenuNavigation(MenuNavigation.Artists);
+        ChangeMenuNavigationUI(MenuNavigation.Artists);
         ApplySorting();
         FetchNewArtists();
         LayoutRebuilder.ForceRebuildLayoutImmediate(artistsLayoutArea);
+        StartCoroutine(WaitForCanvases());
     }
     
-    private async Task FetchNewArtists()
+    private void FetchNewArtists()
     {
-        if (!FirebaseLoader.ArtistCollectionFull && FirebaseLoader.Artists.Count < minArtistCount)
-        {
-            await FirebaseLoader.FetchDocuments<ArtistData>(Mathf.Abs(minArtistCount - FirebaseLoader.Artists.Count));
-        }
+        var sortedArtists = FirebaseLoader.Artists.
+            OrderByDescending(artwork => artwork.creation_time);
         
-        var sortedArtists = FirebaseLoader.Artists.OrderByDescending(artwork => artwork.creation_time);
         foreach (var artist in sortedArtists)
         {
-            // guard clause to avoid populating in the incorrect menu or scene
-            if (currentMenuNavigation != MenuNavigation.Artists || currentSceneName != SceneManager.GetActiveScene().name) return;
+            if (loadedArtists.Any(artistContainer => artistContainer.artist == artist)) continue;
+            
             ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
             container.Assign(artist);
+            loadedArtists.Add(container);
             if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
-        }
-    }
-
-    public async void AddNewDocument()
-    {
-        try
-        {
-            switch (currentMenuNavigation)
-            {
-                case MenuNavigation.Artworks:
-                    if (FirebaseLoader.ArtworkCollectionFull)
-                    {
-                        return;
-                    }
-                    
-                    var artworkDoc = await FirebaseLoader.FetchDocuments<ArtworkData>(1);
-
-                    if (artworkDoc.Count < 0) return;
-                    if (artworkDoc[0] == null) return;
-                
-                    ArtworkShower shower = Instantiate(ArtworkUIPrefab, defaultLayoutArea).GetComponent<ArtworkShower>();
-                    shower.Init(artworkDoc[0]);
-                    CachedGalleryDisplays.Add(shower);
-                    break;
-            
-                case MenuNavigation.Exhibitions:
-                    if (FirebaseLoader.ExhibitionCollectionFull) return;
-                
-                    var exhibitionDoc = await FirebaseLoader.FetchDocuments<ExhibitionData>(1);
-                    ExhibitionCard card = Instantiate(ExhibitionUIPrefab, defaultLayoutArea).GetComponent<ExhibitionCard>();
-                    card.Init(exhibitionDoc[0]);
-                    break;
-            
-                case MenuNavigation.Artists:
-                    if (FirebaseLoader.ArtistCollectionFull) return;
-                
-                    var artistDoc = await FirebaseLoader.FetchDocuments<ArtistData>(1);
-                    ArtistContainer container = Instantiate(ArtistUIPrefab, artistsLayoutArea).GetComponent<ArtistContainer>();
-                    container.Assign(artistDoc[0]);
-                    break;
-            
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        
-            OnNewDocumentAdded?.Invoke();
-        }
-        catch (Exception e)
-        {
-            Debug.LogWarning("Failed to add new documents: " + e);
         }
     }
     
@@ -319,7 +274,7 @@ public class ArtworkUIManager : MonoBehaviour
         artistsLayoutArea.gameObject.SetActive(!state);
     }
 
-    private void ChangeMenuNavigation(MenuNavigation navigation)
+    private void ChangeMenuNavigationUI(MenuNavigation navigation)
     {
         currentMenuNavigation = navigation;
         
@@ -338,8 +293,7 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void ApplySorting()
     {
-        return;
-        CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedArtwork.creation_date_time).ToList();
+        /*CachedGalleryDisplays = CachedGalleryDisplays.OrderByDescending(display => display.cachedArtwork.creation_date_time).ToList();
 
         switch (CurrentFilter)
         {
@@ -368,7 +322,7 @@ public class ArtworkUIManager : MonoBehaviour
         for (int i = 0; i < CachedGalleryDisplays.Count; i++)
         {
             CachedGalleryDisplays[i].transform.SetSiblingIndex(i);
-        }
+        }*/
     }
 
     public void OpenDetailedInfoFromStaticAR() 
@@ -415,4 +369,16 @@ public class ArtworkUIManager : MonoBehaviour
         }
     }
 
+    private void TryLoadVisible()
+    {
+        if (currentMenuNavigation != MenuNavigation.Artworks || !canTryLoadInvisible) return;
+        foreach (var li in loadedArtworks)
+        {
+            if (li.IsLoading || li.ARPhoto.sprite != null) continue;
+
+            // get the child’s bounds **relative to** the viewport
+            var childBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(viewport, li.transform as RectTransform);
+            if (childBounds.center.y > -1200) li.SetImage();
+        }
+    }
 }

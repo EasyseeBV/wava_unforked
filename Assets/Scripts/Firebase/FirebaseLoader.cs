@@ -263,8 +263,6 @@ public class FirebaseLoader : MonoBehaviour
             {
                 await artwork.GetAllImages();
             }
-            
-            Debug.Log("<color=red>Done downloading.</color>");
         }
 
         if (downloadArtworkImagesOnStartup)
@@ -305,12 +303,8 @@ public class FirebaseLoader : MonoBehaviour
                 await artist.GetIcon();
             }
         }
-
-        Debug.LogWarning("Loading content in setup is not available yet.");
         
         OnStartUpEventProcessed?.Invoke(string.Empty);
-
-        Debug.Log("<color=red>Setup compl.</color>");
         SetupComplete = true;
     }
 

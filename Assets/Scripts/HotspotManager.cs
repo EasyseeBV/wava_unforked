@@ -310,21 +310,7 @@ public class HotspotManager : MonoBehaviour
             return;
         }
         
-        ArTapper.ArtworkToPlace = artwork;
-        ArTapper.PlaceDirectly = false; //artwork.PlayARObjectDirectly;
-        Debug.LogWarning("PlaceObjectDirectly was disabled");
-        ArTapper.DistanceWhenActivated = _distance;
-
-        if(string.IsNullOrEmpty(artwork.alt_scene))
-        {
-            Debug.Log("Loading Default AR Scene");
-            SceneManager.LoadScene("ARView");
-        }
-        else
-        {
-            Debug.Log("Loading Alternate Scene " + artwork.alt_scene);
-            SceneManager.LoadScene(artwork.alt_scene);
-        }
+        ARLoader.Open(artwork);
     }
 
     private bool CanOpenARScene(ArtworkData artwork)

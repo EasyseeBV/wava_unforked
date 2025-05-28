@@ -90,7 +90,7 @@ public class ExhibitionDetailsPanel : DetailsPanel
                 for (int i = 0; i < artworks.Count; i++)
                 {
                     ArtworkShower artwork = Instantiate(artworkShowerPrefab, layoutArea);
-                    artwork.Init(artworks[i]);
+                    artwork.Init(artworks[i], false);
                 }
                 break;
             case MenuNavigation.Artists:

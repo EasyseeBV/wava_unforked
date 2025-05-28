@@ -22,6 +22,9 @@ public class ArtworkShower : MonoBehaviour
     public Button ViewButton;
     [Space]
     public TextMeshProUGUI exhibitionTitle;
+    [SerializeField] private LoadingCircle loadingCircle;
+    
+    public bool IsLoading { get; set; }
     
     public ArtworkData cachedArtwork { get; set; }
 
@@ -29,9 +32,10 @@ public class ArtworkShower : MonoBehaviour
     {
         ViewButton.onClick.AddListener(OpenDetails);
         DetailButton.onClick.AddListener(OpenDetails);
+        loadingCircle.gameObject.SetActive(false);
     }
 
-    public void Init(ArtworkData artwork) 
+    public void Init(ArtworkData artwork, bool loadImage) 
     {
         if (artwork == null)
         {
@@ -53,9 +57,21 @@ public class ArtworkShower : MonoBehaviour
         
         cachedArtwork = artwork;
 
-        SetImage(artwork);
+        if (loadImage) SetImage(artwork);
     }
 
+    public void SetImage()
+    {
+        Debug.Log("Loading image...");
+        
+        if (ARPhoto.sprite != null) return;
+        
+        IsLoading = true;
+        loadingCircle.gameObject.SetActive(true);
+        loadingCircle.BeginLoading();
+        SetImage(cachedArtwork);
+    }
+    
     private async Task SetImage(ArtworkData artwork)
     {
         try
@@ -72,6 +88,7 @@ public class ArtworkShower : MonoBehaviour
                     return;
                 }
                 
+                loadingCircle.StopLoading();
                 ARPhoto.sprite = images.Count > 0 ? images[0] : null;
 
                 if (ARPhoto.sprite != null)
