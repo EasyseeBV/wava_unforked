@@ -35,7 +35,7 @@ public class ArtistContainer : MonoBehaviour
         int works = GetArtistWorkCount();
         artworkCountLabel.text = works == 1 ? "1 Artwork" : $"{GetArtistWorkCount()} Artworks";
         artistPageButton.onClick.AddListener(OpenArtistPage);
-        await SetImage();
+        SetImage();
     }
     
     private async Task SetImage()

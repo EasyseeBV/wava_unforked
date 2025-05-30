@@ -97,7 +97,6 @@ public class ArtworkUIManager : MonoBehaviour
 
     private bool canTryLoadInvisible = false;
     
-
     private void Awake()
     {
         if (!Instance) Instance = this;
@@ -219,7 +218,6 @@ public class ArtworkUIManager : MonoBehaviour
         ChangeMenuNavigationUI(MenuNavigation.Exhibitions);
         FetchNewExhibitions();
         ApplySorting();
-        StartCoroutine(WaitForCanvases());
     }
     
     private void FetchNewExhibitions()
@@ -248,7 +246,6 @@ public class ArtworkUIManager : MonoBehaviour
         ApplySorting();
         FetchNewArtists();
         LayoutRebuilder.ForceRebuildLayoutImmediate(artistsLayoutArea);
-        StartCoroutine(WaitForCanvases());
     }
     
     private void FetchNewArtists()

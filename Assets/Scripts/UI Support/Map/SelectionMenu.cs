@@ -47,10 +47,7 @@ public class SelectionMenu : MonoBehaviour
         
         openButton.onClick.AddListener(StartAR);
         
-        openButton.gameObject.SetActive(true);        
-#if UNITY_EDITOR
-        openButton.gameObject.SetActive(true);        
-#endif
+        openButton.gameObject.SetActive(AppSettings.DeveloperMode);
     }
 
     private void OnEnable()
