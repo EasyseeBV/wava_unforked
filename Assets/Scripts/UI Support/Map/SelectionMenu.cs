@@ -34,6 +34,7 @@ public class SelectionMenu : MonoBehaviour
     [SerializeField] private Button openButton;
     
     private HotspotManager cachedHotspot;
+    private float cachedDistance;
     
     private void Awake()
     {
@@ -84,7 +85,7 @@ public class SelectionMenu : MonoBehaviour
         
         selectionButton[0].onClick.RemoveAllListeners();
         selectionButton[1].onClick.RemoveAllListeners();
-        selectionButton[inRange ? 1 : 0].onClick.AddListener(inRange && hotspot.CanShow ? OpenArtwork : hotspot.GetDirections);
+        selectionButton[inRange ? 1 : 0].onClick.AddListener(inRange && hotspot.CanShow ? OpenAR : hotspot.GetDirections);
         
         foreach (var g in inRange ? layoutGroupsInRange : layoutGroups)
         {
@@ -102,6 +103,14 @@ public class SelectionMenu : MonoBehaviour
         SceneManager.LoadScene("Exhibition&Art");
     }
 
+    private void OpenAR()
+    {
+        if (!cachedHotspot) return;
+        
+        ArTapper.ArtworkToPlace = cachedHotspot.GetHotspotArtwork();
+        ARLoader.Open(cachedHotspot.GetHotspotArtwork(), cachedDistance);
+    }
+
     private void StartAR()
     {
         if (!cachedHotspot) return;
@@ -111,6 +120,7 @@ public class SelectionMenu : MonoBehaviour
 
     public void UpdateDistance(float d)
     {
+        cachedDistance = d;
         distanceLabel[0].text = $"{d:F1}m";
         distanceLabel[1].text = $"{d:F1}m";
     }

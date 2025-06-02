@@ -15,7 +15,22 @@ public class ScreenshotAR : MonoBehaviour
     public void Capture()
     {
         Handheld.Vibrate();
-        StartCoroutine(CaptureScreenshot());
+        //StartCoroutine(CaptureScreenshot());
+        ScreenshotManager.onCaptureEndDelegate += OnCaptureEndDelegate;
+        // Call update to only capture the texture without exporting
+        screenshotManager.UpdateAll();
+    }
+    
+    public void OnCaptureEndDelegate ()
+    {
+        // Stop listening the callback
+        ScreenshotManager.onCaptureEndDelegate -= OnCaptureEndDelegate;
+
+        // Update the texture image
+        var texture = screenshotManager.GetLastScreenshotTexture();
+        if (texture != null)
+            screenshotManager.ExportAllToFiles();
+        else Debug.LogWarning("No texture found from screenshot");
     }
 
     private IEnumerator CaptureAndSave()

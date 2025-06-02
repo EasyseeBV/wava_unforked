@@ -14,6 +14,7 @@ public class PhotosPage : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private UserPhoto userPhotoPrefab;
+    [SerializeField] private UserVideo userVideoPrefab;
     [SerializeField] private Transform photosLayoutArea;
     [SerializeField] private TMP_Text infoLabel;
     [SerializeField] private TMP_Text countLabel;
@@ -31,6 +32,7 @@ public class PhotosPage : MonoBehaviour
     [SerializeField] private Image closeButtonImage;
     
     private List<UserPhoto> photos = new();
+    private List<UserVideo> videos = new();
     
     private void Awake()
     {
@@ -96,16 +98,14 @@ public class PhotosPage : MonoBehaviour
         }
     }
 
-    IEnumerator LoadAllImages()
+    private IEnumerator LoadAllImages()
     {
         string path = screenshotManager.GetExportPath();
         if (!Directory.Exists(path))
         {
             Debug.LogError("Directory does not exist: " + path);
-            
-            if (infoLabel) infoLabel.text = "No Images";
+            if (infoLabel) infoLabel.text = "No Images or Videos";
             refreshButton?.gameObject.SetActive(true);
-            
             yield break;
         }
         else
@@ -113,56 +113,82 @@ public class PhotosPage : MonoBehaviour
             if (infoLabel) infoLabel.text = "Loading...";
             refreshButton?.gameObject.SetActive(false);
         }
-
-        if (infoLabel != null)
-        {
-            infoLabel.text = "";
-        }
         
-        string[] files = Directory.GetFiles(path, "*.png");
-        if (files.Length != photos.Count)
-        {
-            foreach (var photo in photos)
-            {
-                photo.gameObject.SetActive(false);
-            }
-
-            photos.Clear();
-        }
-        else yield break; // all images are already loaded
+        if (infoLabel != null) infoLabel.text = "";
         
+        string[] imageFiles = Directory.GetFiles(path, "*.png");
+        string[] videoFiles = Directory.GetFiles(path, "*.mp4");
+
+        // If nothing has changed (same number of images + videos as before), skip reloading
+        int totalFileCount = imageFiles.Length + videoFiles.Length;
+        int previousCount = photos.Count /*+ videos.Count if you track videos*/;
+        if (totalFileCount == previousCount)
+        {
+            // Assume nothing changed—bail out
+            yield break;
+        }
+
+        // Otherwise, wipe out old items
+        foreach (var photo in photos)
+        {
+            photo.gameObject.SetActive(false);
+        }
+        photos.Clear();
+        
+        foreach (var vid in videos)
+        {
+             vid.gameObject.SetActive(false);
+        }
+        videos.Clear();
+
+        // Load all image sprites asynchronously
         List<Sprite> sprites = new List<Sprite>();
-
-        if (files.Length != AppCache.LocalGallery.Count)
+        if (imageFiles.Length != AppCache.LocalGallery.Count)
         {
-            foreach (var t in files)
+            // Load each image only if it's not already cached
+            foreach (var imgPath in imageFiles)
             {
-                yield return StartCoroutine(LoadImage(t, sprites));
+                yield return StartCoroutine(LoadImage(imgPath, sprites));
             }
         }
         else
         {
             sprites = AppCache.LocalGallery.Values.ToList();
         }
-        
+
         if (infoLabel != null)
         {
             infoLabel.text = "";
         }
-        
         if (countLabel) countLabel.text = "";
 
         int count = 0;
 
+        // Instantiate UserPhoto for each loaded sprite
         for (int i = 0; i < sprites.Count; i++)
         {
             UserPhoto photo = Instantiate(userPhotoPrefab, photosLayoutArea);
-            photo.Init(sprites[i], files[i]);
+            photo.Init(sprites[i], imageFiles[i]);
             photos.Add(photo);
-            LayoutRebuilder.ForceRebuildLayoutImmediate(photosLayoutArea as RectTransform); // Force immediate rebuild
+            LayoutRebuilder.ForceRebuildLayoutImmediate(photosLayoutArea as RectTransform);
+            count++;
         }
 
-        if(sprites.Count <= 0) refreshButton?.gameObject.SetActive(true);
+        // Instantiate UserVideo for each .mp4
+        for (int i = 0; i < videoFiles.Length; i++)
+        {
+            string videoPath = videoFiles[i];
+            UserVideo vid = Instantiate(userVideoPrefab, photosLayoutArea);
+            vid.Init(videoPath);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(photosLayoutArea as RectTransform);
+            count++;
+        }
+
+        if (count <= 0)
+        {
+            refreshButton?.gameObject.SetActive(true);
+        }
+
         StartCoroutine(LateRebuild());
     }
 

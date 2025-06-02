@@ -18,7 +18,7 @@ public class CameraModeManager : MonoBehaviour
     [SerializeField] private Color recordingColor;
     [SerializeField] private List<GameObject> ObjectToTurnOff;
     [SerializeField] private List<GameObject> ObjectToTurnOn;
-
+    
     private bool videoInitialized = false;
 
     public void Action()

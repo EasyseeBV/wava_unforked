@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/LoadingScene.unity
     guid: 50f0ffc32822d49b68138197ee4bf314
   - enabled: 0
-    path: Assets/Scenes/StartMenu.unity
+    path: Assets/Scenes/Old Scenes/StartMenu.unity
     guid: 273b9b47965d378408a13046b3250c71
   - enabled: 0
     path: Assets/Plugins/VoxelBusters/ScreenRecorderKit/Examples/Scenes/ScreenRecorderDemo.unity
@@ -18,34 +18,34 @@ EditorBuildSettings:
     path: Assets/AlmostEngine/UltimateScreenshotCreator/Examples/Scenes/DefaultExample.unity
     guid: 6745a049a01478344a652452bb861a50
   - enabled: 0
-    path: Assets/Scenes/test_build.unity
+    path: Assets/Scenes/Old Scenes/test_build.unity
     guid: e4e58901f763b35418db8346104e7361
   - enabled: 1
-    path: Assets/Scenes/WelcomeTutorial_1.unity
+    path: Assets/Scenes/Tutorials/WelcomeTutorial_1.unity
     guid: 5dfda12dddc7545088a051a5066fcfb8
   - enabled: 1
-    path: Assets/Scenes/WelcomeTutorial_2.unity
+    path: Assets/Scenes/Tutorials/WelcomeTutorial_2.unity
     guid: bdaa6fa1abc794d01aa8c25bf129b88b
   - enabled: 1
-    path: Assets/Scenes/WelcomeTutorial_3.unity
+    path: Assets/Scenes/Tutorials/WelcomeTutorial_3.unity
     guid: 50176d91c69e64c019f01e8ac3c2deb7
   - enabled: 1
-    path: Assets/Scenes/WelcomeTutorial_4.unity
+    path: Assets/Scenes/Tutorials/WelcomeTutorial_4.unity
     guid: 26e89f3abef3549c59daa6b80470a7ce
   - enabled: 1
-    path: Assets/Scenes/WelcomeTutorial_5.unity
+    path: Assets/Scenes/Tutorials/WelcomeTutorial_5.unity
     guid: 99749311ab6c84812aca3d9b314f2238
   - enabled: 1
-    path: Assets/Scenes/WelcomeTutorial_6.unity
+    path: Assets/Scenes/Tutorials/WelcomeTutorial_6.unity
     guid: 958b81eae31b5463a8800cc9c145474b
   - enabled: 0
-    path: Assets/Scenes/Tutorial.unity
+    path: Assets/Scenes/Old Scenes/Tutorial.unity
     guid: 0c925f5fe93ff744e8ea0d5f5f5fa008
   - enabled: 1
     path: Assets/Scenes/Map.unity
     guid: d6a52d074d5c8aa488917e1cec071de1
   - enabled: 1
-    path: Assets/Scenes/AR.unity
+    path: Assets/Scenes/Old Scenes/AR.unity
     guid: 4a36c0dc757675244a45366c2435629f
   - enabled: 0
     path: Assets/Infinity Code/Online maps/Examples/Scenes/Behaviours/Navigation.unity
@@ -54,7 +54,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Exhibition&Art.unity
     guid: 80db1d336999b4147babc43bc4dd06e8
   - enabled: 1
-    path: Assets/Scenes/AboutUs.unity
+    path: Assets/Scenes/Old Scenes/AboutUs.unity
     guid: a6bd162e73285514394c5b336346c5f8
   - enabled: 1
     path: Assets/Scenes/Help.unity
@@ -66,7 +66,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Profile.unity
     guid: dbda34c44a8d9694aa94a726e0ad9ce7
   - enabled: 1
-    path: Assets/Scenes/ScanInvitation.unity
+    path: Assets/Scenes/Old Scenes/ScanInvitation.unity
     guid: 585f6147972164501b6952408a867517
   - enabled: 1
     path: Assets/AR objects/Exhibition1/Embedded Systems - Benedikt Akkerman/AlternateScene/Ben/Ben.unity

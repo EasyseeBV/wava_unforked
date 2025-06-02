@@ -38,6 +38,11 @@ public class ProfilePhotoDetails : MonoBehaviour
         Debug.Log("Can share: " + ShareUtils.CanShare());
     }
 
+    public void Open(UserVideo userVideo)
+    {
+        Debug.Log("Can share: " + ShareUtils.CanShare());
+    }
+
     private void ToggleLike()
     {
         int liked = PlayerPrefs.GetInt(savedName, 0);
