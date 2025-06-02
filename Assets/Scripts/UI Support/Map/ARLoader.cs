@@ -26,5 +26,4 @@ public class ARLoader : MonoBehaviour
             SceneManager.LoadScene(artwork.alt_scene);
         }
     }
-    
 }

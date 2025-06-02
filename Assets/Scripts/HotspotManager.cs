@@ -316,7 +316,8 @@ public class HotspotManager : MonoBehaviour
     private bool CanOpenARScene(ArtworkData artwork)
     {
         // If the user is online
-        if (!FirebaseLoader.OfflineMode) return true;
+        if (!FirebaseLoader.OfflineMode && Application.internetReachability != NetworkReachability.NotReachable) return true;
+        
         // if the artwork is a preset, without content
         if (!string.IsNullOrEmpty(artwork.preset) && artwork.content_list.Count <= 0) return true;
 

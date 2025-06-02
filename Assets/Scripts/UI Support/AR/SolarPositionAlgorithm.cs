@@ -15,6 +15,7 @@ public class SolarPositionAlgorithm : MonoBehaviour
 
     private void OnEnable()
     {
+        return;
         dirLight = GetComponent<Light>();
 
         // If external static overrides are non-zero, use them;
@@ -29,6 +30,7 @@ public class SolarPositionAlgorithm : MonoBehaviour
 
     private void Start()
     {
+        return;
         // 1) Compute current local time & offset
         DateTime utcNow    = DateTime.UtcNow;
         float    tzOffsetH = (float)DateTimeOffset.Now.Offset.TotalHours;
