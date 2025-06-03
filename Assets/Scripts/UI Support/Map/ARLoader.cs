@@ -12,8 +12,8 @@ public class ARLoader : MonoBehaviour
         ArTapper.DistanceWhenActivated = _distance;
         
         // Sun position information
-        SolarPositionAlgorithm.Latitude = (float)PlayerMarker.Instance.Latitude;
-        SolarPositionAlgorithm.Longitude = (float)PlayerMarker.Instance.Longitude;
+        /*SolarPositionAlgorithm.Latitude = (float)PlayerMarker.Instance.Latitude;
+        SolarPositionAlgorithm.Longitude = (float)PlayerMarker.Instance.Longitude;*/
 
         if(string.IsNullOrEmpty(artwork.alt_scene))
         {

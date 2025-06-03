@@ -1,0 +1,3 @@
+To get the latest revision of the manual please follow this link on your browser:
+http://bit.ly/2IJVGkT
+(RealSunAR 2.10 Rev 1 is already included with the plugin) 
