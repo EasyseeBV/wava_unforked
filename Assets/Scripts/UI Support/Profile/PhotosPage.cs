@@ -87,7 +87,7 @@ public class PhotosPage : MonoBehaviour
             layoutAreasToRefresh.Add(photosLayoutArea as RectTransform);    
         }
         
-        if(gameObject.activeInHierarchy) StartCoroutine(LoadAllImages());
+        if (gameObject.activeInHierarchy) StartCoroutine(LoadAllImages());
     }
 
     public void Close()

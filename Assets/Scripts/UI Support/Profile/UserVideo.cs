@@ -15,8 +15,48 @@ public class UserVideo : MonoBehaviour
     
     public void Init(string path)
     {
-        path = Path;
-        videoPlayer.url = path;
+        Path = path;
+        gameObject.SetActive(true);
+        videoPlayer.source = VideoSource.Url;
+        videoPlayer.url = Path;
+
+        // Ensure it doesn't play automatically
+        videoPlayer.playOnAwake = false;
+        videoPlayer.waitForFirstFrame = true;
+
+        // Begin preparing (decoding) the video
+        videoPlayer.Prepare();
+        
+        VideoPlayer.EventHandler handler = null;
+        handler = (VideoPlayer vp) =>
+        {
+            vp.prepareCompleted -= handler;
+            rawImage.texture = videoPlayer.texture;
+            videoPlayer.Play();
+            // Pause the player so it never auto-plays
+            // videoPlayer.Pause();
+        };
+
+        videoPlayer.prepareCompleted += handler;
+
+        // Start coroutine to wait until it's ready and then grab frame 0
+        StartCoroutine(ApplyFirstFrameWhenReady());
+    }
+    
+    private IEnumerator ApplyFirstFrameWhenReady()
+    {
+        // Wait until the VideoPlayer has finished preparing
+        while (!videoPlayer.isPrepared)
+        {
+            yield return null;
+        }
+
+        // At this point, videoPlayer.texture contains the first frame
+        // Assign it to the RawImage so you see the very first frame
+        rawImage.texture = videoPlayer.texture;
+
+        // Pause the player so it never auto-plays
+        videoPlayer.Pause();
     }
 
     public void Open()
