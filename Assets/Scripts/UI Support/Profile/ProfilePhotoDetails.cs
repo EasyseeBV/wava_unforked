@@ -38,9 +38,10 @@ public class ProfilePhotoDetails : MonoBehaviour
         Debug.Log("Can share: " + ShareUtils.CanShare());
     }
 
-    public void Open(UserVideo userVideo)
+    public void SetVideoPlayerVideo(UserVideo userVideo)
     {
-        Debug.Log("Can share: " + ShareUtils.CanShare());
+        // Open the view for the video player.
+
     }
 
     private void ToggleLike()

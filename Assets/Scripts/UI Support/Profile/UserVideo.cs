@@ -41,8 +41,12 @@ public class UserVideo : MonoBehaviour
 
         // Start coroutine to wait until it's ready and then grab frame 0
         StartCoroutine(ApplyFirstFrameWhenReady());
+
+        // Set the video to open when the button is pressed.
+        openButton.onClick.RemoveAllListeners();
+        openButton.onClick.AddListener(Open);
     }
-    
+
     private IEnumerator ApplyFirstFrameWhenReady()
     {
         // Wait until the VideoPlayer has finished preparing
@@ -59,14 +63,14 @@ public class UserVideo : MonoBehaviour
         videoPlayer.Pause();
     }
 
-    public void Open()
+    void Open()
     {
         if (!IsARView)
         {
             if (ProfileUIManager.Instance == null) return;
             
             ProfileUIManager.Instance.photoDetails.gameObject.SetActive(true);
-            ProfileUIManager.Instance.photoDetails.Open(this);
+            ProfileUIManager.Instance.photoDetails.SetVideoPlayerVideo(this);
         }
         else
         {

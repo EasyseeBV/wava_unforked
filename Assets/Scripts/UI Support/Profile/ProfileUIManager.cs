@@ -27,7 +27,7 @@ public class ProfileUIManager : MonoBehaviour
     [SerializeField] private Color unselectedColor;
     [Space]
     [SerializeField] private GameObject photosMenuObject;
-    [SerializeField] private PhotosPage photosPage;
+    [SerializeField] private MediaLoader photosPage;
     [SerializeField] private GameObject favoriteMenuObject;
     [SerializeField] private FavoritesPage favoritesPage;
 

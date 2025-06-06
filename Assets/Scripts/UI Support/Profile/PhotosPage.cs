@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,10 +6,9 @@ using AlmostEngine.Screenshot;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Android;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
-public class PhotosPage : MonoBehaviour
+public class MediaLoader : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private UserPhoto userPhotoPrefab;
@@ -87,7 +85,7 @@ public class PhotosPage : MonoBehaviour
             layoutAreasToRefresh.Add(photosLayoutArea as RectTransform);    
         }
         
-        if (gameObject.activeInHierarchy) StartCoroutine(LoadAllImages());
+        if (gameObject.activeInHierarchy) StartCoroutine(LoadAllMedia());
     }
 
     public void Close()
@@ -98,7 +96,7 @@ public class PhotosPage : MonoBehaviour
         }
     }
 
-    private IEnumerator LoadAllImages()
+    private IEnumerator LoadAllMedia()
     {
         string path = screenshotManager.GetExportPath();
         if (!Directory.Exists(path))
