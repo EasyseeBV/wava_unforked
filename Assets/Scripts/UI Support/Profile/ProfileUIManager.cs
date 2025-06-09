@@ -27,7 +27,7 @@ public class ProfileUIManager : MonoBehaviour
     [SerializeField] private Color unselectedColor;
     [Space]
     [SerializeField] private GameObject photosMenuObject;
-    [SerializeField] private MediaLoader photosPage;
+    [SerializeField] private GalleryItemsInstantiator photosPage;
     [SerializeField] private GameObject favoriteMenuObject;
     [SerializeField] private FavoritesPage favoritesPage;
 
@@ -105,7 +105,6 @@ public class ProfileUIManager : MonoBehaviour
                 // TODO: filter photos here, if it was wanted in the future
                 break;
             case MenuNavigation.Favorites:
-                photosPage.Close();
                 photosMenuObject.SetActive(false);
                 favoriteMenuObject.SetActive(true);
                 favoritesPage.Open();

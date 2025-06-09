@@ -11,6 +11,7 @@ public class ProfilePhotoDetails : MonoBehaviour
     [SerializeField] private TextMeshProUGUI photoLabel;
     [SerializeField] private Image photoImage;
     [SerializeField] private Button shareButton;
+    [SerializeField] AdvancedVideoPlayer advancedVideoPlayer;
 
     [Header("Like Buttons")]
     [SerializeField] protected Button heartButton;
@@ -38,9 +39,13 @@ public class ProfilePhotoDetails : MonoBehaviour
         Debug.Log("Can share: " + ShareUtils.CanShare());
     }
 
-    public void SetVideoPlayerVideo(UserVideo userVideo)
+    public void OpenVideo(string videoPath)
     {
-        // Open the view for the video player.
+        // Show the advanced video player and hide the photo image.
+        advancedVideoPlayer.gameObject.SetActive(true);
+        photoImage.gameObject.SetActive(false);
+
+        // Set the video path for the advanced video player.
 
     }
 

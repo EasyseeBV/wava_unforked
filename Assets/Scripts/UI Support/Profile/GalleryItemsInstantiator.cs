@@ -8,12 +8,12 @@ using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.UI;
 
-public class MediaLoader : MonoBehaviour
+public class GalleryItemsInstantiator : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private UserPhoto userPhotoPrefab;
-    [SerializeField] private UserVideo userVideoPrefab;
-    [SerializeField] private Transform photosLayoutArea;
+    [SerializeField] private VideoGalleryItemUI _videoGalleryItemPrefab;
+    [SerializeField] private Transform _galleryItemsContainer;
     [SerializeField] private TMP_Text infoLabel;
     [SerializeField] private TMP_Text countLabel;
     [SerializeField] private ContentSizeFitter contentSizeFitter;
@@ -30,7 +30,7 @@ public class MediaLoader : MonoBehaviour
     [SerializeField] private Image closeButtonImage;
     
     private List<UserPhoto> photos = new();
-    private List<UserVideo> videos = new();
+    private List<VideoGalleryItemUI> videos = new();
     
     private void Awake()
     {
@@ -80,25 +80,19 @@ public class MediaLoader : MonoBehaviour
 
     public void Open()
     {
-        if (!layoutAreasToRefresh.Contains(photosLayoutArea as RectTransform))
+        if (!layoutAreasToRefresh.Contains(_galleryItemsContainer as RectTransform))
         {
-            layoutAreasToRefresh.Add(photosLayoutArea as RectTransform);    
+            layoutAreasToRefresh.Add(_galleryItemsContainer as RectTransform);    
         }
         
         if (gameObject.activeInHierarchy) StartCoroutine(LoadAllMedia());
     }
 
-    public void Close()
-    {
-        foreach (var photo in photos)
-        {
-            
-        }
-    }
-
     private IEnumerator LoadAllMedia()
     {
         string path = screenshotManager.GetExportPath();
+
+
         if (!Directory.Exists(path))
         {
             Debug.LogError("Directory does not exist: " + path);
@@ -158,36 +152,33 @@ public class MediaLoader : MonoBehaviour
         {
             infoLabel.text = "";
         }
-        if (countLabel) countLabel.text = "";
+        if (countLabel)
+            countLabel.text = "";
 
-        int count = 0;
-
-        // Instantiate UserPhoto for each loaded sprite
+        // Instantiate gallery items for photos.
         for (int i = 0; i < sprites.Count; i++)
         {
-            UserPhoto photo = Instantiate(userPhotoPrefab, photosLayoutArea);
+            UserPhoto photo = Instantiate(userPhotoPrefab, _galleryItemsContainer);
             photo.Init(sprites[i], imageFiles[i]);
             photos.Add(photo);
-            LayoutRebuilder.ForceRebuildLayoutImmediate(photosLayoutArea as RectTransform);
-            count++;
         }
 
-        // Instantiate UserVideo for each .mp4
+        // Instantiate gallery items for videos.
         for (int i = 0; i < videoFiles.Length; i++)
         {
+            // Instantiate the video gallery item.
+            var videoGalleryItem = Instantiate(_videoGalleryItemPrefab, _galleryItemsContainer);
+
+            // Set its video.
             string videoPath = videoFiles[i];
-            UserVideo vid = Instantiate(userVideoPrefab, photosLayoutArea);
-            vid.Init(videoPath);
-            LayoutRebuilder.ForceRebuildLayoutImmediate(photosLayoutArea as RectTransform);
-            count++;
+            videoGalleryItem.SetVideoToShow(videoPath);
         }
 
-        if (count <= 0)
-        {
-            refreshButton?.gameObject.SetActive(true);
-        }
+        // Show the refresh button if no items are present.
+        refreshButton?.gameObject.SetActive(videoFiles.Length == 0 && sprites.Count == 0);
 
-        StartCoroutine(LateRebuild());
+        // Commented for now; don't see the purpose.
+        //StartCoroutine(LateRebuild());
     }
 
     IEnumerator LoadImage(string filePath, List<Sprite> sprites)
@@ -216,14 +207,6 @@ public class MediaLoader : MonoBehaviour
     protected IEnumerator LateRebuild()
     {
         yield return new WaitForEndOfFrame();
-        
-        // Disable and re-enable the ContentSizeFitter to force a refresh
-        if (contentSizeFitter != null)
-        {
-            contentSizeFitter.enabled = false;
-            yield return null; // Wait one frame
-            contentSizeFitter.enabled = true;
-        }
         
         foreach (var l in layoutAreasToRefresh)
         {

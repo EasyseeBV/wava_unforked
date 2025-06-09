@@ -15,7 +15,7 @@ public class ARPhotoViewer : MonoBehaviour
     [SerializeField] private Button shareButton;
 
     private UserPhoto userPhoto;
-    private UserVideo userVideo;
+    private VideoGalleryItemUI userVideo;
     
     private void Awake()
     {
@@ -34,7 +34,7 @@ public class ARPhotoViewer : MonoBehaviour
         image.sprite = photo.CachedSprite;
     }
 
-    public void Open(UserVideo video)
+    public void Open(VideoGalleryItemUI video)
     {
         content.SetActive(true);
         

@@ -164,6 +164,51 @@ public class AdvancedVideoPlayer : MonoBehaviour
 
     void OnVideoPrepareCompleted(VideoPlayer source)
     {
+        // NOTE TO MYSELF: CONTINUE WORKING ON THIS FUNCTION. IT NEEDS TO INSTANTIATE THE RENDERTEXTURE WITH
+        // THE CORRECT WITH AND HEIGHT DEPENDING ON THE VIDEO. SEE LATEST CHATGPT TALK.
+
+
+
+        // Setup a render texture with the dimensions of the video clip.
+        // - Check if a render texture has been previously created.
+        var renderTexture = _videoPlayer.targetTexture;
+
+        var videoWidth = (int)_videoPlayer.width;
+        var videoHeight = (int)_videoPlayer.height;
+
+        if (renderTexture != null
+            && (renderTexture.width != videoWidth || renderTexture.height != videoHeight))
+        {
+            // A render texture was previously created.
+            // Delete it because its dimensions don't match the video dimensions.
+            renderTexture.Release();
+            Destroy(renderTexture);
+            renderTexture = null;
+        }
+
+        // - If no suitable render texture exists then create one.
+        if (renderTexture == null)
+        {
+            renderTexture = new RenderTexture(videoWidth, videoHeight, 0);
+        }
+
+        // - Set the render texture to be used by the video player and the raw image that shows it.
+        _videoPlayer.targetTexture = renderTexture;
+        _videoRawImage.texture = renderTexture;
+
+
+        // Adjust the aspect ratio of the raw image that shows the video to avoid stretching.
+        //_videoRawImageAspect.aspectRatio = (float)videoClip.width / videoClip.height;
+
+
+        // The button should show a 'play' icon.
+        _playAndResumeButtonImage.sprite = _playIcon;
+
+
+        // Update the time text.
+        UpdateTimeText();
+
+
         // Play and pause the player immediately to put the first frame of the video into the render texture.
         _videoPlayer.Play();
         _videoPlayer.Pause();
@@ -199,53 +244,24 @@ public class AdvancedVideoPlayer : MonoBehaviour
     public void SetVideoClip(VideoClip videoClip)
     {
         // Set the video of the videoplayer component.
+        _videoPlayer.source = VideoSource.VideoClip;
         _videoPlayer.clip = videoClip;
 
 
         // Prepare the video for instant access.
         _videoPlayer.Prepare();
-
-
-        // Setup a render texture with the dimensions of the video clip.
-        // - Check if a render texture has been previously created.
-        var renderTexture = _videoPlayer.targetTexture;
-
-        if (renderTexture != null
-            && (renderTexture.width != videoClip.width || renderTexture.height != videoClip.height))
-        {
-            // A render texture was previously created.
-            // Delete it because its dimensions don't match the video dimensions.
-            renderTexture.Release();
-            Destroy(renderTexture);
-            renderTexture = null;
-        }
-
-        // - If no suitable render texture exists then create one.
-        if (renderTexture == null)
-        {
-            // Create a new render texture.
-            var width = (int)videoClip.width;
-            var height = (int)videoClip.height;
-
-            renderTexture = new RenderTexture(width, height, 0);
-        }
-
-        // - Set the render texture to be used by the video player and the raw image that shows it.
-        _videoPlayer.targetTexture = renderTexture;
-        _videoRawImage.texture = renderTexture;
-
-
-        // Adjust the aspect ratio of the raw image that shows the video to avoid stretching.
-        _videoRawImageAspect.aspectRatio = (float)videoClip.width / videoClip.height;
-
-
-        // The button should show a 'play' icon.
-        _playAndResumeButtonImage.sprite = _playIcon;
-
-
-        // Update the time text.
-        UpdateTimeText();
     }
+
+    public void SetVideoPath(string path)
+    {
+        // Set url for video player.
+        _videoPlayer.source = VideoSource.Url;
+        _videoPlayer.url = path;
+
+        // Prepare the video as it is necessary when using a url.
+        _videoPlayer.Prepare();
+    }
+
 
     private void Update()
     {
@@ -312,7 +328,7 @@ public class AdvancedVideoPlayer : MonoBehaviour
 
     void UpdateTimeText() => _timeText.text = $"<b>{FormatTime(_videoPlayer.time)}</b> / {FormatTime(_videoPlayer.length)}";
 
-    static string FormatTime(double seconds)
+    public static string FormatTime(double seconds)
     {
         // Calculate the number of minutes.
         var minutes = (int)(seconds / 60);
