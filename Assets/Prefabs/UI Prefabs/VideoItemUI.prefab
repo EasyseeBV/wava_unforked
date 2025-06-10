@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6881479917561464028}
-  - component: {fileID: 2572996624167416800}
+  - component: {fileID: 9054371820109375189}
   - component: {fileID: 7379092622953971472}
   - component: {fileID: 3123167903112624614}
   m_Layer: 5
@@ -40,7 +40,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2572996624167416800
+--- !u!114 &9054371820109375189
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -49,7 +49,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1731973080403550357}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85021a6bc30fb394d8d472b1c5ba8700, type: 3}
+  m_Script: {fileID: 11500000, guid: abaf87ae6bb66b441bfa1cfb16f2c4cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   openVideoButton: {fileID: 7379092622953971472}
