@@ -11,8 +11,8 @@ using UnityEngine.UI;
 public class GalleryItemsInstantiator : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private PhotoItemUI userPhotoPrefab;
-    [SerializeField] private VideoItemUI _videoGalleryItemPrefab;
+    [SerializeField] private PhotoItemUI photoItemPrefab;
+    [SerializeField] private VideoItemUI _videoItemPrefab;
     [SerializeField] private Transform _galleryItemsContainer;
     [SerializeField] private TMP_Text infoLabel;
     [SerializeField] private TMP_Text countLabel;
@@ -158,7 +158,7 @@ public class GalleryItemsInstantiator : MonoBehaviour
         // Instantiate gallery items for photos.
         for (int i = 0; i < sprites.Count; i++)
         {
-            PhotoItemUI photo = Instantiate(userPhotoPrefab, _galleryItemsContainer);
+            PhotoItemUI photo = Instantiate(photoItemPrefab, _galleryItemsContainer);
             photo.Init(sprites[i], imageFiles[i]);
             photos.Add(photo);
         }
@@ -167,7 +167,7 @@ public class GalleryItemsInstantiator : MonoBehaviour
         for (int i = 0; i < videoFiles.Length; i++)
         {
             // Instantiate the video gallery item.
-            var videoGalleryItem = Instantiate(_videoGalleryItemPrefab, _galleryItemsContainer);
+            var videoGalleryItem = Instantiate(_videoItemPrefab, _galleryItemsContainer);
 
             // Set its video.
             string videoPath = videoFiles[i];
