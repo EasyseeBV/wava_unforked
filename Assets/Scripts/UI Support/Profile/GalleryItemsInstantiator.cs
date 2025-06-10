@@ -11,8 +11,8 @@ using UnityEngine.UI;
 public class GalleryItemsInstantiator : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private PhotoGalleryItemUI userPhotoPrefab;
-    [SerializeField] private VideoGalleryItemUI _videoGalleryItemPrefab;
+    [SerializeField] private PhotoItemUI userPhotoPrefab;
+    [SerializeField] private VideoItemUI _videoGalleryItemPrefab;
     [SerializeField] private Transform _galleryItemsContainer;
     [SerializeField] private TMP_Text infoLabel;
     [SerializeField] private TMP_Text countLabel;
@@ -29,8 +29,8 @@ public class GalleryItemsInstantiator : MonoBehaviour
     [SerializeField] private bool preload;
     [SerializeField] private Image closeButtonImage;
     
-    private List<PhotoGalleryItemUI> photos = new();
-    private List<VideoGalleryItemUI> videos = new();
+    private List<PhotoItemUI> photos = new();
+    private List<VideoItemUI> videos = new();
     
     private void Awake()
     {
@@ -158,7 +158,7 @@ public class GalleryItemsInstantiator : MonoBehaviour
         // Instantiate gallery items for photos.
         for (int i = 0; i < sprites.Count; i++)
         {
-            PhotoGalleryItemUI photo = Instantiate(userPhotoPrefab, _galleryItemsContainer);
+            PhotoItemUI photo = Instantiate(userPhotoPrefab, _galleryItemsContainer);
             photo.Init(sprites[i], imageFiles[i]);
             photos.Add(photo);
         }

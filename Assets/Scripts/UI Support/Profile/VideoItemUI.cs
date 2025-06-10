@@ -8,7 +8,7 @@ using UnityEngine.Video;
 /// It handles creating the preview image of the video for the gallery.
 /// It also adds functionality to when the item is clicked.
 /// </summary>
-public class VideoGalleryItemUI : MonoBehaviour
+public class VideoItemUI : MonoBehaviour
 {
     [SerializeField]
     Button openVideoButton;

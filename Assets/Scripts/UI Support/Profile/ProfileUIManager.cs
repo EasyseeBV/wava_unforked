@@ -32,7 +32,7 @@ public class ProfileUIManager : MonoBehaviour
     [SerializeField] private FavoritesPage favoritesPage;
 
     [Header("Details")]
-    public GalleryItemDetailsUI galleryItemDetailsUI;
+    public ItemDetailsUI galleryItemDetailsUI;
     
     private MenuNavigation currentMenu = MenuNavigation.Default;
     

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PhotoGalleryItemUI : MonoBehaviour
+public class PhotoItemUI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField]

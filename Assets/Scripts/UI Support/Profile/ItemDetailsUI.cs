@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityNative.Sharing;
 
-public class GalleryItemDetailsUI : MonoBehaviour
+public class ItemDetailsUI : MonoBehaviour
 {
     [SerializeField]
     GameObject detailsContainer;
@@ -37,7 +37,7 @@ public class GalleryItemDetailsUI : MonoBehaviour
 
     private string savedName = null;
 
-    private PhotoGalleryItemUI openedUserPhoto;
+    private PhotoItemUI openedUserPhoto;
 
     /*
     private void Awake()
@@ -58,7 +58,7 @@ public class GalleryItemDetailsUI : MonoBehaviour
     }
 
 
-    public void Open(PhotoGalleryItemUI userPhoto)
+    public void Open(PhotoItemUI userPhoto)
     {
 
 
