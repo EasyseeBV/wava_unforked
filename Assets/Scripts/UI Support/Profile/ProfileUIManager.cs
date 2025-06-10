@@ -27,12 +27,12 @@ public class ProfileUIManager : MonoBehaviour
     [SerializeField] private Color unselectedColor;
     [Space]
     [SerializeField] private GameObject photosMenuObject;
-    [SerializeField] private GalleryItemsInstantiator photosPage;
+    [SerializeField] private GalleryItemsInstantiator galleryItemsInstantiator;
     [SerializeField] private GameObject favoriteMenuObject;
     [SerializeField] private FavoritesPage favoritesPage;
 
     [Header("Details")]
-    public ProfilePhotoDetails photoDetails;
+    public GalleryItemDetailsUI galleryItemDetailsUI;
     
     private MenuNavigation currentMenu = MenuNavigation.Default;
     
@@ -101,7 +101,7 @@ public class ProfileUIManager : MonoBehaviour
                 favoritesPage.Close();
                 favoriteMenuObject.SetActive(false);
                 photosMenuObject.SetActive(true);
-                photosPage.Open();
+                galleryItemsInstantiator.Open();
                 // TODO: filter photos here, if it was wanted in the future
                 break;
             case MenuNavigation.Favorites:

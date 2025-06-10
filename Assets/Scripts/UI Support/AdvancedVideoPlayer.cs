@@ -62,10 +62,23 @@ public class AdvancedVideoPlayer : MonoBehaviour
 
     float _hideControlsTime = Mathf.Infinity;
 
+    RenderTexture _placeholderRenderTexture;
+
+    RenderTexture _targetTexture;
+
     private void Awake()
     {
         // Store the initial alpha value of the black overlay. This alpha value is changed in animations.
         _initialBlackOverlayAlpha = _blackOverlayImage.color.a;
+
+        // Create a placeholder render texture. The video player needs a target texture to prepare in the VideoRenderMode.RenderTexture
+        _placeholderRenderTexture = new RenderTexture(4, 4, 0);
+    }
+
+    private void OnDestroy()
+    {
+        _placeholderRenderTexture.Release();
+        Destroy(_placeholderRenderTexture);
     }
 
     void OnEnable()
@@ -164,41 +177,33 @@ public class AdvancedVideoPlayer : MonoBehaviour
 
     void OnVideoPrepareCompleted(VideoPlayer source)
     {
-        // NOTE TO MYSELF: CONTINUE WORKING ON THIS FUNCTION. IT NEEDS TO INSTANTIATE THE RENDERTEXTURE WITH
-        // THE CORRECT WITH AND HEIGHT DEPENDING ON THE VIDEO. SEE LATEST CHATGPT TALK.
-
-
-
-        // Setup a render texture with the dimensions of the video clip.
-        // - Check if a render texture has been previously created.
-        var renderTexture = _videoPlayer.targetTexture;
-
+        // Hoist video dimensions for easy use.
         var videoWidth = (int)_videoPlayer.width;
         var videoHeight = (int)_videoPlayer.height;
 
-        if (renderTexture != null
-            && (renderTexture.width != videoWidth || renderTexture.height != videoHeight))
+        // Setup a render texture with the dimensions of the prepared video.
+        // - Check if a previous render texture can be reused.
+        if (_targetTexture != null && (_targetTexture.width != videoWidth || _targetTexture.height != videoHeight))
         {
-            // A render texture was previously created.
-            // Delete it because its dimensions don't match the video dimensions.
-            renderTexture.Release();
-            Destroy(renderTexture);
-            renderTexture = null;
+            // Delete the previous render texture as its dimensions do not match.
+            _targetTexture.Release();
+            Destroy(_targetTexture);
+            _targetTexture = null;
         }
 
         // - If no suitable render texture exists then create one.
-        if (renderTexture == null)
+        if (_targetTexture == null)
         {
-            renderTexture = new RenderTexture(videoWidth, videoHeight, 0);
+            _targetTexture = new RenderTexture(videoWidth, videoHeight, 0);
         }
 
         // - Set the render texture to be used by the video player and the raw image that shows it.
-        _videoPlayer.targetTexture = renderTexture;
-        _videoRawImage.texture = renderTexture;
+        _videoPlayer.targetTexture = _targetTexture;
+        _videoRawImage.texture = _targetTexture;
 
 
         // Adjust the aspect ratio of the raw image that shows the video to avoid stretching.
-        //_videoRawImageAspect.aspectRatio = (float)videoClip.width / videoClip.height;
+        _videoRawImageAspect.aspectRatio = (float)videoWidth / videoHeight;
 
 
         // The button should show a 'play' icon.
@@ -241,6 +246,7 @@ public class AdvancedVideoPlayer : MonoBehaviour
             _videoPlayer.Play();
     }
 
+    /*
     public void SetVideoClip(VideoClip videoClip)
     {
         // Set the video of the videoplayer component.
@@ -251,12 +257,16 @@ public class AdvancedVideoPlayer : MonoBehaviour
         // Prepare the video for instant access.
         _videoPlayer.Prepare();
     }
+    */
 
     public void SetVideoPath(string path)
     {
         // Set url for video player.
         _videoPlayer.source = VideoSource.Url;
         _videoPlayer.url = path;
+
+        // Set a placeholder render texture for the video.
+        _videoPlayer.targetTexture = _placeholderRenderTexture;
 
         // Prepare the video as it is necessary when using a url.
         _videoPlayer.Prepare();
@@ -361,6 +371,7 @@ public class AdvancedVideoPlayer : MonoBehaviour
 
             EditorGUILayout.LabelField("DEBUG");
 
+            /*
             // Add a VideoClip field for testing.
             _videoClip = (VideoClip)EditorGUILayout.ObjectField(
                 "Video Clip",
@@ -375,6 +386,8 @@ public class AdvancedVideoPlayer : MonoBehaviour
                 AdvancedVideoPlayer myTarget = (AdvancedVideoPlayer)target;
                 myTarget.SetVideoClip(_videoClip);
             }
+            */
+            
         }
     }
 #endif

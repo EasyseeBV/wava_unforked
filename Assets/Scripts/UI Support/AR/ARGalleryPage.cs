@@ -17,10 +17,10 @@ public class ARGalleryPage : AnimateInfoBar
     [SerializeField] private RectTransform layout;
     [SerializeField] private RectTransform background;
     [SerializeField] private RectTransform galleryParent;
-    [SerializeField] private UserPhoto userPhoto;
+    [SerializeField] private PhotoGalleryItemUI userPhoto;
     [SerializeField] private ScreenshotManager screenshotManager;
     
-    private List<UserPhoto> photos = new List<UserPhoto>();
+    private List<PhotoGalleryItemUI> photos = new List<PhotoGalleryItemUI>();
     private Coroutine coroutine;
 
     private float backgroundHeight = 0;

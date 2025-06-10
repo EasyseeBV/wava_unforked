@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 6881479917561464028}
   - component: {fileID: 2572996624167416800}
-  - component: {fileID: 3370501083797658405}
   - component: {fileID: 7379092622953971472}
   - component: {fileID: 3123167903112624614}
   m_Layer: 5
@@ -57,14 +56,6 @@ MonoBehaviour:
   _videoPreviewImage: {fileID: 5202210769130672086}
   _previewImageAspect: {fileID: 1774608653025656649}
   _videoDurationText: {fileID: 1566808756191133577}
---- !u!222 &3370501083797658405
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1731973080403550357}
-  m_CullTransparentMesh: 1
 --- !u!114 &7379092622953971472
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -100,7 +100,7 @@ public class VideoGalleryItemUI : MonoBehaviour
         if (ProfileUIManager.Instance == null)
             return;
 
-        ProfileUIManager.Instance.photoDetails.gameObject.SetActive(true);
-        ProfileUIManager.Instance.photoDetails.OpenVideo(_videoPath);
+        ProfileUIManager.Instance.galleryItemDetailsUI.OpenDetailsPage();
+        ProfileUIManager.Instance.galleryItemDetailsUI.SetPathOfVideoToShow(_videoPath);
     }
 }

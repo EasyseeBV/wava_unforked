@@ -1,14 +1,14 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UserPhoto : MonoBehaviour
+public class PhotoGalleryItemUI : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private Image photoImage;
-    [SerializeField] private Button photoButton;
+    [SerializeField]
+    Image photoPreviewImage;
+
+    [SerializeField]
+    Button openPhotoButton;
 
     public Sprite CachedSprite { get; private set; }
     public string Path { get; private set; }
@@ -16,14 +16,14 @@ public class UserPhoto : MonoBehaviour
 
     private void Awake()
     {
-        photoButton.onClick.AddListener(Open);
+        openPhotoButton.onClick.AddListener(Open);
     }
 
     public void Init(Sprite sprite, string path)
     {
         Path = path;
         CachedSprite = sprite;
-        photoImage.sprite = sprite;
+        photoPreviewImage.sprite = sprite;
     }
 
     private void Open()
@@ -32,8 +32,8 @@ public class UserPhoto : MonoBehaviour
         {
             if (ProfileUIManager.Instance == null) return;
             
-            ProfileUIManager.Instance.photoDetails.gameObject.SetActive(true);
-            ProfileUIManager.Instance.photoDetails.Open(this);
+            ProfileUIManager.Instance.galleryItemDetailsUI.OpenDetailsPage();
+            ProfileUIManager.Instance.galleryItemDetailsUI.SetPhotoSpriteToShow(CachedSprite);
         }
         else
         {
