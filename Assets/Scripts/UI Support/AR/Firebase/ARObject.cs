@@ -28,6 +28,7 @@ public class ARObject : MonoBehaviour
     private List<ARUIImage> uis = new List<ARUIImage>();
     private List<VideoPlayer> videoPlayers = new List<VideoPlayer>();
     private List<AudioSource> audioSources = new List<AudioSource>();
+    private List<GameObject> audioSourceUIs = new List<GameObject>();
 
     private bool showPreset = false;
     private GameObject presetObject = null;
@@ -140,8 +141,9 @@ public class ARObject : MonoBehaviour
         ApplyOffsets(obj, contentData);
 
         var audioCanvas = Instantiate(audioImageCanvas, obj.transform.position, Quaternion.identity);
-        audioCanvas.gameObject.SetActive(true);
+        audioCanvas.gameObject.SetActive(false);
         audioCanvas.transform.SetParent(placementParent, true);
+        audioSourceUIs.Add(audioCanvas);
         
         if (Camera.main)
         {
@@ -277,6 +279,11 @@ public class ARObject : MonoBehaviour
         {
             source.Play();
             source.gameObject.AddComponent<ARAnchor>();
+        }
+
+        foreach (var sourceUI in audioSourceUIs)
+        {
+            sourceUI.SetActive(true);
         }
 
         foreach (var ui in uis)

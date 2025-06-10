@@ -19,6 +19,8 @@ public static class AppCache
     
     public static Dictionary<string, Sprite> LocalGallery { get; set; } = new Dictionary<string, Sprite>();
     
+    public static Dictionary<string, GameObject> LocalModels { get; set; } = new Dictionary<string, GameObject>();
+    
     public static bool Loaded { get; private set; } = false;
     
     #region Loading local cache
@@ -83,7 +85,7 @@ public static class AppCache
                         FirebaseLoader.AddArtworkData(artwork);
                     }
 
-                    Debug.Log($"Loaded {wrapper.artworks.Count} artworks from local cache.");
+                    Debug.Log($"Loaded [{wrapper.artworks.Count}] artworks from local cache.");
                 }
             }
             catch (Exception e)
@@ -109,7 +111,7 @@ public static class AppCache
                         FirebaseLoader.AddExhibitionData(exhibition);
                     }
 
-                    Debug.Log($"Loaded {wrapper.exhibitions.Count} exhibitions from local cache.");
+                    Debug.Log($"Loaded [{wrapper.exhibitions.Count}] exhibitions from local cache.");
                 }
             }
             catch (Exception e)
@@ -178,6 +180,111 @@ public static class AppCache
     
     #endregion
 
+    #region Delete Data
+    
+    /// <summary>
+    /// Deletes one artist entry (by artist.Id) from disk cache and in-memory loader.
+    /// </summary>
+    public static async Task DeleteArtistCache(string artistId)
+    {
+        if (!File.Exists(artistDataCachePath))
+        {
+            Debug.Log($"Artist cache file not found: {artistDataCachePath}");
+            return;
+        }
+
+        try
+        {
+            string json = await File.ReadAllTextAsync(artistDataCachePath);
+            var wrapper = JsonUtility.FromJson<ArtistDataHolderListWrapper>(json);
+            int before = wrapper.artists?.Count ?? 0;
+
+            wrapper.artists.RemoveAll(a => a.artist_id == artistId);
+
+            int after = wrapper.artists.Count;
+            if (after < before)
+            {
+                string newJson = JsonUtility.ToJson(wrapper, true);
+                await File.WriteAllTextAsync(artistDataCachePath, newJson);
+                Debug.Log($"Deleted artist [{artistId}] from cache. {before - after} entry removed.");
+            }
+            else Debug.Log($"Artist [{artistId}] not found in cache.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed to delete artist [{artistId}] from cache: {e.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Deletes one artwork entry (by artwork.Id) from disk cache and in-memory loader.
+    /// </summary>
+    public static async Task DeleteArtworkCache(string artworkId)
+    {
+        if (!File.Exists(artworkDataCachePath))
+        {
+            Debug.Log($"Artwork cache file not found: {artworkDataCachePath}");
+            return;
+        }
+
+        try
+        {
+            string json = await File.ReadAllTextAsync(artworkDataCachePath);
+            var wrapper = JsonUtility.FromJson<ArtworkDataHolderListWrapper>(json);
+            int before = wrapper.artworks?.Count ?? 0;
+
+            wrapper.artworks.RemoveAll(a => a.artwork_id == artworkId);
+
+            int after = wrapper.artworks.Count;
+            if (after < before)
+            {
+                string newJson = JsonUtility.ToJson(wrapper, true);
+                await File.WriteAllTextAsync(artworkDataCachePath, newJson);
+            }
+            else Debug.Log($"Artwork [{artworkId}] not found in cache.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed to delete artwork [{artworkId}] from cache: {e.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Deletes one exhibition entry (by exhibition.Id) from disk cache and in-memory loader.
+    /// </summary>
+    public static async Task DeleteExhibitionCache(string exhibitionId)
+    {
+        if (!File.Exists(exhibitionDataCachePath))
+        {
+            Debug.Log($"Exhibition cache file not found: {exhibitionDataCachePath}");
+            return;
+        }
+
+        try
+        {
+            string json = await File.ReadAllTextAsync(exhibitionDataCachePath);
+            var wrapper = JsonUtility.FromJson<ExhibitionDataHolderListWrapper>(json);
+            int before = wrapper.exhibitions?.Count ?? 0;
+
+            wrapper.exhibitions.RemoveAll(e => e.exhibition_id == exhibitionId);
+
+            int after = wrapper.exhibitions.Count;
+            if (after < before)
+            {
+                string newJson = JsonUtility.ToJson(wrapper, true);
+                await File.WriteAllTextAsync(exhibitionDataCachePath, newJson);
+                Debug.Log($"Deleted exhibition [{exhibitionId}] from cache. {before - after} entry removed.");
+            }
+            else Debug.Log($"Exhibition [{exhibitionId}] not found in cache.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Failed to delete exhibition [{exhibitionId}] from cache: {e.Message}");
+        }
+    }
+    
+    #endregion
+    
     #region Helper
 
     // Ensures that the directory for a given file path exists.

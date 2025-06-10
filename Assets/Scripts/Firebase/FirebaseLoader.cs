@@ -324,8 +324,14 @@ public class FirebaseLoader : MonoBehaviour
         Query artworksQuery = _firestore.Collection("artworks").WhereGreaterThan("update_time", lastFetchTimestamp);
         Query exhibitionsQuery = _firestore.Collection("exhibitions").WhereGreaterThan("update_time", lastFetchTimestamp);
         Query artistsQuery = _firestore.Collection("artists").WhereGreaterThan("update_time", lastFetchTimestamp);
+        
+        Query deletedArtworks = _firestore.Collection("DeletedRecords/DeletedRecords/artworks_archived").WhereGreaterThan("softDeletes.deletedAt", lastFetchTimestamp);
+        Query deletedArtists = _firestore.Collection("DeletedRecords/DeletedRecords/artists_archived").WhereGreaterThan("softDeletes.deletedAt", lastFetchTimestamp);
+        Query deletedExhibitions = _firestore.Collection("DeletedRecords/DeletedRecords/exhibitions_archived").WhereGreaterThan("softDeletes.deletedAt", lastFetchTimestamp);
 
-        int updated = 0;
+        int artistsUpdated = 0;
+        int artworksUpdated = 0;
+        int exhibitionsUpdated = 0;
         
         try
         {
@@ -334,7 +340,7 @@ public class FirebaseLoader : MonoBehaviour
             QuerySnapshot artistsSnapshot = await artistsQuery.GetSnapshotAsync();
             foreach (DocumentSnapshot doc in artistsSnapshot.Documents)
             {
-                updated++;
+                artistsUpdated++;
                 Debug.Log("Artist scheduled for update: " + doc.Id);
                 
                 if (ArtistsMap.TryGetValue(doc.Id, out var artistStored))
@@ -352,13 +358,26 @@ public class FirebaseLoader : MonoBehaviour
                     
                     artistStored.creation_date_time = artist.creation_time.ToDateTime();
                     artistStored.update_date_time = artist.update_time.ToDateTime();
-                    
-                    await AppCache.SaveArtistsCache();
                 }
                 else
                 {
                     await ReadArtistDocument(doc);
-                    await AppCache.SaveArtistsCache();
+                }
+            }
+            
+            // Delete old artists
+            QuerySnapshot deletedArtistsSnapshot = await deletedArtists.GetSnapshotAsync();
+            foreach (DocumentSnapshot doc in deletedArtistsSnapshot.Documents)
+            {
+                artistsUpdated++;
+                Debug.Log("Artist deleting: " + doc.Id);
+                
+                if (ArtistsMap.TryGetValue(doc.Id, out var artistStored))
+                {
+                    // Update existing entry
+                    await AppCache.DeleteArtistCache(doc.Id);
+                    Artists.Remove(artistStored);
+                    ArtistsMap.Remove(doc.Id);
                 }
             }
             
@@ -367,7 +386,7 @@ public class FirebaseLoader : MonoBehaviour
             QuerySnapshot artworksSnapshot = await artworksQuery.GetSnapshotAsync();
             foreach (DocumentSnapshot doc in artworksSnapshot.Documents)
             {
-                updated++;
+                artworksUpdated++;
                 Debug.Log("Artwork scheduled for update: " + doc.Id);
 
                 if (ArtworksMap.TryGetValue(doc.Id, out var artworkStored))
@@ -417,22 +436,35 @@ public class FirebaseLoader : MonoBehaviour
                     
                     artworkStored.preset = artwork.preset;
                     artworkStored.alt_scene = artwork.alt_scene;
-                    
-                    await AppCache.SaveArtworksCache();
                 }
                 else
                 {
                     await ReadArtworkDocument(doc);
-                    await AppCache.SaveArtworksCache();
                 }
             }
-
+            
+            // Delete old artworks
+            QuerySnapshot deletedArtworksSnapshot = await deletedArtworks.GetSnapshotAsync();
+            foreach (DocumentSnapshot doc in deletedArtworksSnapshot.Documents)
+            {
+                artworksUpdated++;
+                Debug.Log("Artwork deleting: " + doc.Id);
+                
+                if (ArtworksMap.TryGetValue(doc.Id, out var artworkStored))
+                {
+                    // Update existing entry
+                    await AppCache.DeleteArtworkCache(doc.Id);
+                    Artworks.Remove(artworkStored);
+                    ArtworksMap.Remove(doc.Id);
+                }
+            }
+            
             // Process exhibitions
             OnStartUpEventProcessed?.Invoke("Updating exhibition cache...");
             QuerySnapshot exhibitionsSnapshot = await exhibitionsQuery.GetSnapshotAsync();
             foreach (DocumentSnapshot doc in exhibitionsSnapshot.Documents)
             {
-                updated++;
+                exhibitionsUpdated++;
                 Debug.Log("Exhibition scheduled for update: " + doc.Id);
                 
                 if (ExhibitionsMap.TryGetValue(doc.Id, out var exhibitionStored))
@@ -468,26 +500,42 @@ public class FirebaseLoader : MonoBehaviour
                     
                     exhibitionStored.creation_date_time = exhibition.creation_time.ToDateTime();
                     exhibitionStored.update_date_time = exhibition.update_time.ToDateTime();
-                    
-                    await AppCache.SaveExhibitionsCache();
                 }
                 else
                 {
                     await ReadExhibitionDocument(doc);
-                    await AppCache.SaveExhibitionsCache();
                 }
-
             }
+            
+            // Delete old artists
+            QuerySnapshot deletedExhibitionsSnapshot = await deletedExhibitions.GetSnapshotAsync();
+            foreach (DocumentSnapshot doc in deletedExhibitionsSnapshot.Documents)
+            {
+                exhibitionsUpdated++;
+                Debug.Log("Artist deleting: " + doc.Id);
+                
+                if (ExhibitionsMap.TryGetValue(doc.Id, out var exhibitionStored))
+                {
+                    // Update existing entry
+                    await AppCache.DeleteExhibitionCache(doc.Id);
+                    Exhibitions.Remove(exhibitionStored);
+                    ArtistsMap.Remove(doc.Id);
+                }
+            }
+            
+            if (artistsUpdated > 0) await AppCache.SaveArtistsCache();
+            if (artworksUpdated > 0) await AppCache.SaveArtworksCache();
+            if (exhibitionsUpdated > 0) await AppCache.SaveExhibitionsCache();
+
         }
         catch (Exception ex)
         {
             Debug.LogError("Error fetching updates: " + ex.Message);
         }
-        
-        
-        if (updated > 0) Debug.Log($"Updated [{updated}] local cached data");
-        else Debug.Log("Local cache was already up to date");
-        
+
+        var updated = artworksUpdated + artistsUpdated + exhibitionsUpdated;
+        Debug.Log(updated > 0 ? $"Updated [{updated}] local cached data" : "Local cache was already up to date");
+
         // Finally, update the last fetch time to the current time (in ISO8601 format).
         string newFetchTime = DateTime.UtcNow.ToString("o");
         PlayerPrefs.SetString("lastFetchTime", newFetchTime);
