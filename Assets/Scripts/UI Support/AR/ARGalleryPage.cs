@@ -80,7 +80,7 @@ public class ARGalleryPage : AnimateInfoBar
             for (int i = 0; i < sprites.Length; i++)
             {
                 var photo = Instantiate(userPhoto, layout);
-                photo.Init(sprites[i], files[i]);
+                photo.Setup(sprites[i], files[i]);
                 photo.IsARView = true;
                 photos.Add(photo);
             }

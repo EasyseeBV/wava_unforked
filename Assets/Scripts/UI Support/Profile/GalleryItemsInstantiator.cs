@@ -1,8 +1,8 @@
+using AlmostEngine.Screenshot;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using AlmostEngine.Screenshot;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Android;
@@ -29,9 +29,9 @@ public class GalleryItemsInstantiator : MonoBehaviour
     [SerializeField] private bool preload;
     [SerializeField] private Image closeButtonImage;
     
-    private List<PhotoItemUI> photos = new();
-    private List<VideoItemUI> videos = new();
-    
+    private List<PhotoItemUI> photoItemUIs = new();
+    private List<VideoItemUI> videoItemUIs = new();
+
     private void Awake()
     {
         refreshButton?.onClick.AddListener(() =>
@@ -85,102 +85,148 @@ public class GalleryItemsInstantiator : MonoBehaviour
             layoutAreasToRefresh.Add(_galleryItemsContainer as RectTransform);    
         }
         
-        if (gameObject.activeInHierarchy) StartCoroutine(LoadAllMedia());
+        if (gameObject.activeInHierarchy) StartCoroutine(LoadMediaFilesAndUpdateUI());
     }
 
-    private IEnumerator LoadAllMedia()
+    private IEnumerator LoadMediaFilesAndUpdateUI()
     {
-        string path = screenshotManager.GetExportPath();
+        // Load all photo sprites.
+        var photosFolderPath = screenshotManager.GetExportPath();
+        var photoSprites = new List<Sprite>();
 
+        // - Retrieve the names of all photo files.
+        var photoPaths = new string[0];
 
-        if (!Directory.Exists(path))
+        // - - Check if the directory exists.
+        if (Directory.Exists(photosFolderPath))
+        { // - The directory exists; get the file names.
+            photoPaths = Directory.GetFiles(photosFolderPath, "*.png");
+        }
+
+        // - Retrieve sprite for each photo file path.
+        // - - If the number of file names matches the number of cached sprites then we expect them to be the same.
+        if (photoPaths.Length == AppCache.LocalGallery.Count)
         {
-            Debug.LogError("Directory does not exist: " + path);
-            if (infoLabel) infoLabel.text = "No Images or Videos";
-            refreshButton?.gameObject.SetActive(true);
-            yield break;
+            photoSprites = AppCache.LocalGallery.Values.ToList();
         }
         else
         {
-            if (infoLabel) infoLabel.text = "Loading...";
-            refreshButton?.gameObject.SetActive(false);
-        }
-        
-        if (infoLabel != null) infoLabel.text = "";
-        
-        string[] imageFiles = Directory.GetFiles(path, "*.png");
-        string[] videoFiles = Directory.GetFiles(path, "*.mp4");
-
-        // If nothing has changed (same number of images + videos as before), skip reloading
-        int totalFileCount = imageFiles.Length + videoFiles.Length;
-        int previousCount = photos.Count /*+ videos.Count if you track videos*/;
-        if (totalFileCount == previousCount)
-        {
-            // Assume nothing changed—bail out
-            yield break;
-        }
-
-        // Otherwise, wipe out old items
-        foreach (var photo in photos)
-        {
-            photo.gameObject.SetActive(false);
-        }
-        photos.Clear();
-        
-        foreach (var vid in videos)
-        {
-             vid.gameObject.SetActive(false);
-        }
-        videos.Clear();
-
-        // Load all image sprites asynchronously
-        List<Sprite> sprites = new List<Sprite>();
-        if (imageFiles.Length != AppCache.LocalGallery.Count)
-        {
-            // Load each image only if it's not already cached
-            foreach (var imgPath in imageFiles)
+            // Load each image individually.
+            foreach (var path in photoPaths)
             {
-                yield return StartCoroutine(LoadImage(imgPath, sprites));
+                yield return LoadImage(path, photoSprites);
             }
         }
+
+
+
+        // Retrieve file paths for videos. The videos are loaded inside the VideoItemUI.
+        // - Read the player prefs to get the storage location for videos.
+        // - See ScreenRecorderDemo to see where it is set.
+        var videosFolderPath = PlayerPrefs.GetString("VideoStoragePath");
+
+        Debug.Log($"Video folder path: {videosFolderPath}");
+
+        var videoPaths = new string[0];
+
+        if (Directory.Exists(videosFolderPath))
+        {
+            videoPaths = Directory.GetFiles(videosFolderPath, "*.mp4");
+        }
+
+
+
+        // Hide or show the refresh button.
+        if (photoPaths.Length + videoPaths.Length == 0)
+        {
+            infoLabel.gameObject.SetActive(true);
+            refreshButton.gameObject.SetActive(true);
+        }
         else
         {
-            sprites = AppCache.LocalGallery.Values.ToList();
+            infoLabel.gameObject.SetActive(false);
+            refreshButton.gameObject.SetActive(false);
         }
 
-        if (infoLabel != null)
+
+
+        // Update the photo ui items.
+        for (int i = 0; i < photoSprites.Count; i++)
         {
-            infoLabel.text = "";
-        }
-        if (countLabel)
-            countLabel.text = "";
+            var sprite = photoSprites[i];
+            var photoPath = photoPaths[i];
 
-        // Instantiate gallery items for photos.
-        for (int i = 0; i < sprites.Count; i++)
+            // If a ui item exists: reuse it.
+            if (i < photoItemUIs.Count)
+            {
+                var photoItemUI = photoItemUIs[i];
+                photoItemUI.gameObject.SetActive(true);
+                photoItemUI.Setup(sprite, photoPath);
+            }
+            else
+            {
+                // Otherwise: Instantiate a new UI element.
+                var photoItemUI = Instantiate(photoItemPrefab, _galleryItemsContainer);
+
+                photoItemUI.Setup(sprite, photoPath);
+
+                // Store the element.
+                photoItemUIs.Add(photoItemUI);
+            }
+        }
+
+        // - Hide all photo ui elements that are too many.
+        for (int i = photoSprites.Count; i < photoItemUIs.Count; i++)
         {
-            PhotoItemUI photo = Instantiate(photoItemPrefab, _galleryItemsContainer);
-            photo.Init(sprites[i], imageFiles[i]);
-            photos.Add(photo);
+            var photoItemUI = photoItemUIs[i];
+            photoItemUI.gameObject.SetActive(false);
         }
 
-        // Instantiate gallery items for videos.
-        for (int i = 0; i < videoFiles.Length; i++)
+
+
+        // Update the video ui items.
+        for (int i = 0; i < videoPaths.Length; i++)
         {
-            // Instantiate the video gallery item.
-            var videoGalleryItem = Instantiate(_videoItemPrefab, _galleryItemsContainer);
+            var videoPath = videoPaths[i];
 
-            // Set its video.
-            string videoPath = videoFiles[i];
-            videoGalleryItem.SetVideoToShow(videoPath);
+            // Reuse the video item if it exists.
+            if (i < videoItemUIs.Count)
+            {
+                var videoItemUI = videoItemUIs[i];
+                videoItemUI.gameObject.SetActive(true);
+                videoItemUI.SetVideoToShow(videoPath);
+            }
+            else
+            {
+                // Otherwise: Instantiate a new UI element.
+                var videoItemUI = Instantiate(_videoItemPrefab, _galleryItemsContainer);
+
+                videoItemUI.SetVideoToShow(videoPath);
+
+                // Store the element.
+                videoItemUIs.Add(videoItemUI);
+            }
         }
 
-        // Show the refresh button if no items are present.
-        refreshButton?.gameObject.SetActive(videoFiles.Length == 0 && sprites.Count == 0);
+        // - Hide all video ui elements that are too many.
+        for (int i = videoPaths.Length; i < videoItemUIs.Count; i++)
+        {
+            var videoitemUI = videoItemUIs[i];
+            videoitemUI.gameObject.SetActive(false);
+        }
+
+
 
         // Commented for now; don't see the purpose.
         //StartCoroutine(LateRebuild());
     }
 
+    /// <summary>
+    /// If a file with the specified path is cached then it's added to the sprites list. If not, creates a sprite, caches it, then adds it to the list.
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <param name="sprites"></param>
+    /// <returns></returns>
     IEnumerator LoadImage(string filePath, List<Sprite> sprites)
     {
         if (AppCache.LocalGallery.ContainsKey(filePath))

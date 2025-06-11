@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityNative.Sharing;
+using NativeShareNamespace;
 
 public class ItemDetailsUI : MonoBehaviour
 {
@@ -27,6 +28,10 @@ public class ItemDetailsUI : MonoBehaviour
     [SerializeField]
     Button backButton;
 
+    [SerializeField]
+
+    string mediaFilePath;
+
     /*
     [Header("Like Buttons")]
     [SerializeField] protected Button heartButton;
@@ -39,13 +44,12 @@ public class ItemDetailsUI : MonoBehaviour
 
     private PhotoItemUI openedUserPhoto;
 
-    /*
     private void Awake()
     {
-        heartButton.onClick.AddListener(ToggleLike);
+        //heartButton.onClick.AddListener(ToggleLike);
         shareButton.onClick.AddListener(Share);
     }
-    */
+
 
     private void OnEnable()
     {
@@ -83,7 +87,7 @@ public class ItemDetailsUI : MonoBehaviour
         detailsContainer.SetActive(false);
     }
 
-    public void SetPhotoSpriteToShow(Sprite sprite)
+    public void SetPhotoSpriteToShow(Sprite sprite, string filePath)
     {
         // Hide the advanced video player.
         advancedVideoPlayer.gameObject.SetActive(false);
@@ -95,6 +99,9 @@ public class ItemDetailsUI : MonoBehaviour
         // Set the correct aspect ratio for the image.
         var aspectRatio = sprite.texture.width / (float)sprite.texture.height;
         photoAspectRatioFitter.aspectRatio = aspectRatio;
+
+        // Store the media path for social sharing.
+        mediaFilePath = filePath;
     }
 
     public void SetPathOfVideoToShow(string videoPath)
@@ -105,6 +112,9 @@ public class ItemDetailsUI : MonoBehaviour
         // Show the advanced video player and set the video.
         advancedVideoPlayer.gameObject.SetActive(true);
         advancedVideoPlayer.SetVideoPath(videoPath);
+
+        // Store the media path for social sharing.
+        mediaFilePath = videoPath;
     }
 
     /*
@@ -124,12 +134,16 @@ public class ItemDetailsUI : MonoBehaviour
     }
     */
 
-    private void Share()
+    void Share()
     {
-        var share = UnityNativeSharing.Create();
-        share.ShareScreenshotAndText("WAVA", openedUserPhoto.Path);
+        Debug.Log($"Pressed share button! Attempting to share media at path: {mediaFilePath}");
+
+        new NativeShare().AddFile(mediaFilePath).Share();
+
+        //var share = UnityNativeSharing.Create();
+        //share.ShareScreenshotAndText("WAVA", openedUserPhoto.Path);
+
         //UnityNativeSharing.ShareScreenshotAndText("WAVA", Path.GetFileName(openedUserPhoto.Path), true);
         //ShareUtils.ShareImage(openedUserPhoto.CachedSprite.texture, Path.GetFileName(openedUserPhoto.Path), "Screenshot taken from WAVA.");
     }
-
 }

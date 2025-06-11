@@ -54,6 +54,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   photoPreviewImage: {fileID: 5728433753987413484}
   openPhotoButton: {fileID: 5905628125899542027}
+  aspectRatioFitter: {fileID: 1977110041793473441}
 --- !u!114 &5905628125899542027
 MonoBehaviour:
   m_ObjectHideFlags: 0
