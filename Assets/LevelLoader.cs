@@ -26,7 +26,8 @@ public class LevelLoader : MonoBehaviour
 
     private void OnEnable() => FirebaseLoader.OnStartUpEventProcessed += UpdateLoadingText;
     private void OnDisable() => FirebaseLoader.OnStartUpEventProcessed -= UpdateLoadingText;
-    
+
+    public static string DebugSceneToOpen = string.Empty;
 
     private IEnumerator Start()
     {
@@ -37,6 +38,10 @@ public class LevelLoader : MonoBehaviour
 
         int levelToLoad = PlayerPrefs.GetInt("OpeningTutorial", 0);
         string level = levelToLoad == 0 ? "WelcomeTutorial_1" : "Home";
+        
+#if UNITY_EDITOR
+        if (!string.IsNullOrEmpty(DebugSceneToOpen)) level =  DebugSceneToOpen;
+#endif
         
         StartCoroutine(LoadAsynchronously(level));
     }
