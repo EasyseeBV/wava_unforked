@@ -81,6 +81,8 @@ public class ArTapper : MonoBehaviour
     public Dictionary<int, GameObject> contentDict = new Dictionary<int, GameObject>();
     private static bool HideShadow = false;
 
+    public static event Action<ArtworkData> OnArtworkPlaced;
+
     #region Unity Lifecycle
     
     private void OnEnable()
@@ -188,6 +190,8 @@ public class ArTapper : MonoBehaviour
             LineRenderer lineRenderer = trackable.GetComponent<LineRenderer>();
             if (lineRenderer != null) lineRenderer.enabled = false;*/
         }
+        
+        OnArtworkPlaced?.Invoke(ArtworkToPlace);
         
         UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
     }
