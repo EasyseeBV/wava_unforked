@@ -20,42 +20,10 @@ public class ProximityAutoDownloader : MonoBehaviour
             .OrderBy(a => HaversineDistance(userLat, userLon, a.latitude, a.longitude))
             .Take(3);
 
-        Debug.Log("count found: " + closestThree.Count());
         foreach (var art in closestThree)
         {
             Debug.Log("Found art: " + art.title);
-            foreach (var content in art.content_list)
-            {
-                var uri = new Uri(content.media_content);
-                string encodedPath = uri.AbsolutePath;
-                string decodedPath = Uri.UnescapeDataString(encodedPath);
-                string fileName = Path.GetFileName(decodedPath);
-
-                string path = content.media_content; // default the path to the firestore uri of the content
-                string localPath = Path.Combine(AppCache.ContentFolder, fileName);
-            
-                // if the file does not exist locally, download it
-                if (!File.Exists(localPath))
-                {
-                    // failed to download handling needs to be done here
-                    if (FirebaseLoader.OfflineMode)
-                    {
-                        Debug.Log("OfflineMode");
-                        return;
-                    }
-
-                    var results = await DownloadManager.Instance.BackgroundDownloadMedia(AppCache.ContentFolder, content.media_content, null);
-                    path = results.localPath;
-                    if (!string.IsNullOrEmpty(path) && File.Exists(path))
-                    {
-                        Debug.Log("Content was downloaded and stored locally");
-                    }
-                }
-                else if (File.Exists(localPath)) // if the file does exist, set the path to that location
-                {
-                    Debug.Log("Content was already found locally");
-                }
-            }
+            DownloadManager.Instance.LoadModels(art.content_list, art.id);
         }
     }
     

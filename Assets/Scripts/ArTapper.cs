@@ -308,27 +308,46 @@ public class ArTapper : MonoBehaviour
                             path = localPath;
                         }
                         
-                        if (_assetLoaderOptions == null)
+                        if (DownloadManager.LocalModels.TryGetValue(ArtworkToPlace.id, out var localModel))
                         {
-                            _assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
-                            _assetLoaderOptions.MaterialMappers = new MaterialMapper[]
-                            {
-                                ScriptableObject.CreateInstance<UniversalRPMaterialMapper>()
-                            };
-                        }
-                    
-                        Debug.Log("attempting to load local model file: " + fileName);
+                            Debug.Log("Loading model from local cache.");
+                            contentLoadedCount++;
+                            var obj = Instantiate(localModel, arObject.transform);
+                            contentDict.TryAdd(contentDict.Count, obj);
+                            obj.name = "Loaded Model (Cache)";
+                            arObject.Add(obj, content);
 
-                        // Load the model from the local file path instead of downloading it.
-                        AssetLoader.LoadModelFromFile(
-                            path: path,
-                            onLoad: OnLoad,
-                            onMaterialsLoad: c => { OnMaterialsLoad(c, content, contentDict.Count, monuments); },
-                            onProgress: (c, progress) => { OnProgress(c, progress, 0); },
-                            onError: OnError,
-                            wrapperGameObject: null,
-                            assetLoaderOptions: _assetLoaderOptions
-                        );
+                            if (contentLoadedCount >= contentTotalCount)
+                            {
+                                allContentLoaded = true;
+                                downloadBar?.gameObject.SetActive(false);
+                            }
+                        }
+                        else
+                        {
+                            if (_assetLoaderOptions == null)
+                            {
+                                _assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
+                                _assetLoaderOptions.MaterialMappers = new MaterialMapper[]
+                                {
+                                    ScriptableObject.CreateInstance<UniversalRPMaterialMapper>()
+                                };
+                            }
+                    
+                            Debug.Log("attempting to load local model file: " + fileName);
+
+                            // Load the model from the local file path instead of downloading it.
+                            AssetLoader.LoadModelFromFile(
+                                path: path,
+                                onLoad: OnLoad,
+                                onMaterialsLoad: c => { OnMaterialsLoad(c, content, contentDict.Count, monuments); },
+                                onProgress: (c, progress) => { OnProgress(c, progress, 0); },
+                                onError: OnError,
+                                wrapperGameObject: null,
+                                assetLoaderOptions: _assetLoaderOptions
+                            );    
+                        }
+                        
                         break;
                     }
                     
@@ -421,59 +440,97 @@ public class ArTapper : MonoBehaviour
                 
                 case ".fbx" or ".obj" or ".gltf" or ".gltf2" when storedLocal: // stored local model
                 {
-                    if (_assetLoaderOptions == null)
+                    if (DownloadManager.LocalModels.TryGetValue(ArtworkToPlace.id, out var localModel))
                     {
-                        _assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
-                        _assetLoaderOptions.MaterialMappers = new MaterialMapper[]
+                        Debug.Log("Loading model from local cache.");
+                        contentLoadedCount++;
+                        var obj = Instantiate(localModel, arObject.transform);
+                        contentDict.TryAdd(i, obj);
+                        obj.name = "Loaded Model (Cache)";
+                        arObject.Add(obj, content);
+
+                        if (contentLoadedCount >= contentTotalCount)
+                        {
+                            allContentLoaded = true;
+                            downloadBar?.gameObject.SetActive(false);
+                        }
+                    }
+                    else
+                    {
+                        if (_assetLoaderOptions == null)
+                        {
+                            _assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
+                            _assetLoaderOptions.MaterialMappers = new MaterialMapper[]
                             {
                                 ScriptableObject.CreateInstance<UniversalRPMaterialMapper>()
                             };
-                        _assetLoaderOptions.AnimationType = AnimationType.Legacy;
-                        _assetLoaderOptions.AutomaticallyPlayLegacyAnimations = true;
+                            _assetLoaderOptions.AnimationType = AnimationType.Legacy;
+                            _assetLoaderOptions.AutomaticallyPlayLegacyAnimations = true;
+                        }
+                    
+                        Debug.Log("attempting to load local model file: " + fileName);
+
+                        // Load the model from the local file path instead of downloading it.
+                        var i1 = i;
+                        AssetLoader.LoadModelFromFile(
+                            path: path,
+                            onLoad: OnLoad,
+                            onMaterialsLoad: c => { OnMaterialsLoad(c, content, i1); },
+                            onProgress: (c, progress) => { OnProgress(c, progress, i1); },
+                            onError: OnError,
+                            wrapperGameObject: null,
+                            assetLoaderOptions: _assetLoaderOptions
+                        );    
                     }
                     
-                    Debug.Log("attempting to load local model file: " + fileName);
-
-                    // Load the model from the local file path instead of downloading it.
-                    var i1 = i;
-                    AssetLoader.LoadModelFromFile(
-                        path: path,
-                        onLoad: OnLoad,
-                        onMaterialsLoad: c => { OnMaterialsLoad(c, content, i1); },
-                        onProgress: (c, progress) => { OnProgress(c, progress, i1); },
-                        onError: OnError,
-                        wrapperGameObject: null,
-                        assetLoaderOptions: _assetLoaderOptions
-                    );
                     break;
                 }
                 
                 case ".fbx" or ".obj" or ".gltf" or ".gltf2": // url model
                 {
-                    if (_assetLoaderOptions == null)
+                    if (DownloadManager.LocalModels.TryGetValue(path, out var localModel))
                     {
-                        _assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
-                        _assetLoaderOptions.MaterialMappers = new MaterialMapper[]
+                        Debug.Log("Loading model from local cache.");
+                        contentLoadedCount++;
+                        var obj = Instantiate(localModel, arObject.transform);
+                        contentDict.TryAdd(i, obj);
+                        obj.name = "Loaded Model (Cache)";
+                        arObject.Add(obj, content);
+
+                        if (contentLoadedCount >= contentTotalCount)
                         {
-                            ScriptableObject.CreateInstance<UniversalRPMaterialMapper>()
-                        };
+                            allContentLoaded = true;
+                            downloadBar?.gameObject.SetActive(false);
+                        }
+                    }
+                    else
+                    {
+                        if (_assetLoaderOptions == null)
+                        {
+                            _assetLoaderOptions = AssetLoader.CreateDefaultLoaderOptions(false, true);
+                            _assetLoaderOptions.MaterialMappers = new MaterialMapper[]
+                            {
+                                ScriptableObject.CreateInstance<UniversalRPMaterialMapper>()
+                            };
+                        }
+                        
+                        Debug.Log("attempting to download model: " + fileName);
+                        
+                        var webRequest = AssetDownloader.CreateWebRequest(content.media_content);
+    
+                        var i1 = i;
+                        AssetDownloader.LoadModelFromUri(
+                            webRequest,
+                            onLoad: OnLoad,
+                            onMaterialsLoad: c => { OnMaterialsLoad(c, content, i1); },
+                            onProgress: (c, progress) => { OnProgress(c, progress, i1); },
+                            onError: OnError,
+                            wrapperGameObject: null,
+                            assetLoaderOptions: _assetLoaderOptions,
+                            fileExtension: extension
+                        );
                     }
                     
-                    Debug.Log("attempting to download model: " + fileName);
-                    
-                    var webRequest = AssetDownloader.CreateWebRequest(content.media_content);
-
-                    var i1 = i;
-                    AssetDownloader.LoadModelFromUri(
-                        webRequest,
-                        onLoad: OnLoad,
-                        onMaterialsLoad: c => { OnMaterialsLoad(c, content, i1); },
-                        onProgress: (c, progress) => { OnProgress(c, progress, i1); },
-                        onError: OnError,
-                        wrapperGameObject: null,
-                        assetLoaderOptions: _assetLoaderOptions,
-                        fileExtension: extension
-                    );
                     break;
                 }
                 
@@ -519,6 +576,9 @@ public class ArTapper : MonoBehaviour
         obj.name = "Loaded Model";
         arObject.Add(obj, mediaContentData);
 
+        var cachedObj = Instantiate(obj, DownloadManager.Instance.gameObject.transform);
+        DownloadManager.LocalModels.TryAdd(ArtworkToPlace.id, cachedObj);
+
         if (contentLoadedCount >= contentTotalCount)
         {
             allContentLoaded = true;
@@ -542,6 +602,9 @@ public class ArTapper : MonoBehaviour
         contentDict.TryAdd(index, obj);
         obj.name = "Loaded Model";
         arObject.Add(obj, mediaContentData);
+        
+        var cachedObj = Instantiate(obj, DownloadManager.Instance.gameObject.transform);
+        DownloadManager.LocalModels.TryAdd(ArtworkToPlace.id, cachedObj);
 
         if (contentLoadedCount >= contentTotalCount)
         {

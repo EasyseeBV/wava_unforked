@@ -118,6 +118,9 @@ namespace TriLibCore
         /// </summary>
         private void OnDestroy()
         {
+            // removed unloading assets as we want to cache them instead
+            
+            return;
             if (AssetUnloaders.TryGetValue(_id, out var value))
             {
                 if (--value <= 0)

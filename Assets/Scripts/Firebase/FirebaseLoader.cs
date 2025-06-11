@@ -262,6 +262,8 @@ public class FirebaseLoader : MonoBehaviour
             foreach (var artwork in newestArtworks)
             {
                 await artwork.GetAllImages();
+                
+                DownloadManager.Instance.LoadModels(artwork.content_list, artwork.id);
             }
         }
 
