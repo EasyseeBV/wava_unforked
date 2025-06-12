@@ -34,7 +34,12 @@ public class CameraModeManager : MonoBehaviour
                 if (screenRecorder.CheckIsRecording())
                 {
                     screenRecorder.StopRecording(() => {
-                        screenRecorder.SaveRecording();
+                        string videoSavePath = screenRecorder.SaveRecording();
+
+                        // If the video has been saved then persistently store its path.
+                        if (videoSavePath != null)
+                            VideoPathStore.StorePath(videoSavePath);
+
                         button.color = Color.white;
                         ObjectToTurnOff.ForEach(o => o.SetActive(true));
                         ObjectToTurnOn.ForEach(o => o.SetActive(false));

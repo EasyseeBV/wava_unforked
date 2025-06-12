@@ -2,6 +2,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
+using System.Collections;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /// <summary>
 /// Each item in the gallery that is a video has this script attached.
@@ -72,8 +77,12 @@ public class VideoItemUI : MonoBehaviour
             _videoPlayer.Play();
             _videoPlayer.Pause();
 
+            //Debug.Log($"Video width: {_videoPlayer.width}, height: {_videoPlayer.height}");
+
             // Set the aspect ratio of the preview image according to the aspect ratio of the video.
             _previewImageAspect.aspectRatio = (float)_videoPlayer.width / _videoPlayer.height;
+
+            //StartCoroutine(ForceRebuildLayoutNextFrame(_videoPreviewImage.rectTransform));
 
             // Set the duration text.
             _videoDurationText.text = AdvancedVideoPlayer.FormatTime(_videoPlayer.length);
@@ -89,6 +98,14 @@ public class VideoItemUI : MonoBehaviour
         _videoPath = videoPath;
     }
 
+    /*
+    IEnumerator ForceRebuildLayoutNextFrame(RectTransform transform)
+    {
+        yield return null;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(transform);
+    }
+    */
+
     void OnOpenVideoButtonClicked()
     {
         // Check if there is a video to play.
@@ -103,4 +120,36 @@ public class VideoItemUI : MonoBehaviour
         ProfileUIManager.Instance.galleryItemDetailsUI.OpenDetailsPage();
         ProfileUIManager.Instance.galleryItemDetailsUI.SetPathOfVideoToShow(_videoPath);
     }
+
+#if UNITY_EDITOR
+    // Custom editor for easy testing.
+    [CustomEditor(typeof(VideoItemUI))]
+    class VideoItemUIEditor : Editor
+    {
+        string _videoPath;
+
+        public override void OnInspectorGUI()
+        {
+            // Draw the default inspector UI.
+            DrawDefaultInspector();
+
+            // Add some space.
+            EditorGUILayout.Space();
+
+            EditorGUILayout.LabelField("DEBUG");
+
+            _videoPath = EditorGUILayout.TextField("Video path", _videoPath);
+
+            // Add a button.
+            if (GUILayout.Button("Set video path"))
+            {
+                Debug.Log($"Setting path: {_videoPath}");
+
+                VideoItemUI myTarget = (VideoItemUI)target;
+                myTarget.SetVideoToShow(_videoPath);
+            }
+
+        }
+    }
+#endif
 }

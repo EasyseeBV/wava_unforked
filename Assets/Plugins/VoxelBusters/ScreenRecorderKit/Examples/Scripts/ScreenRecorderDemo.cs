@@ -215,29 +215,25 @@ namespace VoxelBusters.ScreenRecorderKit.Demo
             });
         }
 
-        public void SaveRecording()
+        public string SaveRecording()
         {
+            string videoSavePath = null;
+
             m_recorder.SaveRecording(null, (result, error) =>
             {
                 if (error == null)
                 {
-                    // Save the path where the video files are being stored.
-                    // Accessed by the 'captured' view inside the GalleryItemsInstantiator class.
-                    var directory = Path.GetDirectoryName(result.Path);
-
-                    PlayerPrefs.SetString("VideoStoragePath", directory);
-
-                    Debug.Log($"Is setting {directory} in player prefs.");
-
-
-
                     SetStatus("Saved recording successfully :" + result.Path);
+
+                    videoSavePath = result.Path;
                 }
                 else
                 {
                     SetStatus($"Failed saving recording [{error}]");
                 }
             });
+
+            return videoSavePath;
         }
 
         public void DiscardRecording()

@@ -119,25 +119,34 @@ public class GalleryItemsInstantiator : MonoBehaviour
         }
 
 
+        // Read the video paths.
+        var videoPaths = VideoPathStore.ReadPaths();
 
-        // Retrieve file paths for videos. The videos are loaded inside the VideoItemUI.
-        // - Read the player prefs to get the storage location for videos.
-        // - See ScreenRecorderDemo to see where it is set.
-        var videosFolderPath = PlayerPrefs.GetString("VideoStoragePath");
+        /*
+        // TODO: REMOVE THE FOLLOWING HACKY TEST
+        var testPath = "file:///storage/emulated/0/Android/media/com.wava.ar.game/WAVA/WavaTest.mp4";
 
-        Debug.Log($"Video folder path: {videosFolderPath}");
-
-        var videoPaths = new string[0];
-
-        if (Directory.Exists(videosFolderPath))
+        if (!videoPaths.Contains(testPath))
         {
-            videoPaths = Directory.GetFiles(videosFolderPath, "*.mp4");
+            VideoPathStore.StorePath(testPath);
+            videoPaths = VideoPathStore.ReadPaths();
+        }
+        */
+
+
+        // Convert each path that is an android media store uri alias into a real media store uri.
+        for (int i = 0; i < videoPaths.Count; i++)
+        {
+            //Debug.Log($"Found this video path: {videoPaths[i]}");
+
+            videoPaths[i] = VideoPathStore.ConvertToMediaStoreURIIfAlias(videoPaths[i]);
+
+            //Debug.Log($"Converted the video path to: {videoPaths[i]}");
         }
 
 
-
         // Hide or show the refresh button.
-        if (photoPaths.Length + videoPaths.Length == 0)
+        if (photoPaths.Length + videoPaths.Count == 0)
         {
             infoLabel.gameObject.SetActive(true);
             refreshButton.gameObject.SetActive(true);
@@ -147,7 +156,6 @@ public class GalleryItemsInstantiator : MonoBehaviour
             infoLabel.gameObject.SetActive(false);
             refreshButton.gameObject.SetActive(false);
         }
-
 
 
         // Update the photo ui items.
@@ -185,7 +193,7 @@ public class GalleryItemsInstantiator : MonoBehaviour
 
 
         // Update the video ui items.
-        for (int i = 0; i < videoPaths.Length; i++)
+        for (int i = 0; i < videoPaths.Count; i++)
         {
             var videoPath = videoPaths[i];
 
@@ -209,7 +217,7 @@ public class GalleryItemsInstantiator : MonoBehaviour
         }
 
         // - Hide all video ui elements that are too many.
-        for (int i = videoPaths.Length; i < videoItemUIs.Count; i++)
+        for (int i = videoPaths.Count; i < videoItemUIs.Count; i++)
         {
             var videoitemUI = videoItemUIs[i];
             videoitemUI.gameObject.SetActive(false);
