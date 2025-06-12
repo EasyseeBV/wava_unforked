@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityNative.Sharing;
@@ -14,8 +11,8 @@ public class ARPhotoViewer : MonoBehaviour
     [SerializeField] private Button returnButton;
     [SerializeField] private Button shareButton;
 
-    private UserPhoto userPhoto;
-    private UserVideo userVideo;
+    private PhotoItemUI userPhoto;
+    private VideoItemUI userVideo;
     
     private void Awake()
     {
@@ -26,7 +23,7 @@ public class ARPhotoViewer : MonoBehaviour
         content.SetActive(false);
     }
 
-    public void Open(UserPhoto photo)
+    public void Open(PhotoItemUI photo)
     {
         content.SetActive(true);
         
@@ -34,7 +31,7 @@ public class ARPhotoViewer : MonoBehaviour
         image.sprite = photo.CachedSprite;
     }
 
-    public void Open(UserVideo video)
+    public void Open(VideoItemUI video)
     {
         content.SetActive(true);
         
