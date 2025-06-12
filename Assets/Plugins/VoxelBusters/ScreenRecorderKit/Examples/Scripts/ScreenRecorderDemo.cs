@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using VoxelBusters.CoreLibrary;
@@ -214,19 +215,25 @@ namespace VoxelBusters.ScreenRecorderKit.Demo
             });
         }
 
-        public void SaveRecording()
+        public string SaveRecording()
         {
+            string videoSavePath = null;
+
             m_recorder.SaveRecording(null, (result, error) =>
             {
-                if(error == null)
+                if (error == null)
                 {
                     SetStatus("Saved recording successfully :" + result.Path);
+
+                    videoSavePath = result.Path;
                 }
                 else
                 {
                     SetStatus($"Failed saving recording [{error}]");
                 }
             });
+
+            return videoSavePath;
         }
 
         public void DiscardRecording()

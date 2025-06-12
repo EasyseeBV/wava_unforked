@@ -17,10 +17,10 @@ public class ARGalleryPage : AnimateInfoBar
     [SerializeField] private RectTransform layout;
     [SerializeField] private RectTransform background;
     [SerializeField] private RectTransform galleryParent;
-    [SerializeField] private UserPhoto userPhoto;
+    [SerializeField] private PhotoItemUI userPhoto;
     [SerializeField] private ScreenshotManager screenshotManager;
     
-    private List<UserPhoto> photos = new List<UserPhoto>();
+    private List<PhotoItemUI> photos = new List<PhotoItemUI>();
     private Coroutine coroutine;
 
     private float backgroundHeight = 0;
@@ -80,7 +80,7 @@ public class ARGalleryPage : AnimateInfoBar
             for (int i = 0; i < sprites.Length; i++)
             {
                 var photo = Instantiate(userPhoto, layout);
-                photo.Init(sprites[i], files[i]);
+                photo.Setup(sprites[i], files[i]);
                 photo.IsARView = true;
                 photos.Add(photo);
             }
