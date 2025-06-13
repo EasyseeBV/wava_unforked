@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Video;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -78,6 +77,15 @@ public class PointsAndLineUI : MonoBehaviour
 
     public int GetPointCount() => _points != null ? _points.Count : 0;
 
+    public void FinishAnimationsImmediately()
+    {
+        for (int i = 0; i < _points.Count; i++)
+        {
+            _pointsAnimationProgress[i] = i == _selectedPointIndex ? 1 : 0;
+            UpdateAnimationForPoint(i);
+        }
+    }
+
     void Update()
     {
         if (_points == null)
@@ -101,12 +109,17 @@ public class PointsAndLineUI : MonoBehaviour
 
 
             // Animate the point.
-            var point = _points[i];
-            var progress = LeanTween.easeInOutSine(0, 1, _pointsAnimationProgress[i]);
-            point.color = Color.Lerp(_defaultPointColor, _selectedColor, progress);
-            var width = Mathf.Lerp(_defaultWidth, _selectedWidth, progress);
-            point.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+            UpdateAnimationForPoint(i);
         }
+    }
+
+    void UpdateAnimationForPoint(int pointIndex)
+    {
+        var point = _points[pointIndex];
+        var progress = LeanTween.easeInOutSine(0, 1, _pointsAnimationProgress[pointIndex]);
+        point.color = Color.Lerp(_defaultPointColor, _selectedColor, progress);
+        var width = Mathf.Lerp(_defaultWidth, _selectedWidth, progress);
+        point.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
     }
 
 #if UNITY_EDITOR

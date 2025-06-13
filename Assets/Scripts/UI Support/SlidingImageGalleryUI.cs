@@ -6,49 +6,59 @@ using UnityEditor;
 
 public class SlidingImageGalleryUI : MonoBehaviour
 {
+    public float _ElementWidth;
+
     [SerializeField]
     HorizontalLayoutGroup _horizontalLayoutGroup;
 
-    [SerializeField]
-    float _elementWidth;
-
     [SerializeField, Range(0, 1)]
-    float _smoothTime;
+    float _animationDuration;
+
+    RectTransform _layoutGroupTransform;
+
+    int _tweenId;
 
     int _targetChildIndex;
 
-    // For smooth damp.
-    float _targetPadding;
-    float _velocity;
-
-    private void Update()
+    private void Awake()
     {
-        // Adjust padding left.
+        _layoutGroupTransform = _horizontalLayoutGroup.transform as RectTransform;
+    }
+
+    public void GoForwards() => SetTargetImageIndex(_targetChildIndex + 1);
+
+    public void GoBackwards() => SetTargetImageIndex(_targetChildIndex - 1);
+
+    public void SetTargetImageIndex(int targetIndex)
+    {
+        // Keep index within bounds.
+        _targetChildIndex = Mathf.Clamp(targetIndex, 0, transform.childCount - 1);
+
+        LeanTween.cancel(_tweenId);
+
         var currentPadding = _horizontalLayoutGroup.padding.left;
+        var targetPadding = -_targetChildIndex * _ElementWidth;
 
-        var nextPadding = Mathf.SmoothDamp(currentPadding, _targetPadding, ref _velocity, _smoothTime);
+        _tweenId = LeanTween.value(gameObject, currentPadding, targetPadding, _animationDuration)
+            .setOnUpdate((float val) =>
+            {
+                _horizontalLayoutGroup.padding.left = Mathf.RoundToInt(val);
 
-        _horizontalLayoutGroup.padding.left = Mathf.RoundToInt(nextPadding);
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(transform as RectTransform);
+                LayoutRebuilder.ForceRebuildLayoutImmediate(_layoutGroupTransform);
+            })
+            .setEase(LeanTweenType.easeInOutQuad)
+            .uniqueId;
     }
 
-    public void GoForwards()
+    public void FinishAnimationsImmediately()
     {
-        _targetChildIndex = Mathf.Clamp(_targetChildIndex + 1, 0, transform.childCount - 1);
+        LeanTween.cancel(_tweenId);
 
-        _targetPadding = - _targetChildIndex * _elementWidth;
+        var targetPadding = -_targetChildIndex * _ElementWidth;
 
-        Debug.Log(_targetChildIndex);
-    }
+        _horizontalLayoutGroup.padding.left = Mathf.RoundToInt(targetPadding);
 
-    public void GoBackwards()
-    {
-        _targetChildIndex = Mathf.Clamp(_targetChildIndex - 1, 0, transform.childCount - 1);
-
-        _targetPadding = - _targetChildIndex * _elementWidth;
-
-        Debug.Log(_targetChildIndex);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_layoutGroupTransform);
     }
 
 #if UNITY_EDITOR

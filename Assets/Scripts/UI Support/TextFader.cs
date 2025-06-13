@@ -26,6 +26,11 @@ public class TextFader : MonoBehaviour
             _text = GetComponentInChildren<TextMeshProUGUI>();
     }
 
+    private void Start()
+    {
+        _nextText = _text.text;
+    }
+
     void Update()
     {
         // Update the text if it is completely hidden.
@@ -66,8 +71,20 @@ public class TextFader : MonoBehaviour
     /// </summary>
     public void UpdateText()
     {
+        // Only update if text would change.
+        if (_nextText == _text.text)
+            return;
+
         _autoFadeInAfterFadeOut = true;
         _fadeIn = false;
+    }
+
+    public void UpdateTextImmediately()
+    {
+        _text.text = _nextText;
+
+        _autoFadeInAfterFadeOut = false;
+        _fadeIn = true;
     }
 
     public void FadeOut()
