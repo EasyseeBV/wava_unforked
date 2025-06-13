@@ -19705,7 +19705,7 @@ MonoBehaviour:
   layout: {fileID: 8904678811843569864}
   background: {fileID: 4363468020217449094}
   galleryParent: {fileID: 8110489202593823037}
-  userPhoto: {fileID: 8135620681699942521, guid: c158fa1c0db284349b32c076a584efb4,
+  userPhoto: {fileID: 7687078513567722218, guid: c158fa1c0db284349b32c076a584efb4,
     type: 3}
   screenshotManager: {fileID: 4394027836333577610}
 --- !u!114 &4392552758808049739
@@ -24901,8 +24901,40 @@ PrefabInstance:
       value: -Infinity
       objectReference: {fileID: 0}
     - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
+      propertyPath: m_Config.m_CameraMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
+      propertyPath: m_Config.m_CaptureMode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
+      propertyPath: m_Config.m_ExportAsync
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
       propertyPath: m_Config.m_RelativePath
       value: WAVA
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
+      propertyPath: m_Config.m_PlaySoundOnCapture
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
+      propertyPath: m_Config.m_Overlays.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
+      propertyPath: m_Config.m_ResizingWaitingTime
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
+      propertyPath: m_Config.m_CaptureActiveUICanvas
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
+      propertyPath: m_Config.m_ResizingWaitingFrames
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
       propertyPath: m_Config.m_ResolutionCaptureMode
@@ -24915,6 +24947,14 @@ PrefabInstance:
     - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
       propertyPath: m_Config.m_GameViewResolution.m_Height
       value: 555
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
+      propertyPath: m_Config.m_Overlays.Array.data[0].m_Active
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400048, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
+      propertyPath: m_Config.m_Overlays.Array.data[0].m_Canvas
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 11400050, guid: 17f70b34ca78a8843aeba4110051a266, type: 3}
       propertyPath: m_GameViewResizingWaitingTime

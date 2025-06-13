@@ -26,13 +26,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100038}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11400048
 MonoBehaviour:
@@ -48,13 +47,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Config:
     m_DestinationFolder: 3
-    m_RelativePath: WAVA
+    m_RelativePath: Screenshots/
     m_RootedPath: 
     m_ExportToPhoneGallery: 1
-    m_ExportAsync: 1
     m_FileName: '{width}x{height}-screenshot'
     m_OverwriteFiles: 0
-    m_NumberLeftPadding: 0
     m_FileFormat: 0
     m_JPGQuality: 75
     m_ShareTitle: Share the screenshot
@@ -64,11 +61,10 @@ MonoBehaviour:
     m_MultisamplingAntiAliasing: 8
     m_ColorFormat: 0
     m_RecomputeAlphaLayer: 0
-    m_DisableHDRPFX: 1
     m_ShotMode: 0
-    m_MaxBurstShotsNumber: 1
-    m_MaxShotPerSeconds: 1
-    m_FixedFrameRate: 0
+    m_MaxBurstShotsNumber: 10
+    m_MaxShotPerSeconds: 30
+    m_FixedFrameRate: 1
     m_CameraMode: 0
     m_ExportToDifferentLayers: 0
     m_Cameras:
@@ -327,7 +323,7 @@ MonoBehaviour:
         y: 0
         width: 0
         height: 0
-    m_CaptureActiveUICanvas: 0
+    m_CaptureActiveUICanvas: 1
     m_ForceUICullingLayer: 0
     m_Overlays: []
     m_CompositionMode: 0
@@ -341,8 +337,8 @@ MonoBehaviour:
     m_PreviewSize: 0.5
     m_PreviewInGameViewWhilePlaying: 0
     m_DontDestroyOnLoad: 1
-    m_StopTimeOnCapture: 0
-    m_PlaySoundOnCapture: 0
+    m_StopTimeOnCapture: 1
+    m_PlaySoundOnCapture: 1
     m_ShotSound: {fileID: 8300000, guid: 8395331d4bc4a4f4190622709cdef091, type: 3}
     m_CaptureHotkey:
       m_Shift: 0
@@ -364,9 +360,9 @@ MonoBehaviour:
       m_Control: 0
       m_Alt: 0
       m_Key: 19
-    m_GameViewResizingWaitingMode: 1
-    m_ResizingWaitingTime: 0
-    m_ResizingWaitingFrames: 0
+    m_GameViewResizingWaitingMode: 0
+    m_ResizingWaitingTime: 1
+    m_ResizingWaitingFrames: 2
     m_ItemsPerPage: 20
     m_ShowDestination: 1
     m_ShowName: 1
@@ -386,7 +382,9 @@ MonoBehaviour:
     m_ShowDelay: 1
     m_ShowShare: 1
   m_IsBurstActive: 0
-  m_LastShotTime: -Infinity
+  m_IsCapturing: 0
+  m_PreviousFrameRate: -1
+  m_LastShotTime: 0
   m_CurrentBatch:
     m_Active: 1
     m_Name: 
@@ -506,6 +504,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Texture: {fileID: 0}
-  m_GameViewResizingWaitingMode: 1
-  m_GameViewResizingWaitingTime: 0
-  m_GameViewResizingWaitingFrames: 0
+  m_GameViewResizingWaitingMode: 0
+  m_GameViewResizingWaitingTime: 1
+  m_GameViewResizingWaitingFrames: 2
