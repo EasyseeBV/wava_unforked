@@ -224,7 +224,7 @@ public class FirebaseLoader : MonoBehaviour
             await AppCache.SaveExhibitionsCache();
         }
 
-        if (createLocalGallery && screenshotManager != null)
+        /*if (createLocalGallery && screenshotManager != null)
         {
             string path = screenshotManager.GetExportPath();
             OnStartUpEventProcessed?.Invoke($"Loading local storage...");
@@ -249,7 +249,7 @@ public class FirebaseLoader : MonoBehaviour
             }
 
             ARGalleryPage.StoragePath = path;
-        }
+        }*/
 
         if (downloadHomeScreenContent)
         {
