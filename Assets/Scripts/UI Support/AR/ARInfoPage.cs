@@ -1,36 +1,56 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ARInfoPage : AnimateInfoBar
+public class ARInfoPage : MonoBehaviour
 {
+    [Header("Header")]
+    [SerializeField] private GameObject content;
     [SerializeField] private Button toggleButton;
     [SerializeField] private ARStaticDetails arStaticDetails;
+    [SerializeField] private RectTransform scrollRectTransform;
 
-    public bool CanOpen;
+    private bool isOpen = false;
+    private bool animating = false;
     
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
         toggleButton.onClick.AddListener(TogglePage);
     }
 
     private void TogglePage()
     {
-        if (!CanOpen) return;
         Animate();
     }
 
-    protected override void StartRectAnimation(bool hide)
+    private void Animate()
     {
-        if (!hide)
-        {
-            Rect.gameObject.SetActive(true);
-            arStaticDetails.Open(ArTapper.ArtworkToPlace);
-        }
+        if (animating) return;
         
-        base.StartRectAnimation(hide);
+        content.SetActive(true);
+        animating = true;
+        
+        if (isOpen)
+        {
+            // close
+            scrollRectTransform.DOLocalMoveY(0, 0.4f).SetEase(Ease.OutBack).OnComplete(() =>
+            {
+                content.SetActive(false);
+                animating = false;
+                isOpen = false;
+            });
+        }
+        else
+        {
+            // show
+            scrollRectTransform.DOLocalMoveY(500, 0.6f).SetEase(Ease.OutBack).OnComplete(() =>
+            {
+                animating = false;
+                isOpen = true;
+            });
+        }
     }
 }

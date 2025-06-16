@@ -224,33 +224,6 @@ public class FirebaseLoader : MonoBehaviour
             await AppCache.SaveExhibitionsCache();
         }
 
-        if (createLocalGallery && screenshotManager != null)
-        {
-            string path = screenshotManager.GetExportPath();
-            OnStartUpEventProcessed?.Invoke($"Loading local storage...");
-            if (Directory.Exists(path))
-            {
-                string[] files = Directory.GetFiles(path, "*.png");
-                List<Sprite> sprites = new List<Sprite>();
-
-                foreach (var file in files)
-                {
-                    byte[] fileData = await File.ReadAllBytesAsync(file);
-                    Texture2D texture = new Texture2D(2, 2);
-                    texture.LoadImage(fileData);
-                    
-                    Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-                    sprite.name = Path.GetFileName(file);
-
-                    AppCache.LocalGallery.Add(file, sprite);
-        
-                    sprites.Add(sprite);
-                }
-            }
-
-            ARGalleryPage.StoragePath = path;
-        }
-
         if (downloadHomeScreenContent)
         {
             OnStartUpEventProcessed?.Invoke($"Downloading new exhibitions...");
