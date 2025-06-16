@@ -55,13 +55,13 @@ public class GroupMarkerHandler : MonoBehaviour
     private void OnEnable()
     {
         ARMapPointMaker.OnHotspotsSpawned += Group;
-        OnlineMaps.instance.OnChangeZoom += OnChangeZoom;
+        map.OnChangeZoom += OnChangeZoom;
     }
 
     private void OnDisable()
     {
         ARMapPointMaker.OnHotspotsSpawned -= Group;
-        if(OnlineMaps.instance) OnlineMaps.instance.OnChangeZoom -= OnChangeZoom;
+        if(map) map.OnChangeZoom -= OnChangeZoom;
     }
     
     private void Group()
