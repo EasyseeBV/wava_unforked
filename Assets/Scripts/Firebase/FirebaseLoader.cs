@@ -31,9 +31,9 @@ public class FirebaseLoader : MonoBehaviour
     public static List<ExhibitionData> Exhibitions { get; set; } = new List<ExhibitionData>();
 
     // Caching Maps
-    private static Dictionary<string, ArtistData> ArtistsMap = new Dictionary<string, ArtistData>();
-    private static Dictionary<string, ArtworkData> ArtworksMap = new Dictionary<string, ArtworkData>();
-    private static Dictionary<string, ExhibitionData> ExhibitionsMap = new Dictionary<string, ExhibitionData>();
+    public static Dictionary<string, ArtistData> ArtistsMap = new Dictionary<string, ArtistData>();
+    public static Dictionary<string, ArtworkData> ArtworksMap = new Dictionary<string, ArtworkData>();
+    public static Dictionary<string, ExhibitionData> ExhibitionsMap = new Dictionary<string, ExhibitionData>();
 
     // Pagination
     private static DocumentSnapshot lastOpenedDocument = null;
@@ -41,7 +41,8 @@ public class FirebaseLoader : MonoBehaviour
     // Callbacks
     public static Action OnFirestoreInitialized;
     public static Action OnNewDocumentsFetched;
-    
+    public static Action OnDocumentLoaded;
+
     // Collection Sizes
     public static long ArtworkCollectionSize { get; private set; } = -1;
     public static long ExhibitionCollectionSize { get; private set; } = -1;
@@ -83,7 +84,7 @@ public class FirebaseLoader : MonoBehaviour
     
     [Header("Setup Dependencies")]
     [SerializeField] private ScreenshotManager screenshotManager;
-    
+
     #region Setup
     private void Awake()
     {
@@ -693,7 +694,10 @@ public class FirebaseLoader : MonoBehaviour
         exhibition.update_date_time = exhibition.update_time.ToDateTime();
         AddExhibitionData(exhibition);
         Debug.Log($"[Firebase] Loaded Exhibition: {exhibition.title} [{document.Id}]");
-        
+
+        // Track that a document has been loaded.
+        OnDocumentLoaded?.Invoke();
+
         return exhibition;
     }
     
@@ -860,6 +864,9 @@ public class FirebaseLoader : MonoBehaviour
                         ArtistData artist = await ReadArtistDocument(document);
                         ArtistsMap.TryAdd(id, artist);
                         newArtists.Add(artist);
+
+                        // Track that a document has been loaded.
+                        OnDocumentLoaded?.Invoke();
                     }
                     catch (Exception ex)
                     {
@@ -893,6 +900,9 @@ public class FirebaseLoader : MonoBehaviour
                             ArtistData artist = await ReadArtistDocument(document);
                             ArtistsMap.TryAdd(id, artist);
                             newArtists.Add(artist);
+
+                            // Track that a document has been loaded.
+                            OnDocumentLoaded?.Invoke();
                         }
                         catch (Exception ex)
                         {
@@ -946,6 +956,9 @@ public class FirebaseLoader : MonoBehaviour
                         ArtworkData artwork = await ReadArtworkDocument(document);
                         ArtworksMap.TryAdd(id, artwork);
                         newArtworks.Add(artwork);
+
+                        // Track that a document has been loaded.
+                        OnDocumentLoaded?.Invoke();
                     }
                     catch (Exception ex)
                     {
@@ -979,6 +992,9 @@ public class FirebaseLoader : MonoBehaviour
                             ArtworkData artwork = await ReadArtworkDocument(document);
                             ArtworksMap.TryAdd(id, artwork);
                             newArtworks.Add(artwork);
+
+                            // Track that a document has been loaded.
+                            OnDocumentLoaded?.Invoke();
                         }
                         catch (Exception ex)
                         {
@@ -1057,6 +1073,9 @@ public class FirebaseLoader : MonoBehaviour
             if (!ExhibitionsMap.ContainsKey(document.Id))
             {
                 newExhibitions.Add(await ReadExhibitionDocument(document));
+
+                // Track that a document has been loaded.
+                OnDocumentLoaded?.Invoke();
             }
         }
         
