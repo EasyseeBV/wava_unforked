@@ -74,7 +74,7 @@ public class MapTutorialManager : MonoBehaviour
 
     private void CloseAll()
     {
-        finalObjectToShow.SetActive(false);
+        //finalObjectToShow.SetActive(false);
     }
 
     private void NextTutorial()

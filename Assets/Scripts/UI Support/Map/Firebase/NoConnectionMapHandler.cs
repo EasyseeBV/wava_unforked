@@ -41,10 +41,13 @@ public class NoConnectionMapHandler : MonoBehaviour
 
     private void AttemptReconnect()
     {
-        reconnectContent.SetActive(true);
+        //reconnectContent.SetActive(true);
         content.SetActive(false);
 
-        firebaseLoader.AttemptToReconnect(slider);
+        LevelLoader.DebugSceneToOpen = "Map";
+        SceneManager.LoadScene("LoadingScene");
+
+        //firebaseLoader.AttemptToReconnect(slider);
         // on reconnect -> reload current scene 
     }
 }

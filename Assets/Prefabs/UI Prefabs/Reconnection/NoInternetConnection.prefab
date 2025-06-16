@@ -730,6 +730,7 @@ GameObject:
   - component: {fileID: 2481865282472122631}
   - component: {fileID: 1869665863714578925}
   - component: {fileID: 6873275410959045979}
+  - component: {fileID: 6448697097445147138}
   m_Layer: 5
   m_Name: Background
   m_TagString: Untagged
@@ -755,10 +756,10 @@ RectTransform:
   - {fileID: 4084242009248356814}
   m_Father: {fileID: 8229912414697288604}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 110.1}
-  m_SizeDelta: {x: -48, y: 218}
+  m_SizeDelta: {x: 358, y: 218}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &2481865282472122631
 CanvasRenderer:
@@ -824,6 +825,23 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &6448697097445147138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3679477815717466881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 798db3cc4335135429f483a190e591cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shadowColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+  shadowDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
+  iterations: 6
+  shadowSpread: {x: 1, y: 1}
 --- !u!1 &3792142889820009167
 GameObject:
   m_ObjectHideFlags: 0

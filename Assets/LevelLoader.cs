@@ -39,9 +39,7 @@ public class LevelLoader : MonoBehaviour
         int levelToLoad = PlayerPrefs.GetInt("OpeningTutorial", 0);
         string level = levelToLoad == 0 ? "WelcomeTutorial_1" : "Map";
         
-#if UNITY_EDITOR
         if (!string.IsNullOrEmpty(DebugSceneToOpen)) level =  DebugSceneToOpen;
-#endif
         
         StartCoroutine(LoadAsynchronously(level));
     }
