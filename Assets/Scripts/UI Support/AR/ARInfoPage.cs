@@ -12,6 +12,7 @@ public class ARInfoPage : MonoBehaviour
     [SerializeField] private Button toggleButton;
     [SerializeField] private ARStaticDetails arStaticDetails;
     [SerializeField] private RectTransform scrollRectTransform;
+    [SerializeField] private ScrollRectSwipeDetector scrollRectSwipeDetector;
 
     private bool isOpen = false;
     private bool animating = false;
@@ -19,6 +20,13 @@ public class ARInfoPage : MonoBehaviour
     protected void Awake()
     {
         toggleButton.onClick.AddListener(TogglePage);
+    }
+
+    private void OnEnable()
+    {
+        scrollRectSwipeDetector.OnSwipeUp += OnSwipeUp;
+        scrollRectSwipeDetector.OnSwipeDown += OnSwipeDown;
+        
     }
 
     private void TogglePage()
@@ -52,5 +60,36 @@ public class ARInfoPage : MonoBehaviour
                 isOpen = true;
             });
         }
+    }
+
+    private void OnSwipeUp()
+    {
+        if (animating) return;
+        
+        content.SetActive(true);
+        animating = true;
+        
+        // open
+        scrollRectTransform.DOLocalMoveY(812, 0.6f).SetEase(Ease.OutBack).OnComplete(() =>
+        {
+            animating = false;
+            isOpen = true;
+        });
+    }
+
+    private void OnSwipeDown()
+    {
+        if (animating) return;
+        
+        content.SetActive(true);
+        animating = true;
+        
+        // close
+        scrollRectTransform.DOLocalMoveY(0, 0.4f).SetEase(Ease.OutBack).OnComplete(() =>
+        {
+            content.SetActive(false);
+            animating = false;
+            isOpen = false;
+        });
     }
 }

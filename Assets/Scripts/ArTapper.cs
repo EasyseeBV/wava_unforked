@@ -39,6 +39,7 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private ARNamebar arNamebar;
     [SerializeField] private ARInfoPage arInfoPage;
     [SerializeField] private ARDownloadBar downloadBar;
+    [SerializeField] private ARStaticDetails staticDetails;
     [SerializeField] private NoConnectionMapHandler noConnectionMapHandler;
     [SerializeField] private GameObject uiTutorialContainer;
     [SerializeField] private ARAnchorManager arAnchorManager;
@@ -116,6 +117,8 @@ public class ArTapper : MonoBehaviour
             
         if (downloadBar == null) downloadBar = FindObjectOfType<ARDownloadBar>();
         HideShadow = false;
+        
+        staticDetails.Open(ArtworkToPlace);
     }
 
     private void Start()
@@ -199,7 +202,7 @@ public class ArTapper : MonoBehaviour
         
         OnArtworkPlaced?.Invoke(ArtworkToPlace);
         
-        UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
+        //UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
     }
 
     #region Content Loading

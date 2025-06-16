@@ -13,16 +13,18 @@ public class ARStaticDetails : MonoBehaviour
     [SerializeField] private TextMeshProUGUI contentDescriptionLabel;
     [SerializeField] private Button contentDescriptionButton;
     [SerializeField] private bool lateUpdateText;
-
+    [SerializeField] private TMP_Text exhibitionLabel;
+    [SerializeField] private TMP_Text artistLabel;
+    [SerializeField] private TMP_Text dateLabel;
+    
     [Header("Artwork By")]
     [SerializeField] private ArtistContainer artistContainer;
 
     [Header("Exhibition")]
     [SerializeField] private ExhibitionCard exhibitionCard;
 
-    [Header("AR Layout Elements")]
-    [SerializeField] private RectTransform textLayoutElement;
-    [SerializeField] private RectTransform arLayoutElement;
+    /*[Header("AR Layout Elements")]
+    [SerializeField] private RectTransform textLayoutElement;*/
 
     private string fullLengthDescription;
     private bool readingMore = false;
@@ -35,7 +37,7 @@ public class ARStaticDetails : MonoBehaviour
     private void Awake()
     {
         if (lateUpdateText) textNeedsUpdate = true;
-        contentDescriptionButton.onClick.AddListener(ToggleReadMore);
+        contentDescriptionButton?.onClick.AddListener(ToggleReadMore);
     }
 
     public void Open(ArtworkData artwork)
@@ -45,36 +47,45 @@ public class ARStaticDetails : MonoBehaviour
             Debug.LogWarning("Null ARPointSO... aborting");
             return;
         }
+        
         this.artwork = artwork;
 
         //readingMore = false;
         contentTitleLabel.text = artwork.title;
-        fullLengthDescription = artwork.description;
-        TruncateText();
-        
-        //artistContainer.Assign(arPoint.Hotspot);
+        //fullLengthDescription = artwork.description;
+        contentDescriptionLabel.text = artwork.description;
+        //TruncateText();
 
-        if (artwork.hotspot?.ConnectedExhibition == null)
+        if (artwork.artists.Count > 0)
         {
-            Debug.LogWarning("ConnectedExhibition was missing... trying to refind it...");
-            WaitForExhibition();
+            artistContainer?.Assign(artwork.artists[0]);
+            artistLabel.text = artwork.artists[0].title;
+        }
+
+        var connectedExhibition = artwork.hotspot?.ConnectedExhibition ?? FirebaseLoader.GetConnectedExhibition(artwork);
+        if (connectedExhibition != null)
+        {
+            exhibitionCard.Init(connectedExhibition);
+            exhibitionLabel.text = connectedExhibition.title;
         }
         else
         {
-            exhibitionCard.Init(artwork.hotspot?.ConnectedExhibition);
+            exhibitionCard.gameObject.SetActive(false);
         }
+
+        dateLabel.text = artwork.year.ToString();
     }
 
-    private async void WaitForExhibition()
+    private void WaitForExhibition()
     {
         if (artwork.hotspot == null)
         {
-            var exhibition = await FirebaseLoader.FindRelatedExhibition(artwork.id);
+            var exhibition = FirebaseLoader.GetConnectedExhibition(artwork);
             exhibitionCard.Init(exhibition);
         }
         else
         {
-            artwork.hotspot.ConnectedExhibition = await FirebaseLoader.FindRelatedExhibition(artwork.id);
+            artwork.hotspot.ConnectedExhibition = FirebaseLoader.GetConnectedExhibition(artwork);;
             exhibitionCard.Init(artwork.hotspot.ConnectedExhibition);
         }
     }
@@ -139,15 +150,16 @@ public class ARStaticDetails : MonoBehaviour
         yield return new WaitForEndOfFrame();
         contentDescriptionLabel.text = currText;
         yield return new WaitForEndOfFrame();
-        LayoutRebuilder.ForceRebuildLayoutImmediate(textLayoutElement);        
+        //LayoutRebuilder.ForceRebuildLayoutImmediate(textLayoutElement);        
         yield return new WaitForEndOfFrame();
-        if(arLayoutElement) LayoutRebuilder.ForceRebuildLayoutImmediate(arLayoutElement);
         //yield return new WaitForEndOfFrame();
         //Canvas.ForceUpdateCanvases();
     }
     
     private void ToggleReadMore()
     {
+        Debug.LogError("ToggleReadMore() called, but not implemented");
+        return;
         readingMore = !readingMore;
 
         if (readingMore)
