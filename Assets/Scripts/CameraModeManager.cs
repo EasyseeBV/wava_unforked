@@ -10,13 +10,11 @@ using VoxelBusters.ScreenRecorderKit.Demo;
 
 public class CameraModeManager : MonoBehaviour
 {
-    [SerializeField] private ScreenRecorderDemo screenRecorder;
-    [SerializeField] private ScreenshotManager screenshotManager;
-    [SerializeField] private ScreenshotAR screenshotAR;
+    [SerializeField] private ARScreenRecorder screenRecorder;
     [SerializeField] private ScreenshotHandler screenshotHandler;
-
+    [Space]
     [SerializeField] private CameraMode mode = CameraMode.Photo;
-
+    [Space]
     [SerializeField] private Image button;
     [SerializeField] private Color recordingColor;
     [SerializeField] private List<GameObject> ObjectToTurnOff;
@@ -31,51 +29,19 @@ public class CameraModeManager : MonoBehaviour
             case CameraMode.Photo:
                 Handheld.Vibrate();
                 screenshotHandler.Capture();
-                //screenshotAR.Capture();
-                //screenshotManager.Capture();
                 break;
             case CameraMode.Video:
                 if (screenRecorder.CheckIsRecording())
                 {
                     screenRecorder.StopRecording(() => {
-                        string videoSavePath = screenRecorder.SaveRecording();
+                        screenRecorder.SaveRecording(_ =>
+                        {
+                            Debug.Log("Recording saved to native gallery");
+                        });
 
-                        Debug.Log("videoSavePath: " +  videoSavePath);
-                        
-                        /*string path = Path.Combine(Application.persistentDataPath, "Gallery");
-            
-                        string directory = Path.GetDirectoryName(path);
-                        if (!Directory.Exists(directory))
-                        {
-                            if (directory != null)
-                            {
-                                Directory.CreateDirectory(directory);
-                                Debug.Log("Created new directory: " + directory);
-                            }
-                        }
-                        
-                        // copy videoSavePath to the path above
-                        string fileName = Path.GetFileName(videoSavePath);
-                        string destinationPath = Path.Combine(path, fileName);
-                        
-                        try
-                        {
-                            File.Copy(videoSavePath, destinationPath, true); // true to overwrite if file exists
-                            Debug.Log("Video copied to: " + destinationPath);
-                            
-                            // If the video has been saved then persistently store its path.
-                            VideoPathStore.StorePath(destinationPath);
-                        }
-                        catch (Exception e)
-                        {
-                            Debug.LogError("Failed to copy video: " + e.Message);
-                        }*/
-
-                        if (!string.IsNullOrEmpty(videoSavePath)) VideoPathStore.StorePath(videoSavePath);
                         button.color = Color.white;
                         ObjectToTurnOff.ForEach(o => o.SetActive(true));
                         ObjectToTurnOn.ForEach(o => o.SetActive(false));
-
                     });
                 }
                 else

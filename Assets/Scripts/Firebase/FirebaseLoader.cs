@@ -402,7 +402,7 @@ public class FirebaseLoader : MonoBehaviour
                     }
                     artworkStored.year = artwork.year;
                     artworkStored.location = artwork.location;
-                    artworkStored.published = artwork.published;
+                    artworkStored.availability = artwork.availability;
                     
                     artworkStored.artwork_image_references = new List<string>(artwork.artwork_image_references);
                     
@@ -614,10 +614,10 @@ public class FirebaseLoader : MonoBehaviour
 
         if (!AppSettings.DeveloperMode)
         {
-            if (!data.published)
+            if (data.availability == "Unpublished")
             {
                 ArtworkCollectionSize--;
-                Debug.LogWarning($"Removed an unpublished artwork from loading queue [{data.title}] because publishing was: {data.published}");
+                Debug.LogWarning($"Removed an unpublished artwork from loading queue [{data.title}] because publishing was: {data.availability}");
                 return;
             }
         }

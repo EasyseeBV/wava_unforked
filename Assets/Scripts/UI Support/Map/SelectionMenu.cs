@@ -18,6 +18,7 @@ public class SelectionMenu : MonoBehaviour
     [SerializeField] private TMP_Text[] artworkLabel;
     [SerializeField] private Button[] selectionButton;
     [SerializeField] private Button[] exitButtons; // these are changed from exit buttons to view buttons, that will open the artwork in the exhibition section
+    [SerializeField] private TMP_Text[] buttonTexts;
     [Space]
     [SerializeField] private GameObject[] container;
     [SerializeField] private List<RectTransform> layoutGroups;
@@ -82,6 +83,12 @@ public class SelectionMenu : MonoBehaviour
         distanceLabel[inRange ? 1 : 0].text = $"{artwork.max_distance:F1}m";
         artistLabel[inRange ? 1 : 0].text = artwork.artists.Count > 0 ? $"{artwork.artists[0].title}" : string.Empty;
         artworkLabel[inRange ? 1 : 0].text = hotspot.ConnectedExhibition.title;
+        
+        buttonTexts[0].text = artwork.availability == "Non-accessible" ? "No longer available" : "Get directions";
+        buttonTexts[1].text = artwork.availability == "Non-accessible" ? "No longer available" : "Open artwork now";
+
+        selectionButton[0].interactable = artwork.availability != "Non-accessible";
+        selectionButton[1].interactable = artwork.availability != "Non-accessible";
         
         selectionButton[0].onClick.RemoveAllListeners();
         selectionButton[1].onClick.RemoveAllListeners();
