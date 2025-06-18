@@ -15,7 +15,7 @@ public class DetailsPanel : MonoBehaviour
     [SerializeField] protected TextMeshProUGUI contentTitleLabel;
     [SerializeField] protected TextMeshProUGUI contentDescriptionLabel;
     [SerializeField] protected Button contentDescriptionButton;
-    [SerializeField] protected RectTransform textAreaTransform;
+    //[SerializeField] protected RectTransform textAreaTransform;
     [SerializeField] protected bool lateUpdateText;
 
     [Header("General")]

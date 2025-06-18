@@ -1,17 +1,26 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DanielLochner.Assets.SimpleScrollSnap;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static OnlineMapsZipDecompressor;
 
-public class ArtworkDetailsPanel : DetailsPanel
+public class ArtworkDetailsPanel : MonoBehaviour
 {
     private ArtworkData artwork;
+
+    [SerializeField] TextMeshProUGUI artworkTitleText;
+    [SerializeField] TextMeshProUGUI descriptionText;
+
+    [SerializeField] Button closeButton;
+
+    [SerializeField] protected List<RectTransform> rebuildLayout;
 
     [Header("Gallery Area")] 
     [SerializeField] private SimpleScrollSnap scrollSnapper;
@@ -33,9 +42,10 @@ public class ArtworkDetailsPanel : DetailsPanel
     [Header("Exhibition")]
     [SerializeField] private ExhibitionCard exhibitionCard;
 
-    protected override void Setup()
+    void Awake()
     {
-        base.Setup();
+        closeButton.onClick.AddListener(() => gameObject.SetActive(false));
+
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
 
         downloadButton.onClick.AddListener(() =>
@@ -58,17 +68,22 @@ public class ArtworkDetailsPanel : DetailsPanel
         }
     }
 
-    protected override void Close()
-    {
-        ArtworkUIManager.Instance.InitArtworks();
-        base.Close();
-    }
-
     public void Fill(ArtworkData artwork)
     {
         this.artwork = artwork;
 
-        Clear();
+        artworkTitleText.text = artwork.title;
+
+        descriptionText.text = artwork.description;
+
+
+        // Update artists list.
+        scrollSnapper.RemoveAll();
+
+        foreach (Transform child in artistArea)
+        {
+            Destroy(child.gameObject);
+        }
 
         for (int i = 0; i < artwork.artists.Count; i++)
         {
@@ -77,26 +92,21 @@ public class ArtworkDetailsPanel : DetailsPanel
             container.Assign(artwork.artists[i]);
         }
 
-        GetExhibition();
-        
-        contentTitleLabel.text = artwork.title;
 
-        contentDescriptionLabel.text = artwork.description;
-
-        ArtworkIsDownloaded();
-        
         showOnMapButton.onClick.RemoveAllListeners();
         showOnMapButton.onClick.AddListener(() =>
         {
             ARMapPointMaker.SelectedArtwork = artwork;
             SceneManager.LoadScene("Map");
         });
-        
+
+
+        SetupGalleryImages(artwork);
+
         scrollSnapper.Setup();
         ChangeIndicator(0, 0);
 
-        SetImages(artwork);
-
+        SetupExhibitionCard();
 
 
         // Update appearance of download button.
@@ -123,7 +133,7 @@ public class ArtworkDetailsPanel : DetailsPanel
         }
     }
 
-    private async Task SetImages(ArtworkData _artwork)
+    private async Task SetupGalleryImages(ArtworkData _artwork)
     {
         try
         {
@@ -148,35 +158,11 @@ public class ArtworkDetailsPanel : DetailsPanel
             pointsAndLineUI.SetPointCount(images.Count);
             pointsAndLineUI.SetSelectedPointIndex(0);
             pointsAndLineUI.FinishAnimationsImmediately();
-
-
-            StartCoroutine(LateRebuild());
         }
         catch (Exception e)
         {
             Debug.Log("Failed to load all ArtworkDetailsImages: " + e);
         }
-    }
-
-    private void Clear()
-    {
-        scrollSnapper.RemoveAll();
-        
-        foreach (Transform child in artistArea)
-        {
-            Destroy(child.gameObject);
-        }
-
-        readingMore = false;
-        fullLengthDescription = string.Empty;
-    }
-
-    private void LikeArtwork()
-    {
-        if (artwork == null) return;
-
-        // artwork.Liked = !artwork.Liked;
-        // heartImage.sprite = artwork.Liked ? likedSprite : unlikedSprite;
     }
     
     private bool ArtworkIsDownloaded()
@@ -270,7 +256,7 @@ public class ArtworkDetailsPanel : DetailsPanel
         }
     }
 
-    private async void GetExhibition()
+    private async void SetupExhibitionCard()
     {
         if (FirebaseLoader.Exhibitions == null) return;
 
