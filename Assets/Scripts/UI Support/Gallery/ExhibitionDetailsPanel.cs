@@ -54,7 +54,7 @@ public class ExhibitionDetailsPanel : DetailsPanel
     protected override void Setup()
     {
         base.Setup();
-        heartButton.onClick.AddListener(LikeArtwork);
+        //heartButton.onClick.AddListener(LikeArtwork);
         artworksButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artworks));
         artistsButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artists));
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);

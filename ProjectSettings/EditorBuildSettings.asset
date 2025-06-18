@@ -50,14 +50,17 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Infinity Code/Online maps/Examples/Scenes/Behaviours/Navigation.unity
     guid: 0f18cdbd5a83b6b419452f107a242330
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Exhibition&Art.unity
     guid: 80db1d336999b4147babc43bc4dd06e8
+  - enabled: 1
+    path: Assets/Scenes/Gallery.unity
+    guid: 56f27e0f5423c3245acdd589cb69cc68
   - enabled: 1
     path: Assets/Scenes/Old Scenes/AboutUs.unity
     guid: a6bd162e73285514394c5b336346c5f8
   - enabled: 1
-    path: Assets/Scenes/Help.unity
+    path: Assets/Scenes/Settings.unity
     guid: 92796818e701fc54b8e0e84e63322575
   - enabled: 1
     path: Assets/Scenes/Home.unity

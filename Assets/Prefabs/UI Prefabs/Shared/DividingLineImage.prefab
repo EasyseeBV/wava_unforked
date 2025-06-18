@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1410477100506418339}
   - component: {fileID: 6941038601279530559}
   m_Layer: 0
-  m_Name: SettingsDividerImage
+  m_Name: DividingLineImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

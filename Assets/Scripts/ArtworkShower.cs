@@ -1,27 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
-using Messy.Definitions;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
-using UnityEngine.XR.ARFoundation;
 
 public class ArtworkShower : MonoBehaviour
 {
-    public Image ARPhoto;
-    public TextMeshProUGUI Title;
-    public TextMeshProUGUI Artist;
-    public TextMeshProUGUI Location;
-    public TextMeshProUGUI Year;
-    public Button DetailButton;
-    public Button ViewButton;
+    public Image ArtworkImage;
+    public AspectRatioFitter ArtworkAspectRatioFitter;
+    public TextMeshProUGUI ArtworkTitleText;
+    public TextMeshProUGUI ArtistNameText;
+    public TextMeshProUGUI YearText;
+    public Button ExhibitionButton;
+    public Button ViewArtworkButton;
     [Space]
-    public TextMeshProUGUI exhibitionTitle;
+    public TextMeshProUGUI ExhibitionTitleText;
     [SerializeField] private LoadingCircle loadingCircle;
     
     public bool IsLoading { get; set; }
@@ -30,8 +25,8 @@ public class ArtworkShower : MonoBehaviour
 
     private void Awake()
     {
-        ViewButton.onClick.AddListener(OpenDetails);
-        DetailButton.onClick.AddListener(OpenDetails);
+        ViewArtworkButton.onClick.AddListener(OpenDetails);
+        ExhibitionButton.onClick.AddListener(OpenDetails);
         loadingCircle.gameObject.SetActive(false);
     }
 
@@ -43,15 +38,14 @@ public class ArtworkShower : MonoBehaviour
             return;
         }
         
-        Title.text = artwork.title;
-        Artist.text = artwork.artists.Count > 0 ? artwork.artists[0].title : null;
+        ArtworkTitleText.text = artwork.title;
+        ArtistNameText.text = artwork.artists.Count > 0 ? artwork.artists[0].title : null;
 
-        //Location.text = point.Location;
-        Year.text = artwork.year.ToString();
+        YearText.text = artwork.year.ToString();
 
         foreach (var exhibition in FirebaseLoader.Exhibitions.Where(exhibition => exhibition.artworks.Contains(artwork)))
         {
-            exhibitionTitle.text = exhibition.title;
+            ExhibitionTitleText.text = exhibition.title;
             break;
         }
         
@@ -64,7 +58,7 @@ public class ArtworkShower : MonoBehaviour
     {
         Debug.Log("Loading image...");
         
-        if (ARPhoto.sprite != null) return;
+        if (ArtworkImage.sprite != null) return;
         
         IsLoading = true;
         loadingCircle.gameObject.SetActive(true);
@@ -83,18 +77,19 @@ public class ArtworkShower : MonoBehaviour
                 if (images.Count <= 0)
                 {
                     Debug.Log($"Removed artwork from display, could not get any images: OfflineMode status: [{FirebaseLoader.OfflineMode}]");
-                    ARPhoto.sprite = null;
+                    ArtworkImage.sprite = null;
                     gameObject.SetActive(false);
                     return;
                 }
                 
                 loadingCircle.StopLoading();
-                ARPhoto.sprite = images.Count > 0 ? images[0] : null;
+                ArtworkImage.sprite = images.Count > 0 ? images[0] : null;
 
-                if (ARPhoto.sprite != null)
+                if (ArtworkImage.sprite != null)
                 {
-                    var imageAspectRatio = ARPhoto.sprite.rect.width / ARPhoto.sprite.rect.height;
-                    ARPhoto.GetComponent<AspectRatioFitter>().aspectRatio = imageAspectRatio;
+                    var imageAspectRatio = ArtworkImage.sprite.rect.width / ArtworkImage.sprite.rect.height;
+
+                    ArtworkAspectRatioFitter.aspectRatio = imageAspectRatio;
                 }
                 else
                 {
@@ -104,13 +99,13 @@ public class ArtworkShower : MonoBehaviour
             else
             {
                 Debug.Log($"Removed artwork from display, could not get any images: OfflineMode status: [{FirebaseLoader.OfflineMode}]");
-                ARPhoto.sprite = null;
+                ArtworkImage.sprite = null;
                 gameObject.SetActive(false);
             }
         }
         catch (Exception e)
         {
-            ARPhoto.sprite = null;
+            ArtworkImage.sprite = null;
             Debug.Log($"Failed to set ArtworkShower image: {e} | OfflineMode status: [{FirebaseLoader.OfflineMode}]");
             gameObject.SetActive(false);
         }

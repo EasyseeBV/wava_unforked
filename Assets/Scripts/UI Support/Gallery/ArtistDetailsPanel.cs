@@ -45,7 +45,7 @@ public class ArtistDetailsPanel : DetailsPanel
     protected override void Setup()
     {
         base.Setup();
-        heartButton.onClick.AddListener(LikeArtwork);
+        //heartButton.onClick.AddListener(LikeArtwork);
         artworksButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artworks));
         exhibitionButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Exhibitions));
     }

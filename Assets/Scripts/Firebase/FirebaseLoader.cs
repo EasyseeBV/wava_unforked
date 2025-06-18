@@ -1454,7 +1454,7 @@ public class FirebaseLoader : MonoBehaviour
 
     #region Downloading Media
 
-    public static async Task<(string localPath, bool downloaded)> DownloadMedia(string storagePath, string path, ARDownloadBar downloadBar, int index = 0)
+    public static async Task<(string localPath, bool downloaded)> DownloadMedia(string storagePath, string path, ARDownloadBar downloadBar, int index = 0, Action<float> progressChangedCallback = null)
     {
         Debug.Log("Attempting to download");
         
@@ -1504,6 +1504,9 @@ public class FirebaseLoader : MonoBehaviour
                 while (!operation.isDone)
                 {
                     float progressValue = request.downloadProgress; // value between 0 and 1
+
+                    progressChangedCallback?.Invoke(progressValue);
+
                     if (downloadBar)
                     {
                         downloadBar.UpdateProgress(index, (progressValue * 100f) / 2);
@@ -1512,10 +1515,13 @@ public class FirebaseLoader : MonoBehaviour
                     // Yield control until the next frame so the UI can update.
                     await Task.Yield();
                 }
+                    
 
                 // Check if the download completed successfully.
                 if (request.result == UnityWebRequest.Result.Success)
                 {
+                    progressChangedCallback?.Invoke(1f);
+
                     if (downloadBar)
                     {
                         downloadBar.UpdateProgress(index, 50);

@@ -371,7 +371,7 @@ public class ArtworkUIManager : MonoBehaviour
         if (currentMenuNavigation != MenuNavigation.Artworks || !canTryLoadInvisible) return;
         foreach (var li in loadedArtworks)
         {
-            if (li.IsLoading || li.ARPhoto.sprite != null) continue;
+            if (li.IsLoading || li.ArtworkImage.sprite != null) continue;
 
             // get the child’s bounds **relative to** the viewport
             var childBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(viewport, li.transform as RectTransform);
