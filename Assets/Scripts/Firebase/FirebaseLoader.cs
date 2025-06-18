@@ -81,9 +81,6 @@ public class FirebaseLoader : MonoBehaviour
     [Space]
     [SerializeField] private bool startInOfflineMode = false;
     
-    [Header("Setup Dependencies")]
-    [SerializeField] private ScreenshotManager screenshotManager;
-    
     #region Setup
     private void Awake()
     {
@@ -224,9 +221,9 @@ public class FirebaseLoader : MonoBehaviour
             await AppCache.SaveExhibitionsCache();
         }
 
-        /*if (createLocalGallery && screenshotManager != null)
+        if (createLocalGallery)
         {
-            string path = screenshotManager.GetExportPath();
+            string path = AppCache.GalleryFolder;
             OnStartUpEventProcessed?.Invoke($"Loading local storage...");
             if (Directory.Exists(path))
             {
@@ -249,7 +246,7 @@ public class FirebaseLoader : MonoBehaviour
             }
 
             ARGalleryPage.StoragePath = path;
-        }*/
+        }
 
         if (downloadHomeScreenContent)
         {

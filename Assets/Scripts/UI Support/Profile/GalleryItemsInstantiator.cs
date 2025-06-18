@@ -91,7 +91,7 @@ public class GalleryItemsInstantiator : MonoBehaviour
     private IEnumerator LoadMediaFilesAndUpdateUI()
     {
         // Load all photo sprites.
-        var photosFolderPath = screenshotManager.GetExportPath();
+        var photosFolderPath = Path.Combine(Application.persistentDataPath, "Gallery");//screenshotManager.GetExportPath();
         var photoSprites = new List<Sprite>();
 
         // - Retrieve the names of all photo files.

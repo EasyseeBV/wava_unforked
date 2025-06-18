@@ -13,13 +13,18 @@ public static class AppCache
     private static readonly string artworkDataCachePath = Path.Combine(Application.persistentDataPath, "artworksCache.json");
     private static readonly string exhibitionDataCachePath = Path.Combine(Application.persistentDataPath, "exhibitionsCache.json");
     
+    private static readonly string galleryFilePathCache = Path.Combine(Application.persistentDataPath, "galleryCache.json");
+    
     // Folder for the actual downloaded files
     public static readonly string MediaFolder = Path.Combine(Application.persistentDataPath, "media");
     public static readonly string ContentFolder = Path.Combine(Application.persistentDataPath, "content");
+    public static readonly string GalleryFolder = Path.Combine(Application.persistentDataPath, "gallery");
     
     public static Dictionary<string, Sprite> LocalGallery { get; set; } = new Dictionary<string, Sprite>();
     
     public static Dictionary<string, GameObject> LocalModels { get; set; } = new Dictionary<string, GameObject>();
+
+    public static List<string> GalleryFilePaths { get; set; } = new List<string>();
     
     public static bool Loaded { get; private set; } = false;
     
@@ -39,6 +44,8 @@ public static class AppCache
         await LoadArtistCache();
         await LoadArtworkCache();
         await LoadExhibitionCache();
+
+        await LoadGalleryFilePaths();
 
         Debug.Log("Local cache loaded");
         Loaded = true;
@@ -121,6 +128,30 @@ public static class AppCache
         }
         else Debug.Log("Exhibition Cache does not exist");
     }
+
+    private static async Task LoadGalleryFilePaths()
+    {
+        if (File.Exists(galleryFilePathCache))
+        {
+            try 
+            {
+                string json = await File.ReadAllTextAsync(galleryFilePathCache);
+                GalleryFilePathsWrapper wrapper = JsonUtility.FromJson<GalleryFilePathsWrapper>(json);
+                if (wrapper is { paths: not null })
+                {
+                    foreach (var path in wrapper.paths)
+                    {
+                        GalleryFilePaths.Add(path);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Failed to load gallery file path cache: " + e.Message);
+            }
+        }
+        else Debug.Log("Gallery file cache does not exist");
+    }
     
     #endregion
     
@@ -171,6 +202,31 @@ public static class AppCache
             string json = JsonUtility.ToJson(wrapper, true);
             await File.WriteAllTextAsync(exhibitionDataCachePath, json);
             Debug.Log("Saved exhibitions cache to disk.");
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("Failed to save exhibitions cache: " + e.Message);
+        }
+    }
+
+    public static void SaveFilePaths()
+    {
+        Debug.Log("Saving files paths");
+        try
+        {
+            string directory = Path.GetDirectoryName(galleryFilePathCache);
+            if (!Directory.Exists(directory))
+            {
+                if (directory != null)
+                {
+                    Directory.CreateDirectory(directory);
+                    Debug.Log("Created new directory: " + directory);
+                }
+            }
+            
+            GalleryFilePathsWrapper wrapper = new GalleryFilePathsWrapper { paths = GalleryFilePaths };
+            string json = JsonUtility.ToJson(wrapper, true);
+            File.WriteAllText(galleryFilePathCache, json);
         }
         catch (Exception e)
         {
@@ -328,4 +384,10 @@ public class ArtworkDataHolderListWrapper
 public class ExhibitionDataHolderListWrapper
 {
     public List<ExhibitionDataHolder> exhibitions;
+}
+
+[Serializable]
+public class GalleryFilePathsWrapper
+{
+    public List<string> paths;
 }
