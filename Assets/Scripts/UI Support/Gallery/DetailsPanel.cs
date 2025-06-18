@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DetailsPanel : MonoBehaviour
 {
-    [Header("Content Layout Group")]
+    [Header("Rebuild layout")]
+    [SerializeField] protected List<RectTransform> rebuildLayout;
     [SerializeField] protected RectTransform contentLayoutGroup;
     
     [Header("Text References")] 

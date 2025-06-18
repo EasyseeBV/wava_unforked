@@ -8,6 +8,7 @@ using TriLibCore.General;
 using TriLibCore.Mappers;
 using TriLibCore.URP.Mappers;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class DownloadManager : MonoBehaviour
 {
@@ -31,9 +32,9 @@ public class DownloadManager : MonoBehaviour
         }
     }
 
-    public async Task<(string localPath, bool downloaded)> BackgroundDownloadMedia(string storagePath, string path, ARDownloadBar downloadBar, int index = 0, Action<float> progressChangedCallback = null)
+    public async Task<(string localPath, bool downloaded)> BackgroundDownloadMedia(string storagePath, string path, ARDownloadBar downloadBar, int index = 0, Action<float> progressChangedCallback = null, Action<UnityWebRequest.Result> resultCallback = null)
     {
-        return await FirebaseLoader.DownloadMedia(storagePath, path, downloadBar, index, progressChangedCallback);
+        return await FirebaseLoader.DownloadMedia(storagePath, path, downloadBar, index, progressChangedCallback, resultCallback);
     }
 
     public async Task LoadModels(List<MediaContentData> content, string artworkName)

@@ -350,9 +350,6 @@ public class ArtworkUIManager : MonoBehaviour
             case ArtworkData artwork:
             {
                 artworkDetailsPanel?.Fill(artwork);
-                if (Title != null) Title.text = artwork.title;
-                if (Description != null) Description.text = artwork.description;
-                if (Header != null) Header.text = artwork.title;
                 break;
             }
             case ExhibitionData exhibition:

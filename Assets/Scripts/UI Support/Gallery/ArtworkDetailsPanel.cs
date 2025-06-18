@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using DanielLochner.Assets.SimpleScrollSnap;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static OnlineMapsZipDecompressor;
 
 public class ArtworkDetailsPanel : DetailsPanel
 {
@@ -38,6 +40,9 @@ public class ArtworkDetailsPanel : DetailsPanel
 
         downloadButton.onClick.AddListener(() =>
         {
+            if (ArtworkIsDownloaded())
+                return;
+
             DownloadArtwork();
         });
         
@@ -62,7 +67,7 @@ public class ArtworkDetailsPanel : DetailsPanel
     public void Fill(ArtworkData artwork)
     {
         this.artwork = artwork;
-        
+
         Clear();
 
         for (int i = 0; i < artwork.artists.Count; i++)
@@ -72,21 +77,13 @@ public class ArtworkDetailsPanel : DetailsPanel
             container.Assign(artwork.artists[i]);
         }
 
-        // Rebuild layout of artist area to take into account newly instantiated artists.
-        LayoutRebuilder.ForceRebuildLayoutImmediate(artistArea as RectTransform);
-
-
         GetExhibition();
         
         contentTitleLabel.text = artwork.title;
 
-        fullLengthDescription = artwork.description;
+        contentDescriptionLabel.text = artwork.description;
 
-
-
-        //TruncateText();
-        
-        CheckArtworkDownload();
+        ArtworkIsDownloaded();
         
         showOnMapButton.onClick.RemoveAllListeners();
         showOnMapButton.onClick.AddListener(() =>
@@ -99,6 +96,31 @@ public class ArtworkDetailsPanel : DetailsPanel
         ChangeIndicator(0, 0);
 
         SetImages(artwork);
+
+
+
+        // Update appearance of download button.
+        if (ArtworkIsDownloaded())
+        {
+            downloadButtonUI.ShowAsDownloadFinished();
+            downloadButton.interactable = false;
+        }
+        else
+        {
+            downloadButtonUI.ShowAsReadyForDownload();
+            downloadButton.interactable = true;
+        }
+
+        // - If the download is in progress then the callback will show the button as downloading.
+
+
+        // Rebuild layout because elements have changed sizes and contents.
+        for (int i = 0; i < rebuildLayout.Count; i++)
+        {
+            var transform = rebuildLayout[i];
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(transform);
+        }
     }
 
     private async Task SetImages(ArtworkData _artwork)
@@ -115,16 +137,18 @@ public class ArtworkDetailsPanel : DetailsPanel
                     var aspectRatioFitter = artworkImage.GetComponent<AspectRatioFitter>();
                     var aspectRatio = spr.rect.width / spr.rect.height;
                     aspectRatioFitter.aspectRatio = aspectRatio;
-
-                    //Image indicator = Instantiate(indicatorImage, indicatorArea).GetComponentInChildren<Image>();
-                    //indicator.color = inactiveColor;
-                    //indicators.Add(indicator);
                 }
                 else
                 {
                     Debug.LogWarning("A null image was loaded from ArtworkDetailsPanel");
                 }
             }
+
+            // Set number of indicator points.
+            pointsAndLineUI.SetPointCount(images.Count);
+            pointsAndLineUI.SetSelectedPointIndex(0);
+            pointsAndLineUI.FinishAnimationsImmediately();
+
 
             StartCoroutine(LateRebuild());
         }
@@ -155,35 +179,28 @@ public class ArtworkDetailsPanel : DetailsPanel
         // heartImage.sprite = artwork.Liked ? likedSprite : unlikedSprite;
     }
     
-    private void CheckArtworkDownload()
+    private bool ArtworkIsDownloaded()
     {
-        bool downloaded = false;
+        if (artwork == null || artwork.content_list.Count == 0)
+            return true;
 
-        if (artwork != null && artwork.content_list.Count > 0)
+        // Check if all files exist.
+        foreach (var content in artwork.content_list)
         {
-            downloaded = true;
-            foreach (var content in artwork.content_list)
+            var uri = new Uri(content.media_content);
+            string encodedPath = uri.AbsolutePath;
+            string decodedPath = Uri.UnescapeDataString(encodedPath);
+            string fileName = Path.GetFileName(decodedPath);
+            string localPath = Path.Combine(AppCache.ContentFolder, fileName);
+
+            if (!File.Exists(localPath))
             {
-                try
-                {
-                    var uri = new Uri(content.media_content);
-                    string encodedPath = uri.AbsolutePath;
-                    string decodedPath = Uri.UnescapeDataString(encodedPath);
-                    string fileName = Path.GetFileName(decodedPath);
-                    string localPath = Path.Combine(AppCache.ContentFolder, fileName);
-            
-                    // if the file does not exist locally, download it
-                    if (!File.Exists(localPath))
-                    {
-                        downloaded = false;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.Log("Failed to download content: " + e);
-                }
-            }   
+                return false;
+            }
         }
+
+        // All files exist, so they are downloaded.
+        return true;
     }
 
     private async Task DownloadArtwork()
@@ -199,7 +216,10 @@ public class ArtworkDetailsPanel : DetailsPanel
                 string decodedPath = Uri.UnescapeDataString(encodedPath);
                 string fileName = Path.GetFileName(decodedPath);
                 string localPath = Path.Combine(AppCache.ContentFolder, fileName);
-            
+
+                // Create intermediate variable for upcoming callback.
+                var artworkData = artwork;
+
                 // if the file does not exist locally, download it
                 if (!File.Exists(localPath))
                 {
@@ -209,8 +229,33 @@ public class ArtworkDetailsPanel : DetailsPanel
                         0,
                         (progress) =>
                         {
-                            if (progress == 1f)
+                            // Only update download button on associated artwork page.
+                            if (artwork != artworkData)
+                                return;
+
+                            if (progress < 1f)
+                            {
+                                downloadButtonUI.ShowAsDownloading();
+                                downloadButton.interactable = false;
+                            } else if (progress == 1f)
+                            {
                                 downloadButtonUI.ShowAsDownloadFinished();
+                                downloadButton.interactable = false;
+                            }
+
+                        },
+                        (result) =>
+                        {
+                            if (result == UnityWebRequest.Result.Success)
+                            {
+                                downloadButtonUI.ShowAsDownloadFinished();
+                                downloadButton.interactable = false;
+                            }
+                            else
+                            {
+                                downloadButtonUI.ShowAsReadyForDownload();
+                                downloadButton.interactable = true;
+                            }
                         });
                 }
                 else

@@ -1241,7 +1241,7 @@ GameObject:
   - component: {fileID: 5234355280269786406}
   - component: {fileID: 8719527129277819615}
   m_Layer: 5
-  m_Name: ArtworkUI Overhauled
+  m_Name: ArtworkCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1269,7 +1269,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 343, y: 325}
+  m_SizeDelta: {x: 343, y: 320}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8719527129277819615
 MonoBehaviour:
