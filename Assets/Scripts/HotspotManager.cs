@@ -13,9 +13,7 @@ public class HotspotManager : MonoBehaviour
     [HideInInspector] public ArtworkData artwork;
     public TextMeshPro LeftTitle;
     public TextMeshPro LeftDistance;
-    public TextMeshPro RightTitle;
-    public TextMeshPro RightDistance;
-    public float _distance = 100f;
+    
     public bool CanShow = false;
     public GameObject ARObject;
     public Image BackgroundAR;
@@ -50,6 +48,9 @@ public class HotspotManager : MonoBehaviour
     public static event Action OnOfflineModeNoLocalInstance;
     
     private bool inReach = false;
+
+    public float distance => _distance;
+    private float _distance = 0.12f;
     
     
     //Replaced ARPoint with ARPointSO
@@ -121,7 +122,7 @@ public class HotspotManager : MonoBehaviour
     public void OnChangeGpsPosition(float distance) {
         _distance = distance;
         LeftDistance.text = string.Format("{0}km", distance.ToString("F1"));
-
+        
         if (CanShow && !IsClose()) {
             CanShow = false;
             SetReach(false);
@@ -188,11 +189,9 @@ public class HotspotManager : MonoBehaviour
 
     public bool IsClose()
     {
-        float distance = artwork.max_distance > 0.01f ? artwork.max_distance : 0.12f;
-        
-        bool state = _distance <= distance;
-        if (state) OnDistanceValidated?.Invoke(distance);
-        
+        //float distance = //artwork.max_distance > 0.01f ? artwork.max_distance : 0.12f;
+        bool state = _distance <= 0.045f;
+        if (state) OnDistanceValidated?.Invoke(0.045f);
         return state;
     }
 
@@ -201,7 +200,7 @@ public class HotspotManager : MonoBehaviour
         ZoomLevel = zoomLevel;
         Zoom = ZoomLevel;
         
-        OnDistanceValidated?.Invoke(artwork.max_distance > 0.01f ? artwork.max_distance : 0.12f);
+        OnDistanceValidated?.Invoke(0.045f);
         
         bool zoomed = zoomLevel < MinZoom;
         
