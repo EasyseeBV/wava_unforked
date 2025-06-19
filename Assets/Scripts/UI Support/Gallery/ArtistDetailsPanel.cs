@@ -1,14 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Messy.Definitions;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ArtistDetailsPanel : DetailsPanel
+public class ArtistDetailsPanel : MonoBehaviour
 {
     private ArtistData artist;
     
@@ -19,56 +16,45 @@ public class ArtistDetailsPanel : DetailsPanel
         Exhibitions
     }
 
-    [Header("Header info")] 
+    [Header("Header info")]
+    [SerializeField] private TextMeshProUGUI artistNameText;
     [SerializeField] private TextMeshProUGUI locationLabel;
     [SerializeField] private Image profileIcon;
+    [SerializeField] private AspectRatioFitter profileAspectRatio;
 
-    [Header("Menus")]
+    [Header("Mid section")]
+    [SerializeField] private TextMeshProUGUI descriptionText;
+
+    [Header("Menu")]
     [SerializeField] private Button artworksButton;
-    [SerializeField] private TMP_Text artworkText;
     [SerializeField] private Button exhibitionButton;
-    [SerializeField] private TMP_Text exhibitionText;
-    [SerializeField] private Transform menuBar;
+    [SerializeField] private UnderlinedSelectionUI underlinedSelectionUI;
     [Space]
-    [SerializeField] private Transform layoutArea;
+    [SerializeField] private Transform artworksAndExhibitionsContainer;
     [SerializeField] private ArtworkShower artworkShowerPrefab;
     [SerializeField] private ExhibitionCard exhibitionCardPrefab;
-    [Space]
-    [SerializeField] private Color selectedColor;
-    [SerializeField] private Color unselectedColor;
+
+    [Header("Other references")]
+    [SerializeField] private Button closeButton;
+    [SerializeField] private List<RectTransform> rebuildLayout;
+
 
     private MenuNavigation currentMenu = MenuNavigation.Default;
 
-    private const float MENU_BAR_ARTWORKS = -171.5f;
-    private const float MENU_BAR_EXHBITIONS = 0;
-
-    protected override void Setup()
+    void Awake()
     {
-        base.Setup();
-        //heartButton.onClick.AddListener(LikeArtwork);
+        closeButton.onClick.AddListener(() => gameObject.SetActive(false));
+
         artworksButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artworks));
         exhibitionButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Exhibitions));
-    }
-    
-    protected override void Close()
-    {
-        ArtworkUIManager.Instance.InitArtists();
-        base.Close();
     }
 
     private void ChangeMenu(MenuNavigation menu)
     {
-        if (currentMenu == menu) return;
+        if (currentMenu == menu)
+            return;
 
-        menuBar.transform.localPosition = new Vector3(
-            menu == MenuNavigation.Artworks ? MENU_BAR_ARTWORKS : MENU_BAR_EXHBITIONS,
-            menuBar.transform.localPosition.y,
-            menuBar.transform.localPosition.z);
-
-        artworkText.color = menu == MenuNavigation.Artworks ? selectedColor : unselectedColor;
-        exhibitionText.color = menu == MenuNavigation.Exhibitions ? selectedColor : unselectedColor;
-
-        foreach (Transform child in layoutArea)
+        foreach (Transform child in artworksAndExhibitionsContainer)
         {
             Destroy(child.gameObject);
         }
@@ -79,25 +65,42 @@ public class ArtistDetailsPanel : DetailsPanel
                 var artworks = GetArtworks();
                 for (int i = 0; i < artworks.Count; i++)
                 {
-                    ArtworkShower artwork = Instantiate(artworkShowerPrefab, layoutArea);
+                    ArtworkShower artwork = Instantiate(artworkShowerPrefab, artworksAndExhibitionsContainer);
                     artwork.Init(artworks[i], true);
                 }
+                underlinedSelectionUI.ShowAsSelected(0);
+
                 break;
             case MenuNavigation.Exhibitions:
                 var exhibitions = GetExhibitions();
                 for (int i = 0; i < exhibitions.Count; i++)
                 {
-                    ExhibitionCard exhibition = Instantiate(exhibitionCardPrefab, layoutArea);
+                    ExhibitionCard exhibition = Instantiate(exhibitionCardPrefab, artworksAndExhibitionsContainer);
                     exhibition.Init(exhibitions[i]);
                 }
+                underlinedSelectionUI.ShowAsSelected(1);
+
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(menu), menu, null);
         }
         
         currentMenu = menu;
-        
-        StartCoroutine(LateRebuild());
+
+
+        // Rebuild layout.
+        for (int i = 0; i < rebuildLayout.Count; i++)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rebuildLayout[i]);
+        }
+
+        this.InvokeNextFrame(() =>
+        {
+            for (int i = 0; i < rebuildLayout.Count; i++)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(rebuildLayout[i]);
+            }
+        });
     }
     
     public async void Fill(ArtistData artist)
@@ -106,36 +109,29 @@ public class ArtistDetailsPanel : DetailsPanel
         
         Clear();
 
-        contentTitleLabel.text = artist.title;
+        artistNameText.text = artist.title;
+        descriptionText.text = artist.description;
         profileIcon.sprite = await artist.GetIcon();
-        fullLengthDescription = artist.description;
-        TruncateText();
-        
-        // heartImage.sprite = artist.Liked ? likedSprite : unlikedSprite;
-        
+
+        // Update aspect ratio of artist photo.
+        var texture = profileIcon.sprite.texture;
+        var aspectRatio = texture.width / (float) texture.height;
+        profileAspectRatio.aspectRatio = aspectRatio;
+
+
         ChangeMenu(MenuNavigation.Artworks);
-        
-        StartCoroutine(LateRebuild());
+
+        underlinedSelectionUI.Setup();
     }
 
     private void Clear()
     {
-        foreach (Transform child in layoutArea)
+        foreach (Transform child in artworksAndExhibitionsContainer)
         {
             Destroy(child.gameObject);
         }
 
         currentMenu = MenuNavigation.Default;
-        readingMore = false;
-        fullLengthDescription = string.Empty;
-    }
-
-    private void LikeArtwork()
-    {
-        if (artist == null) return;
-
-        // artist.Liked = !artist.Liked;
-        // heartImage.sprite = artist.Liked ? likedSprite : unlikedSprite;
     }
 
     private List<ExhibitionData> GetExhibitions()

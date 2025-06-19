@@ -149,13 +149,19 @@ public class ArtworkDetailsPanel : MonoBehaviour
         // - If the download is in progress then the callback will show the button as downloading.
 
 
-        // Rebuild layout because elements have changed sizes and contents.
+        // Rebuild layout.
         for (int i = 0; i < rebuildLayout.Count; i++)
         {
-            var transform = rebuildLayout[i];
-
-            LayoutRebuilder.ForceRebuildLayoutImmediate(transform);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rebuildLayout[i]);
         }
+
+        this.InvokeNextFrame(() =>
+        {
+            for (int i = 0; i < rebuildLayout.Count; i++)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(rebuildLayout[i]);
+            }
+        });
     }
 
     private async Task SetupGalleryImages(ArtworkData _artwork)

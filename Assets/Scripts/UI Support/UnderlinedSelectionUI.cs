@@ -43,7 +43,7 @@ public class UnderlinedSelectionUI : MonoBehaviour
         Setup();
     }
 
-    void Setup()
+    public void Setup()
     {
         // Set black line width.
         var totalWidth = _grayLine.rect.width;
@@ -79,7 +79,7 @@ public class UnderlinedSelectionUI : MonoBehaviour
 
     int SelectionOptionsCount() => _selectionTexts.Count;
 
-    void ShowAsSelected(int index)
+    public void ShowAsSelected(int index)
     {
         index = Mathf.Clamp(index, 0, SelectionOptionsCount() - 1);
 

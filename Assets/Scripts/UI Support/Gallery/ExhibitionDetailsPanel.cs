@@ -27,6 +27,7 @@ public class ExhibitionDetailsPanel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI locationText;
     [SerializeField] private Button downloadButton;
     [SerializeField] private DownloadButtonUI downloadButtonUI;
+    [SerializeField] private UnderlinedSelectionUI ArtworksArtistMenu;
 
     [Header("Image gallery")] 
     [SerializeField] private SimpleScrollSnap scrollSnapper;
@@ -104,6 +105,8 @@ public class ExhibitionDetailsPanel : MonoBehaviour
                     ArtworkShower artwork = Instantiate(artworkShowerPrefab, artworksAndArtistsContainer);
                     artwork.Init(artworks[i], true);
                 }
+                ArtworksArtistMenu.ShowAsSelected(0);
+
                 break;
             case MenuNavigation.Artists:
                 var artists = await GetArtists();
@@ -112,6 +115,8 @@ public class ExhibitionDetailsPanel : MonoBehaviour
                     ArtistContainer container = Instantiate(artistContainerPrefab, artworksAndArtistsContainer);
                     container.Assign(artists[i]);
                 }
+                ArtworksArtistMenu.ShowAsSelected(1);
+
                 break;
         }
         
