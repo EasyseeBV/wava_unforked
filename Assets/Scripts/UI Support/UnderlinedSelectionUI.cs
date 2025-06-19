@@ -99,7 +99,7 @@ public class UnderlinedSelectionUI : MonoBehaviour
                     position.x = val;
                     _blackLine.anchoredPosition = position;
                 })
-                .setEase(LeanTweenType.easeInOutQuad);
+                .setEase(LeanTweenType.easeOutCubic);
         }
 
 
@@ -119,7 +119,7 @@ public class UnderlinedSelectionUI : MonoBehaviour
                 {
                     text.color = Color.Lerp(currentColor, targetColor, val);
                 })
-                .setEase(LeanTweenType.easeInOutQuad);
+                .setEase(LeanTweenType.easeOutCubic);
         }
     }
 

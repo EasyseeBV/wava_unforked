@@ -1,14 +1,10 @@
+using Michsky.MUIP;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Messy.Definitions;
-using UnityEngine;
-using Michsky.MUIP;
-using TMPro;
 using System.Linq;
-using System.Threading.Tasks;
-using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
+using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class ArtworkUIManager : MonoBehaviour

@@ -1,15 +1,14 @@
+using DanielLochner.Assets.SimpleScrollSnap;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DanielLochner.Assets.SimpleScrollSnap;
-using Messy.Definitions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class ExhibitionDetailsPanel : DetailsPanel
+public class ExhibitionDetailsPanel : MonoBehaviour
 {
     private ExhibitionData exhibition;
     
@@ -19,66 +18,79 @@ public class ExhibitionDetailsPanel : DetailsPanel
         Artworks,
         Artists
     }
-    
-    [Header("Gallery Area")] 
+
+    [SerializeField] private List<RectTransform> rebuildLayout;
+    [SerializeField] private Button closeButton;
+    [SerializeField] private TextMeshProUGUI exhibitionTitleText;
+    [SerializeField] private TextMeshProUGUI descriptionText;
+    [SerializeField] private TextMeshProUGUI durationText;
+    [SerializeField] private TextMeshProUGUI locationText;
+    [SerializeField] private Button downloadButton;
+    [SerializeField] private DownloadButtonUI downloadButtonUI;
+
+    [Header("Image gallery")] 
     [SerializeField] private SimpleScrollSnap scrollSnapper;
-    [SerializeField] private Transform galleryArea;
     [SerializeField] private GameObject galleryImagePrefab;
-    [Space]
-    [SerializeField] private Transform indicatorArea;
-    [SerializeField] private GameObject indicatorImage;
-    [SerializeField] private Color activeColor;
-    [SerializeField] private Color inactiveColor;
+    [SerializeField] private PointsAndLineUI galleryIndicator;
     
     [Header("Menus")]
     [SerializeField] private Button artworksButton;
-    [SerializeField] private TMP_Text artworkText;
     [SerializeField] private Button artistsButton;
-    [SerializeField] private TMP_Text artistsText;
-    [SerializeField] private Transform menuBar;
-    [Space]
-    [SerializeField] private Transform layoutArea;
+    [SerializeField] private Transform artworksAndArtistsContainer;
     [SerializeField] private ArtworkShower artworkShowerPrefab;
-    [SerializeField] private ArtistContainer artistContainer;
-    [Space]
-    [SerializeField] private Color selectedColor;
-    [SerializeField] private Color unselectedColor;
+    [SerializeField] private ArtistContainer artistContainerPrefab;
     
     private MenuNavigation currentMenu = MenuNavigation.Default;
 
-    private const float MENU_BAR_ARTWORKS = -171.5f;
-    private const float MENU_BAR_ARTISTS = 0;
-
-    private List<Image> indicators = new();
-
-    protected override void Setup()
+    void Awake()
     {
-        base.Setup();
-        //heartButton.onClick.AddListener(LikeArtwork);
+        closeButton.onClick.AddListener(() => gameObject.SetActive(false));
+
+        downloadButton.onClick.AddListener(() => {
+
+            downloadButtonUI.ShowAsDownloading();
+            downloadButton.interactable = false;
+
+            // Create intermediate variable for following callback.
+            var callbackExhibition = exhibition;
+
+            _ = DownloadManager.DownloadExhibition(exhibition, (_) =>
+            {
+                if (exhibition != callbackExhibition)
+                    return;
+
+                downloadButtonUI.ShowAsDownloading();
+                downloadButton.interactable = false;
+
+            }, (result) =>
+            {
+                if (exhibition != callbackExhibition)
+                    return;
+
+                if (result == UnityWebRequest.Result.Success)
+                {
+                    downloadButtonUI.ShowAsDownloadFinished();
+                    downloadButton.interactable = false;
+                }
+                else
+                {
+                    downloadButtonUI.ShowAsReadyForDownload();
+                    downloadButton.interactable = true;
+                }
+            });
+        });
+
         artworksButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artworks));
         artistsButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artists));
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
     }
-    
-    protected override void Close()
-    {
-        ArtworkUIManager.Instance.InitExhibitions();
-        base.Close();
-    }
 
     private async void ChangeMenu(MenuNavigation menu)
     {
-        if (currentMenu == menu) return;
+        if (currentMenu == menu)
+            return;
 
-        menuBar.transform.localPosition = new Vector3(
-            menu == MenuNavigation.Artworks ? MENU_BAR_ARTWORKS : MENU_BAR_ARTISTS,
-            menuBar.transform.localPosition.y,
-            menuBar.transform.localPosition.z);
-
-        artworkText.color = menu == MenuNavigation.Artworks ? selectedColor : unselectedColor;
-        artistsText.color = menu == MenuNavigation.Artists ? selectedColor : unselectedColor;
-
-        foreach (Transform child in layoutArea)
+        foreach (Transform child in artworksAndArtistsContainer)
         {
             Destroy(child.gameObject);
         }
@@ -89,7 +101,7 @@ public class ExhibitionDetailsPanel : DetailsPanel
                 var artworks = await GetArtworks();
                 for (int i = 0; i < artworks.Count; i++)
                 {
-                    ArtworkShower artwork = Instantiate(artworkShowerPrefab, layoutArea);
+                    ArtworkShower artwork = Instantiate(artworkShowerPrefab, artworksAndArtistsContainer);
                     artwork.Init(artworks[i], true);
                 }
                 break;
@@ -97,15 +109,28 @@ public class ExhibitionDetailsPanel : DetailsPanel
                 var artists = await GetArtists();
                 for (int i = 0; i < artists.Count; i++)
                 {
-                    ArtistContainer container = Instantiate(artistContainer, layoutArea);
+                    ArtistContainer container = Instantiate(artistContainerPrefab, artworksAndArtistsContainer);
                     container.Assign(artists[i]);
                 }
                 break;
         }
         
         currentMenu = menu;
-        
-        StartCoroutine(LateRebuild());
+
+
+        // Rebuild layout.
+        for (int i = 0; i < rebuildLayout.Count; i++)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rebuildLayout[i]);
+        }
+
+        this.InvokeNextFrame(() =>
+        {
+            for (int i = 0; i < rebuildLayout.Count; i++)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(rebuildLayout[i]);
+            }
+        });
     }
 
     public void Fill(ExhibitionData exhibition)
@@ -113,20 +138,53 @@ public class ExhibitionDetailsPanel : DetailsPanel
         this.exhibition = exhibition;
         
         Clear();
+
+        exhibitionTitleText.text = exhibition.title;
+        durationText.text = exhibition.year.ToString();
+        locationText.text = exhibition.location.ToString();
+
+        descriptionText.text = exhibition.description;
         
-        contentTitleLabel.text = exhibition.title;
-        fullLengthDescription = exhibition.description;
-        
-        TruncateText();
-        
-        // heartImage.sprite = exhibition.Liked ? likedSprite : unlikedSprite;
-        
+
+
         ChangeMenu(MenuNavigation.Artworks);
         
         scrollSnapper.Setup();
         ChangeIndicator(0, 0);
 
         FillImages();
+
+
+        galleryIndicator.SetSelectedPointIndex(0);
+        galleryIndicator.FinishAnimationsImmediately();
+
+
+        // Update appearance of download button.
+        if (DownloadManager.ExhibitionIsDownloaded(exhibition))
+        {
+            downloadButtonUI.ShowAsDownloadFinished();
+            downloadButton.interactable = false;
+        }
+        else
+        {
+            downloadButtonUI.ShowAsReadyForDownload();
+            downloadButton.interactable = true;
+        }
+
+
+        // Rebuild layout.
+        for (int i = 0; i < rebuildLayout.Count; i++)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rebuildLayout[i]);
+        }
+
+        this.InvokeNextFrame(() =>
+        {
+            for (int i = 0; i < rebuildLayout.Count; i++)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(rebuildLayout[i]);
+            }
+        });
     }
 
     private async void FillImages()
@@ -141,13 +199,9 @@ public class ExhibitionDetailsPanel : DetailsPanel
                 var aspectRatioFitter = artworkImage.GetComponent<AspectRatioFitter>();
                 var aspectRatio = spr.rect.width / spr.rect.height;
                 aspectRatioFitter.aspectRatio = aspectRatio;
-
-                Image indicator = Instantiate(indicatorImage, indicatorArea).GetComponentInChildren<Image>();
-                indicator.color = inactiveColor;
-                indicators.Add(indicator);
             }
-            
-            StartCoroutine(LateRebuild());
+
+            galleryIndicator.SetPointCount(images.Count);
         }
         catch (Exception e)
         {
@@ -159,36 +213,17 @@ public class ExhibitionDetailsPanel : DetailsPanel
     {
         scrollSnapper.RemoveAll();
         
-        foreach (Transform child in indicatorArea)
-        {
-            Destroy(child.gameObject);
-        }
-        
-        foreach (Transform child in layoutArea)
+        foreach (Transform child in artworksAndArtistsContainer)
         {
             Destroy(child.gameObject);
         }
         
         currentMenu = MenuNavigation.Default;
-        indicators.Clear();
-        readingMore = false;
-        fullLengthDescription = string.Empty;
-    }
-
-    private void LikeArtwork()
-    {
-        if (exhibition == null) return;
-
-        // exhibition.Liked = !exhibition.Liked;
-        // heartImage.sprite = exhibition.Liked ? likedSprite : unlikedSprite;
     }
 
     private void ChangeIndicator(int newIndex,int oldIndex)
     {
-        if (indicators.Count <= 0) return;
-        
-        indicators[oldIndex].color = inactiveColor;
-        indicators[newIndex].color = activeColor;
+        galleryIndicator.SetSelectedPointIndex(newIndex);
     }
     
     private async Task<List<ArtistData>> GetArtists()

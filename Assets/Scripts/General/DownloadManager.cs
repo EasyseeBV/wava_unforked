@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using TriLibCore;
 using TriLibCore.General;
@@ -128,6 +129,116 @@ public class DownloadManager : MonoBehaviour
 
         return path;
     }
+
+    public static bool MediaContentIsDownloaded(MediaContentData media)
+    {
+        var uri = new Uri(media.media_content);
+        string encodedPath = uri.AbsolutePath;
+        string decodedPath = Uri.UnescapeDataString(encodedPath);
+        string fileName = Path.GetFileName(decodedPath);
+        string localPath = Path.Combine(AppCache.ContentFolder, fileName);
+
+        return File.Exists(localPath);
+    }
+
+    public static async Task DownloadMediaContent(MediaContentData media, Action<float> progressCallback = null, Action<UnityWebRequest.Result> resultCallback = null)
+    {
+        if (!MediaContentIsDownloaded(media))
+            await Instance.BackgroundDownloadMedia(AppCache.ContentFolder, media.media_content, null, 0, progressCallback, resultCallback);
+    }
+
+    public static bool ArtworkIsDownloaded(ArtworkData artwork)
+    {
+        if (artwork == null || artwork.content_list.Count == 0)
+            return true;
+
+        foreach (var content in artwork.content_list)
+        {
+            if (!MediaContentIsDownloaded(content))
+                return false;
+        }
+
+        return true;
+    }
+
+    public static async Task DownloadArtwork(ArtworkData artwork, Action<float> progressChangedCallback = null, Action<UnityWebRequest.Result> resultCallback = null)
+    {
+        var progresses = Enumerable.Repeat(0f, artwork.content_list.Count).ToList();
+
+        var doneCount = 0;
+
+        bool success = true;
+
+        foreach (var content in artwork.content_list)
+        {
+            await DownloadMediaContent(content, (progress) =>
+            {
+                if (progressChangedCallback == null)
+                    return;
+
+                var totalprogress = progresses.Sum() / progresses.Count;
+
+                progressChangedCallback.Invoke(totalprogress);
+            }, (result) =>
+            {
+                doneCount++;
+
+                if (result != UnityWebRequest.Result.Success)
+                    success = false;
+
+                if (doneCount == artwork.content_list.Count)
+                {
+                    resultCallback?.Invoke(success ? UnityWebRequest.Result.Success : UnityWebRequest.Result.ConnectionError);
+                }
+
+            });
+        }
+    }
+
+    public static bool ExhibitionIsDownloaded(ExhibitionData exhibitionData)
+    {
+        foreach (var artworkData in exhibitionData.artworks)
+        {
+            if (!ArtworkIsDownloaded(artworkData))
+                return false;
+        }
+
+        return true;
+    }
+
+    public static async Task DownloadExhibition(ExhibitionData exhibition, Action<float> progressChangedCallback = null, Action<UnityWebRequest.Result> resultCallback = null)
+    {
+        var progresses = Enumerable.Repeat(0f, exhibition.artworks.Count).ToList(); ;
+
+        var doneCount = 0;
+
+        bool success = true;
+
+        foreach (var artwork in exhibition.artworks)
+        {
+            await DownloadArtwork(artwork, (progress) =>
+            {
+                if (progressChangedCallback == null)
+                    return;
+
+                var totalprogress = progresses.Sum() / progresses.Count;
+
+                progressChangedCallback.Invoke(totalprogress);
+            }, (result) =>
+            {
+                doneCount++;
+
+                if (result != UnityWebRequest.Result.Success)
+                    success = false;
+
+                if (doneCount == artwork.content_list.Count)
+                {
+                    resultCallback?.Invoke(success ? UnityWebRequest.Result.Success : UnityWebRequest.Result.ConnectionError);
+                }
+            });
+        }
+    }
+
 
     #region Model Loading Callbacks
     private void OnError(IContextualizedError obj) => Debug.LogError($"An error occurred while loading your model: {obj.GetInnerException()}");
