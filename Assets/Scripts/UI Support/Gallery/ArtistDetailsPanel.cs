@@ -108,6 +108,7 @@ public class ArtistDetailsPanel : DetailsPanel
 
         contentTitleLabel.text = artist.title;
         fullLengthDescription = artist.description;
+        locationLabel.text = artist.location;
         TruncateText();
         
         // heartImage.sprite = artist.Liked ? likedSprite : unlikedSprite;

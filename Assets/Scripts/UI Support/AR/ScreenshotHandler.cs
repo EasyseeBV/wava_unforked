@@ -49,7 +49,8 @@ public class ScreenshotHandler : MonoBehaviour
         byte[] pngData = capturedTexture.EncodeToPNG();
         if (pngData != null)
         {
-            string fileName = $"{ArTapper.ArtworkToPlace.title}.png";
+            string add = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string fileName = $"{ArTapper.ArtworkToPlace.title}_{add}.png";
             string path = Path.Combine(AppCache.GalleryFolder, fileName);
             
             string directory = Path.GetDirectoryName(path);
