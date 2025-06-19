@@ -207,10 +207,16 @@ public class ARScreenRecorder : MonoBehaviour
             return;
         }
 
+        if (!Directory.Exists(AppCache.GalleryFolder))
+        {
+            Directory.CreateDirectory(AppCache.GalleryFolder);
+        }
+        
         // copy to persistent data folder
         string filename    = Path.GetFileName(srcPath);
         string destPath    = Path.Combine(AppCache.GalleryFolder,  filename);
-        File.Copy(srcPath, destPath, overwrite: true);
+        
+        File.Copy(srcPath, destPath, overwrite: false);
 
         Debug.Log($"Recording copied to: {destPath}");
     }
