@@ -37,7 +37,6 @@ public class MapFilterToggle : MonoBehaviour
         if (state)
         {
             filterArea.SetActive(true);
-            selectionMenu?.Close();
         }
         
         animator.SetBool(displayKey, state);

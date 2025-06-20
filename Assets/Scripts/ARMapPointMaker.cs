@@ -87,8 +87,7 @@ public class ARMapPointMaker : MonoBehaviour {
             {
                 try
                 {
-                    artwork.marker =
-                        control.marker3DManager.Create(artwork.longitude, artwork.latitude, ZoomedInMapObject);
+                    artwork.marker = control.marker3DManager.Create(artwork.longitude, artwork.latitude, ZoomedInMapObject);
                     artwork.marker.instance.name = artwork.title;
                     artwork.hotspot = artwork.marker.instance.GetComponent<HotspotManager>();
                     artwork.marker.sizeType = OnlineMapsMarker3D.SizeType.realWorld;
@@ -98,6 +97,8 @@ public class ARMapPointMaker : MonoBehaviour {
                     artwork.hotspot.ConnectedExhibition = await FirebaseLoader.FindRelatedExhibition(artwork.id);
                     artwork.hotspot.Init(artwork);
                     artwork.hotspot.MinZoom = minZoom;
+                    
+                    selectionMenu.Add(artwork);
                 }
                 catch (Exception e)
                 {

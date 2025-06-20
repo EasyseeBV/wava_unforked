@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.IO;
+using System.Threading.Tasks;
 
 public class HotspotManager : MonoBehaviour
 {   
@@ -28,6 +29,9 @@ public class HotspotManager : MonoBehaviour
     public Material SelectedHotspotMat;
     public Material SelectedHotspotInRangeMat;
     public GameObject Shadow;
+
+    [Header("UI Designs V3")]
+    [SerializeField] private Image backgroundARImage;
     
     [Header("Runtime")]
     public bool selected = false;
@@ -106,7 +110,8 @@ public class HotspotManager : MonoBehaviour
         */
     }
 
-    private void OnEnable() {
+    private void OnEnable() 
+    {
         if (artwork != null)
             OnChangeGpsPosition(_distance);
     }
@@ -118,20 +123,37 @@ public class HotspotManager : MonoBehaviour
         Logo.material.color = c;*/
     }
 
-    public void OnChangeGpsPosition(float distance) {
+    public void OnChangeGpsPosition(float distance) 
+    {
         _distance = distance;
         LeftDistance.text = string.Format("{0}km", distance.ToString("F1"));
 
-        if (CanShow && !IsClose()) {
+        if (backgroundARImage.sprite == null)
+        {
+            if (artwork.marker.inMapView) LoadBackgroundImage();
+        }
+
+        if (CanShow && !IsClose()) 
+        {
             CanShow = false;
             SetReach(false);
         }
+    }
 
-        if (selected)
+    private async Task LoadBackgroundImage()
+    {
+        try
         {
-            SelectionMenu.Instance.UpdateDistance(_distance);
+            var sprites = await artwork.GetImages(1);
+            if (sprites is { Count: > 0 } && sprites[0] != null)
+            {
+                backgroundARImage.sprite = sprites[0];
+            }
         }
-
+        catch (Exception ex)
+        {
+            Debug.LogError(ex.Message);
+        }
     }
 
     public void SetReach(bool InReach)
@@ -147,7 +169,7 @@ public class HotspotManager : MonoBehaviour
 
         if (!ZoomedOut && InReach)
         {
-            if(selected) SelectionMenu.Instance.Open(this, true);
+            if(selected) SelectionMenu.Instance.SelectHotspot(this, true);
         }
         else if(!InReach)
         {
@@ -221,9 +243,9 @@ public class HotspotManager : MonoBehaviour
         ZoomedOut = IsZoomedOut;
         if (IsZoomedOut) {
             ARObject.SetActive(false);
-            GetComponent<Animator>().ResetTrigger("Show");
+            /*GetComponent<Animator>().ResetTrigger("Show");
             GetComponent<Animator>().ResetTrigger("Hide");
-            GetComponent<Animator>().SetTrigger("Base");
+            GetComponent<Animator>().SetTrigger("Base");*/
             //EnableInfo(false);
         } else {
             ARObject.SetActive(true);
@@ -280,8 +302,9 @@ public class HotspotManager : MonoBehaviour
 #endif
     }
 
-    public IEnumerator UnTouch() {
-        yield return new WaitForSeconds(0.5f);
+    public IEnumerator UnTouch() 
+    {
+        yield return new WaitForSeconds(0.25f);
         Touched = false;
     }
 
@@ -293,10 +316,8 @@ public class HotspotManager : MonoBehaviour
         BorderRingMesh.material = SelectedHotspotMat;
         if (state)
         {
-            SelectionMenu.Instance?.Open(this, inReach);
-            SelectionMenu.Instance?.UpdateDistance(_distance);
+            SelectionMenu.Instance?.SelectHotspot(this, inReach);
         }
-        else SelectionMenu.Instance?.Close();
     }
 
 

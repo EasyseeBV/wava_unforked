@@ -68,7 +68,7 @@ public class OnlineMapsMarker3DDrawer : OnlineMapsMarkerDrawerBase
         {
             OnlineMapsMarker3D marker = manager[i];
             if (marker.manager == null) marker.manager = manager;
-            marker.Update(bounds, tlx, tly, brx, bry, zoom, ttlx, ttly, tbrx, tbry, bestYScale);
+            marker?.Update(bounds, tlx, tly, brx, bry, zoom, ttlx, ttly, tbrx, tbry, bestYScale);
         }
     }
 }
