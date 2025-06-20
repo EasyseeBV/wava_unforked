@@ -189,11 +189,16 @@ public class FirebaseLoader : MonoBehaviour
 
     private async Task ProcessSetup(bool reload = false)
     {
+        var loadingProfiler = new LoadingProfiler();
+        loadingProfiler.StartTracking();
+
         if (loadArtistsOnStartup)
         {
             OnStartUpEventProcessed?.Invoke("Loading artist data...");
             await LoadRemainingArtists();
         }
+
+        loadingProfiler.LogStep("Loaded remaining artists.");
 
         if (loadArtworksOnStartup)
         {
@@ -201,17 +206,23 @@ public class FirebaseLoader : MonoBehaviour
             await LoadRemainingArtworks(() => { OnStartUpEventProcessed?.Invoke("Loaded Artworks"); });
         }
 
+        loadingProfiler.LogStep("Loaded remaining artworks.");
+
         if (loadExhibitionsOnStartup)
         {
             OnStartUpEventProcessed?.Invoke("Loading exhibition data...");
             await LoadRemainingExhibitions(false);
             OnStartUpEventProcessed?.Invoke("Connecting exhibition data...");
 
+            loadingProfiler.LogStep("Loaded remaining exhibitions.");
+
             // Connect artworks
             foreach (var exhibition in Exhibitions)
             {
                 await FillExhibitionArtworkData(exhibition, false);
             }
+
+            loadingProfiler.LogStep("Connected artworks.");
 
             // Connect artists
             foreach (var exhibition in Exhibitions)
@@ -222,7 +233,11 @@ public class FirebaseLoader : MonoBehaviour
                 }
             }
 
+            loadingProfiler.LogStep("Connected artists.");
+
             await AppCache.SaveExhibitionsCache();
+
+            loadingProfiler.LogStep("Saved exhibitions cache.");
         }
 
         if (createLocalGallery && screenshotManager != null)
@@ -252,6 +267,8 @@ public class FirebaseLoader : MonoBehaviour
             ARGalleryPage.StoragePath = path;
         }
 
+        loadingProfiler.LogStep("Created local gallery.");
+
         if (downloadHomeScreenContent)
         {
             OnStartUpEventProcessed?.Invoke($"Downloading new exhibitions...");
@@ -268,6 +285,8 @@ public class FirebaseLoader : MonoBehaviour
             }
         }
 
+        loadingProfiler.LogStep("Downloaded home screen content.");
+
         if (downloadArtworkImagesOnStartup)
         {
             int curr = 0;
@@ -280,7 +299,9 @@ public class FirebaseLoader : MonoBehaviour
                 await artwork.GetAllImages();
             }
         }
-        
+
+        loadingProfiler.LogStep("Downloaded artwork images.");
+
         if (downloadExhibitionImagesOnStartup)
         {
             int curr = 0;
@@ -293,7 +314,9 @@ public class FirebaseLoader : MonoBehaviour
                 await exhibition.GetAllImages();
             }
         }
-        
+
+        loadingProfiler.LogStep("Downloaded exhibition images.");
+
         if (downloadArtistImagesOnStartup)
         {
             int curr = 0;
@@ -306,7 +329,10 @@ public class FirebaseLoader : MonoBehaviour
                 await artist.GetIcon();
             }
         }
-        
+
+        loadingProfiler.LogStep("Downloaded artist images.");
+        loadingProfiler.EndTracking();
+
         OnStartUpEventProcessed?.Invoke(string.Empty);
         SetupComplete = true;
     }

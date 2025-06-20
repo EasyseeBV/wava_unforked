@@ -78,6 +78,8 @@ public class ExhibitionDetailsPanel : MonoBehaviour
                     downloadButtonUI.ShowAsReadyForDownload();
                     downloadButton.interactable = true;
                 }
+
+                ArtworkUIManager.Instance.UpdateCardDownloadStatusForExhibition(callbackExhibition);
             });
         });
 
@@ -153,13 +155,16 @@ public class ExhibitionDetailsPanel : MonoBehaviour
 
 
         ChangeMenu(MenuNavigation.Artworks);
-        
+        ArtworksArtistMenu.FinishAnimationsImmediately();
+
+
         scrollSnapper.Setup();
         ChangeIndicator(0, 0);
 
         FillImages();
 
 
+        galleryIndicator.SetPointCount(scrollSnapper.NumberOfPanels);
         galleryIndicator.SetSelectedPointIndex(0);
         galleryIndicator.FinishAnimationsImmediately();
 
@@ -205,8 +210,6 @@ public class ExhibitionDetailsPanel : MonoBehaviour
                 var aspectRatio = spr.rect.width / spr.rect.height;
                 aspectRatioFitter.aspectRatio = aspectRatio;
             }
-
-            galleryIndicator.SetPointCount(images.Count);
         }
         catch (Exception e)
         {

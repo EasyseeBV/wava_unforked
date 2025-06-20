@@ -16,9 +16,14 @@ public class ArtworkShower : MonoBehaviour
     public Button ExhibitionButton;
     public Button ViewArtworkButton;
     [Space]
-    public TextMeshProUGUI ExhibitionTitleText;
+    public TextSlider ExhibitionTitleTextSlider;
     [SerializeField] private LoadingCircle loadingCircle;
-    
+
+    [Header("Download status")]
+    [SerializeField] Image downloadStatusImage;
+    [SerializeField] Color defaultColor;
+    [SerializeField] Color downloadedColor;
+
     public bool IsLoading { get; set; }
     
     public ArtworkData cachedArtwork { get; set; }
@@ -45,13 +50,15 @@ public class ArtworkShower : MonoBehaviour
 
         foreach (var exhibition in FirebaseLoader.Exhibitions.Where(exhibition => exhibition.artworks.Contains(artwork)))
         {
-            ExhibitionTitleText.text = exhibition.title;
+            ExhibitionTitleTextSlider.SetTextAndResetAnimation(exhibition.title);
             break;
         }
         
         cachedArtwork = artwork;
 
         if (loadImage) SetImage(artwork);
+
+        UpdateDownloadStatus();
     }
 
     public void SetImage()
@@ -66,6 +73,17 @@ public class ArtworkShower : MonoBehaviour
         SetImage(cachedArtwork);
     }
     
+    public void UpdateDownloadStatus()
+    {
+        if (cachedArtwork == null)
+            return;
+
+        if (DownloadManager.ArtworkIsDownloaded(cachedArtwork))
+            downloadStatusImage.color = downloadedColor;
+        else
+            downloadStatusImage.color = defaultColor;
+    }
+
     private async Task SetImage(ArtworkData artwork)
     {
         try

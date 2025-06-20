@@ -74,14 +74,11 @@ public class ArtworkUIManager : MonoBehaviour
     public TextMeshProUGUI Description;
     public TextMeshProUGUI Header;
 
-    [Header("Gallery Navigation")]
-    [SerializeField] private Transform currentNavigationArea;
-    [SerializeField] private TMP_Text artworkNavigationLabel;
-    [SerializeField] private TMP_Text exhibitionsNavigationLabel;
-    [SerializeField] private TMP_Text artistsNavigationLabel;
-    [Space]
-    [SerializeField] private Color navigationActive = Color.black;
-    [SerializeField] private Color navigationInactive = Color.grey;
+    [Header("Navigation")]
+    [SerializeField] UnderlinedSelectionUI underlinedSelectionUI;
+    [SerializeField] Button artworksButton;
+    [SerializeField] Button exhibitionsButton;
+    [SerializeField] Button artistsButton;
 
     [HideInInspector] public GalleryFilter.Filter CurrentFilter = GalleryFilter.Filter.RecentlyAdded;
 
@@ -95,6 +92,12 @@ public class ArtworkUIManager : MonoBehaviour
     
     private void Awake()
     {
+        // Subscribe to navigation buttons.
+        artworksButton.onClick.AddListener(InitArtworks);
+        exhibitionsButton.onClick.AddListener(InitExhibitions);
+        artistsButton.onClick.AddListener(InitArtists);
+
+
         if (!Instance) Instance = this;
 
         if (parentCanvas == null) parentCanvas = GetComponentInParent<Canvas>();
@@ -183,10 +186,18 @@ public class ArtworkUIManager : MonoBehaviour
         
         ReplaceStage<ArtworkData>();
         ShowDefaultLayoutArea(true);
-        ChangeMenuNavigationUI(MenuNavigation.Artworks);
+        currentMenuNavigation = MenuNavigation.Artworks;
+        underlinedSelectionUI.ShowAsSelected(0);
         FetchNewArtworks();
         ApplySorting();
         StartCoroutine(WaitForCanvases());
+    }
+
+    public void UpdateCardDownloadStatusForArtwork(ArtworkData artwork)
+    {
+        var card = loadedArtworks.FirstOrDefault(card => card.cachedArtwork == artwork || card.cachedArtwork.id == artwork.id);
+
+        card?.UpdateDownloadStatus();
     }
 
     private void FetchNewArtworks()
@@ -211,11 +222,19 @@ public class ArtworkUIManager : MonoBehaviour
         if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.BeginLoading();
         ReplaceStage<ExhibitionData>();
         ShowDefaultLayoutArea(true);
-        ChangeMenuNavigationUI(MenuNavigation.Exhibitions);
+        currentMenuNavigation = MenuNavigation.Exhibitions;
+        underlinedSelectionUI.ShowAsSelected(1);
         FetchNewExhibitions();
         ApplySorting();
     }
     
+    public void UpdateCardDownloadStatusForExhibition(ExhibitionData exhibition)
+    {
+        var card = loadedExhibitions.FirstOrDefault(card => card.exhibition == exhibition || card.exhibition.id == exhibition.id);
+
+        card?.UpdateDownloadStatus();
+    }
+
     private void FetchNewExhibitions()
     {
         // Sort Exhibitions by creation_time descending
@@ -232,13 +251,14 @@ public class ArtworkUIManager : MonoBehaviour
             if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
         }
     }
-    
+
     public void InitArtists()
     {
         if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
         ReplaceStage<ArtistData>();
         ShowDefaultLayoutArea(false);
-        ChangeMenuNavigationUI(MenuNavigation.Artists);
+        currentMenuNavigation = MenuNavigation.Artists;
+        underlinedSelectionUI.ShowAsSelected(2);
         ApplySorting();
         FetchNewArtists();
         LayoutRebuilder.ForceRebuildLayoutImmediate(artistsLayoutArea);
@@ -270,18 +290,6 @@ public class ArtworkUIManager : MonoBehaviour
     private void ChangeMenuNavigationUI(MenuNavigation navigation)
     {
         currentMenuNavigation = navigation;
-        
-        artworkNavigationLabel.color = navigation == MenuNavigation.Artworks ? navigationActive : navigationInactive;
-        exhibitionsNavigationLabel.color = navigation == MenuNavigation.Exhibitions ? navigationActive : navigationInactive;
-        artistsNavigationLabel.color = navigation == MenuNavigation.Artists ? navigationActive : navigationInactive;
-
-        currentNavigationArea.localPosition = navigation switch
-        {
-            MenuNavigation.Artworks => new Vector3(-114.3f, -18f, 0),
-            MenuNavigation.Exhibitions => new Vector3(0, -18f, 0),
-            MenuNavigation.Artists => new Vector3(114.3f, -18f, 0),
-            _ => throw new ArgumentOutOfRangeException(nameof(navigation), navigation, null)
-        };
     }
 
     public void ApplySorting()

@@ -34,9 +34,9 @@ public class UnderlinedSelectionUI : MonoBehaviour
 
     float _lineWidth;
 
-    public Action<int> _SelectedIndex;
-
     bool _subscribedToButtons;
+
+    int _selectedIndex;
 
     private void Start()
     {
@@ -83,6 +83,8 @@ public class UnderlinedSelectionUI : MonoBehaviour
     {
         index = Mathf.Clamp(index, 0, SelectionOptionsCount() - 1);
 
+        _selectedIndex = index;
+
         LeanTween.cancel(gameObject);
 
 
@@ -120,6 +122,24 @@ public class UnderlinedSelectionUI : MonoBehaviour
                     text.color = Color.Lerp(currentColor, targetColor, val);
                 })
                 .setEase(LeanTweenType.easeOutCubic);
+        }
+    }
+
+    public void FinishAnimationsImmediately()
+    {
+        LeanTween.cancel(gameObject);
+
+        // Finish black bar movement.
+        var position = _blackLine.anchoredPosition;
+        position.x = _selectedIndex * _lineWidth;
+        _blackLine.anchoredPosition = position;
+
+        // Finish text color animation.
+        for (int i = 0; i < _selectionTexts.Count; i++)
+        {
+            var text = _selectionTexts[i];
+
+            text.color = i == _selectedIndex ? _selectedTextColor : _defaultTextColor;
         }
     }
 

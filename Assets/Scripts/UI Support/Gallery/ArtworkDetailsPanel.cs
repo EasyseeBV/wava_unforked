@@ -78,6 +78,8 @@ public class ArtworkDetailsPanel : MonoBehaviour
                     downloadButtonUI.ShowAsReadyForDownload();
                     downloadButton.interactable = true;
                 }
+
+                ArtworkUIManager.Instance.UpdateCardDownloadStatusForArtwork(callbackArtwork);
             });
         });
         

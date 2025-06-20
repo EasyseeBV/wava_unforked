@@ -1,80 +1,121 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class TextSlider : MonoBehaviour
 {
     [Header("References")]
     [SerializeField]
-    private RectTransform _slidingTransform;
+    TextMeshProUGUI _slidingText;
 
     [SerializeField, Tooltip("Indicates that there is text before the shown text.")]
-    private Image _leftIndicator;
+    Image _leftIndicator;
 
     [SerializeField, Tooltip("Indicates that there is text after the shown text.")]
-    private Image _rightIndicator;
+    Image _rightIndicator;
+
+    [SerializeField]
+    LayoutElement _textContainerLayoutElement;
 
     [Header("Animation Settings")]
     [SerializeField]
-    private float _startForwardDelay = 1f;
+    float _startForwardDelay = 1f;
 
     [SerializeField]
-    private float _slideBackDelay = 1f;
+    float _slideBackDelay = 1f;
 
     [SerializeField]
-    private float _slideForwardSpeed = 100f;
+    float _slideForwardSpeed = 100f;
 
     [SerializeField]
-    private float _slideBackSpeed = 100f;
+    float _slideBackSpeed = 100f;
 
-    [Header("Indicator Settings")]
+    [Header("Other Settings")]
     [SerializeField, Tooltip("The distance from the edge at which indicators start fading.")]
-    private float _showIndicatorThreshold = 50f;
+    float _showIndicatorThreshold = 50f;
 
-    private float _containerWidth;
-    private float _textWidth;
-    private float _timeSinceAnimationStart;
-    private Vector2 _originalPosition;
+    [SerializeField]
+    int _maxWidth = 100;
 
-    private enum SlideState { WaitingToSlide, SlidingForward, WaitingToReturn, SlidingBack }
-    private SlideState _state;
-
-    private bool _shouldAnimate = true;
-
-    void Start()
-    {
-        this.InvokeNextFrame(() => ResetAnimation());
+    RectTransform slidingTransform {
+        get => _slidingText.transform as RectTransform;
     }
 
-    void ResetAnimation()
-    {
-        _textWidth = _slidingTransform.rect.width;
-        _containerWidth = (_slidingTransform.parent as RectTransform).rect.width;
+    float _containerWidth;
+    float _textWidth;
+    float _timeSinceAnimationStart;
+    Vector2 _originalPosition;
 
+    enum SlideState { WaitingToSlide, SlidingForward, WaitingToReturn, SlidingBack }
+    SlideState _state;
+
+    bool _shouldAnimate = true;
+
+    void Awake()
+    {
+        _originalPosition = slidingTransform.anchoredPosition;
+    }
+
+    public void ResetAnimation()
+    {
+        // Reset sliding transform position.
+        slidingTransform.anchoredPosition = _originalPosition;
+
+
+        // Get element dimensions.
+        _textWidth = slidingTransform.rect.width;
+        _containerWidth = (slidingTransform.parent as RectTransform).rect.width;
+
+
+        // Check if animation necessary.
         _shouldAnimate = _textWidth > _containerWidth;
 
-        if (!_shouldAnimate)
-            return;
+        if (_shouldAnimate)
+        {
+            // Reset animation parameters.
+            _timeSinceAnimationStart = 0f;
+            _state = SlideState.WaitingToSlide;
+        }
+        else
+        {
+            // Hide indicators.
+            SetImageAlpha(_leftIndicator, 0f);
+            SetImageAlpha(_rightIndicator, 0f);
+        }
+    }
 
-        _originalPosition = _slidingTransform.anchoredPosition;
+    public void SetTextAndResetAnimation(string text)
+    {
+        _slidingText.text = text;
 
-        _timeSinceAnimationStart = 0f;
-        _state = SlideState.WaitingToSlide;
 
-        UpdateIndicators();
+        // Update layout.
+        LayoutRebuilder.ForceRebuildLayoutImmediate(slidingTransform);
+
+        // - Wait until content size fitter on text updated.
+        this.InvokeNextFrame(() =>
+        {
+            var preferredWidth = LayoutUtility.GetPreferredWidth(slidingTransform);
+
+            _textContainerLayoutElement.preferredWidth = Mathf.Min(preferredWidth, _maxWidth);
+        });
+
+
+        // Wait for container layout update, then reset animation.
+        this.InvokeAfterDelay(2, ResetAnimation);
     }
 
     void Update()
     {
         if (!_shouldAnimate)
-        {
-            SetImageAlpha(_leftIndicator, 0f);
-            SetImageAlpha(_rightIndicator, 0f);
             return;
-        }
 
         _timeSinceAnimationStart += Time.deltaTime;
 
-        Vector2 pos = _slidingTransform.anchoredPosition;
+        Vector2 pos = slidingTransform.anchoredPosition;
 
         switch (_state)
         {
@@ -94,7 +135,7 @@ public class TextSlider : MonoBehaviour
                     _timeSinceAnimationStart = 0f;
                     _state = SlideState.WaitingToReturn;
                 }
-                _slidingTransform.anchoredPosition = pos;
+                slidingTransform.anchoredPosition = pos;
                 break;
 
             case SlideState.WaitingToReturn:
@@ -113,7 +154,7 @@ public class TextSlider : MonoBehaviour
                     _timeSinceAnimationStart = 0f;
                     _state = SlideState.WaitingToSlide;
                 }
-                _slidingTransform.anchoredPosition = pos;
+                slidingTransform.anchoredPosition = pos;
                 break;
         }
 
@@ -122,7 +163,7 @@ public class TextSlider : MonoBehaviour
 
     void UpdateIndicators()
     {
-        float distanceFromStart = Mathf.Abs(_slidingTransform.anchoredPosition.x);
+        float distanceFromStart = Mathf.Abs(slidingTransform.anchoredPosition.x);
         float distanceToEnd = Mathf.Abs((_textWidth - _containerWidth) - distanceFromStart);
 
         float beforeAlpha = Mathf.Clamp01(distanceFromStart / _showIndicatorThreshold);
@@ -141,4 +182,37 @@ public class TextSlider : MonoBehaviour
         color.a = alpha;
         img.color = color;
     }
+
+#if UNITY_EDITOR
+    // Custom editor for easy testing.
+    [CustomEditor(typeof(TextSlider))]
+    class TextSliderEditor : Editor
+    {
+        string _textToSet;
+
+        public override void OnInspectorGUI()
+        {
+            DrawDefaultInspector();
+
+            EditorGUILayout.Space();
+
+            EditorGUILayout.LabelField("DEBUG");
+
+
+            _textToSet = EditorGUILayout.TextField("Text to set", _textToSet);
+
+            if (GUILayout.Button("Set text and reset animation"))
+            {
+                var myTarget = (TextSlider)target;
+                myTarget.SetTextAndResetAnimation(_textToSet);
+            }
+
+            if (GUILayout.Button("Reset animation"))
+            {
+                var myTarget = (TextSlider)target;
+                myTarget.ResetAnimation();
+            }
+        }
+    }
+#endif
 }

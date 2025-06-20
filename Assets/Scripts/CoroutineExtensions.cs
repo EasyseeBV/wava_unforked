@@ -6,12 +6,21 @@ public static class CoroutineExtensions
 {
     public static void InvokeNextFrame(this MonoBehaviour mb, Action callback)
     {
-        mb.StartCoroutine(InvokeRoutine(callback));
+        mb.StartCoroutine(InvokeRoutine(1, callback));
     }
 
-    private static IEnumerator InvokeRoutine(Action callback)
+    public static void InvokeAfterDelay(this MonoBehaviour mb, int waitTimeInFrames, Action callback)
     {
-        yield return null;
+        mb.StartCoroutine(InvokeRoutine(waitTimeInFrames, callback));
+    }
+
+    private static IEnumerator InvokeRoutine(int waitTimeInFrames, Action callback)
+    {
+        for (int i = 0; i < waitTimeInFrames; i++)
+        {
+            yield return null;
+        }
+
         callback?.Invoke();
     }
 }

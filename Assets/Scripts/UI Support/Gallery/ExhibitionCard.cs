@@ -8,10 +8,6 @@ public class ExhibitionCard : MonoBehaviour
 {
     [HideInInspector] public ExhibitionData exhibition;
     
-    [Header("References")]
-    [SerializeField] Button viewExhibitionButton;
-    [SerializeField] LoadingCircle loadingCircle;
-
     [Header("Single cover image")]
     [SerializeField] GameObject singleCoverImageContainer;
     [SerializeField] Image singleImage;
@@ -30,6 +26,15 @@ public class ExhibitionCard : MonoBehaviour
     [SerializeField] TextMeshProUGUI exhibitionTitleText;
     [SerializeField] TextMeshProUGUI yearText;
     [SerializeField] TextMeshProUGUI locationText;
+
+    [Header("Download status")]
+    [SerializeField] Image downloadStatusImage;
+    [SerializeField] Color defaultColor;
+    [SerializeField] Color downloadedColor;
+
+    [Header("Other references")]
+    [SerializeField] Button viewExhibitionButton;
+    [SerializeField] LoadingCircle loadingCircle;
 
     protected virtual void Awake()
     {
@@ -51,7 +56,6 @@ public class ExhibitionCard : MonoBehaviour
         try
         {
             exhibition = point;
-            
             exhibitionTitleText.text = point.title;
             locationText.text = point.year + " · " + point.location;
 
@@ -65,6 +69,29 @@ public class ExhibitionCard : MonoBehaviour
                 mainImage.sprite = images.Count >= 0 ? images[0] : null;
                 topImage.sprite = images.Count >= 1 ? images[1] : null;
                 bottomImage.sprite = images.Count >= 2 ? images[2] : null;
+
+
+                // Update aspect ratios.
+                if (mainImage.sprite != null)
+                {
+                    var width = mainImage.sprite.rect.width;
+                    var height = mainImage.sprite.rect.height;
+                    mainImageAspect.aspectRatio = width / height;
+                }
+
+                if (topImage.sprite != null)
+                {
+                    var width = topImage.sprite.rect.width;
+                    var height = topImage.sprite.rect.height;
+                    topImageAspect.aspectRatio = width / height;
+                }
+
+                if (bottomImage.sprite != null)
+                {
+                    var width = bottomImage.sprite.rect.width;
+                    var height = bottomImage.sprite.rect.height;
+                    bottomImageAspect.aspectRatio = width / height;
+                }
             }
             else if (point.artworks.Count >= 3 && point.artworks[0].artwork_image_references.Count > 0 
                                                && point.artworks[1].artwork_image_references.Count > 0 
@@ -117,11 +144,24 @@ public class ExhibitionCard : MonoBehaviour
             }
 
             loadingCircle?.StopLoading();
+
+            UpdateDownloadStatus();
         }
         catch(Exception e)
         {
             Debug.LogError("Failed to fill ExhibitionCard: " + e);
         }
+    }
+
+    public void UpdateDownloadStatus()
+    {
+        if (exhibition == null)
+            return;
+
+        if (DownloadManager.ExhibitionIsDownloaded(exhibition))
+            downloadStatusImage.color = downloadedColor;
+        else
+            downloadStatusImage.color = defaultColor;
     }
 
     protected void OpenExhibitionPage()

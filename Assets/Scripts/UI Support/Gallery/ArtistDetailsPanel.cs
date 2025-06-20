@@ -122,6 +122,8 @@ public class ArtistDetailsPanel : MonoBehaviour
         ChangeMenu(MenuNavigation.Artworks);
 
         underlinedSelectionUI.Setup();
+
+        underlinedSelectionUI.FinishAnimationsImmediately();
     }
 
     private void Clear()
