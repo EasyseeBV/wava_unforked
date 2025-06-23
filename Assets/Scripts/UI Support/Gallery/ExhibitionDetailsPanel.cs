@@ -164,7 +164,9 @@ public class ExhibitionDetailsPanel : MonoBehaviour
         FillImages();
 
 
-        galleryIndicator.SetPointCount(scrollSnapper.NumberOfPanels);
+        var numberOfPanels = scrollSnapper.NumberOfPanels;
+
+        galleryIndicator.SetPointCount(numberOfPanels);
         galleryIndicator.SetSelectedPointIndex(0);
         galleryIndicator.FinishAnimationsImmediately();
 

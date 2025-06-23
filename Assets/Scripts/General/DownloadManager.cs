@@ -143,8 +143,14 @@ public class DownloadManager : MonoBehaviour
 
     public static async Task DownloadMediaContent(MediaContentData media, Action<float> progressCallback = null, Action<UnityWebRequest.Result> resultCallback = null)
     {
-        if (!MediaContentIsDownloaded(media))
+        if (MediaContentIsDownloaded(media))
+        {
+            progressCallback?.Invoke(1f);
+            resultCallback?.Invoke(UnityWebRequest.Result.Success);
+        } else
+        {
             await Instance.BackgroundDownloadMedia(AppCache.ContentFolder, media.media_content, null, 0, progressCallback, resultCallback);
+        }
     }
 
     public static bool ArtworkIsDownloaded(ArtworkData artwork)
@@ -231,7 +237,7 @@ public class DownloadManager : MonoBehaviour
                 if (result != UnityWebRequest.Result.Success)
                     success = false;
 
-                if (doneCount == artwork.content_list.Count)
+                if (doneCount == exhibition.artworks.Count)
                 {
                     resultCallback?.Invoke(success ? UnityWebRequest.Result.Success : UnityWebRequest.Result.ConnectionError);
                 }

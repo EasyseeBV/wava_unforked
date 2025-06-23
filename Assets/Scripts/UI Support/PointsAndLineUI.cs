@@ -71,7 +71,7 @@ public class PointsAndLineUI : MonoBehaviour
             Destroy(pointToRemove.gameObject);
 
             _points.RemoveAt(_points.Count - 1);
-            _pointsAnimationProgress.RemoveAt(_points.Count - 1);
+            _pointsAnimationProgress.RemoveAt(_pointsAnimationProgress.Count - 1);
         }
     }
 
