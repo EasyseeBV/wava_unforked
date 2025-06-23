@@ -89,7 +89,7 @@ public class DraggableSelectionBar : MonoBehaviour, IBeginDragHandler, IDragHand
         else targetHeight = startHeight;
     }
 
-    private void Expand(bool open)
+    public void Expand(bool open, Action onCompleted = null)
     {
         container.DOKill();
 
@@ -103,6 +103,10 @@ public class DraggableSelectionBar : MonoBehaviour, IBeginDragHandler, IDragHand
         Vector2 targetSize  = new Vector2(currentSize.x, endHeight);
 
         OnExpanding?.Invoke(open);
-        container.DOSizeDelta(targetSize, expandDuration).SetEase(open ? expandEase : collapseEase).OnComplete(() => OnExpanded?.Invoke(open));
+        container.DOSizeDelta(targetSize, expandDuration).SetEase(open ? expandEase : collapseEase).OnComplete(() =>
+        {
+            OnExpanded?.Invoke(open);
+            onCompleted?.Invoke();
+        });
     }
 }

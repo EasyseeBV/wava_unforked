@@ -116,6 +116,8 @@ public class ARMapPointMaker : MonoBehaviour {
 
             loadingPlane.SetActive(false);
             loadingCircle.StopLoading();
+
+            selectionMenu.Build();
             
             loadedHotspots = true;
             noConnectionMapHandler.TryDisplay();

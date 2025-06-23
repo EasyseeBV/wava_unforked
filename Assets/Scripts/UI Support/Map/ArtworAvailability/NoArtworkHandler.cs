@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class NoArtworkHandler : MonoBehaviour
 {
     [SerializeField] private GameObject content;
-
+    
     [Header("References")]
     [SerializeField] private Button closeButton;
     [SerializeField] private Button findArtworkButton;

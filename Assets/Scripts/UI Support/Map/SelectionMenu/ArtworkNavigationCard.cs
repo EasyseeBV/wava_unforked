@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -28,10 +29,14 @@ public class ArtworkNavigationCard : MonoBehaviour
     [SerializeField] private TMP_Text exhibitionLabel;
     [SerializeField] private TMP_Text artistLabel;
     [SerializeField] private Image image;
+    [SerializeField] private TMP_Text buttonLabel;
+    [SerializeField] private Image labelImage;
     [SerializeField] private Button maximizedNavigationButton;
 
     [Header("References")]
     [SerializeField] private Button infoButton;
+    [SerializeField] private Sprite navigateSprite;
+    [SerializeField] private Sprite arSprite;
     
     public ArtworkData CachedArtworkData { get; private set; }
 
@@ -51,7 +56,7 @@ public class ArtworkNavigationCard : MonoBehaviour
         minimizedTitle.text = artworkData.title;
         minimizedNavigationButton.onClick.AddListener(() =>
         {
-            Debug.Log("Navigation link needs to be implemented - unclear how it should function");
+            GetDirections();
         });
         
         maximizedTitle.text = artworkData.title;
@@ -60,7 +65,7 @@ public class ArtworkNavigationCard : MonoBehaviour
         artistLabel.text = artworkData.artists.Count > 0 ? (artworkData.artists[0]?.title ?? "-") : "-";
         maximizedNavigationButton.onClick.AddListener(() =>
         {
-            Debug.Log("Navigation link needs to be implemented - unclear how it should function");
+            GetDirections(); // might need additional functionality in the future
         });
         
         WaitForImage();
@@ -90,41 +95,61 @@ public class ArtworkNavigationCard : MonoBehaviour
 
         minimizedGroup.alpha = state ? 0f : 1f;
         maximizedGroup.alpha = state ? 1f : 0f;
-        
-        return;
-        
-        if (state)
-        {
-            minimizedGroup.alpha = 1f;
-            maximizedGroup.alpha = 0f;
-            minimizedGroup.interactable = false;
-            minimizedGroup.blocksRaycasts = false;
-            minimizedGroup.DOFade(0f, 0.1f).SetEase(Ease.OutCubic).OnComplete(() =>
-            {
-                maximizedGroup.interactable = true;
-                maximizedGroup.blocksRaycasts = true;
-                maximizedGroup.DOFade(1f, 0.2f).SetEase(Ease.OutCubic);
-            });
-        }
-        else
-        {
-            maximizedGroup.alpha = 1f;
-            maximizedGroup.alpha = 0f;
-            maximizedGroup.interactable = false;
-            maximizedGroup.blocksRaycasts = false;
-            maximizedGroup.DOFade(0f, 0.1f).SetEase(Ease.OutCubic).OnComplete(() =>
-            {
-                minimizedGroup.interactable = true;
-                minimizedGroup.blocksRaycasts = true;
-                minimizedGroup.DOFade(1f, 0.2f).SetEase(Ease.OutCubic);
-            });
-        }
 
-        /*minimizedContent.SetActive(!state);
-        maximizedContent.SetActive(state);*/
+        minimizedGroup.interactable = !state;
+        maximizedGroup.interactable = state;
+        
+        minimizedGroup.blocksRaycasts = !state;
+        maximizedGroup.blocksRaycasts = state;
+    }
+    
+    public void GetDirections()
+    {
+        string location = CachedArtworkData.latitude + "," + CachedArtworkData.longitude;
+        
+#if UNITY_ANDROID
+        string url = "https://www.google.com/maps/dir/?api=1&destination=" + location;
+        Application.OpenURL(url);
+#elif UNITY_IOS
+            // Apple Maps URL scheme for iOS
+            string url = "http://maps.apple.com/?daddr=" + location;
+            Application.OpenURL(url);
+#endif
     }
 
-    
+    private bool allowedAR = false;
+
+    public void AllowAR()
+    {
+        allowedAR = true;
+        buttonLabel.text = "Open AR-View now";
+        labelImage.sprite = arSprite;
+        OnlineMapsLocationService.instance.OnLocationChanged += OnLocationChanged;
+    }
+
+    public void DisallowAR()
+    {
+        if (!DistanceValidator.InRange(CachedArtworkData)) return;
+        
+        buttonLabel.text = "Navigate";
+        labelImage.sprite = navigateSprite;
+        allowedAR = false;
+        OnlineMapsLocationService.instance.OnLocationChanged -= OnLocationChanged;
+    }
+
+    private void OnDisable()
+    {
+        if (allowedAR) OnlineMapsLocationService.instance.OnLocationChanged -= OnLocationChanged;
+    }
+
+    private void OnLocationChanged(Vector2 obj)
+    {
+        if (!DistanceValidator.InRange(CachedArtworkData))
+        {
+            DisallowAR();
+        }
+    }
+
     /*
      * private void OpenArtworkInGallery()
     {
