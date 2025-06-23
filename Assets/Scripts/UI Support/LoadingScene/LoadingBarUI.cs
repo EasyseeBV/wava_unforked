@@ -8,7 +8,7 @@ public class LoadingBarUI : MonoBehaviour
     Image _loadingBarImage;
 
     [SerializeField]
-    DocumentLoadingTracker _loadingTracker;
+    LoadingProgressTracker _loadingTracker;
 
     [Header("Settings")]
     [SerializeField]
@@ -19,28 +19,20 @@ public class LoadingBarUI : MonoBehaviour
 
     float _targetValue;
 
-    private void Start()
-    {
-        _loadingTracker.ResetTracking();
-    }
-
     private void OnEnable()
     {
-        _loadingTracker._OnProgressChanged += OnProgressChanged;
-        _loadingTracker._OnAllDocumentsLoaded += OnAllDocumentsLoaded;
+        _loadingTracker._ProgressChanged += OnProgressChanged;
+        _loadingTracker._OnLoadingFinished += OnLoadingFinished;
     }
 
     private void OnDisable()
     {
-        _loadingTracker._OnProgressChanged -= OnProgressChanged;
-        _loadingTracker._OnAllDocumentsLoaded -= OnAllDocumentsLoaded;
+        _loadingTracker._ProgressChanged -= OnProgressChanged;
+        _loadingTracker._OnLoadingFinished -= OnLoadingFinished;
     }
 
     private void Update()
     {
-        // Debug
-        //OnProgressChanged(Time.time * 0.1f);
-
         var current = _loadingBarImage.fillAmount;
 
         _loadingBarImage.fillAmount = Mathf.SmoothDamp(current, _targetValue, ref _velocity, _animationSmoothTime);
@@ -49,11 +41,9 @@ public class LoadingBarUI : MonoBehaviour
     void OnProgressChanged(float progressPercentage)
     {
         _targetValue = progressPercentage;
-
-        Debug.Log(progressPercentage);
     }
 
-    void OnAllDocumentsLoaded()
+    void OnLoadingFinished()
     {
 
     }

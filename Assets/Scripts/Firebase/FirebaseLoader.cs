@@ -41,7 +41,8 @@ public class FirebaseLoader : MonoBehaviour
     // Callbacks
     public static Action OnFirestoreInitialized;
     public static Action OnNewDocumentsFetched;
-    public static Action OnDocumentLoaded;
+    public static Action OnStartedLoading;
+    public static Action OnCompletedLoadingStep;
 
     // Collection Sizes
     public static long ArtworkCollectionSize { get; private set; } = -1;
@@ -115,6 +116,8 @@ public class FirebaseLoader : MonoBehaviour
     /// </summary>
     private async void InitializeFirebase()
     {
+        OnStartedLoading?.Invoke();
+
         while (!Initialized)
         {
             if (!startInOfflineMode)
@@ -133,9 +136,15 @@ public class FirebaseLoader : MonoBehaviour
                             Debug.LogWarning("Firestore settings are empty");
                         }
 
+
                         await GetCollectionCountsAsync();
+
+                        OnCompletedLoadingStep?.Invoke();
+
                         await AppCache.LoadLocalCaches();
                         await CheckForCacheUpdates();
+
+                        OnCompletedLoadingStep?.Invoke();
 
                         OfflineMode = false;
                         Initialized = true;
@@ -189,16 +198,11 @@ public class FirebaseLoader : MonoBehaviour
 
     private async Task ProcessSetup(bool reload = false)
     {
-        var loadingProfiler = new LoadingProfiler();
-        loadingProfiler.StartTracking();
-
         if (loadArtistsOnStartup)
         {
             OnStartUpEventProcessed?.Invoke("Loading artist data...");
             await LoadRemainingArtists();
         }
-
-        loadingProfiler.LogStep("Loaded remaining artists.");
 
         if (loadArtworksOnStartup)
         {
@@ -206,23 +210,17 @@ public class FirebaseLoader : MonoBehaviour
             await LoadRemainingArtworks(() => { OnStartUpEventProcessed?.Invoke("Loaded Artworks"); });
         }
 
-        loadingProfiler.LogStep("Loaded remaining artworks.");
-
         if (loadExhibitionsOnStartup)
         {
             OnStartUpEventProcessed?.Invoke("Loading exhibition data...");
             await LoadRemainingExhibitions(false);
             OnStartUpEventProcessed?.Invoke("Connecting exhibition data...");
 
-            loadingProfiler.LogStep("Loaded remaining exhibitions.");
-
             // Connect artworks
             foreach (var exhibition in Exhibitions)
             {
                 await FillExhibitionArtworkData(exhibition, false);
             }
-
-            loadingProfiler.LogStep("Connected artworks.");
 
             // Connect artists
             foreach (var exhibition in Exhibitions)
@@ -233,11 +231,7 @@ public class FirebaseLoader : MonoBehaviour
                 }
             }
 
-            loadingProfiler.LogStep("Connected artists.");
-
             await AppCache.SaveExhibitionsCache();
-
-            loadingProfiler.LogStep("Saved exhibitions cache.");
         }
 
         if (createLocalGallery && screenshotManager != null)
@@ -267,8 +261,6 @@ public class FirebaseLoader : MonoBehaviour
             ARGalleryPage.StoragePath = path;
         }
 
-        loadingProfiler.LogStep("Created local gallery.");
-
         if (downloadHomeScreenContent)
         {
             OnStartUpEventProcessed?.Invoke($"Downloading new exhibitions...");
@@ -285,7 +277,7 @@ public class FirebaseLoader : MonoBehaviour
             }
         }
 
-        loadingProfiler.LogStep("Downloaded home screen content.");
+        OnCompletedLoadingStep?.Invoke();
 
         if (downloadArtworkImagesOnStartup)
         {
@@ -300,8 +292,6 @@ public class FirebaseLoader : MonoBehaviour
             }
         }
 
-        loadingProfiler.LogStep("Downloaded artwork images.");
-
         if (downloadExhibitionImagesOnStartup)
         {
             int curr = 0;
@@ -315,8 +305,6 @@ public class FirebaseLoader : MonoBehaviour
             }
         }
 
-        loadingProfiler.LogStep("Downloaded exhibition images.");
-
         if (downloadArtistImagesOnStartup)
         {
             int curr = 0;
@@ -329,9 +317,6 @@ public class FirebaseLoader : MonoBehaviour
                 await artist.GetIcon();
             }
         }
-
-        loadingProfiler.LogStep("Downloaded artist images.");
-        loadingProfiler.EndTracking();
 
         OnStartUpEventProcessed?.Invoke(string.Empty);
         SetupComplete = true;
@@ -721,9 +706,6 @@ public class FirebaseLoader : MonoBehaviour
         AddExhibitionData(exhibition);
         Debug.Log($"[Firebase] Loaded Exhibition: {exhibition.title} [{document.Id}]");
 
-        // Track that a document has been loaded.
-        OnDocumentLoaded?.Invoke();
-
         return exhibition;
     }
     
@@ -890,9 +872,6 @@ public class FirebaseLoader : MonoBehaviour
                         ArtistData artist = await ReadArtistDocument(document);
                         ArtistsMap.TryAdd(id, artist);
                         newArtists.Add(artist);
-
-                        // Track that a document has been loaded.
-                        OnDocumentLoaded?.Invoke();
                     }
                     catch (Exception ex)
                     {
@@ -926,9 +905,6 @@ public class FirebaseLoader : MonoBehaviour
                             ArtistData artist = await ReadArtistDocument(document);
                             ArtistsMap.TryAdd(id, artist);
                             newArtists.Add(artist);
-
-                            // Track that a document has been loaded.
-                            OnDocumentLoaded?.Invoke();
                         }
                         catch (Exception ex)
                         {
@@ -982,9 +958,6 @@ public class FirebaseLoader : MonoBehaviour
                         ArtworkData artwork = await ReadArtworkDocument(document);
                         ArtworksMap.TryAdd(id, artwork);
                         newArtworks.Add(artwork);
-
-                        // Track that a document has been loaded.
-                        OnDocumentLoaded?.Invoke();
                     }
                     catch (Exception ex)
                     {
@@ -1018,9 +991,6 @@ public class FirebaseLoader : MonoBehaviour
                             ArtworkData artwork = await ReadArtworkDocument(document);
                             ArtworksMap.TryAdd(id, artwork);
                             newArtworks.Add(artwork);
-
-                            // Track that a document has been loaded.
-                            OnDocumentLoaded?.Invoke();
                         }
                         catch (Exception ex)
                         {
@@ -1099,9 +1069,6 @@ public class FirebaseLoader : MonoBehaviour
             if (!ExhibitionsMap.ContainsKey(document.Id))
             {
                 newExhibitions.Add(await ReadExhibitionDocument(document));
-
-                // Track that a document has been loaded.
-                OnDocumentLoaded?.Invoke();
             }
         }
         
