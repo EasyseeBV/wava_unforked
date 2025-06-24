@@ -173,6 +173,9 @@ public class AdvancedVideoPlayer : MonoBehaviour
 
         // Show the play icon.
         _playAndResumeButtonImage.sprite = _playIcon;
+
+        // Ensure slider is at end.
+        _seekVideoSlider.SetValueWithoutNotify(1f);
     }
 
     void OnVideoPrepareCompleted(VideoPlayer source)
