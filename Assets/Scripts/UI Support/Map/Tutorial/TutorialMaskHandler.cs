@@ -9,8 +9,8 @@ public class TutorialMaskHandler : MonoBehaviour
     [SerializeField] private GameObject maskContent;
     [SerializeField] private GameObject tutorialContent;
     [SerializeField] private RectTransform circleMask;
-    [SerializeField] private RectTransform tutorialInfo;
     [SerializeField] private RectTransform tutorialTriangle;
+    [SerializeField] private GameObject alignmentPoint;
     
     [Header("Dependencies")]
     [SerializeField] private OnlineMaps maps;
@@ -56,18 +56,11 @@ public class TutorialMaskHandler : MonoBehaviour
 
                 if (hotspot != null)
                 {
-                    Vector3 screenPoint = Camera.main.WorldToScreenPoint(hotspot.transform.position);
-
-                    // Optional: early-out if behind the camera
-                    if (screenPoint.z < 0)
-                    {
-                        circleMask.gameObject.SetActive(false);
-                        return;
-                    }
-                    else circleMask.gameObject.SetActive(true);
-
-                    // 2) If your Canvas is Screen Space – Overlay, you can just use:
+                    Vector3 screenPoint = Camera.main.WorldToScreenPoint(hotspot.ARObject.transform.position);
+                    screenPoint.z = 0f;
                     circleMask.position = screenPoint;
+
+                    tutorialTriangle.transform.position = alignmentPoint.transform.position;
                 }
             }
         }
