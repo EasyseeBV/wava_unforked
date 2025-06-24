@@ -93,7 +93,7 @@ public class HotspotManager : MonoBehaviour
             var sprites = await artwork.GetImages(1);
             if (sprites is { Count: > 0 } && sprites[0] != null)
             {
-                if (backgroundARImage == null) return;
+                if (backgroundARImage ==null) return;
                 backgroundARImage.sprite = sprites[0];
             }
         }
