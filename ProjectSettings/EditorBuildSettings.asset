@@ -51,7 +51,7 @@ EditorBuildSettings:
     path: Assets/Infinity Code/Online maps/Examples/Scenes/Behaviours/Navigation.unity
     guid: 0f18cdbd5a83b6b419452f107a242330
   - enabled: 0
-    path: Assets/Scenes/Exhibition&Art.unity
+    path: Assets/Scenes/Old Scenes/Exhibition&Art.unity
     guid: 80db1d336999b4147babc43bc4dd06e8
   - enabled: 1
     path: Assets/Scenes/Gallery.unity

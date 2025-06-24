@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class ArtworkShower : MonoBehaviour
 {
@@ -23,6 +24,11 @@ public class ArtworkShower : MonoBehaviour
     [SerializeField] Image downloadStatusImage;
     [SerializeField] Color defaultColor;
     [SerializeField] Color downloadedColor;
+
+    [Header("Archived-related")]
+    [SerializeField] List<CanvasGroup> canvasGroups;
+    [SerializeField] GameObject archivedOverlay;
+    [SerializeField] float archivedAlpha;
 
     public bool IsLoading { get; set; }
     
@@ -57,6 +63,18 @@ public class ArtworkShower : MonoBehaviour
         cachedArtwork = artwork;
 
         if (loadImage) SetImage(artwork);
+
+
+        // Show if artwork is archived.
+        bool isArchived = false;
+
+        archivedOverlay.SetActive(isArchived);
+
+        foreach (var canvasGroup in canvasGroups)
+        {
+            canvasGroup.alpha = isArchived ? archivedAlpha : 1f;
+        }
+
 
         UpdateDownloadStatus();
     }
