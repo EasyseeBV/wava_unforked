@@ -59,7 +59,7 @@ public class ARGalleryPage : AnimateInfoBar
 
     private async void ShowPhotos()
     {
-        if (StoragePath == string.Empty) StoragePath = screenshotManager.GetExportPath();
+        if (StoragePath == string.Empty) StoragePath = Path.Combine(Application.persistentDataPath, "Gallery");
         var files = Directory.GetFiles(StoragePath, "*.png");
         
         if (files.Length == photos.Count) return;

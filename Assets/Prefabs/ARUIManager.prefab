@@ -11924,6 +11924,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4394027836423459863}
   - component: {fileID: 4394027836423459862}
+  - component: {fileID: 8787281406001115100}
   m_Layer: 0
   m_Name: CamMan
   m_TagString: Untagged
@@ -11958,9 +11959,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed70669bf2b8ffc49a33db757f49f20c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  screenRecorder: {fileID: 4394027836573847981}
-  screenshotManager: {fileID: 4394027836333577610}
-  screenshotAR: {fileID: 4021454265502918177}
+  screenRecorder: {fileID: 8787281406001115100}
+  screenshotHandler: {fileID: 0}
   mode: 0
   button: {fileID: 4394027835458494620}
   recordingColor: {r: 0.9725491, g: 0.41176474, b: 0.44705886, a: 1}
@@ -11971,6 +11971,18 @@ MonoBehaviour:
   - {fileID: 4394027834865528212}
   - {fileID: 9032747883258792551}
   ObjectToTurnOn: []
+--- !u!114 &8787281406001115100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4394027836423459865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b05769ededb5864a81d19867666adb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4394027836573847983
 GameObject:
   m_ObjectHideFlags: 0

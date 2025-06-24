@@ -107,11 +107,27 @@ public class ArtistDetailsPanel : DetailsPanel
         Clear();
 
         contentTitleLabel.text = artist.title;
-        profileIcon.sprite = await artist.GetIcon();
         fullLengthDescription = artist.description;
+        locationLabel.text = artist.location;
         TruncateText();
         
         // heartImage.sprite = artist.Liked ? likedSprite : unlikedSprite;
+        try
+        {
+            var sprite = await artist.GetIcon();
+            profileIcon.sprite = sprite;
+            
+            if (profileIcon.sprite != null)
+            {
+                var imageAspectRatio = profileIcon.sprite.rect.width / profileIcon.sprite.rect.height;
+                profileIcon.GetComponent<AspectRatioFitter>().aspectRatio = imageAspectRatio;
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+        }
+        
         
         ChangeMenu(MenuNavigation.Artworks);
         

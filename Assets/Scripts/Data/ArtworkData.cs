@@ -12,7 +12,8 @@ public class ArtworkData : FirebaseData
     // Main Data
     [FirestoreProperty] public string title { get; set; }
     [FirestoreProperty] public string description { get; set; }
-    [FirestoreProperty] public bool published { get; set; }
+    //[FirestoreProperty] public bool published { get; set; } // legacy, replace with enums
+    [FirestoreProperty] public string availability { get; set; } = "Unpublished";
     
     [FirestoreProperty] public List<DocumentReference> artist_references { get; set; } = new List<DocumentReference>();
 
