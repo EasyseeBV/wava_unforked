@@ -59,6 +59,34 @@ public class TextSlider : MonoBehaviour
         _originalPosition = slidingTransform.anchoredPosition;
     }
 
+    public void SetTextAndResetAnimation(string text)
+    {
+        _slidingText.text = text;
+
+
+        // Update layout.
+        LayoutRebuilder.ForceRebuildLayoutImmediate(slidingTransform);
+
+        // - If a text container layout element is given then adjust its size.
+        if (_textContainerLayoutElement != null)
+        {
+            // - Wait until content size fitter on text updated.
+            this.InvokeNextFrame(() =>
+            {
+                var preferredWidth = LayoutUtility.GetPreferredWidth(slidingTransform);
+
+                _textContainerLayoutElement.preferredWidth = Mathf.Min(preferredWidth, _maxWidth);
+            });
+
+            // Wait for container layout update, then reset animation.
+            this.InvokeAfterDelay(2, ResetAnimation);
+        }
+        else
+        {
+            this.InvokeNextFrame(ResetAnimation);
+        }
+    }
+
     public void ResetAnimation()
     {
         // Reset sliding transform position.
@@ -85,27 +113,6 @@ public class TextSlider : MonoBehaviour
             SetImageAlpha(_leftIndicator, 0f);
             SetImageAlpha(_rightIndicator, 0f);
         }
-    }
-
-    public void SetTextAndResetAnimation(string text)
-    {
-        _slidingText.text = text;
-
-
-        // Update layout.
-        LayoutRebuilder.ForceRebuildLayoutImmediate(slidingTransform);
-
-        // - Wait until content size fitter on text updated.
-        this.InvokeNextFrame(() =>
-        {
-            var preferredWidth = LayoutUtility.GetPreferredWidth(slidingTransform);
-
-            _textContainerLayoutElement.preferredWidth = Mathf.Min(preferredWidth, _maxWidth);
-        });
-
-
-        // Wait for container layout update, then reset animation.
-        this.InvokeAfterDelay(2, ResetAnimation);
     }
 
     void Update()
@@ -166,11 +173,11 @@ public class TextSlider : MonoBehaviour
         float distanceFromStart = Mathf.Abs(slidingTransform.anchoredPosition.x);
         float distanceToEnd = Mathf.Abs((_textWidth - _containerWidth) - distanceFromStart);
 
-        float beforeAlpha = Mathf.Clamp01(distanceFromStart / _showIndicatorThreshold);
-        SetImageAlpha(_leftIndicator, beforeAlpha);
+        float leftAlpha = Mathf.Clamp01(distanceFromStart / _showIndicatorThreshold);
+        SetImageAlpha(_leftIndicator, leftAlpha);
 
-        float afterAlpha = Mathf.Clamp01(distanceToEnd / _showIndicatorThreshold);
-        SetImageAlpha(_rightIndicator, afterAlpha);
+        float rightAlpha = Mathf.Clamp01(distanceToEnd / _showIndicatorThreshold);
+        SetImageAlpha(_rightIndicator, rightAlpha);
     }
 
     void SetImageAlpha(Image img, float alpha)
