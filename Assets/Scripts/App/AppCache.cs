@@ -39,6 +39,7 @@ public static class AppCache
         await EnsureDirectoryExists(artworkDataCachePath);
         await EnsureDirectoryExists(exhibitionDataCachePath);
         await EnsureDirectoryExists(MediaFolder);
+        await EnsureDirectoryExists(GalleryFolder);
         
         // Load FirebaseData
         await LoadArtistCache();
