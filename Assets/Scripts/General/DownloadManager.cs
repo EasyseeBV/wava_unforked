@@ -169,6 +169,15 @@ public class DownloadManager : MonoBehaviour
 
     public static async Task DownloadArtwork(ArtworkData artwork, Action<float> progressChangedCallback = null, Action<UnityWebRequest.Result> resultCallback = null)
     {
+        // Automatic success if artwork has no media.
+        if (artwork.content_list.Count == 0)
+        {
+            progressChangedCallback?.Invoke(1f);
+            resultCallback?.Invoke(UnityWebRequest.Result.Success);
+            return;
+        }
+
+
         var progresses = Enumerable.Repeat(0f, artwork.content_list.Count).ToList();
 
         var doneCount = 0;
@@ -214,6 +223,15 @@ public class DownloadManager : MonoBehaviour
 
     public static async Task DownloadExhibition(ExhibitionData exhibition, Action<float> progressChangedCallback = null, Action<UnityWebRequest.Result> resultCallback = null)
     {
+        // Automatic success if exhibition has no artworks.
+        if (exhibition.artworks.Count == 0)
+        {
+            progressChangedCallback?.Invoke(1f);
+            resultCallback?.Invoke(UnityWebRequest.Result.Success);
+            return;
+        }
+
+
         var progresses = Enumerable.Repeat(0f, exhibition.artworks.Count).ToList(); ;
 
         var doneCount = 0;
