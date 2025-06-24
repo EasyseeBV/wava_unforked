@@ -9,6 +9,7 @@ public class ArtworkDataHolder
     public string title;
     public string description;
     public List<ArtistDataHolder> artists;
+    public string availability;
     public int year;
     public string location;
     public List<string> artwork_image_references = new List<string>();
@@ -48,6 +49,7 @@ public class ArtworkDataHolder
         holder.cache = new List<string>(artwork.cached);
         holder.preset = artwork.preset;
         holder.alt_scene = artwork.alt_scene;
+        holder.availability = artwork.availability;
 
         // Convert the list of MediaContentData to holder objects
         holder.media_content_list = new List<MediaContentDataHolder>();
@@ -86,6 +88,7 @@ public class ArtworkDataHolder
         artwork.cached = new List<string>(holder.cache);
         artwork.preset = holder.preset;
         artwork.alt_scene = holder.alt_scene;
+        artwork.availability = holder.availability;
 
         // Convert back the list of media content holders to MediaContentData objects
         artwork.content_list = new List<MediaContentData>();

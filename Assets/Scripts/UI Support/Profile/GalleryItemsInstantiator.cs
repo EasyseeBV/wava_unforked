@@ -91,16 +91,15 @@ public class GalleryItemsInstantiator : MonoBehaviour
     private IEnumerator LoadMediaFilesAndUpdateUI()
     {
         // Load all photo sprites.
-        var photosFolderPath = screenshotManager.GetExportPath();
         var photoSprites = new List<Sprite>();
 
         // - Retrieve the names of all photo files.
         var photoPaths = new string[0];
 
         // - - Check if the directory exists.
-        if (Directory.Exists(photosFolderPath))
+        if (Directory.Exists(AppCache.GalleryFolder))
         { // - The directory exists; get the file names.
-            photoPaths = Directory.GetFiles(photosFolderPath, "*.png");
+            photoPaths = Directory.GetFiles(AppCache.GalleryFolder, "*.png");
         }
 
         // - Retrieve sprite for each photo file path.
@@ -120,7 +119,7 @@ public class GalleryItemsInstantiator : MonoBehaviour
 
 
         // Read the video paths.
-        var videoPaths = VideoPathStore.ReadPaths();
+        var videoPaths = Directory.GetFiles(AppCache.GalleryFolder, "*.mp4").ToList();//VideoPathStore.ReadPaths();
 
         /*
         // TODO: REMOVE THE FOLLOWING HACKY TEST

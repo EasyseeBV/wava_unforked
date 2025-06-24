@@ -37,6 +37,7 @@ namespace VoxelBusters.ScreenRecorderKit.Demo
             {
                 string path = result.Data as string;
                 SetStatus($"File path: {path}");
+                OnRecordingReady(result);
             });
 
             SetStatus("Video Recorder Created");
@@ -236,6 +237,39 @@ namespace VoxelBusters.ScreenRecorderKit.Demo
             return videoSavePath;
         }
 
+        public void SaveRecording(Action<string> onComplete)
+        {
+            m_recorder.SaveRecording(null, (result, error) =>
+            {
+                if (error == null)
+                {
+                    SetStatus("Saved recording successfully :" + result.Path);
+                    onComplete?.Invoke(result.Path);
+                }
+                else
+                {
+                    SetStatus($"Failed saving recording [{error}]");
+                }
+            });
+        }
+
+        private void OnRecordingReady(ScreenRecorderRecordingAvailableResult result)
+        {
+            string srcPath = result.Data as string;
+            if (string.IsNullOrEmpty(srcPath) || !File.Exists(srcPath))
+            {
+                Debug.LogError("No recording found to process.");
+                return;
+            }
+
+            // copy to persistent data folder
+            string filename    = Path.GetFileName(srcPath);
+            string destPath    = Path.Combine(Application.persistentDataPath, "gallery",  filename);
+            File.Copy(srcPath, destPath, overwrite: true);
+
+            Debug.Log($"Recording copied to: {destPath}");
+        }
+        
         public void DiscardRecording()
         {
             m_recorder.DiscardRecording(callback: (success, error) =>

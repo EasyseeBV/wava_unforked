@@ -15,10 +15,10 @@ public class ScreenshotAR : MonoBehaviour
     public void Capture()
     {
         Handheld.Vibrate();
-        //StartCoroutine(CaptureScreenshot());
-        ScreenshotManager.onCaptureEndDelegate += OnCaptureEndDelegate;
+        StartCoroutine(CaptureScreenshot());
+        //ScreenshotManager.onCaptureEndDelegate += OnCaptureEndDelegate;
         // Call update to only capture the texture without exporting
-        screenshotManager.UpdateAll();
+        //screenshotManager.UpdateAll();
     }
     
     public void OnCaptureEndDelegate ()
@@ -133,7 +133,7 @@ public class ScreenshotAR : MonoBehaviour
         yield return new WaitForEndOfFrame();
         
         var fileName = DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png";
-        var filePath = Path.Combine(screenshotManager.GetExportPath(), "screenshots", fileName);
+        var filePath = Path.Combine(screenshotManager.GetExportPath(), fileName);
         var tex = ScreenCapture.CaptureScreenshotAsTexture();
 
         if (tex == null)

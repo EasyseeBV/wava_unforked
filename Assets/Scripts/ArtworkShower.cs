@@ -23,6 +23,8 @@ public class ArtworkShower : MonoBehaviour
     [Space]
     public TextMeshProUGUI exhibitionTitle;
     [SerializeField] private LoadingCircle loadingCircle;
+    [Space]
+    [SerializeField] private GameObject archiveTag;
     
     public bool IsLoading { get; set; }
     
@@ -45,6 +47,8 @@ public class ArtworkShower : MonoBehaviour
         
         Title.text = artwork.title;
         Artist.text = artwork.artists.Count > 0 ? artwork.artists[0].title : null;
+        
+        archiveTag?.SetActive(artwork.availability == "Archived");
 
         //Location.text = point.Location;
         Year.text = artwork.year.ToString();
