@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class TutorialMaskHandler : MonoBehaviour
 {
+    [SerializeField] private Canvas maskCanvas;
+    [SerializeField] private GameObject maskContent;
+    [SerializeField] private GameObject tutorialContent;
     [SerializeField] private RectTransform circleMask;
     [SerializeField] private RectTransform tutorialInfo;
     [SerializeField] private RectTransform tutorialTriangle;
@@ -14,7 +17,9 @@ public class TutorialMaskHandler : MonoBehaviour
 
     public void PlaceMask()
     {
-        
+        maskContent.gameObject.SetActive(true);
+        tutorialContent.gameObject.SetActive(true);
+        FindClosestArtwork();
     }
     
     private void FindClosestArtwork()
@@ -47,10 +52,23 @@ public class TutorialMaskHandler : MonoBehaviour
         {
             if (maps.InMapView(closestArtwork.longitude, closestArtwork.latitude))
             {
-                // find hotspot
-                // get screen position
-                // move mask to this area
-                // move tutorial info to above this
+                var hotspot = closestArtwork.hotspot;
+
+                if (hotspot != null)
+                {
+                    Vector3 screenPoint = Camera.main.WorldToScreenPoint(hotspot.transform.position);
+
+                    // Optional: early-out if behind the camera
+                    if (screenPoint.z < 0)
+                    {
+                        circleMask.gameObject.SetActive(false);
+                        return;
+                    }
+                    else circleMask.gameObject.SetActive(true);
+
+                    // 2) If your Canvas is Screen Space – Overlay, you can just use:
+                    circleMask.position = screenPoint;
+                }
             }
         }
     }

@@ -5,8 +5,9 @@ using UnityEngine;
 public class MapIdleDetector : MonoBehaviour
 {
     [Tooltip("Seconds of inactivity before OnIdle is invoked")]
-    public float idleThreshold = 10f;
-
+    [SerializeField] private float idleThreshold = 10f;
+    [SerializeField] private TutorialMaskHandler tutorialMaskHandler;
+    
     private float _lastInteractionTime;
     private bool _hasFiredIdle;
 
@@ -30,8 +31,7 @@ public class MapIdleDetector : MonoBehaviour
         if (!_hasFiredIdle && Time.time - _lastInteractionTime >= idleThreshold)
         {
             _hasFiredIdle = true;
-            Debug.Log("<color=red>Idle delayed</color>");
-            //OnIdle?.Invoke();
+            tutorialMaskHandler.PlaceMask();
         }
     }
 
