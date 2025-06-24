@@ -30,6 +30,7 @@ public class MapIdleDetector : MonoBehaviour
         if (!_hasFiredIdle && Time.time - _lastInteractionTime >= idleThreshold)
         {
             _hasFiredIdle = true;
+            Debug.Log("<color=red>Idle delayed</color>");
             //OnIdle?.Invoke();
         }
     }
@@ -49,7 +50,12 @@ public class MapIdleDetector : MonoBehaviour
             Debug.LogWarning("MapIdleDetector: No OnlineMapsControlBase instance found in scene.");
             return;
         }
-       
+
+        control.OnMapClick += RegisterInteraction;
+        control.OnMapLongPress += RegisterInteraction;
+        control.OnMapDrag += RegisterInteraction;
+        control.OnMapRelease += RegisterInteraction;
+        control.OnMapDoubleClick += RegisterInteraction;
     }
 
     private void OnDestroy()
@@ -57,5 +63,11 @@ public class MapIdleDetector : MonoBehaviour
         // Clean up subscriptions
         var control = OnlineMapsControlBase.instance;
         if (control == null) return;
+        
+        control.OnMapClick -= RegisterInteraction;
+        control.OnMapLongPress -= RegisterInteraction;
+        control.OnMapDrag -= RegisterInteraction;
+        control.OnMapRelease -= RegisterInteraction;
+        control.OnMapDoubleClick -= RegisterInteraction;
     }
 }
