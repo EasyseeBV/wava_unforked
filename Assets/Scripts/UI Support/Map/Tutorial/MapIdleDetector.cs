@@ -10,6 +10,8 @@ public class MapIdleDetector : MonoBehaviour
     
     private float _lastInteractionTime;
     private bool _hasFiredIdle;
+    
+    private static bool once = false;
 
     private void Start()
     {
@@ -19,6 +21,8 @@ public class MapIdleDetector : MonoBehaviour
 
     private void Update()
     {
+        if (once) return;
+        
         if (Input.touchCount > 0 ||
             Input.GetMouseButtonDown(0) ||
             Input.GetMouseButtonDown(1) ||
@@ -32,6 +36,7 @@ public class MapIdleDetector : MonoBehaviour
         {
             _hasFiredIdle = true;
             tutorialMaskHandler.PlaceMask();
+            once = true;
         }
     }
 
