@@ -16,5 +16,7 @@ MonoBehaviour:
   m_ObjectsToExclude: []
   m_FoldersToExclude:
   - Assets\AlmostEngine/Dependencies/UnityNativeShare
+  - Assets\AlmostEngine/UltimateScreenshotCreator/Examples
+  - Assets\AlmostEngine/Shared/Examples
   m_ExcludedObjectPaths: []
   m_ExclusionProcessStarted: 0
