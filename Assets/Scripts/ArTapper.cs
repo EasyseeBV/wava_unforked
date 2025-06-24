@@ -39,6 +39,7 @@ public class ArTapper : MonoBehaviour
     [SerializeField] private ARNamebar arNamebar;
     [SerializeField] private ARInfoPage arInfoPage;
     [SerializeField] private ARDownloadBar downloadBar;
+    [SerializeField] private ARStaticDetails staticDetails;
     [SerializeField] private NoConnectionMapHandler noConnectionMapHandler;
     [SerializeField] private GameObject uiTutorialContainer;
     [SerializeField] private ARAnchorManager arAnchorManager;
@@ -80,6 +81,9 @@ public class ArTapper : MonoBehaviour
     private AssetLoaderOptions _assetLoaderOptions;
     public Dictionary<int, GameObject> contentDict = new Dictionary<int, GameObject>();
     private static bool HideShadow = false;
+    private bool placementAccepted = false;
+
+    public static event Action OnPlacementAccepted;
 
     public static event Action<ArtworkData> OnArtworkPlaced;
 
@@ -103,7 +107,7 @@ public class ArTapper : MonoBehaviour
         if (objectSpawner) objectSpawner.arObject = arObject.gameObject;
         
         if (!interactorSpawnTrigger) interactorSpawnTrigger = FindObjectOfType<ARInteractorSpawnTrigger>();
-        if (interactorSpawnTrigger)
+        if (interactorSpawnTrigger && ArtworkToPlace != null)
         {
             foreach (var content in ArtworkToPlace.content_list)
             {
@@ -113,6 +117,8 @@ public class ArTapper : MonoBehaviour
             
         if (downloadBar == null) downloadBar = FindObjectOfType<ARDownloadBar>();
         HideShadow = false;
+        
+        staticDetails.Open(ArtworkToPlace);
     }
 
     private void Start()
@@ -127,7 +133,7 @@ public class ArTapper : MonoBehaviour
         if (testContent)
         {
             testContent = false;
-            TryPlaceObject();
+            OnTouch(null);
         }
 #endif
         
@@ -136,9 +142,8 @@ public class ArTapper : MonoBehaviour
     #endregion
     
     // When you select a placement for the AR content
-    private void OnTouch(GameObject obj)
+    private void OnTouch(GameObject _)
     {
-        Debug.Log("OnTouch");
         // object placement is handled from the method that invokes this callback
         TryPlaceObject();
     }
@@ -155,19 +160,21 @@ public class ArTapper : MonoBehaviour
     {
         if (hasContent && allContentLoaded)
         {
+            placementAccepted = true;
+            OnPlacementAccepted?.Invoke();
             OnArtworkReady();
         }
         else if (hasContent && !allContentLoaded)
         {
+            placementAccepted = true;
+            OnPlacementAccepted?.Invoke();
+            ShowLoading();
             StartCoroutine(WaitForLoad());
         }
         else if(!hasContent)
         {
             Debug.Log("no content found...");
         }
-        
-        arNamebar.SetNamebarLabel(ArtworkToPlace.title);
-        arInfoPage.CanOpen = true;
     }
 
     // Artwork is ready - show the artwork
@@ -179,6 +186,8 @@ public class ArTapper : MonoBehaviour
         //arPlaneManager.enabled = false;
         arObject.gameObject.SetActive(true);
         arObject.Show(HideShadow);
+        
+        arNamebar.SetNamebarLabel(ArtworkToPlace.title);
 
         arPlaneManager.planePrefab = null;
         foreach (var trackable in arPlaneManager.trackables)
@@ -193,7 +202,7 @@ public class ArTapper : MonoBehaviour
         
         OnArtworkPlaced?.Invoke(ArtworkToPlace);
         
-        UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
+        //UIInfoController.Instance.SetDefaultText("Congratulations, the artwork is placed!");
     }
 
     #region Content Loading
@@ -202,11 +211,16 @@ public class ArTapper : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
 
-        if (allContentLoaded || !hasContent) yield return null;
+        if (allContentLoaded || !hasContent || !placementAccepted) yield return null;
         else
         {
-            downloadBar.Show();
+            ShowLoading();
         }
+    }
+
+    private void ShowLoading()
+    {
+        downloadBar.Show();
     }
 
     private async void LoadContent()

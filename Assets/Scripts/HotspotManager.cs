@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.IO;
+using System.Threading.Tasks;
 
 public class HotspotManager : MonoBehaviour
 {   
@@ -28,6 +29,9 @@ public class HotspotManager : MonoBehaviour
     public Material SelectedHotspotMat;
     public Material SelectedHotspotInRangeMat;
     public GameObject Shadow;
+
+    [Header("UI Designs V3")]
+    [SerializeField] private Image backgroundARImage;
     
     [Header("Runtime")]
     public bool selected = false;
@@ -57,81 +61,45 @@ public class HotspotManager : MonoBehaviour
     {
         artwork = point;
         LeftTitle.text = artwork.title;
-
-        //EnableInfo(true);
-        if (ConnectedExhibition != null)
-        {
-            Color parsedColor = Color.white; // default color
-            switch (ConnectedExhibition.color.ToLower())
-            {
-                case "green":
-                    parsedColor = Color.green;
-                    break;
-                case "red":
-                    parsedColor = Color.red;
-                    break;
-                case "blue":
-                    parsedColor = Color.blue;
-                    break;
-                case "yellow":
-                    parsedColor = Color.yellow;
-                    break;
-                case "purple":
-                    parsedColor = new Color(0.5f, 0.1f, 0.9f, 255f);
-                    break;
-                case "pink":
-                    parsedColor = new Color(0.9f, 0.4f, 0.95f, 255f);;
-                    break;
-                case "orange":
-                    parsedColor = new Color(0.95f, 0.35f, 0.1f, 255f);;
-                    break;
-                default:
-                    parsedColor = Color.green;
-                    break;
-            }
-            Logo.material.color = parsedColor;
-        }
-        else
-        {
-            Logo.material.color = Color.green;
-            Debug.Log("ConnectedExhibition is null");
-        }
-
-//        Debug.LogWarning("<color=blue>Disabled background images & color setting</color>");
-        
-        /*
-        BackgroundAR.sprite = point.ARMapBackgroundImage;
-        if (point.ARMapImage)
-            ARObjectImage.sprite = point.ARMapImage;
-        */
     }
 
-    private void OnEnable() {
+    private void OnEnable() 
+    {
         if (artwork != null)
             OnChangeGpsPosition(_distance);
     }
-
-    public void Update()
+    
+    public void OnChangeGpsPosition(float distance) 
     {
-        /*Color c = Color.green;//ConnectedExhibition.Color;
-        c.a = 1f - ARObjectImage.color.a;
-        Logo.material.color = c;*/
-    }
-
-    public void OnChangeGpsPosition(float distance) {
         _distance = distance;
         LeftDistance.text = string.Format("{0}km", distance.ToString("F1"));
 
-        if (CanShow && !IsClose()) {
+        if (backgroundARImage.sprite == null)
+        {
+            if (artwork.marker.inMapView) LoadBackgroundImage();
+        }
+
+        if (CanShow && !IsClose()) 
+        {
             CanShow = false;
             SetReach(false);
         }
+    }
 
-        if (selected)
+    private async Task LoadBackgroundImage()
+    {
+        try
         {
-            SelectionMenu.Instance.UpdateDistance(_distance);
+            var sprites = await artwork.GetImages(1);
+            if (sprites is { Count: > 0 } && sprites[0] != null)
+            {
+                backgroundARImage.sprite = sprites[0];
+            }
         }
-
+        catch (Exception ex)
+        {
+            Debug.LogError(ex.Message);
+        }
     }
 
     public void SetReach(bool InReach)
@@ -143,54 +111,35 @@ public class HotspotManager : MonoBehaviour
             BorderRingMesh.enabled = true;
             BorderRingMesh.material = SelectedHotspotInRangeMat;
             inPlayerRange = true;
+            
+            if (ColorUtility.TryParseHtmlString("#00FFC5", out Color hexColor)) Logo.material.color = hexColor;
+            else Logo.material.color = Color.green;
+            
+            SelectionMenu.Instance.SelectHotspot(this, true);
         }
-
-        if (!ZoomedOut && InReach)
-        {
-            if(selected) SelectionMenu.Instance.Open(this, true);
-        }
-        else if(!InReach)
+        else
         {
             inPlayerRange = false;
             if (selected)
             {
                 BorderRingMesh.enabled = true; 
                 BorderRingMesh.material = SelectedHotspotMat;
+                SelectionMenu.Instance.SelectHotspot(this, false);
             }
             else
             { 
                 BorderRingMesh.enabled = false;
             }
+
+            Logo.material.color = Color.white;
         }
-        
-        /*
-         // Legacy code to display border with an animation
-         
-        Animator ani = GetComponent<Animator>();
-        AnimatorClipInfo[] animatorinfo = ani.GetCurrentAnimatorClipInfo(0);
-        if (animatorinfo.Length == 0)
-            return;
-
-        if (!ZoomedOut && InReach && !animatorinfo[0].clip.name.Equals("Show")) {
-           // EnableInfo(false);
-            GetComponent<Animator>().ResetTrigger("Base");
-            GetComponent<Animator>().ResetTrigger("Hide");
-            GetComponent<Animator>().SetTrigger("Show");
-            if(selected) SelectionMenu.Instance.Open(this, true);
-
-        } else if (!InReach && !animatorinfo[0].clip.name.Equals("Hide")) {
-            GetComponent<Animator>().ResetTrigger("Show");
-            GetComponent<Animator>().ResetTrigger("Base");
-            GetComponent<Animator>().SetTrigger("Hide");
-            //EnableInfo(true);
-        }*/
     }
 
     public bool IsClose()
     {
         float distance = artwork.max_distance > 0.01f ? artwork.max_distance : 0.12f;
-        
-        bool state = _distance <= distance;
+
+        bool state = DistanceValidator.InRange(artwork); //_distance <= distance;
         if (state) OnDistanceValidated?.Invoke(distance);
         
         return state;
@@ -215,23 +164,18 @@ public class HotspotManager : MonoBehaviour
     /// 
     /// </summary>
     /// <param name="IsZoomedOut">Should it be zoomed out?</param>
-    void SetStage(bool IsZoomedOut) {
-        if (ZoomedOut == IsZoomedOut)
-            return;
+    void SetStage(bool IsZoomedOut) 
+    {
+        if (ZoomedOut == IsZoomedOut) return;
         ZoomedOut = IsZoomedOut;
-        if (IsZoomedOut) {
+        if (IsZoomedOut) 
+        {
             ARObject.SetActive(false);
-            GetComponent<Animator>().ResetTrigger("Show");
-            GetComponent<Animator>().ResetTrigger("Hide");
-            GetComponent<Animator>().SetTrigger("Base");
-            //EnableInfo(false);
-        } else {
+        } 
+        else 
+        {
             ARObject.SetActive(true);
-
-            if (CanShow)
-                SetReach(true);
-            /*else
-                EnableInfo(true);*/
+            if (CanShow) SetReach(true);
         }
     }
 
@@ -266,22 +210,9 @@ public class HotspotManager : MonoBehaviour
         }
     }
 
-    public void GetDirections()
+    public IEnumerator UnTouch() 
     {
-        string location = artwork.latitude + "," + artwork.longitude;
-        
-#if UNITY_ANDROID
-        string url = "https://www.google.com/maps/dir/?api=1&destination=" + location;
-        Application.OpenURL(url);
-#elif UNITY_IOS
-            // Apple Maps URL scheme for iOS
-            string url = "http://maps.apple.com/?daddr=" + location;
-            Application.OpenURL(url);
-#endif
-    }
-
-    public IEnumerator UnTouch() {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.25f);
         Touched = false;
     }
 
@@ -293,10 +224,8 @@ public class HotspotManager : MonoBehaviour
         BorderRingMesh.material = SelectedHotspotMat;
         if (state)
         {
-            SelectionMenu.Instance?.Open(this, inReach);
-            SelectionMenu.Instance?.UpdateDistance(_distance);
+            SelectionMenu.Instance?.SelectHotspot(this, inReach);
         }
-        else SelectionMenu.Instance?.Close();
     }
 
 
@@ -343,5 +272,10 @@ public class HotspotManager : MonoBehaviour
     public ArtworkData GetHotspotArtwork()
     {
         return artwork;
+    }
+
+    private void OnDisable()
+    {
+        UnityEngine.Debug.Log("OnDisable");
     }
 }

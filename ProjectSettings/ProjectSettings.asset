@@ -140,14 +140,9 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 2.0.2
+  bundleVersion: 2.0.3
   preloadedAssets:
   - {fileID: 11400000, guid: 6f46f516c52200c42babfa0225ddd129, type: 2}
-  - {fileID: 4800000, guid: c9f956787b1d945e7b36e0516201fc76, type: 3}
-  - {fileID: 4800000, guid: 0945859e5a1034c2cb6dce53cb4fb899, type: 3}
-  - {fileID: -6122771651556369562, guid: e2f869774b12e400996eb546603602e3, type: 2}
-  - {fileID: 11400000, guid: f858a419e1b01f4438f02ffca5320da6, type: 2}
-  - {fileID: 31615114342900627, guid: 1ba9cc3c3f476af4e8311f1277d4a92b, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -168,7 +163,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Android: com.wava.ar.game
+    Android: com.wava.wavaar
     Standalone: com.unity.arfoundation.samples
     iPhone: com.wava.grit
   buildNumber:
@@ -177,7 +172,7 @@ PlayerSettings:
     iPhone: 4
     tvOS: 0
   overrideDefaultApplicationIdentifier: 1
-  AndroidBundleVersionCode: 1
+  AndroidBundleVersionCode: 7
   AndroidMinSdkVersion: 24
   AndroidTargetSdkVersion: 35
   AndroidPreferredInstallLocation: 1
@@ -186,9 +181,9 @@ PlayerSettings:
   iPhoneStrippingLevel: 0
   iPhoneScriptCallOptimization: 0
   ForceInternetPermission: 0
-  ForceSDCardPermission: 1
+  ForceSDCardPermission: 0
   CreateWallpaper: 0
-  APKExpansionFiles: 0
+  APKExpansionFiles: 1
   keepLoadedShadersAlive: 0
   StripUnusedMeshComponents: 1
   strictShaderVariantMatching: 0
@@ -283,14 +278,14 @@ PlayerSettings:
   AndroidEnableTango: 0
   androidEnableBanner: 1
   androidUseLowAccuracyLocation: 0
-  androidUseCustomKeystore: 0
+  androidUseCustomKeystore: 1
   m_AndroidBanners:
   - width: 320
     height: 180
     banner: {fileID: 0}
   androidGamepadSupportLevel: 0
   chromeosInputEmulation: 1
-  AndroidMinifyRelease: 0
+  AndroidMinifyRelease: 1
   AndroidMinifyDebug: 0
   AndroidValidateAppBundleSize: 1
   AndroidAppBundleSizeToValidate: 150
@@ -818,7 +813,7 @@ PlayerSettings:
   webGLPowerPreference: 2
   scriptingDefineSymbols:
     : UNITY_POST_PROCESSING_STACK_V2
-    Android: UNITY_POST_PROCESSING_STACK_V2;FINGERS_TG;USC_EXCLUDE_SHARE;ENABLE_VOXELBUSTERS_SCREEN_RECORDER_KIT;LETAI_TRUESHADOW;USC_UNITY_PIPELINE_URP;USC_ANDROID_LEGACY_EXTERNAL_STORAGE;DOTWEEN
+    Android: UNITY_POST_PROCESSING_STACK_V2;FINGERS_TG;USC_EXCLUDE_SHARE;ENABLE_VOXELBUSTERS_SCREEN_RECORDER_KIT;LETAI_TRUESHADOW;USC_UNITY_PIPELINE_URP;DOTWEEN
     CloudRendering: UNITY_POST_PROCESSING_STACK_V2;FINGERS_TG
     EmbeddedLinux: UNITY_POST_PROCESSING_STACK_V2;FINGERS_TG;DOTWEEN
     GameCoreScarlett: FINGERS_TG;DOTWEEN
@@ -835,7 +830,7 @@ PlayerSettings:
     WebGL: UNITY_POST_PROCESSING_STACK_V2;FINGERS_TG;ENABLE_VOXELBUSTERS_REPLAY_KIT;USC_EXCLUDE_SHARE;ENABLE_VOXELBUSTERS_SCREEN_RECORDER_KIT;DOTWEEN
     Windows Store Apps: UNITY_POST_PROCESSING_STACK_V2;FINGERS_TG;ENABLE_VOXELBUSTERS_SCREEN_RECORDER_KIT;DOTWEEN
     XboxOne: UNITY_POST_PROCESSING_STACK_V2;FINGERS_TG;DOTWEEN
-    iPhone: UNITY_POST_PROCESSING_STACK_V2;UNITY_XR_ARKIT_LOADER_ENABLED;FINGERS_TG;ENABLE_VOXELBUSTERS_REPLAY_KIT;USC_EXCLUDE_SHARE;ENABLE_VOXELBUSTERS_SCREEN_RECORDER_KIT;LETAI_TRUESHADOW;USC_UNITY_PIPELINE_URP;DOTWEEN
+    iPhone: UNITY_POST_PROCESSING_STACK_V2;UNITY_XR_ARKIT_LOADER_ENABLED;FINGERS_TG;ENABLE_VOXELBUSTERS_REPLAY_KIT;USC_EXCLUDE_SHARE;ENABLE_VOXELBUSTERS_SCREEN_RECORDER_KIT;LETAI_TRUESHADOW;USC_UNITY_PIPELINE_URP;DOTWEEN;USC_EXCLUDE_IOS_GALLERY
     tvOS: UNITY_POST_PROCESSING_STACK_V2;FINGERS_TG;DOTWEEN
   additionalCompilerArguments: {}
   platformArchitecture:

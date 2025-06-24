@@ -19,7 +19,7 @@ public class ArtworkShower : MonoBehaviour
     [Space]
     public TextSlider ExhibitionTitleTextSlider;
     [SerializeField] private LoadingCircle loadingCircle;
-
+    
     [Header("Download status")]
     [SerializeField] Image downloadStatusImage;
     [SerializeField] Color defaultColor;
@@ -49,6 +49,7 @@ public class ArtworkShower : MonoBehaviour
             return;
         }
         
+
         ArtworkTitleText.text = artwork.title;
         ArtistNameText.text = artwork.artists.Count > 0 ? artwork.artists[0].title : null;
 
@@ -66,7 +67,7 @@ public class ArtworkShower : MonoBehaviour
 
 
         // Show if artwork is archived.
-        bool isArchived = false;
+        bool isArchived = artwork.availability == "Archived";
 
         archivedOverlay.SetActive(isArchived);
 

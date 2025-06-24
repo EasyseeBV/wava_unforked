@@ -121,6 +121,7 @@ namespace VoxelBusters.ScreenRecorderKit.VideoRecorderCore.Android
 
         public override void SaveRecording(string filename, CompletionCallback<ScreenRecorderSaveRecordingResult> callback)
         {
+            Debug.Log("IMPLEMENTATION FILE PATH: " + filename);
             Plugin.Call(Native.Methods.SAVE_RECORDING, filename, new NativeSaveRecordingListener(callback));
         }
 

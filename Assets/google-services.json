@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "392230179045",
+    "firebase_url": "https://wava-database-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "wava-database",
     "storage_bucket": "wava-database.firebasestorage.app"
   },
@@ -12,7 +13,12 @@
           "package_name": "com.wava.ar.game"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "392230179045-p7fdmiaun7k3rnu4abgm00pbek6pg7oh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCJXt9ZFlfqinh2ICz4KFP_g6S_h73wveM"
@@ -20,7 +26,55 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392230179045-p7fdmiaun7k3rnu4abgm00pbek6pg7oh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "392230179045-8qks9moi095d27m9h3h01drovnkeknv4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wava.ar.game"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:392230179045:android:7658036c57084b9cf3040c",
+        "android_client_info": {
+          "package_name": "com.wava.wavaar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "392230179045-p7fdmiaun7k3rnu4abgm00pbek6pg7oh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJXt9ZFlfqinh2ICz4KFP_g6S_h73wveM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "392230179045-p7fdmiaun7k3rnu4abgm00pbek6pg7oh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "392230179045-8qks9moi095d27m9h3h01drovnkeknv4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.wava.ar.game"
+              }
+            }
+          ]
         }
       }
     }

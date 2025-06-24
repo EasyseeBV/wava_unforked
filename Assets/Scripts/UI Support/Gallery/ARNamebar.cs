@@ -6,12 +6,26 @@ using UnityEngine;
 
 public class ARNamebar : MonoBehaviour
 {
+    [SerializeField] private GameObject content;
     [SerializeField] private TMP_Text namebarLabel;
-    
-    private void OnEnable()
+    [SerializeField] private float waitToHideTime = 3f;
+
+    private void Awake()
     {
-        namebarLabel.text = "";
+        content.gameObject.SetActive(false);
     }
 
-    public void SetNamebarLabel(string text) => namebarLabel.text = text;
+    public void SetNamebarLabel(string text)
+    {
+        namebarLabel.text = text;
+        content.gameObject.SetActive(true);
+        StartCoroutine(HideNamebar());
+    }
+
+    private IEnumerator HideNamebar()
+    {
+        yield return new WaitForSecondsRealtime(waitToHideTime);
+        
+        content.gameObject.SetActive(false);
+    }
 }

@@ -102,7 +102,8 @@ public class DeveloperModeARView : MonoBehaviour
     {
         content.SetActive(false);
 
-        if (!AppSettings.DeveloperMode || ArTapper.ArtworkToPlace == null)
+        // developer mode settings disabled for release branch
+        if (true)//if (!AppSettings.DeveloperMode || ArTapper.ArtworkToPlace == null)
         {
             enableDeveloperWindowButton.gameObject.SetActive(false);
             occlusionCullingButton.gameObject.SetActive(false);

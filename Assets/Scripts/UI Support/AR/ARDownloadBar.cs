@@ -30,7 +30,6 @@ public class ARDownloadBar : MonoBehaviour
     public void SetSize(int size)
     {
         this.size = size;
-        Debug.Log("max: " + size * 100 + (hasPresets ? 100 : 0));
         slider.maxValue = size * 100 + (hasPresets ? 100 : 0);
         slider.value = 0;
     }
@@ -40,7 +39,6 @@ public class ARDownloadBar : MonoBehaviour
         statusLabel.color = Color.black;
         statusLabel.text = "Artwork is loading...";
         float currentProgress = (hasPresets ? index + 1 : index) * 100;
-        Debug.Log($"Progress: {value:F2}% | Download: [{currentProgress + value:F2}/{slider.maxValue}]");
         slider.value = (currentProgress + value);
     }
 
