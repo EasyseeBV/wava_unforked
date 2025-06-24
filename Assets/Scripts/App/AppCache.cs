@@ -35,9 +35,6 @@ public static class AppCache
         Debug.Log("Loading local caches...");
         
         // Directory checking
-        await EnsureDirectoryExists(artistDataCachePath);
-        await EnsureDirectoryExists(artworkDataCachePath);
-        await EnsureDirectoryExists(exhibitionDataCachePath);
         await EnsureDirectoryExists(MediaFolder);
         await EnsureDirectoryExists(GalleryFolder);
         
@@ -162,7 +159,7 @@ public static class AppCache
     {
         try 
         {
-            await EnsureDirectoryExists(artistDataCachePath);
+            await EnsureFileExists(artistDataCachePath);
             List<ArtistDataHolder> holders = FirebaseLoader.Artists.Select(artist => ArtistDataHolder.FromArtistData(artist)).ToList();
             ArtistDataHolderListWrapper wrapper = new ArtistDataHolderListWrapper { artists = holders };
             string json = JsonUtility.ToJson(wrapper, true);
@@ -179,7 +176,7 @@ public static class AppCache
     {
         try 
         {
-            await EnsureDirectoryExists(artworkDataCachePath);
+            await EnsureFileExists(artworkDataCachePath);
             List<ArtworkDataHolder> holders = FirebaseLoader.Artworks.Select(ArtworkDataHolder.ToHolder).ToList();
             ArtworkDataHolderListWrapper wrapper = new ArtworkDataHolderListWrapper { artworks = holders };
             string json = JsonUtility.ToJson(wrapper, true);
@@ -197,7 +194,7 @@ public static class AppCache
         Debug.Log("Trying to save exhibition cache");
         try
         {
-            await EnsureDirectoryExists(exhibitionDataCachePath);
+            await EnsureFileExists(exhibitionDataCachePath);
             List<ExhibitionDataHolder> holders = FirebaseLoader.Exhibitions.Select(ExhibitionDataHolder.FromExhibitionData).ToList();
             ExhibitionDataHolderListWrapper wrapper = new ExhibitionDataHolderListWrapper { exhibitions = holders };
             string json = JsonUtility.ToJson(wrapper, true);
@@ -349,6 +346,22 @@ public static class AppCache
     {
         try
         {
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+                Debug.Log("Created directory: " + filePath);
+            }
+        }
+        catch(Exception e)
+        {
+            Debug.LogError($"Failed to validate directory [{filePath}] with error: {e}");
+        }
+    }
+
+    private static async Task EnsureFileExists(string filePath)
+    {
+        try
+        {
             string directory = Path.GetDirectoryName(filePath);
             if (!Directory.Exists(directory))
             {
@@ -359,9 +372,9 @@ public static class AppCache
                 }
             }
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            Debug.LogError($"Failed to validate directory [{filePath}] with error: {e}");
+            Debug.LogError($"Failed to validate file [{filePath}] with error: {e}");
         }
     }
 
