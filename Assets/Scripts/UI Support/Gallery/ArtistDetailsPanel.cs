@@ -89,11 +89,6 @@ public class ArtistDetailsPanel : MonoBehaviour
 
 
         // Rebuild layout.
-        for (int i = 0; i < rebuildLayout.Count; i++)
-        {
-            LayoutRebuilder.ForceRebuildLayoutImmediate(rebuildLayout[i]);
-        }
-
         this.InvokeNextFrame(() =>
         {
             for (int i = 0; i < rebuildLayout.Count; i++)
