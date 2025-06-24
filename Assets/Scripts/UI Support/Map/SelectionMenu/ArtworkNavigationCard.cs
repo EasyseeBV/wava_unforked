@@ -124,6 +124,10 @@ public class ArtworkNavigationCard : MonoBehaviour
         allowedAR = true;
         buttonLabel.text = "Open AR-View now";
         labelImage.sprite = arSprite;
+        minimizedNavigationButton.onClick.RemoveAllListeners();
+        maximizedNavigationButton.onClick.RemoveAllListeners();
+        maximizedNavigationButton.onClick.AddListener(OpenARView);
+        minimizedNavigationButton.onClick.AddListener(OpenARView);
         OnlineMapsLocationService.instance.OnLocationChanged += OnLocationChanged;
     }
 
@@ -131,6 +135,10 @@ public class ArtworkNavigationCard : MonoBehaviour
     {
         if (!DistanceValidator.InRange(CachedArtworkData)) return;
         
+        minimizedNavigationButton.onClick.RemoveAllListeners();
+        maximizedNavigationButton.onClick.RemoveAllListeners();
+        maximizedNavigationButton.onClick.AddListener(GetDirections);
+        minimizedNavigationButton.onClick.AddListener(GetDirections);
         buttonLabel.text = "Navigate";
         labelImage.sprite = navigateSprite;
         allowedAR = false;
@@ -148,6 +156,11 @@ public class ArtworkNavigationCard : MonoBehaviour
         {
             DisallowAR();
         }
+    }
+    
+    private void OpenARView()
+    {
+        ARLoader.Open(CachedArtworkData);
     }
 
     /*
