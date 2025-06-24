@@ -278,7 +278,7 @@ public class ARMapPointMaker : MonoBehaviour {
         AnyCloseEnough = false;
 
         // adjust to work better - it breaks right now
-        HotspotManager manager = FirebaseLoader.Artworks.OrderBy(t => t.hotspot.distance).FirstOrDefault()?.hotspot;
+        HotspotManager manager = FirebaseLoader.Artworks.OrderBy(t => t.hotspot._distance).FirstOrDefault()?.hotspot;
         if (manager != null && manager.IsClose()) {
             if (ClosestHotspot != null) {
                 ClosestHotspot.CanShow = false;
