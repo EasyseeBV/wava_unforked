@@ -38,7 +38,9 @@ public class ArtworkUIManager : MonoBehaviour
     [SerializeField] private Canvas parentCanvas;
     [SerializeField] private RectTransform viewport;
     [SerializeField] private RectTransform content;
-    
+
+    [SerializeField] private HorizontalSwipeDetector swipeDetector;
+
     private float preloadMargin = 100f; 
     
     [Space]
@@ -82,6 +84,8 @@ public class ArtworkUIManager : MonoBehaviour
 
     [HideInInspector] public GalleryFilter.Filter CurrentFilter = GalleryFilter.Filter.RecentlyAdded;
 
+    private DisplayView openView;
+
     private List<ArtworkShower> loadedArtworks = new();
     private List<ExhibitionCard> loadedExhibitions = new();
     private List<ArtistContainer> loadedArtists = new();
@@ -97,6 +101,43 @@ public class ArtworkUIManager : MonoBehaviour
         exhibitionsButton.onClick.AddListener(InitExhibitions);
         artistsButton.onClick.AddListener(InitArtists);
 
+        swipeDetector.SwipedRight += (_) =>
+        {
+            // Don't switch if a details page is opened.
+            if (artworkDetailsArea.activeInHierarchy
+            || exhibitionDetailsArea.activeInHierarchy
+            || artistDetailsArea.activeInHierarchy)
+                return;
+
+            switch (openView)
+            {
+                case DisplayView.Artists:
+                    InitExhibitions();
+                    break;
+                case DisplayView.Exhibitions:
+                    InitArtworks();
+                    break;
+            }
+        };
+
+        swipeDetector.SwipedLeft += (_) =>
+        {
+            // Don't switch if a details page is opened.
+            if (artworkDetailsArea.activeInHierarchy
+            || exhibitionDetailsArea.activeInHierarchy
+            || artistDetailsArea.activeInHierarchy)
+                return;
+
+            switch (openView)
+            {
+                case DisplayView.Artworks:
+                    InitExhibitions();
+                    break;
+                case DisplayView.Exhibitions:
+                    InitArtists();
+                    break;
+            }
+        };
 
         if (!Instance) Instance = this;
 
@@ -105,7 +146,7 @@ public class ArtworkUIManager : MonoBehaviour
         loadingCircle?.BeginLoading();
         visualAreaScrollRect?.onValueChanged.AddListener(_ => TryLoadVisible());
     }
-    
+
     private void Start()
     {
         if (SelectedExhibition != null)
@@ -182,6 +223,8 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitArtworks() 
     {
+        openView = DisplayView.Artworks;
+
         if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
         
         ReplaceStage<ArtworkData>();
@@ -219,6 +262,8 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitExhibitions() 
     {
+        openView = DisplayView.Exhibitions;
+
         if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.BeginLoading();
         ReplaceStage<ExhibitionData>();
         ShowDefaultLayoutArea(true);
@@ -254,6 +299,8 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitArtists()
     {
+        openView = DisplayView.Artists;
+
         if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
         ReplaceStage<ArtistData>();
         ShowDefaultLayoutArea(false);

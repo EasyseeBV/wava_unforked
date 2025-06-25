@@ -28,6 +28,7 @@ public class ExhibitionDetailsPanel : MonoBehaviour
     [SerializeField] private Button downloadButton;
     [SerializeField] private DownloadButtonUI downloadButtonUI;
     [SerializeField] private UnderlinedSelectionUI ArtworksArtistMenu;
+    [SerializeField] private HorizontalSwipeDetector swipeDetector;
 
     [Header("Image gallery")] 
     [SerializeField] private SimpleScrollSnap scrollSnapper;
@@ -86,6 +87,38 @@ public class ExhibitionDetailsPanel : MonoBehaviour
         artworksButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artworks));
         artistsButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artists));
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
+    }
+
+    private void OnEnable()
+    {
+        swipeDetector.SwipedLeft += OnSwipedLeft;
+        swipeDetector.SwipedRight += OnSwipedRight;
+    }
+
+    private void OnDisable()
+    {
+        swipeDetector.SwipedLeft -= OnSwipedLeft;
+        swipeDetector.SwipedRight -= OnSwipedRight;
+    }
+
+    void OnSwipedLeft(Vector2 startPosition)
+    {
+        // Check if touch was performed above container.
+        if (!RectTransformUtility.RectangleContainsScreenPoint(artworksAndArtistsContainer as RectTransform, startPosition))
+            return;
+
+        if (currentMenu == MenuNavigation.Artworks)
+            ChangeMenu(MenuNavigation.Artists);
+    }
+
+    void OnSwipedRight(Vector2 startPosition)
+    {
+        // Check if touch was performed above container.
+        if (!RectTransformUtility.RectangleContainsScreenPoint(artworksAndArtistsContainer as RectTransform, startPosition))
+            return;
+
+        if (currentMenu == MenuNavigation.Artists)
+            ChangeMenu(MenuNavigation.Artworks);
     }
 
     private async void ChangeMenu(MenuNavigation menu)

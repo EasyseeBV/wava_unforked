@@ -38,6 +38,7 @@ public class ArtistDetailsPanel : MonoBehaviour
     [SerializeField] private Button closeButton;
     [SerializeField] private List<RectTransform> rebuildLayout;
 
+    [SerializeField] private HorizontalSwipeDetector swipeDetector;
 
     private MenuNavigation currentMenu = MenuNavigation.Default;
 
@@ -47,6 +48,38 @@ public class ArtistDetailsPanel : MonoBehaviour
 
         artworksButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artworks));
         exhibitionButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Exhibitions));
+    }
+
+    private void OnEnable()
+    {
+        swipeDetector.SwipedLeft += OnSwipedLeft;
+        swipeDetector.SwipedRight += OnSwipedRight;
+    }
+
+    private void OnDisable()
+    {
+        swipeDetector.SwipedLeft -= OnSwipedLeft;
+        swipeDetector.SwipedRight -= OnSwipedRight;
+    }
+
+    void OnSwipedLeft(Vector2 startPosition)
+    {
+        // Check if touch was performed above container.
+        if (!RectTransformUtility.RectangleContainsScreenPoint(artworksAndExhibitionsContainer as RectTransform, startPosition))
+            return;
+
+        if (currentMenu == MenuNavigation.Artworks)
+            ChangeMenu(MenuNavigation.Exhibitions);
+    }
+
+    void OnSwipedRight(Vector2 startPosition)
+    {
+        // Check if touch was performed above container.
+        if (!RectTransformUtility.RectangleContainsScreenPoint(artworksAndExhibitionsContainer as RectTransform, startPosition))
+            return;
+
+        if (currentMenu == MenuNavigation.Exhibitions)
+            ChangeMenu(MenuNavigation.Artworks);
     }
 
     private void ChangeMenu(MenuNavigation menu)
