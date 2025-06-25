@@ -47,6 +47,12 @@ public class AdvancedVideoPlayer : MonoBehaviour
     [SerializeField]
     Image _blackOverlayImage;
 
+    [SerializeField]
+    FullscreenViewer _fullscreenViewer;
+
+    [SerializeField]
+    Button _fullscreenButton;
+
     float _initialBlackOverlayAlpha;
 
     [SerializeField]
@@ -89,6 +95,8 @@ public class AdvancedVideoPlayer : MonoBehaviour
         // Show or hide the controls when the player clicks anywhere on the image.
         _toggleControlsButton.onClick.AddListener(OnToggleControlsButtonClicked);
 
+        _fullscreenButton?.onClick.AddListener(OnFullscreenButtonClicked);
+
         // Tell the video player to show the controls once the loop point has been reached.
         _videoPlayer.loopPointReached += OnLoopPointReached;
 
@@ -109,6 +117,8 @@ public class AdvancedVideoPlayer : MonoBehaviour
         _playAndResumeButton.onClick.RemoveListener(OnPlayAndResumeButtonClicked);
 
         _toggleControlsButton.onClick.RemoveListener(OnToggleControlsButtonClicked);
+
+        _fullscreenButton?.onClick.RemoveListener(OnFullscreenButtonClicked);
 
         _videoPlayer.loopPointReached -= OnLoopPointReached;
 
@@ -161,6 +171,14 @@ public class AdvancedVideoPlayer : MonoBehaviour
             if (_videoPlayer.isPlaying)
                 _hideControlsTime = Time.time + _hideControlsDelay;
         }
+    }
+
+    void OnFullscreenButtonClicked()
+    {
+        if (_fullscreenViewer.IsInFullscreen)
+            _fullscreenViewer.ExitFullscreen();
+        else
+            _fullscreenViewer.EnterFullscreen();
     }
 
     void OnLoopPointReached(VideoPlayer source)
@@ -330,6 +348,7 @@ public class AdvancedVideoPlayer : MonoBehaviour
         _timeText.gameObject.SetActive(true);
         _playAndResumeButton.gameObject.SetActive(true);
         _seekVideoSlider.gameObject.SetActive(true);
+        _fullscreenButton.gameObject.SetActive(true);
     }
 
     void HideControls()
@@ -337,6 +356,7 @@ public class AdvancedVideoPlayer : MonoBehaviour
         _timeText.gameObject.SetActive(false);
         _playAndResumeButton.gameObject.SetActive(false);
         _seekVideoSlider.gameObject.SetActive(false);
+        _fullscreenButton.gameObject.SetActive(false);
     }
 
     void UpdateTimeText() => _timeText.text = $"<b>{FormatTime(_videoPlayer.time)}</b> / {FormatTime(_videoPlayer.length)}";
