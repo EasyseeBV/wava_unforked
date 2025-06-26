@@ -158,9 +158,9 @@ public class ExhibitionCard : MonoBehaviour
         if (exhibition == null)
             return;
 
-        if (DownloadManager.ExhibitionIsDownloaded(exhibition))
+        if (DownloadManager.ExhibitionIsDownloaded(exhibition) && downloadStatusImage != null)
             downloadStatusImage.color = downloadedColor;
-        else
+        else if (downloadStatusImage != null)
             downloadStatusImage.color = defaultColor;
     }
 

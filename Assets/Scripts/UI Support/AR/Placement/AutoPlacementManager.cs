@@ -23,10 +23,8 @@ public class AutoPlacementManager : MonoBehaviour
     void Start()
     {
         // Cache AR components
-        if (raycastManager == null)
-            raycastManager = GetComponent<ARRaycastManager>();
-        if (planeManager == null)
-            planeManager = GetComponent<ARPlaneManager>();
+        if (raycastManager == null) raycastManager = GetComponent<ARRaycastManager>();
+        if (planeManager == null) planeManager = GetComponent<ARPlaneManager>();
 
         // Calculate Y-offset from model pivot to its bottom (half-height)
         var renderer = modelPrefab.GetComponentInChildren<MeshRenderer>();

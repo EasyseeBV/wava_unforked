@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.Interaction.Toolkit.Utilities;
 
 namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
@@ -186,9 +187,12 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
         private bool spawned = false;
         public GameObject arObject { get; set; }
         
-        public bool TrySpawnObject(Vector3 spawnPoint, Vector3 spawnNormal)
+        public bool TrySpawnObject(ARRaycastHit arRaycastHit, ARPlane arPlane)
         {
             if (spawned) return false;
+            
+            var spawnPoint = arRaycastHit.pose.position;
+            var spawnNormal = arPlane.normal;
             
             if (m_OnlySpawnInView)
             {

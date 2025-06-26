@@ -1372,6 +1372,7 @@ public class OnlineMaps : MonoBehaviour, ISerializationCallbackReceiver, IOnline
         UpdateCorners();
 
         DispatchEvent(OnlineMapsEvents.changedPosition);
+        Debug.Log("Move finished");
     }
 
     /// <summary>

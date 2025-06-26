@@ -169,7 +169,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
                     if (m_RequireHorizontalUpSurface && arPlane.alignment != PlaneAlignment.HorizontalUp)
                         return;
 
-                    m_ObjectSpawner.TrySpawnObject(arRaycastHit.pose.position, arPlane.normal);
+                    m_ObjectSpawner.TrySpawnObject(arRaycastHit, arPlane);
                 }
 
                 return;

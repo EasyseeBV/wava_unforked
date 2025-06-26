@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 public class ArtworkShower : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class ArtworkShower : MonoBehaviour
     public TextMeshProUGUI YearText;
     public Button ExhibitionButton;
     public Button ViewArtworkButton;
+    [FormerlySerializedAs("ImageButton")]
+    [SerializeField] private Button imageButton;
     [Space]
     public TextSlider ExhibitionTitleTextSlider;
     [SerializeField] private LoadingCircle loadingCircle;
@@ -36,6 +39,7 @@ public class ArtworkShower : MonoBehaviour
 
     private void Awake()
     {
+        imageButton.onClick.AddListener(OpenDetails);
         ViewArtworkButton.onClick.AddListener(OpenDetails);
         ExhibitionButton.onClick.AddListener(OpenDetails);
         loadingCircle.gameObject.SetActive(false);

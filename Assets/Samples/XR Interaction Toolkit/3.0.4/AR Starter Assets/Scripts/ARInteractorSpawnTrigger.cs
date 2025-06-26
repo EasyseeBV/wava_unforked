@@ -171,6 +171,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
             }
         }
 
+        private bool spawned = false;
+
         /// <summary>
         /// See <see cref="MonoBehaviour"/>.
         /// </summary>
@@ -179,13 +181,13 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
             // Wait a frame after the Spawn Object input is triggered to actually cast against AR planes and spawn
             // in order to ensure the touchscreen gestures have finished processing to allow the ray pose driver
             // to update the pose based on the touch position of the gestures.
-            if (m_AttemptSpawn)
+            if (!spawned)
             {
                 m_AttemptSpawn = false;
 
                 // ignore UI taps
-                if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(-1))
-                    return;
+                /*if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(-1))
+                    return;*/
 
                 // first do the normal AR‐plane hit test
                 if (m_ARInteractor.TryGetCurrentARRaycastHit(out var arHit)
@@ -197,6 +199,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
                     bool canPlace = true;
                     float neededMeters = 0f;
                     
+                    // Old placement system
                     // now for each offset in your list
                     foreach (var offset in ContentOffsets)
                     {
@@ -222,12 +225,13 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.ARStarterAssets
                     {
                         int scanSize = Mathf.CeilToInt(neededMeters);
                         Debug.Log($"Failed to place object, recommended area size is {scanSize}x{scanSize}m");
-                        placementFailed?.Invoke(scanSize);
+                        //placementFailed?.Invoke(scanSize);
                         return;
                     }
                     
                     // If can place
-                    m_ObjectSpawner.TrySpawnObject(basePos, arPlane.normal);
+                    spawned = true;
+                    m_ObjectSpawner.TrySpawnObject(arHit, arPlane);
                 }
 
                 return;
