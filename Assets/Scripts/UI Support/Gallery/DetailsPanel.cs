@@ -1,26 +1,22 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DetailsPanel : MonoBehaviour
 {
-    [Header("Content Layout Group")]
+    [Header("Rebuild layout")]
+    [SerializeField] protected List<RectTransform> rebuildLayout;
     [SerializeField] protected RectTransform contentLayoutGroup;
     
     [Header("Text References")] 
     [SerializeField] protected TextMeshProUGUI contentTitleLabel;
     [SerializeField] protected TextMeshProUGUI contentDescriptionLabel;
     [SerializeField] protected Button contentDescriptionButton;
-    [SerializeField] protected RectTransform textAreaTransform;
+    //[SerializeField] protected RectTransform textAreaTransform;
     [SerializeField] protected bool lateUpdateText;
-    
-    [Header("Like Buttons")] 
-    [SerializeField] protected Button heartButton;
-    [SerializeField] protected Image heartImage;
-    [SerializeField] protected Sprite unlikedSprite;
-    [SerializeField] protected Sprite likedSprite;
 
     [Header("General")]
     [SerializeField] private Button closeButton;
@@ -39,7 +35,7 @@ public class DetailsPanel : MonoBehaviour
     protected virtual void Setup()
     {
         if (lateUpdateText) textNeedsUpdate = true;
-        contentDescriptionButton.onClick.AddListener(ToggleReadMore);
+        //contentDescriptionButton.onClick.AddListener(ToggleReadMore);
         closeButton.onClick.AddListener(Close);
     }
 
@@ -125,7 +121,7 @@ public class DetailsPanel : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         
-        LayoutRebuilder.ForceRebuildLayoutImmediate(textAreaTransform);
-        LayoutRebuilder.ForceRebuildLayoutImmediate(contentLayoutGroup);
+        //LayoutRebuilder.ForceRebuildLayoutImmediate(textAreaTransform);
+        //LayoutRebuilder.ForceRebuildLayoutImmediate(contentLayoutGroup);
     }
 }

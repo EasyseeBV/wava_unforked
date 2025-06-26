@@ -21,22 +21,22 @@ EditorBuildSettings:
     path: Assets/Scenes/Old Scenes/test_build.unity
     guid: e4e58901f763b35418db8346104e7361
   - enabled: 1
-    path: Assets/Scenes/Tutorials/WelcomeTutorial_1.unity
+    path: Assets/Scenes/Old Scenes/WelcomeTutorial_1.unity
     guid: 5dfda12dddc7545088a051a5066fcfb8
   - enabled: 1
-    path: Assets/Scenes/Tutorials/WelcomeTutorial_2.unity
+    path: Assets/Scenes/Old Scenes/WelcomeTutorial_2.unity
     guid: bdaa6fa1abc794d01aa8c25bf129b88b
   - enabled: 1
-    path: Assets/Scenes/Tutorials/WelcomeTutorial_3.unity
+    path: Assets/Scenes/Old Scenes/WelcomeTutorial_3.unity
     guid: 50176d91c69e64c019f01e8ac3c2deb7
   - enabled: 1
-    path: Assets/Scenes/Tutorials/WelcomeTutorial_4.unity
+    path: Assets/Scenes/Old Scenes/WelcomeTutorial_4.unity
     guid: 26e89f3abef3549c59daa6b80470a7ce
   - enabled: 1
-    path: Assets/Scenes/Tutorials/WelcomeTutorial_5.unity
+    path: Assets/Scenes/Old Scenes/WelcomeTutorial_5.unity
     guid: 99749311ab6c84812aca3d9b314f2238
   - enabled: 1
-    path: Assets/Scenes/Tutorials/WelcomeTutorial_6.unity
+    path: Assets/Scenes/Old Scenes/WelcomeTutorial_6.unity
     guid: 958b81eae31b5463a8800cc9c145474b
   - enabled: 0
     path: Assets/Scenes/Old Scenes/Tutorial.unity
@@ -50,21 +50,24 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Infinity Code/Online maps/Examples/Scenes/Behaviours/Navigation.unity
     guid: 0f18cdbd5a83b6b419452f107a242330
-  - enabled: 1
-    path: Assets/Scenes/Exhibition&Art.unity
+  - enabled: 0
+    path: Assets/Scenes/Old Scenes/Exhibition&Art.unity
     guid: 80db1d336999b4147babc43bc4dd06e8
+  - enabled: 1
+    path: Assets/Scenes/Gallery.unity
+    guid: 56f27e0f5423c3245acdd589cb69cc68
   - enabled: 1
     path: Assets/Scenes/Old Scenes/AboutUs.unity
     guid: a6bd162e73285514394c5b336346c5f8
   - enabled: 1
-    path: Assets/Scenes/Help.unity
+    path: Assets/Scenes/Settings.unity
     guid: 92796818e701fc54b8e0e84e63322575
   - enabled: 1
     path: Assets/Scenes/Home.unity
     guid: 53e440f1f005a054e9913ca22397f815
   - enabled: 1
-    path: Assets/Scenes/Profile.unity
-    guid: dbda34c44a8d9694aa94a726e0ad9ce7
+    path: Assets/Scenes/Captured.unity
+    guid: 2fd82899c71bb95419c23545e4002798
   - enabled: 1
     path: Assets/Scenes/Old Scenes/ScanInvitation.unity
     guid: 585f6147972164501b6952408a867517

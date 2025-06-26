@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Messy.Definitions;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -11,30 +8,38 @@ public class ExhibitionCard : MonoBehaviour
 {
     [HideInInspector] public ExhibitionData exhibition;
     
-    [Header("References")]
-    [SerializeField] private GameObject singleCoverImageObject;
-    [SerializeField] private GameObject multCoverImageObject;
-    [Space]
-    [SerializeField] private Image singleImage;
-    [SerializeField] private RectTransform singleImageParent;
-    [Space]
-    [SerializeField] private Image image0;
-    [SerializeField] private RectTransform image0Parent;
-    [SerializeField] private Image image1;
-    [SerializeField] private RectTransform image1Parent;
-    [SerializeField] private Image image2;
-    [SerializeField] private RectTransform image2Parent;
-    [Space]
-    [SerializeField] private TextMeshProUGUI titleLabel;
-    [SerializeField] private TextMeshProUGUI yearLocationLabel;
-    [Space]
-    [SerializeField] private Button interactionButton;
-    [Space]
-    [SerializeField] private LoadingCircle loadingCircle;
+    [Header("Single cover image")]
+    [SerializeField] GameObject singleCoverImageContainer;
+    [SerializeField] Image singleImage;
+    [SerializeField] AspectRatioFitter singleImageAspect;
+
+    [Header("Multiple cover images")]
+    [SerializeField] GameObject multipleCoverImagesContainer;
+    [SerializeField] Image mainImage;
+    [SerializeField] AspectRatioFitter mainImageAspect;
+    [SerializeField] Image topImage;
+    [SerializeField] AspectRatioFitter topImageAspect;
+    [SerializeField] Image bottomImage;
+    [SerializeField] AspectRatioFitter bottomImageAspect;
+
+    [Header("Text references")]
+    [SerializeField] TextMeshProUGUI exhibitionTitleText;
+    [SerializeField] TextMeshProUGUI yearText;
+    [SerializeField] TextMeshProUGUI locationText;
+
+    [Header("Download status")]
+    [SerializeField] Image downloadStatusImage;
+    [SerializeField] Color defaultColor;
+    [SerializeField] Color downloadedColor;
+
+    [Header("Other references")]
+    [SerializeField] Button viewExhibitionButton;
+    [SerializeField] LoadingCircle loadingCircle;
 
     protected virtual void Awake()
     {
-        if(interactionButton) interactionButton.onClick.AddListener(OpenExhibitionPage);
+        if (viewExhibitionButton)
+            viewExhibitionButton.onClick.AddListener(OpenExhibitionPage);
         
         loadingCircle?.BeginLoading();
     }
@@ -51,40 +56,78 @@ public class ExhibitionCard : MonoBehaviour
         try
         {
             exhibition = point;
-            
-            titleLabel.text = point.title;
-            yearLocationLabel.text = point.year + " · " + point.location;
+            exhibitionTitleText.text = point.title;
+            locationText.text = point.year + " · " + point.location;
 
             if (point.exhibition_image_references.Count >= 3)
             {
-                singleCoverImageObject.SetActive(false);
-                multCoverImageObject.SetActive(true);
+                singleCoverImageContainer.SetActive(false);
+                multipleCoverImagesContainer.SetActive(true);
 
                 var images = await point.GetImages(3);
                 
-                image0.sprite = images.Count >= 0 ? images[0] : null;
-                image1.sprite = images.Count >= 1 ? images[1] : null;
-                image2.sprite = images.Count >= 2 ? images[2] : null;
+                mainImage.sprite = images.Count >= 0 ? images[0] : null;
+                topImage.sprite = images.Count >= 1 ? images[1] : null;
+                bottomImage.sprite = images.Count >= 2 ? images[2] : null;
+
+
+                // Update aspect ratios.
+                if (mainImage.sprite != null)
+                {
+                    var width = mainImage.sprite.rect.width;
+                    var height = mainImage.sprite.rect.height;
+                    mainImageAspect.aspectRatio = width / height;
+                }
+
+                if (topImage.sprite != null)
+                {
+                    var width = topImage.sprite.rect.width;
+                    var height = topImage.sprite.rect.height;
+                    topImageAspect.aspectRatio = width / height;
+                }
+
+                if (bottomImage.sprite != null)
+                {
+                    var width = bottomImage.sprite.rect.width;
+                    var height = bottomImage.sprite.rect.height;
+                    bottomImageAspect.aspectRatio = width / height;
+                }
             }
             else if (point.artworks.Count >= 3 && point.artworks[0].artwork_image_references.Count > 0 
                                                && point.artworks[1].artwork_image_references.Count > 0 
                                                && point.artworks[2].artwork_image_references.Count > 0)
             {
-                singleCoverImageObject.SetActive(false);
-                multCoverImageObject.SetActive(true);
+                singleCoverImageContainer.SetActive(false);
+                multipleCoverImagesContainer.SetActive(true);
 
-                var artworkImages1 = await point.artworks[0].GetImages(1);
-                var artworkImages2 = await point.artworks[1].GetImages(1);
-                var artworkImages3 = await point.artworks[2].GetImages(1);
+                // Set sprites.
+                var mainSprites = await point.artworks[0].GetImages(1);
+                var topSprites = await point.artworks[1].GetImages(1);
+                var bottomSprites = await point.artworks[2].GetImages(1);
                 
-                image0.sprite = artworkImages1[0];
-                image1.sprite = artworkImages2[0];
-                image2.sprite = artworkImages3[0];
+                mainImage.sprite = mainSprites[0];
+                topImage.sprite = topSprites[0];
+                bottomImage.sprite = bottomSprites[0];
+
+
+                // Update aspect ratios.
+                var width = mainImage.sprite.rect.width;
+                var height = mainImage.sprite.rect.height;
+                mainImageAspect.aspectRatio = width / height;
+
+                width = topImage.sprite.rect.width;
+                height = topImage.sprite.rect.height;
+                topImageAspect.aspectRatio = width / height;
+
+                width = bottomImage.sprite.rect.width;
+                height = bottomImage.sprite.rect.height;
+                bottomImageAspect.aspectRatio = width / height;
+
             }
             else if(point.exhibition_image_references.Count > 0)
             {
-                singleCoverImageObject.SetActive(true);
-                multCoverImageObject.SetActive(false);
+                singleCoverImageContainer.SetActive(true);
+                multipleCoverImagesContainer.SetActive(false);
                 var images = await point.GetImages(1);
                 singleImage.sprite = images.Count >= 0 ? images[0] : null;
                 if (singleImage.sprite != null)
@@ -95,41 +138,30 @@ public class ExhibitionCard : MonoBehaviour
             }
             else
             {
-                singleCoverImageObject.SetActive(true);
-                multCoverImageObject.SetActive(false);
+                singleCoverImageContainer.SetActive(true);
+                multipleCoverImagesContainer.SetActive(false);
                 singleImage.sprite = null;
             }
 
-            if (image0.sprite != null && image1.sprite != null && image2.sprite != null)
-            {
-                var image0AspectRatio = image0.sprite.rect.width / image0.sprite.rect.height;
-                image0.GetComponent<AspectRatioFitter>().aspectRatio = image0AspectRatio;
-                image0.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-                image0.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-                image0.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                image0.rectTransform.anchoredPosition = Vector2.zero;
-                
-                var image1AspectRatio = image1.sprite.rect.width / image1.sprite.rect.height;
-                image1.GetComponent<AspectRatioFitter>().aspectRatio = image1AspectRatio;
-                image1.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-                image1.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-                image1.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                image1.rectTransform.anchoredPosition = Vector2.zero;
-                
-                var image2AspectRatio = image2.sprite.rect.width / image2.sprite.rect.height;
-                image2.GetComponent<AspectRatioFitter>().aspectRatio = image2AspectRatio;
-                image2.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-                image2.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-                image2.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                image2.rectTransform.anchoredPosition = Vector2.zero;
-            }
-            
             loadingCircle?.StopLoading();
+
+            UpdateDownloadStatus();
         }
         catch(Exception e)
         {
             Debug.LogError("Failed to fill ExhibitionCard: " + e);
         }
+    }
+
+    public void UpdateDownloadStatus()
+    {
+        if (exhibition == null)
+            return;
+
+        if (DownloadManager.ExhibitionIsDownloaded(exhibition))
+            downloadStatusImage.color = downloadedColor;
+        else
+            downloadStatusImage.color = defaultColor;
     }
 
     protected void OpenExhibitionPage()

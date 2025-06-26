@@ -1,14 +1,10 @@
+using Michsky.MUIP;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Messy.Definitions;
-using UnityEngine;
-using Michsky.MUIP;
-using TMPro;
 using System.Linq;
-using System.Threading.Tasks;
-using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
+using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class ArtworkUIManager : MonoBehaviour
@@ -42,7 +38,9 @@ public class ArtworkUIManager : MonoBehaviour
     [SerializeField] private Canvas parentCanvas;
     [SerializeField] private RectTransform viewport;
     [SerializeField] private RectTransform content;
-    
+
+    [SerializeField] private HorizontalSwipeDetector swipeDetector;
+
     private float preloadMargin = 100f; 
     
     [Space]
@@ -78,16 +76,15 @@ public class ArtworkUIManager : MonoBehaviour
     public TextMeshProUGUI Description;
     public TextMeshProUGUI Header;
 
-    [Header("Gallery Navigation")]
-    [SerializeField] private Transform currentNavigationArea;
-    [SerializeField] private TMP_Text artworkNavigationLabel;
-    [SerializeField] private TMP_Text exhibitionsNavigationLabel;
-    [SerializeField] private TMP_Text artistsNavigationLabel;
-    [Space]
-    [SerializeField] private Color navigationActive = Color.black;
-    [SerializeField] private Color navigationInactive = Color.grey;
+    [Header("Navigation")]
+    [SerializeField] UnderlinedSelectionUI underlinedSelectionUI;
+    [SerializeField] Button artworksButton;
+    [SerializeField] Button exhibitionsButton;
+    [SerializeField] Button artistsButton;
 
     [HideInInspector] public GalleryFilter.Filter CurrentFilter = GalleryFilter.Filter.RecentlyAdded;
+
+    private DisplayView openView;
 
     private List<ArtworkShower> loadedArtworks = new();
     private List<ExhibitionCard> loadedExhibitions = new();
@@ -99,6 +96,49 @@ public class ArtworkUIManager : MonoBehaviour
     
     private void Awake()
     {
+        // Subscribe to navigation buttons.
+        artworksButton.onClick.AddListener(InitArtworks);
+        exhibitionsButton.onClick.AddListener(InitExhibitions);
+        artistsButton.onClick.AddListener(InitArtists);
+
+        swipeDetector.SwipedRight += (_) =>
+        {
+            // Don't switch if a details page is opened.
+            if (artworkDetailsArea.activeInHierarchy
+            || exhibitionDetailsArea.activeInHierarchy
+            || artistDetailsArea.activeInHierarchy)
+                return;
+
+            switch (openView)
+            {
+                case DisplayView.Artists:
+                    InitExhibitions();
+                    break;
+                case DisplayView.Exhibitions:
+                    InitArtworks();
+                    break;
+            }
+        };
+
+        swipeDetector.SwipedLeft += (_) =>
+        {
+            // Don't switch if a details page is opened.
+            if (artworkDetailsArea.activeInHierarchy
+            || exhibitionDetailsArea.activeInHierarchy
+            || artistDetailsArea.activeInHierarchy)
+                return;
+
+            switch (openView)
+            {
+                case DisplayView.Artworks:
+                    InitExhibitions();
+                    break;
+                case DisplayView.Exhibitions:
+                    InitArtists();
+                    break;
+            }
+        };
+
         if (!Instance) Instance = this;
 
         if (parentCanvas == null) parentCanvas = GetComponentInParent<Canvas>();
@@ -106,7 +146,7 @@ public class ArtworkUIManager : MonoBehaviour
         loadingCircle?.BeginLoading();
         visualAreaScrollRect?.onValueChanged.AddListener(_ => TryLoadVisible());
     }
-    
+
     private void Start()
     {
         if (SelectedExhibition != null)
@@ -183,14 +223,24 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitArtworks() 
     {
+        openView = DisplayView.Artworks;
+
         if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
         
         ReplaceStage<ArtworkData>();
         ShowDefaultLayoutArea(true);
-        ChangeMenuNavigationUI(MenuNavigation.Artworks);
+        currentMenuNavigation = MenuNavigation.Artworks;
+        underlinedSelectionUI.ShowAsSelected(0);
         FetchNewArtworks();
         ApplySorting();
         StartCoroutine(WaitForCanvases());
+    }
+
+    public void UpdateCardDownloadStatusForArtwork(ArtworkData artwork)
+    {
+        var card = loadedArtworks.FirstOrDefault(card => card.cachedArtwork == artwork || card.cachedArtwork.id == artwork.id);
+
+        card?.UpdateDownloadStatus();
     }
 
     private void FetchNewArtworks()
@@ -212,14 +262,24 @@ public class ArtworkUIManager : MonoBehaviour
 
     public void InitExhibitions() 
     {
+        openView = DisplayView.Exhibitions;
+
         if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.BeginLoading();
         ReplaceStage<ExhibitionData>();
         ShowDefaultLayoutArea(true);
-        ChangeMenuNavigationUI(MenuNavigation.Exhibitions);
+        currentMenuNavigation = MenuNavigation.Exhibitions;
+        underlinedSelectionUI.ShowAsSelected(1);
         FetchNewExhibitions();
         ApplySorting();
     }
     
+    public void UpdateCardDownloadStatusForExhibition(ExhibitionData exhibition)
+    {
+        var card = loadedExhibitions.FirstOrDefault(card => card.exhibition == exhibition || card.exhibition.id == exhibition.id);
+
+        card?.UpdateDownloadStatus();
+    }
+
     private void FetchNewExhibitions()
     {
         // Sort Exhibitions by creation_time descending
@@ -236,13 +296,16 @@ public class ArtworkUIManager : MonoBehaviour
             if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
         }
     }
-    
+
     public void InitArtists()
     {
+        openView = DisplayView.Artists;
+
         if (loadingCircle != null && loadingCircle.isActiveAndEnabled) loadingCircle.StopLoading();
         ReplaceStage<ArtistData>();
         ShowDefaultLayoutArea(false);
-        ChangeMenuNavigationUI(MenuNavigation.Artists);
+        currentMenuNavigation = MenuNavigation.Artists;
+        underlinedSelectionUI.ShowAsSelected(2);
         ApplySorting();
         FetchNewArtists();
         LayoutRebuilder.ForceRebuildLayoutImmediate(artistsLayoutArea);
@@ -274,18 +337,6 @@ public class ArtworkUIManager : MonoBehaviour
     private void ChangeMenuNavigationUI(MenuNavigation navigation)
     {
         currentMenuNavigation = navigation;
-        
-        artworkNavigationLabel.color = navigation == MenuNavigation.Artworks ? navigationActive : navigationInactive;
-        exhibitionsNavigationLabel.color = navigation == MenuNavigation.Exhibitions ? navigationActive : navigationInactive;
-        artistsNavigationLabel.color = navigation == MenuNavigation.Artists ? navigationActive : navigationInactive;
-
-        currentNavigationArea.localPosition = navigation switch
-        {
-            MenuNavigation.Artworks => new Vector3(-114.3f, -18f, 0),
-            MenuNavigation.Exhibitions => new Vector3(0, -18f, 0),
-            MenuNavigation.Artists => new Vector3(114.3f, -18f, 0),
-            _ => throw new ArgumentOutOfRangeException(nameof(navigation), navigation, null)
-        };
     }
 
     public void ApplySorting()
@@ -350,9 +401,6 @@ public class ArtworkUIManager : MonoBehaviour
             case ArtworkData artwork:
             {
                 artworkDetailsPanel?.Fill(artwork);
-                if (Title != null) Title.text = artwork.title;
-                if (Description != null) Description.text = artwork.description;
-                if (Header != null) Header.text = artwork.title;
                 break;
             }
             case ExhibitionData exhibition:
@@ -371,7 +419,7 @@ public class ArtworkUIManager : MonoBehaviour
         if (currentMenuNavigation != MenuNavigation.Artworks || !canTryLoadInvisible) return;
         foreach (var li in loadedArtworks)
         {
-            if (li.IsLoading || li.ARPhoto.sprite != null) continue;
+            if (li.IsLoading || li.ArtworkImage.sprite != null) continue;
 
             // get the child’s bounds **relative to** the viewport
             var childBounds = RectTransformUtility.CalculateRelativeRectTransformBounds(viewport, li.transform as RectTransform);

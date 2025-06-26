@@ -31,9 +31,9 @@ public class FirebaseLoader : MonoBehaviour
     public static List<ExhibitionData> Exhibitions { get; set; } = new List<ExhibitionData>();
 
     // Caching Maps
-    private static Dictionary<string, ArtistData> ArtistsMap = new Dictionary<string, ArtistData>();
-    private static Dictionary<string, ArtworkData> ArtworksMap = new Dictionary<string, ArtworkData>();
-    private static Dictionary<string, ExhibitionData> ExhibitionsMap = new Dictionary<string, ExhibitionData>();
+    public static Dictionary<string, ArtistData> ArtistsMap = new Dictionary<string, ArtistData>();
+    public static Dictionary<string, ArtworkData> ArtworksMap = new Dictionary<string, ArtworkData>();
+    public static Dictionary<string, ExhibitionData> ExhibitionsMap = new Dictionary<string, ExhibitionData>();
 
     // Pagination
     private static DocumentSnapshot lastOpenedDocument = null;
@@ -41,7 +41,9 @@ public class FirebaseLoader : MonoBehaviour
     // Callbacks
     public static Action OnFirestoreInitialized;
     public static Action OnNewDocumentsFetched;
-    
+    public static Action OnStartedLoading;
+    public static Action OnCompletedLoadingStep;
+
     // Collection Sizes
     public static long ArtworkCollectionSize { get; private set; } = -1;
     public static long ExhibitionCollectionSize { get; private set; } = -1;
@@ -81,6 +83,9 @@ public class FirebaseLoader : MonoBehaviour
     [Space]
     [SerializeField] private bool startInOfflineMode = false;
     
+    [Header("Setup Dependencies")]
+    [SerializeField] private ScreenshotManager screenshotManager;
+
     #region Setup
     private void Awake()
     {
@@ -111,6 +116,8 @@ public class FirebaseLoader : MonoBehaviour
     /// </summary>
     private async void InitializeFirebase()
     {
+        OnStartedLoading?.Invoke();
+
         while (!Initialized)
         {
             if (!startInOfflineMode)
@@ -129,9 +136,15 @@ public class FirebaseLoader : MonoBehaviour
                             Debug.LogWarning("Firestore settings are empty");
                         }
 
+
                         await GetCollectionCountsAsync();
+
+                        OnCompletedLoadingStep?.Invoke();
+
                         await AppCache.LoadLocalCaches();
                         await CheckForCacheUpdates();
+
+                        OnCompletedLoadingStep?.Invoke();
 
                         OfflineMode = false;
                         Initialized = true;
@@ -237,6 +250,8 @@ public class FirebaseLoader : MonoBehaviour
             }
         }
 
+        OnCompletedLoadingStep?.Invoke();
+
         if (downloadArtworkImagesOnStartup)
         {
             int curr = 0;
@@ -249,7 +264,7 @@ public class FirebaseLoader : MonoBehaviour
                 await artwork.GetAllImages();
             }
         }
-        
+
         if (downloadExhibitionImagesOnStartup)
         {
             int curr = 0;
@@ -262,7 +277,7 @@ public class FirebaseLoader : MonoBehaviour
                 await exhibition.GetAllImages();
             }
         }
-        
+
         if (downloadArtistImagesOnStartup)
         {
             int curr = 0;
@@ -275,7 +290,7 @@ public class FirebaseLoader : MonoBehaviour
                 await artist.GetIcon();
             }
         }
-        
+
         OnStartUpEventProcessed?.Invoke(string.Empty);
         SetupComplete = true;
     }
@@ -663,7 +678,7 @@ public class FirebaseLoader : MonoBehaviour
         exhibition.update_date_time = exhibition.update_time.ToDateTime();
         AddExhibitionData(exhibition);
         Debug.Log($"[Firebase] Loaded Exhibition: {exhibition.title} [{document.Id}]");
-        
+
         return exhibition;
     }
     
@@ -1405,7 +1420,7 @@ public class FirebaseLoader : MonoBehaviour
 
     #region Downloading Media
 
-    public static async Task<(string localPath, bool downloaded)> DownloadMedia(string storagePath, string path, ARDownloadBar downloadBar, int index = 0)
+    public static async Task<(string localPath, bool downloaded)> DownloadMedia(string storagePath, string path, ARDownloadBar downloadBar, int index = 0, Action<float> progressChangedCallback = null, Action<UnityWebRequest.Result> resultCallback = null)
     {
         Debug.Log("Attempting to download");
         
@@ -1455,6 +1470,9 @@ public class FirebaseLoader : MonoBehaviour
                 while (!operation.isDone)
                 {
                     float progressValue = request.downloadProgress; // value between 0 and 1
+
+                    progressChangedCallback?.Invoke(progressValue);
+
                     if (downloadBar)
                     {
                         downloadBar.UpdateProgress(index, (progressValue * 100f) / 2);
@@ -1463,10 +1481,15 @@ public class FirebaseLoader : MonoBehaviour
                     // Yield control until the next frame so the UI can update.
                     await Task.Yield();
                 }
+                    
 
                 // Check if the download completed successfully.
                 if (request.result == UnityWebRequest.Result.Success)
                 {
+                    progressChangedCallback?.Invoke(1f);
+
+                    resultCallback?.Invoke(UnityWebRequest.Result.Success);
+
                     if (downloadBar)
                     {
                         downloadBar.UpdateProgress(index, 50);
@@ -1476,6 +1499,8 @@ public class FirebaseLoader : MonoBehaviour
                 }
                 else
                 {
+                    resultCallback?.Invoke(request.result);
+
                     Debug.LogError("Error downloading media: " + request.error);
                     if (downloadBar)
                     {

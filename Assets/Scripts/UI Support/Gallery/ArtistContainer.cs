@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Messy.Definitions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,7 +10,7 @@ public class ArtistContainer : MonoBehaviour
 {
     [Header("References")] 
     [SerializeField] private Image profilePicture;
-    [SerializeField] private RectTransform profilePictureParent;
+    [SerializeField] private AspectRatioFitter profilePictureAspect;
     [SerializeField] private TextMeshProUGUI artistNameLabel;
     [SerializeField] private TextMeshProUGUI artworkCountLabel;
     [SerializeField] private Button artistPageButton;
@@ -50,7 +47,7 @@ public class ArtistContainer : MonoBehaviour
                 if (profilePicture.sprite != null)
                 {
                     var imageAspectRatio = profilePicture.sprite.rect.width / profilePicture.sprite.rect.height;
-                    profilePicture.GetComponent<AspectRatioFitter>().aspectRatio = imageAspectRatio;
+                    profilePictureAspect.aspectRatio = imageAspectRatio;
                 }
             }
             else profilePicture.sprite = null;

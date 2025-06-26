@@ -73,21 +73,21 @@ public class VideoItemUI : MonoBehaviour
         // - When the video is prepared then render the first frame.
         _videoPlayer.prepareCompleted += (_) =>
         {
-            // Play and pause the video immediately to render the first frame to the render texture.
-            _videoPlayer.Play();
-            _videoPlayer.Pause();
+            this.InvokeNextFrame(() =>
+            {
+                // Play and pause the video immediately to render the first frame to the render texture.
+                _videoPlayer.Play();
 
-            //Debug.Log($"Video width: {_videoPlayer.width}, height: {_videoPlayer.height}");
+                this.InvokeNextFrame(_videoPlayer.Pause);
 
-            // Set the aspect ratio of the preview image according to the aspect ratio of the video.
-            _previewImageAspect.aspectRatio = (float)_videoPlayer.width / _videoPlayer.height;
+                // Set the aspect ratio of the preview image according to the aspect ratio of the video.
+                _previewImageAspect.aspectRatio = (float)_videoPlayer.width / _videoPlayer.height;
 
-            //StartCoroutine(ForceRebuildLayoutNextFrame(_videoPreviewImage.rectTransform));
+                // Set the duration text.
+                _videoDurationText.text = AdvancedVideoPlayer.FormatTime(_videoPlayer.length);
 
-            // Set the duration text.
-            _videoDurationText.text = AdvancedVideoPlayer.FormatTime(_videoPlayer.length);
-
-            // Don't destroy the video player here; that's too early. The frame will not be rendered.
+                // Don't destroy the video player here; that's too early. The frame will not be rendered.
+            });
         };
 
         // - Prepare the video.

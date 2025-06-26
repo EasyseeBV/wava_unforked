@@ -34,6 +34,8 @@ public class GalleryItemsInstantiator : MonoBehaviour
 
     private void Awake()
     {
+        Open();
+
         refreshButton?.onClick.AddListener(() =>
         {
             if (!Permission.HasUserAuthorizedPermission("android.permission.READ_MEDIA_IMAGES"))

@@ -1,29 +1,30 @@
+using DanielLochner.Assets.SimpleScrollSnap;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using DanielLochner.Assets.SimpleScrollSnap;
-using Messy.Definitions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static OnlineMapsZipDecompressor;
 
-public class ArtworkDetailsPanel : DetailsPanel
+public class ArtworkDetailsPanel : MonoBehaviour
 {
     private ArtworkData artwork;
 
+    [SerializeField] TextMeshProUGUI artworkTitleText;
+    [SerializeField] TextMeshProUGUI descriptionText;
+
+    [SerializeField] Button closeButton;
+
+    [SerializeField] protected List<RectTransform> rebuildLayout;
+
     [Header("Gallery Area")] 
     [SerializeField] private SimpleScrollSnap scrollSnapper;
-    [SerializeField] private Transform galleryArea;
     [SerializeField] private GameObject galleryImagePrefab;
-    [Space]
-    [SerializeField] private Transform indicatorArea;
-    [SerializeField] private GameObject indicatorImage;
-    [SerializeField] private Color activeColor;
-    [SerializeField] private Color inactiveColor;
+    [SerializeField] private PointsAndLineUI pointsAndLineUI;
 
     [Header("Interactions")]
     [SerializeField] private Button showOnMapButton;
@@ -31,25 +32,55 @@ public class ArtworkDetailsPanel : DetailsPanel
     
     [Header("Artists")] 
     [SerializeField] private Transform artistArea;
-    [SerializeField] private ArtistContainer artistContainer;
+    [SerializeField] private ArtistContainer artistContainerPrefab;
     
     [Header("Download Button")]
     [SerializeField] private Button downloadButton;
-    [SerializeField] private GameObject downloadedCheckmark;
+    [SerializeField] private DownloadButtonUI downloadButtonUI;
 
     [Header("Exhibition")]
     [SerializeField] private ExhibitionCard exhibitionCard;
 
-    private List<Image> indicators = new();
-
-    protected override void Setup()
+    void Awake()
     {
-        base.Setup();
-        heartButton.onClick.AddListener(LikeArtwork);
+        closeButton.onClick.AddListener(() => gameObject.SetActive(false));
+
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
+
         downloadButton.onClick.AddListener(() =>
         {
-            DownloadArtwork();
+            downloadButtonUI.ShowAsDownloading();
+            downloadButton.interactable = false;
+
+            // Create intermediate variable for following callback.
+            var callbackArtwork = artwork;
+
+            _ = DownloadManager.DownloadArtwork(artwork, (progress) =>
+            {
+                if (artwork != callbackArtwork)
+                    return;
+
+                downloadButtonUI.ShowAsDownloading();
+                downloadButton.interactable = false;
+
+            }, (result) =>
+            {
+                if (artwork != callbackArtwork)
+                    return;
+
+                if (result == UnityWebRequest.Result.Success)
+                {
+                    downloadButtonUI.ShowAsDownloadFinished();
+                    downloadButton.interactable = false;
+                }
+                else
+                {
+                    downloadButtonUI.ShowAsReadyForDownload();
+                    downloadButton.interactable = true;
+                }
+
+                ArtworkUIManager.Instance.UpdateCardDownloadStatusForArtwork(callbackArtwork);
+            });
         });
         
         if (AppSettings.DeveloperMode)
@@ -64,48 +95,78 @@ public class ArtworkDetailsPanel : DetailsPanel
         }
     }
 
-    protected override void Close()
-    {
-        ArtworkUIManager.Instance.InitArtworks();
-        base.Close();
-    }
-
     public void Fill(ArtworkData artwork)
     {
         this.artwork = artwork;
-        
-        Clear();
+
+        artworkTitleText.text = artwork.title;
+
+        descriptionText.text = artwork.description;
+
+
+        // Update artists list.
+        scrollSnapper.RemoveAll();
+
+        foreach (Transform child in artistArea)
+        {
+            Destroy(child.gameObject);
+        }
 
         for (int i = 0; i < artwork.artists.Count; i++)
         {
-            ArtistContainer container = Instantiate(artistContainer, artistArea);
+            ArtistContainer container = Instantiate(artistContainerPrefab, artistArea);
             container.gameObject.SetActive(true);
             container.Assign(artwork.artists[i]);
         }
 
-        GetExhibition();
-        
-        contentTitleLabel.text = artwork.title;
-        fullLengthDescription = artwork.description;
-        TruncateText();
-        
-        downloadedCheckmark.SetActive(false);
-        CheckArtworkDownload();
-        
+
         showOnMapButton.onClick.RemoveAllListeners();
         showOnMapButton.onClick.AddListener(() =>
         {
             ARMapPointMaker.SelectedArtwork = artwork;
             SceneManager.LoadScene("Map");
         });
-        
+
+
+        SetupGalleryImages(artwork);
+
         scrollSnapper.Setup();
         ChangeIndicator(0, 0);
 
-        SetImages(artwork);
+        SetupExhibitionCard();
+
+
+        // Update appearance of download button.
+        if (DownloadManager.ArtworkIsDownloaded(artwork))
+        {
+            downloadButtonUI.ShowAsDownloadFinished();
+            downloadButton.interactable = false;
+        }
+        else
+        {
+            downloadButtonUI.ShowAsReadyForDownload();
+            downloadButton.interactable = true;
+        }
+
+        // - If the download is in progress then the callback will show the button as downloading.
+
+
+        // Rebuild layout.
+        for (int i = 0; i < rebuildLayout.Count; i++)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rebuildLayout[i]);
+        }
+
+        this.InvokeNextFrame(() =>
+        {
+            for (int i = 0; i < rebuildLayout.Count; i++)
+            {
+                LayoutRebuilder.ForceRebuildLayoutImmediate(rebuildLayout[i]);
+            }
+        });
     }
 
-    private async Task SetImages(ArtworkData _artwork)
+    private async Task SetupGalleryImages(ArtworkData _artwork)
     {
         try
         {
@@ -119,10 +180,6 @@ public class ArtworkDetailsPanel : DetailsPanel
                     var aspectRatioFitter = artworkImage.GetComponent<AspectRatioFitter>();
                     var aspectRatio = spr.rect.width / spr.rect.height;
                     aspectRatioFitter.aspectRatio = aspectRatio;
-
-                    Image indicator = Instantiate(indicatorImage, indicatorArea).GetComponentInChildren<Image>();
-                    indicator.color = inactiveColor;
-                    indicators.Add(indicator);
                 }
                 else
                 {
@@ -130,7 +187,10 @@ public class ArtworkDetailsPanel : DetailsPanel
                 }
             }
 
-            StartCoroutine(LateRebuild());
+            // Set number of indicator points.
+            pointsAndLineUI.SetPointCount(images.Count);
+            pointsAndLineUI.SetSelectedPointIndex(0);
+            pointsAndLineUI.FinishAnimationsImmediately();
         }
         catch (Exception e)
         {
@@ -138,102 +198,7 @@ public class ArtworkDetailsPanel : DetailsPanel
         }
     }
 
-    private void Clear()
-    {
-        scrollSnapper.RemoveAll();
-        
-        foreach (Transform child in artistArea)
-        {
-            Destroy(child.gameObject);
-        }
-        
-        foreach (Transform child in indicatorArea)
-        {
-            Destroy(child.gameObject);
-        }
-        
-        indicators.Clear();
-        readingMore = false;
-        fullLengthDescription = string.Empty;
-    }
-
-    private void LikeArtwork()
-    {
-        if (artwork == null) return;
-
-        // artwork.Liked = !artwork.Liked;
-        // heartImage.sprite = artwork.Liked ? likedSprite : unlikedSprite;
-    }
-    
-    private void CheckArtworkDownload()
-    {
-        bool downloaded = false;
-
-        if (artwork != null && artwork.content_list.Count > 0)
-        {
-            downloaded = true;
-            foreach (var content in artwork.content_list)
-            {
-                try
-                {
-                    var uri = new Uri(content.media_content);
-                    string encodedPath = uri.AbsolutePath;
-                    string decodedPath = Uri.UnescapeDataString(encodedPath);
-                    string fileName = Path.GetFileName(decodedPath);
-                    string localPath = Path.Combine(AppCache.ContentFolder, fileName);
-            
-                    // if the file does not exist locally, download it
-                    if (!File.Exists(localPath))
-                    {
-                        downloaded = false;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.Log("Failed to download content: " + e);
-                }
-            }   
-        }
-        
-        downloadedCheckmark.SetActive(downloaded);
-    }
-
-    private async Task DownloadArtwork()
-    {
-        if (artwork == null || artwork.content_list.Count <= 0) return;
-        
-        foreach (var content in artwork.content_list)
-        {
-            try
-            {
-                var uri = new Uri(content.media_content);
-                string encodedPath = uri.AbsolutePath;
-                string decodedPath = Uri.UnescapeDataString(encodedPath);
-                string fileName = Path.GetFileName(decodedPath);
-                string localPath = Path.Combine(AppCache.ContentFolder, fileName);
-            
-                // if the file does not exist locally, download it
-                if (!File.Exists(localPath))
-                {
-                    downloadedCheckmark.SetActive(true);
-                    await DownloadManager.Instance.BackgroundDownloadMedia(AppCache.ContentFolder,
-                        content.media_content,
-                        null);
-                }
-                else
-                {
-                    downloadedCheckmark.SetActive(false);
-                    File.Delete(localPath);
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.Log("Failed to download content: " + e);
-            }
-        }
-    }
-
-    private async void GetExhibition()
+    private async void SetupExhibitionCard()
     {
         if (FirebaseLoader.Exhibitions == null) return;
 
@@ -267,9 +232,6 @@ public class ArtworkDetailsPanel : DetailsPanel
 
     private void ChangeIndicator(int newIndex,int oldIndex)
     {
-        if (indicators.Count <= 0) return;
-        
-        indicators[oldIndex].color = inactiveColor;
-        indicators[newIndex].color = activeColor;
+        pointsAndLineUI.SetSelectedPointIndex(newIndex);
     }
 }

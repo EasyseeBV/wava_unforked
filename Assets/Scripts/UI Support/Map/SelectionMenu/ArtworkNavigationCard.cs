@@ -24,10 +24,9 @@ public class ArtworkNavigationCard : MonoBehaviour
     [Header("Maximal Content")]
     [SerializeField] private float maximizedParentHeight = 140;
     [SerializeField] private CanvasGroup maximizedGroup;
-    [SerializeField] private TMP_Text maximizedTitle;
-    [SerializeField] private TMP_Text locationLabel;
-    [SerializeField] private TMP_Text exhibitionLabel;
-    [SerializeField] private TMP_Text artistLabel;
+    [SerializeField] private TextSlider maximizedTitleTextSlider;
+    [SerializeField] private TextSlider locationTextSlider;
+    [SerializeField] private TextSlider exhibitionAndArtistTextSlider;
     [SerializeField] private Image image;
     [SerializeField] private TMP_Text buttonLabel;
     [SerializeField] private Image labelImage;
@@ -58,11 +57,18 @@ public class ArtworkNavigationCard : MonoBehaviour
         {
             GetDirections();
         });
-        
-        maximizedTitle.text = artworkData.title;
-        locationLabel.text = artworkData.location;
-        exhibitionLabel.text = FirebaseLoader.GetConnectedExhibition(artworkData)?.title ?? "-";
-        artistLabel.text = artworkData.artists.Count > 0 ? (artworkData.artists[0]?.title ?? "-") : "-";
+
+        maximizedTitleTextSlider.SetTextAndResetAnimation(artworkData.title);
+
+        locationTextSlider.SetTextAndResetAnimation(artworkData.location);
+
+        var exhibition = FirebaseLoader.GetConnectedExhibition(artworkData)?.title ?? "-";
+        var artist = artworkData.artists.Count > 0 ? (artworkData.artists[0]?.title ?? "-") : "-";
+        var grayPoint = "<color=#707070>\u25CF</color>";
+
+        exhibitionAndArtistTextSlider.SetTextAndResetAnimation($"{exhibition} {grayPoint} {artist}");
+
+
         maximizedNavigationButton.onClick.AddListener(() =>
         {
             GetDirections(); // might need additional functionality in the future

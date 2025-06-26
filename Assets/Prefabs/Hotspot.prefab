@@ -939,6 +939,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6675316487002202985}
   - {fileID: 5270611016890517302}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
@@ -1651,7 +1652,6 @@ Transform:
   - {fileID: 3179542155724988209}
   - {fileID: 3186672993858327042}
   - {fileID: 5818971335106765788}
-  - {fileID: 6675316487002202985}
   m_Father: {fileID: 3186672994675511633}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8577188794897411668
@@ -2021,12 +2021,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9027629780499303544}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -5.5}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 1, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5270611016890517302}
+  m_Father: {fileID: 3186672994675511633}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8811852643351276471
 MeshFilter:
@@ -2090,5 +2090,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d2ee520a28d1c44f9a6ff9a7f11ff15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hotspotManager: {fileID: 8473337059988012508}
-  parentTransform: {fileID: 3186672994675511633}
+  scaleFactor: 0.00005

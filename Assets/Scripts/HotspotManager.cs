@@ -274,9 +274,4 @@ public class HotspotManager : MonoBehaviour
     {
         return artwork;
     }
-
-    private void OnDisable()
-    {
-        UnityEngine.Debug.Log("OnDisable");
-    }
 }

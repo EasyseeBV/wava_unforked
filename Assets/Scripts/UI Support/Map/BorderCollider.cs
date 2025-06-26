@@ -1,48 +1,37 @@
-using System;
 using UnityEngine;
 
 public class BorderCollider : MonoBehaviour
 {
-    [SerializeField] private HotspotManager hotspotManager;
-    [SerializeField] private Transform parentTransform;
-    
-    private float targetScale;
-
-    private void Awake()
-    {
-        targetScale = 10.2f;
-    }
-
-    private void Update()
-    {
-        //transform.localScale = new Vector3 (targetScale/parentTransform.localScale.x, targetScale/parentTransform.localScale.y,targetScale/parentTransform.localScale.z);
-    }
+    [SerializeField]
+    float scaleFactor = 0.00005f;
 
     private void OnEnable()
     {
-        HotspotManager.OnDistanceValidated += UpdateScale;
+        UpdateScale();
+
+        OnlineMaps.instance.OnChangeZoom += UpdateScale;
     }
     
     private void OnDisable()
     {
-        HotspotManager.OnDistanceValidated -= UpdateScale;
+        OnlineMaps.instance.OnChangeZoom -= UpdateScale;
     }
 
-    private void UpdateScale(float target)
+    private void UpdateScale()
     {
-        targetScale = target * 100;
-        
-        /*Vector3 relativeScale = new Vector3(
-            initialParentScale.x / parentTransform.localScale.x,
-            initialParentScale.y / parentTransform.localScale.y,
-            initialParentScale.z / parentTransform.localScale.z
-        );
+        Debug.Log("Updated scale!");
 
-        transform.localScale = relativeScale * targetScale;*/
-    }
-    
-    private void OnValidate()
-    {
-        if (!hotspotManager) hotspotManager = GetComponentInParent<HotspotManager>();
+        // Update distance indicator size.
+        var distanceIndicator = transform;
+        var parentLossyScale = distanceIndicator.parent != null ? distanceIndicator.parent.lossyScale : Vector3.one;
+
+        //OnlineMaps.instance.zoom + 
+
+        var indicatorScale = Mathf.Pow(2, OnlineMaps.instance.floatZoom) * scaleFactor;
+
+        distanceIndicator.localScale = new Vector3(
+            indicatorScale / parentLossyScale.x,
+            indicatorScale / parentLossyScale.y,
+            indicatorScale / parentLossyScale.z);
     }
 }

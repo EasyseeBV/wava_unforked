@@ -7,18 +7,40 @@ public class TutorialMaskHandler : MonoBehaviour
 {
     [SerializeField] private Canvas maskCanvas;
     [SerializeField] private GameObject maskContent;
-    [SerializeField] private GameObject tutorialContent;
+    [SerializeField] private GameObject tutorialMaskContent;
     [SerializeField] private RectTransform circleMask;
-    [SerializeField] private RectTransform tutorialTriangle;
-    [SerializeField] private GameObject alignmentPoint;
+    
+    [Header("Tutorial References")]
+    [SerializeField] private RectTransform tutorialTriangleTop;
+    [SerializeField] private RectTransform tutorialTriangleBottom;
+
+    [Header("Content References")]
+    [SerializeField] private RectTransform contentTop;
+    [SerializeField] private RectTransform contentBottom;
+    
+    [Header("Alignment points")]
+    [SerializeField] private GameObject alignmentPointTop;
+    [SerializeField] private GameObject alignmentPointBottom;
+
+    [Header("Alignment offsets")]
+    [SerializeField] private float leftOffset = 55;
+    [SerializeField] private float rightOffset = -55;
     
     [Header("Dependencies")]
     [SerializeField] private OnlineMaps maps;
 
+    private void Awake()
+    {
+        maskContent.gameObject.SetActive(false);
+        tutorialMaskContent.gameObject.SetActive(false);
+        tutorialTriangleTop.gameObject.SetActive(false);
+        tutorialTriangleBottom.gameObject.SetActive(false);
+    }
+
     public void PlaceMask()
     {
         maskContent.gameObject.SetActive(true);
-        tutorialContent.gameObject.SetActive(true);
+        tutorialMaskContent.gameObject.SetActive(true);
         FindClosestArtwork();
     }
     
@@ -60,7 +82,44 @@ public class TutorialMaskHandler : MonoBehaviour
                     screenPoint.z = 0f;
                     circleMask.position = screenPoint;
 
-                    tutorialTriangle.transform.position = alignmentPoint.transform.position;
+// 2) decide whether to use the top or bottom UI
+                    RectTransform chosenTriangle;
+                    GameObject    chosenAlignmentPoint;
+                    RectTransform chosenContent;
+
+// get the actual pixel-height of your content panels
+                    float topHeight    = contentTop.rect.height * contentTop.lossyScale.y;
+                    float bottomHeight = contentBottom.rect.height * contentBottom.lossyScale.y;
+
+// if placing the *top* panel above the point would go off the top edge…
+                    if (screenPoint.y + topHeight > Screen.height)
+                    {
+                        chosenTriangle        = tutorialTriangleBottom;
+                        chosenAlignmentPoint  = alignmentPointBottom;
+                        chosenContent         = contentBottom;
+                    }
+                    else
+                    {
+                        chosenTriangle        = tutorialTriangleTop;
+                        chosenAlignmentPoint  = alignmentPointTop;
+                        chosenContent         = contentTop;
+                    }
+
+// 3) decide if you need a left/right nudge
+                    float halfWidth = (chosenContent.rect.width * chosenContent.lossyScale.x) / 2f;
+                    float offsetX   = 0f;
+                    if (screenPoint.x + halfWidth > Screen.width)
+                        offsetX = leftOffset;    // nudge it leftward
+                    else if (screenPoint.x - halfWidth < 0)
+                        offsetX = rightOffset;   // nudge it rightward
+
+// 4) enable only the one triangle, position it at the chosen alignment + offset
+                    tutorialTriangleTop.gameObject.SetActive(chosenTriangle == tutorialTriangleTop);
+                    tutorialTriangleBottom.gameObject.SetActive(chosenTriangle == tutorialTriangleBottom);
+
+                    Vector3 targetPos = chosenAlignmentPoint.transform.position;
+                    targetPos.x += offsetX;
+                    chosenTriangle.position = targetPos;
                 }
             }
         }

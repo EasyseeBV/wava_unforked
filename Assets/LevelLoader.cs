@@ -1,31 +1,23 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class LevelLoader : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameObject loadingScreen;
-    [SerializeField] private Image loadingImage;
     [SerializeField] private Image wavaImage;
     [SerializeField] private RectTransform iconImage;
-    [SerializeField] private TMP_Text loadingText;
-    
+    [SerializeField] private GameObject offlineWarningContainer;
+    [SerializeField] private TextFader wavaDescriptionTextFader;
+
     [Header("Settings")]
-    [SerializeField] private float rotationSpeed = 100f;
     [SerializeField] [Range(0, 3)] private float wavaFadeSpeed = 0.6f;
     [SerializeField] [Range(0, 3)] private float iconMoveSpeed = 0.5f;
     [SerializeField] [Range(0, 3)] private float transitionWaitTime = 0.5f;
-    
-    private bool transitionComplete = false;
 
-    private void OnEnable() => FirebaseLoader.OnStartUpEventProcessed += UpdateLoadingText;
-    private void OnDisable() => FirebaseLoader.OnStartUpEventProcessed -= UpdateLoadingText;
+    private bool transitionComplete = false;
 
     public static string DebugSceneToOpen = string.Empty;
 
@@ -33,7 +25,11 @@ public class LevelLoader : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
 
-        loadingScreen.SetActive(true);
+
+        // Show / hide no internet warning
+        offlineWarningContainer.SetActive(Application.internetReachability == NetworkReachability.NotReachable);
+
+
         transitionComplete = false;
 
         int levelToLoad = PlayerPrefs.GetInt("OpeningTutorial", 0);
@@ -51,23 +47,21 @@ public class LevelLoader : MonoBehaviour
         
         while (!operation.isDone)
         {
-            if (operation.progress < 0.9f || !FirebaseLoader.Initialized || !FirebaseLoader.SetupComplete)
-            {
-                loadingImage.transform.Rotate(Vector3.forward * (rotationSpeed * Time.deltaTime));
-            }
             // Allow scene transitions
-            else if (operation.progress >= 0.9f && transitionComplete && FirebaseLoader.Initialized && FirebaseLoader.SetupComplete)
+            if (operation.progress >= 0.9f && transitionComplete && FirebaseLoader.Initialized && FirebaseLoader.SetupComplete)
             {
                 operation.allowSceneActivation = true;
             }
             else if(operation.progress >= 0.9f && !transitionComplete && FirebaseLoader.Initialized && FirebaseLoader.SetupComplete)
             {
-                loadingImage.gameObject.SetActive(false);
+                //loadingImage.gameObject.SetActive(false);
                 iconImage.gameObject.SetActive(true);
                 
                 float elapsedTime = 0f;
                 Color startColor = wavaImage.color;
                 Color endColor = new Color(startColor.r, startColor.g, startColor.b, 0f);
+
+                wavaDescriptionTextFader.FadeOut();
 
                 while (elapsedTime < wavaFadeSpeed)
                 {
@@ -97,10 +91,5 @@ public class LevelLoader : MonoBehaviour
             
             yield return null;  
         }
-    }
-
-    private void UpdateLoadingText(string text)
-    {
-        loadingText.text = text;
     }
 }
