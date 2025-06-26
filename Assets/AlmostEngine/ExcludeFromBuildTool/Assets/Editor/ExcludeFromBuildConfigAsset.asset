@@ -18,5 +18,6 @@ MonoBehaviour:
   - Assets\AlmostEngine/Dependencies/UnityNativeShare
   - Assets\AlmostEngine/UltimateScreenshotCreator/Examples
   - Assets\AlmostEngine/Shared/Examples
+  - Assets\AlmostEngine/UltimateScreenshotCreator
   m_ExcludedObjectPaths: []
   m_ExclusionProcessStarted: 0

@@ -16,8 +16,8 @@ MonoBehaviour:
     allow the user to take screenshots that are saved on the device and automatically
     added to the Camera Roll.
   m_FeatureSafeAreaComponent: 1
-  m_FeatureScreenshotCapture: 1
+  m_FeatureScreenshotCapture: 0
   m_FeaturePhoneShare: 0
-  m_FeaturePhoneGallery: 1
+  m_FeaturePhoneGallery: 0
   m_FeatureSimpleLocalization: 1
   m_FeatureExamples: 0
