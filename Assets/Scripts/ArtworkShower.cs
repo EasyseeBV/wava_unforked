@@ -15,7 +15,9 @@ public class ArtworkShower : MonoBehaviour
     public TextMeshProUGUI ArtistNameText;
     public TextMeshProUGUI YearText;
     public Button ExhibitionButton;
-    public Button ViewArtworkButton;
+
+    public List<Button> ViewArtworkButtons;
+
     [Space]
     public TextSlider ExhibitionTitleTextSlider;
     [SerializeField] private LoadingCircle loadingCircle;
@@ -36,7 +38,11 @@ public class ArtworkShower : MonoBehaviour
 
     private void Awake()
     {
-        ViewArtworkButton.onClick.AddListener(OpenDetails);
+        foreach (var button in ViewArtworkButtons)
+        {
+            button.onClick.AddListener(OpenDetails);
+        }
+
         ExhibitionButton.onClick.AddListener(OpenDetails);
         loadingCircle.gameObject.SetActive(false);
     }

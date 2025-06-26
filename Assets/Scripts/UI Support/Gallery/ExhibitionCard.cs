@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class ExhibitionCard : MonoBehaviour
 {
@@ -33,14 +34,16 @@ public class ExhibitionCard : MonoBehaviour
     [SerializeField] Color downloadedColor;
 
     [Header("Other references")]
-    [SerializeField] Button viewExhibitionButton;
+    [SerializeField] List<Button> viewExhibitionButtons;
     [SerializeField] LoadingCircle loadingCircle;
 
     protected virtual void Awake()
     {
-        if (viewExhibitionButton)
-            viewExhibitionButton.onClick.AddListener(OpenExhibitionPage);
-        
+        foreach (var button in viewExhibitionButtons)
+        {
+            button?.onClick.AddListener(OpenExhibitionPage);
+        }
+
         loadingCircle?.BeginLoading();
     }
 
