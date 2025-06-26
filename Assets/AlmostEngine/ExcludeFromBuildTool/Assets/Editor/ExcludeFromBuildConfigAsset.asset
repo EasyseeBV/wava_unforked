@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98ad4af6a428e6e46b8d0613a2c88a5c, type: 3}
   m_Name: ExcludeFromBuildConfigAsset
   m_EditorClassIdentifier: 
-  m_AutoExclusionFromBuildEnabled: 1
+  m_AutoExclusionFromBuildEnabled: 0
   m_ObjectsToExclude: []
   m_FoldersToExclude:
   - Assets\AlmostEngine/Dependencies/UnityNativeShare
