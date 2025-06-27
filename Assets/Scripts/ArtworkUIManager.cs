@@ -236,13 +236,6 @@ public class ArtworkUIManager : MonoBehaviour
         StartCoroutine(WaitForCanvases());
     }
 
-    public void UpdateCardDownloadStatusForArtwork(ArtworkData artwork)
-    {
-        var card = loadedArtworks.FirstOrDefault(card => card.cachedArtwork == artwork || card.cachedArtwork.id == artwork.id);
-
-        card?.UpdateDownloadStatus();
-    }
-
     private void FetchNewArtworks()
     {
         // Flatten all ArtWorks, filter those with images, and sort by creationDateTime descending
@@ -271,13 +264,6 @@ public class ArtworkUIManager : MonoBehaviour
         underlinedSelectionUI.ShowAsSelected(1);
         FetchNewExhibitions();
         ApplySorting();
-    }
-    
-    public void UpdateCardDownloadStatusForExhibition(ExhibitionData exhibition)
-    {
-        var card = loadedExhibitions.FirstOrDefault(card => card.exhibition == exhibition || card.exhibition.id == exhibition.id);
-
-        card?.UpdateDownloadStatus();
     }
 
     private void FetchNewExhibitions()

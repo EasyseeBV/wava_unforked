@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static OnlineMapsZipDecompressor;
@@ -48,42 +47,6 @@ public class ArtworkDetailsPanel : MonoBehaviour
 
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
 
-        downloadButton.onClick.AddListener(() =>
-        {
-            downloadButtonUI.ShowAsDownloading();
-            downloadButton.interactable = false;
-
-            // Create intermediate variable for following callback.
-            var callbackArtwork = artwork;
-
-            _ = DownloadManager.DownloadArtwork(artwork, (progress) =>
-            {
-                if (artwork != callbackArtwork)
-                    return;
-
-                downloadButtonUI.ShowAsDownloading();
-                downloadButton.interactable = false;
-
-            }, (result) =>
-            {
-                if (artwork != callbackArtwork)
-                    return;
-
-                if (result == UnityWebRequest.Result.Success)
-                {
-                    downloadButtonUI.ShowAsDownloadFinished();
-                    downloadButton.interactable = false;
-                }
-                else
-                {
-                    downloadButtonUI.ShowAsReadyForDownload();
-                    downloadButton.interactable = true;
-                }
-
-                ArtworkUIManager.Instance.UpdateCardDownloadStatusForArtwork(callbackArtwork);
-            });
-        });
-        
         if (AppSettings.DeveloperMode)
         {
             developerARTest.gameObject.SetActive(true);
@@ -94,6 +57,42 @@ public class ArtworkDetailsPanel : MonoBehaviour
                 SceneManager.LoadSceneAsync(string.IsNullOrEmpty(artwork.alt_scene) ? "ARView" : artwork.alt_scene);
             });
         }
+    }
+
+    private void OnEnable()
+    {
+        downloadButton.onClick.AddListener(DownloadArtwork);
+        DownloadManager.Instance.StartedArtworkDownloadProcess += OnStartedArtworkDownloadProcess;
+        DownloadManager.Instance.FinishedArtworkDownloadProcess += OnFinishedArtworkDownloadProcess;
+    }
+
+    private void OnDisable()
+    {
+        downloadButton.onClick.RemoveListener(DownloadArtwork);
+        DownloadManager.Instance.StartedArtworkDownloadProcess -= OnStartedArtworkDownloadProcess;
+        DownloadManager.Instance.FinishedArtworkDownloadProcess -= OnFinishedArtworkDownloadProcess;
+    }
+
+    void DownloadArtwork()
+    {
+        _ = DownloadManager.DownloadArtwork(artwork);
+    }
+
+    void OnStartedArtworkDownloadProcess(ArtworkData artworkData)
+    {
+        if (artworkData != artwork && artworkData.id != artwork.id)
+            return;
+
+        downloadButtonUI.ShowAsDownloading();
+        downloadButton.interactable = false;
+    }
+
+    void OnFinishedArtworkDownloadProcess(ArtworkData artworkData)
+    {
+        if (artworkData != artwork && artworkData.id != artwork.id)
+            return;
+
+        UpdateDownloadButton();
     }
 
     public void Fill(ArtworkData artwork)
@@ -137,20 +136,7 @@ public class ArtworkDetailsPanel : MonoBehaviour
         SetupExhibitionCard();
 
 
-        // Update appearance of download button.
-        if (DownloadManager.ArtworkIsDownloaded(artwork))
-        {
-            downloadButtonUI.ShowAsDownloadFinished();
-            downloadButton.interactable = false;
-        }
-        else
-        {
-            downloadButtonUI.ShowAsReadyForDownload();
-            downloadButton.interactable = true;
-        }
-
-        // - If the download is in progress then the callback will show the button as downloading.
-
+        UpdateDownloadButton();
 
         // Rebuild layout.
         for (int i = 0; i < rebuildLayout.Count; i++)
@@ -196,6 +182,28 @@ public class ArtworkDetailsPanel : MonoBehaviour
         catch (Exception e)
         {
             Debug.Log("Failed to load all ArtworkDetailsImages: " + e);
+        }
+    }
+
+    void UpdateDownloadButton()
+    {
+        var downloadStatus = DownloadManager.Instance.GetDownloadStatusFor(artwork);
+
+        switch (downloadStatus)
+        {
+            case DownloadManager.DownloadStatus.Downloaded:
+            case DownloadManager.DownloadStatus.Unavailable:
+                downloadButtonUI.ShowAsDownloadFinished();
+                downloadButton.interactable = false;
+                break;
+            case DownloadManager.DownloadStatus.Downloading:
+                downloadButtonUI.ShowAsDownloading();
+                downloadButton.interactable = false;
+                break;
+            case DownloadManager.DownloadStatus.Downloadable:
+                downloadButtonUI.ShowAsReadyForDownload();
+                downloadButton.interactable = true;
+                break;
         }
     }
 

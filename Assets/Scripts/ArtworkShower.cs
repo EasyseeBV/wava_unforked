@@ -21,11 +21,14 @@ public class ArtworkShower : MonoBehaviour
     [Space]
     public TextSlider ExhibitionTitleTextSlider;
     [SerializeField] private LoadingCircle loadingCircle;
-    
+
     [Header("Download status")]
+    [SerializeField] Button downloadButton;
     [SerializeField] Image downloadStatusImage;
     [SerializeField] Color defaultColor;
     [SerializeField] Color downloadedColor;
+    [SerializeField] GameObject loadingIndicator;
+    [SerializeField] GameObject downloadIcon;
 
     [Header("Archived-related")]
     [SerializeField] List<CanvasGroup> canvasGroups;
@@ -46,6 +49,45 @@ public class ArtworkShower : MonoBehaviour
         ExhibitionButton.onClick.AddListener(OpenDetails);
         loadingCircle.gameObject.SetActive(false);
     }
+
+    private void OnEnable()
+    {
+        downloadButton.onClick.AddListener(DownloadArtwork);
+        DownloadManager.Instance.StartedArtworkDownloadProcess += OnStartedArtworkDownloadProcess;
+        DownloadManager.Instance.FinishedArtworkDownloadProcess += OnFinishedArtworkDownloadProcess;
+    }
+
+    private void OnDisable()
+    {
+        downloadButton.onClick.RemoveListener(DownloadArtwork);
+        DownloadManager.Instance.StartedArtworkDownloadProcess -= OnStartedArtworkDownloadProcess;
+        DownloadManager.Instance.FinishedArtworkDownloadProcess -= OnFinishedArtworkDownloadProcess;
+    }
+
+    void DownloadArtwork()
+    {
+        _ = DownloadManager.DownloadArtwork(cachedArtwork);
+    }
+
+    void OnStartedArtworkDownloadProcess(ArtworkData artwork)
+    {
+        if (artwork != cachedArtwork && artwork.id != cachedArtwork.id)
+            return;
+
+        downloadStatusImage.color = defaultColor;
+        loadingIndicator.SetActive(true);
+        downloadIcon.SetActive(false);
+        downloadButton.interactable = false;
+    }
+
+    void OnFinishedArtworkDownloadProcess(ArtworkData artwork)
+    {
+        if (artwork != cachedArtwork && artwork.id != cachedArtwork.id)
+            return;
+
+        UpdateDownloadButton();
+    }
+
 
     public void Init(ArtworkData artwork, bool loadImage) 
     {
@@ -82,8 +124,7 @@ public class ArtworkShower : MonoBehaviour
             canvasGroup.alpha = isArchived ? archivedAlpha : 1f;
         }
 
-
-        UpdateDownloadStatus();
+        UpdateDownloadButton();
     }
 
     public void SetImage()
@@ -98,15 +139,35 @@ public class ArtworkShower : MonoBehaviour
         SetImage(cachedArtwork);
     }
     
-    public void UpdateDownloadStatus()
+    public void UpdateDownloadButton()
     {
         if (cachedArtwork == null)
             return;
 
-        if (DownloadManager.ArtworkIsDownloaded(cachedArtwork))
-            downloadStatusImage.color = downloadedColor;
-        else
-            downloadStatusImage.color = defaultColor;
+        var downloadStatus = DownloadManager.Instance.GetDownloadStatusFor(cachedArtwork);
+
+        switch (downloadStatus)
+        {
+            case DownloadManager.DownloadStatus.Downloaded:
+            case DownloadManager.DownloadStatus.Unavailable:
+                downloadStatusImage.color = downloadedColor;
+                loadingIndicator.SetActive(false);
+                downloadIcon.SetActive(true);
+                downloadButton.interactable = false;
+                break;
+            case DownloadManager.DownloadStatus.Downloading:
+                downloadStatusImage.color = defaultColor;
+                loadingIndicator.SetActive(true);
+                downloadIcon.SetActive(false);
+                downloadButton.interactable = false;
+                break;
+            case DownloadManager.DownloadStatus.Downloadable:
+                downloadStatusImage.color = defaultColor;
+                loadingIndicator.SetActive(false);
+                downloadIcon.SetActive(true);
+                downloadButton.interactable = true;
+                break;
+        }
     }
 
     private async Task SetImage(ArtworkData artwork)

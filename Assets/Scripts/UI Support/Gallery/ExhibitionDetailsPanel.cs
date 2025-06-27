@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class ExhibitionDetailsPanel : MonoBehaviour
@@ -48,42 +47,6 @@ public class ExhibitionDetailsPanel : MonoBehaviour
     {
         closeButton.onClick.AddListener(() => gameObject.SetActive(false));
 
-        downloadButton.onClick.AddListener(() => {
-
-            downloadButtonUI.ShowAsDownloading();
-            downloadButton.interactable = false;
-
-            // Create intermediate variable for following callback.
-            var callbackExhibition = exhibition;
-
-            _ = DownloadManager.DownloadExhibition(exhibition, (_) =>
-            {
-                if (exhibition != callbackExhibition)
-                    return;
-
-                downloadButtonUI.ShowAsDownloading();
-                downloadButton.interactable = false;
-
-            }, (result) =>
-            {
-                if (exhibition != callbackExhibition)
-                    return;
-
-                if (result == UnityWebRequest.Result.Success)
-                {
-                    downloadButtonUI.ShowAsDownloadFinished();
-                    downloadButton.interactable = false;
-                }
-                else
-                {
-                    downloadButtonUI.ShowAsReadyForDownload();
-                    downloadButton.interactable = true;
-                }
-
-                ArtworkUIManager.Instance.UpdateCardDownloadStatusForExhibition(callbackExhibition);
-            });
-        });
-
         artworksButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artworks));
         artistsButton.onClick.AddListener(() => ChangeMenu(MenuNavigation.Artists));
         scrollSnapper.OnPanelCentered.AddListener(ChangeIndicator);
@@ -93,12 +56,40 @@ public class ExhibitionDetailsPanel : MonoBehaviour
     {
         swipeDetector.SwipedLeft += OnSwipedLeft;
         swipeDetector.SwipedRight += OnSwipedRight;
+        downloadButton.onClick.AddListener(DownloadExhibition);
+        DownloadManager.Instance.StartedExhibitionDownloadProcess += OnStartedExhibitionDownloadProcess;
+        DownloadManager.Instance.FinishedExhibitionDownloadProcess += OnFinishedExhibitionDownloadProcess;
     }
 
     private void OnDisable()
     {
         swipeDetector.SwipedLeft -= OnSwipedLeft;
         swipeDetector.SwipedRight -= OnSwipedRight;
+        downloadButton.onClick.RemoveListener(DownloadExhibition);
+        DownloadManager.Instance.StartedExhibitionDownloadProcess -= OnStartedExhibitionDownloadProcess;
+        DownloadManager.Instance.FinishedExhibitionDownloadProcess -= OnFinishedExhibitionDownloadProcess;
+    }
+
+    void DownloadExhibition()
+    {
+        _ = DownloadManager.DownloadExhibition(exhibition);
+    }
+
+    void OnStartedExhibitionDownloadProcess(ExhibitionData exhibitionData)
+    {
+        if (exhibitionData != exhibition && exhibitionData.id != exhibition.id)
+            return;
+
+        downloadButtonUI.ShowAsDownloading();
+        downloadButton.interactable = false;
+    }
+
+    void OnFinishedExhibitionDownloadProcess(ExhibitionData exhibitionData)
+    {
+        if (exhibitionData != exhibition && exhibitionData.id != exhibition.id)
+            return;
+
+        UpdateDownloadButton();
     }
 
     void OnSwipedLeft(Vector2 startPosition)
@@ -204,17 +195,7 @@ public class ExhibitionDetailsPanel : MonoBehaviour
         galleryIndicator.FinishAnimationsImmediately();
 
 
-        // Update appearance of download button.
-        if (DownloadManager.ExhibitionIsDownloaded(exhibition))
-        {
-            downloadButtonUI.ShowAsDownloadFinished();
-            downloadButton.interactable = false;
-        }
-        else
-        {
-            downloadButtonUI.ShowAsReadyForDownload();
-            downloadButton.interactable = true;
-        }
+        UpdateDownloadButton();
 
 
         // Rebuild layout.
@@ -230,6 +211,28 @@ public class ExhibitionDetailsPanel : MonoBehaviour
                 LayoutRebuilder.ForceRebuildLayoutImmediate(rebuildLayout[i]);
             }
         });
+    }
+
+    void UpdateDownloadButton()
+    {
+        var downloadStatus = DownloadManager.Instance.GetDownloadStatusFor(exhibition);
+
+        switch (downloadStatus)
+        {
+            case DownloadManager.DownloadStatus.Downloaded:
+            case DownloadManager.DownloadStatus.Unavailable:
+                downloadButtonUI.ShowAsDownloadFinished();
+                downloadButton.interactable = false;
+                break;
+            case DownloadManager.DownloadStatus.Downloading:
+                downloadButtonUI.ShowAsDownloading();
+                downloadButton.interactable = false;
+                break;
+            case DownloadManager.DownloadStatus.Downloadable:
+                downloadButtonUI.ShowAsReadyForDownload();
+                downloadButton.interactable = true;
+                break;
+        }
     }
 
     private async void FillImages()

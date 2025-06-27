@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class ExhibitionCard : MonoBehaviour
 {
     [HideInInspector] public ExhibitionData exhibition;
-    
+
     [Header("Single cover image")]
     [SerializeField] GameObject singleCoverImageContainer;
     [SerializeField] Image singleImage;
@@ -29,9 +29,12 @@ public class ExhibitionCard : MonoBehaviour
     [SerializeField] TextMeshProUGUI locationText;
 
     [Header("Download status")]
+    [SerializeField] Button downloadButton;
     [SerializeField] Image downloadStatusImage;
     [SerializeField] Color defaultColor;
     [SerializeField] Color downloadedColor;
+    [SerializeField] GameObject loadingIndicator;
+    [SerializeField] GameObject downloadIcon;
 
     [Header("Other references")]
     [SerializeField] List<Button> viewExhibitionButtons;
@@ -45,6 +48,44 @@ public class ExhibitionCard : MonoBehaviour
         }
 
         loadingCircle?.BeginLoading();
+    }
+
+    private void OnEnable()
+    {
+        downloadButton.onClick.AddListener(DownloadExhibition);
+        DownloadManager.Instance.StartedExhibitionDownloadProcess += OnStartedExhibitionDownloadProcess;
+        DownloadManager.Instance.FinishedExhibitionDownloadProcess += OnFinishedExhibitionDownloadProcess;
+    }
+
+    private void OnDisable()
+    {
+        downloadButton.onClick.RemoveListener(DownloadExhibition);
+        DownloadManager.Instance.StartedExhibitionDownloadProcess -= OnStartedExhibitionDownloadProcess;
+        DownloadManager.Instance.FinishedExhibitionDownloadProcess -= OnFinishedExhibitionDownloadProcess;
+    }
+
+    void DownloadExhibition()
+    {
+        _ = DownloadManager.DownloadExhibition(exhibition);
+    }
+
+    void OnStartedExhibitionDownloadProcess(ExhibitionData exhibitionData)
+    {
+        if (exhibitionData != exhibition && exhibitionData.id != exhibition.id)
+            return;
+
+        downloadStatusImage.color = defaultColor;
+        loadingIndicator.SetActive(true);
+        downloadIcon.SetActive(false);
+        downloadButton.interactable = false;
+    }
+
+    void OnFinishedExhibitionDownloadProcess(ExhibitionData exhibitionData)
+    {
+        if (exhibitionData != exhibition && exhibitionData.id != exhibition.id)
+            return;
+
+        UpdateDownloadButton();
     }
 
     public async void Init(ExhibitionData point)
@@ -148,7 +189,7 @@ public class ExhibitionCard : MonoBehaviour
 
             loadingCircle?.StopLoading();
 
-            UpdateDownloadStatus();
+            UpdateDownloadButton();
         }
         catch(Exception e)
         {
@@ -156,15 +197,35 @@ public class ExhibitionCard : MonoBehaviour
         }
     }
 
-    public void UpdateDownloadStatus()
+    public void UpdateDownloadButton()
     {
         if (exhibition == null)
             return;
 
-        if (DownloadManager.ExhibitionIsDownloaded(exhibition))
-            downloadStatusImage.color = downloadedColor;
-        else
-            downloadStatusImage.color = defaultColor;
+        var downloadStatus = DownloadManager.Instance.GetDownloadStatusFor(exhibition);
+
+        switch (downloadStatus)
+        {
+            case DownloadManager.DownloadStatus.Downloaded:
+            case DownloadManager.DownloadStatus.Unavailable:
+                downloadStatusImage.color = downloadedColor;
+                loadingIndicator.SetActive(false);
+                downloadIcon.SetActive(true);
+                downloadButton.interactable = false;
+                break;
+            case DownloadManager.DownloadStatus.Downloading:
+                downloadStatusImage.color = defaultColor;
+                loadingIndicator.SetActive(true);
+                downloadIcon.SetActive(false);
+                downloadButton.interactable = false;
+                break;
+            case DownloadManager.DownloadStatus.Downloadable:
+                downloadStatusImage.color = defaultColor;
+                loadingIndicator.SetActive(false);
+                downloadIcon.SetActive(true);
+                downloadButton.interactable = true;
+                break;
+        }
     }
 
     protected void OpenExhibitionPage()

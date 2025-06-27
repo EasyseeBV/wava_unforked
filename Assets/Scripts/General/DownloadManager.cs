@@ -19,7 +19,19 @@ public class DownloadManager : MonoBehaviour
     public static Dictionary<string, GameObject> LocalModels = new Dictionary<string, GameObject>();
     
     private AssetLoaderOptions _assetLoaderOptions;
-    
+
+    private HashSet<string> _currentlyDownloadingURLs = new();
+
+    public Action<ArtworkData> StartedArtworkDownloadProcess;
+
+    public Action<ArtworkData> FinishedArtworkDownloadProcess;
+
+    public Action<ExhibitionData> StartedExhibitionDownloadProcess;
+
+    public Action<ExhibitionData> FinishedExhibitionDownloadProcess;
+
+    public enum DownloadStatus { Unavailable, Downloadable, Downloading, Downloaded}
+
     private void Awake() 
     {
         if (_instance == null) 
@@ -35,7 +47,10 @@ public class DownloadManager : MonoBehaviour
 
     public async Task<(string localPath, bool downloaded)> BackgroundDownloadMedia(string storagePath, string path, ARDownloadBar downloadBar, int index = 0, Action<float> progressChangedCallback = null, Action<UnityWebRequest.Result> resultCallback = null)
     {
-        return await FirebaseLoader.DownloadMedia(storagePath, path, downloadBar, index, progressChangedCallback, resultCallback);
+        _currentlyDownloadingURLs.Add(path);
+        var task = await FirebaseLoader.DownloadMedia(storagePath, path, downloadBar, index, progressChangedCallback, resultCallback);
+        _currentlyDownloadingURLs.Remove(path);
+        return task;
     }
 
     public async Task LoadModels(List<MediaContentData> content, string artworkName)
@@ -130,20 +145,91 @@ public class DownloadManager : MonoBehaviour
         return path;
     }
 
-    public static bool MediaContentIsDownloaded(MediaContentData media)
+    public DownloadStatus GetDownloadStatusFor(MediaContentData mediaContent)
     {
-        var uri = new Uri(media.media_content);
+        if (mediaContent == null)
+            return DownloadStatus.Unavailable;
+
+        var uri = new Uri(mediaContent.media_content);
         string encodedPath = uri.AbsolutePath;
         string decodedPath = Uri.UnescapeDataString(encodedPath);
         string fileName = Path.GetFileName(decodedPath);
         string localPath = Path.Combine(AppCache.ContentFolder, fileName);
 
-        return File.Exists(localPath);
+        if (File.Exists(localPath))
+            return DownloadStatus.Downloaded;
+
+        if (_currentlyDownloadingURLs.Contains(mediaContent.media_content))
+            return DownloadStatus.Downloading;
+
+        return DownloadStatus.Downloadable;
+    }
+
+    public DownloadStatus GetDownloadStatusFor(ArtworkData artwork)
+    {
+        if (artwork == null)
+            return DownloadStatus.Unavailable;
+
+        if (artwork.content_list.Count == 0)
+            return DownloadStatus.Downloaded;
+
+        var someMediaIsDownloadable = false;
+
+        for (int i = 0; i < artwork.content_list.Count; i++)
+        {
+            var media = artwork.content_list[i];
+
+            var status = GetDownloadStatusFor(media);
+
+            // The artwork is downloading if any media is downloading.
+            if (status == DownloadStatus.Downloading)
+                return DownloadStatus.Downloading;
+
+            someMediaIsDownloadable |= status == DownloadStatus.Downloadable;
+        }
+
+        // The artwork is downloaded if all media are either downloaded or unavailable.
+        if (!someMediaIsDownloadable)
+            return DownloadStatus.Downloaded;
+
+        return DownloadStatus.Downloadable;
+    }
+
+    public DownloadStatus GetDownloadStatusFor(ExhibitionData exhibition)
+    {
+        if (exhibition == null)
+            return DownloadStatus.Unavailable;
+
+        if (exhibition.artworks.Count == 0)
+            return DownloadStatus.Downloaded;
+
+        var someArtworkIsDownloadable = false;
+
+        for (int i = 0; i < exhibition.artworks.Count; i++)
+        {
+            var artwork = exhibition.artworks[i];
+
+            var status = GetDownloadStatusFor(artwork);
+
+            // The exhibition is downloading if any artwork is downloading.
+            if (status == DownloadStatus.Downloading)
+                return DownloadStatus.Downloading;
+
+            someArtworkIsDownloadable |= status == DownloadStatus.Downloadable;
+        }
+
+        // The exhibition is downloaded if all artworks are either downloaded or unavailable.
+        if (!someArtworkIsDownloadable)
+            return DownloadStatus.Downloaded;
+
+        return DownloadStatus.Downloadable;
     }
 
     public static async Task DownloadMediaContent(MediaContentData media, Action<float> progressCallback = null, Action<UnityWebRequest.Result> resultCallback = null)
     {
-        if (MediaContentIsDownloaded(media))
+        var downloadStatus = Instance.GetDownloadStatusFor(media);
+
+        if (downloadStatus == DownloadStatus.Downloaded || downloadStatus == DownloadStatus.Unavailable)
         {
             progressCallback?.Invoke(1f);
             resultCallback?.Invoke(UnityWebRequest.Result.Success);
@@ -153,30 +239,18 @@ public class DownloadManager : MonoBehaviour
         }
     }
 
-    public static bool ArtworkIsDownloaded(ArtworkData artwork)
-    {
-        if (artwork == null || artwork.content_list.Count == 0)
-            return true;
-
-        foreach (var content in artwork.content_list)
-        {
-            if (!MediaContentIsDownloaded(content))
-                return false;
-        }
-
-        return true;
-    }
-
     public static async Task DownloadArtwork(ArtworkData artwork, Action<float> progressChangedCallback = null, Action<UnityWebRequest.Result> resultCallback = null)
     {
+        Instance.StartedArtworkDownloadProcess?.Invoke(artwork);
+
         // Automatic success if artwork has no media.
         if (artwork.content_list.Count == 0)
         {
             progressChangedCallback?.Invoke(1f);
             resultCallback?.Invoke(UnityWebRequest.Result.Success);
+            Instance.FinishedArtworkDownloadProcess?.Invoke(artwork);
             return;
         }
-
 
         var progresses = Enumerable.Repeat(0f, artwork.content_list.Count).ToList();
 
@@ -205,32 +279,24 @@ public class DownloadManager : MonoBehaviour
                 {
                     resultCallback?.Invoke(success ? UnityWebRequest.Result.Success : UnityWebRequest.Result.ConnectionError);
                 }
-
             });
         }
-    }
 
-    public static bool ExhibitionIsDownloaded(ExhibitionData exhibitionData)
-    {
-        foreach (var artworkData in exhibitionData.artworks)
-        {
-            if (!ArtworkIsDownloaded(artworkData))
-                return false;
-        }
-
-        return true;
+        Instance.FinishedArtworkDownloadProcess?.Invoke(artwork);
     }
 
     public static async Task DownloadExhibition(ExhibitionData exhibition, Action<float> progressChangedCallback = null, Action<UnityWebRequest.Result> resultCallback = null)
     {
+        Instance.StartedExhibitionDownloadProcess?.Invoke(exhibition);
+
         // Automatic success if exhibition has no artworks.
         if (exhibition.artworks.Count == 0)
         {
             progressChangedCallback?.Invoke(1f);
             resultCallback?.Invoke(UnityWebRequest.Result.Success);
+            Instance.FinishedExhibitionDownloadProcess.Invoke(exhibition);
             return;
         }
-
 
         var progresses = Enumerable.Repeat(0f, exhibition.artworks.Count).ToList(); ;
 
@@ -261,8 +327,9 @@ public class DownloadManager : MonoBehaviour
                 }
             });
         }
-    }
 
+        Instance.FinishedExhibitionDownloadProcess?.Invoke(exhibition);
+    }
 
     #region Model Loading Callbacks
     private void OnError(IContextualizedError obj) => Debug.LogError($"An error occurred while loading your model: {obj.GetInnerException()}");
