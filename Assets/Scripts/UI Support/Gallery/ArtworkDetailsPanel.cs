@@ -15,6 +15,7 @@ public class ArtworkDetailsPanel : MonoBehaviour
     private ArtworkData artwork;
 
     [SerializeField] TextMeshProUGUI artworkTitleText;
+    [SerializeField] TextMeshProUGUI artistNameText;
     [SerializeField] TextMeshProUGUI descriptionText;
 
     [SerializeField] Button closeButton;
@@ -100,7 +101,7 @@ public class ArtworkDetailsPanel : MonoBehaviour
         this.artwork = artwork;
 
         artworkTitleText.text = artwork.title;
-
+        artistNameText.text = artwork.artists.Count > 0 ? artwork.artists[0].title : string.Empty;
         descriptionText.text = artwork.description;
 
 
